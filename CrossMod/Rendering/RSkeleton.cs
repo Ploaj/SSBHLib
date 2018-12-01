@@ -51,7 +51,7 @@ namespace CrossMod.Rendering
             return Transforms;
         }
 
-        public override void Render()
+        public void Render()
         {
             //TODO:
         }

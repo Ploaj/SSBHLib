@@ -81,8 +81,9 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Nodes\IFileNode.cs" />
-    <Compile Include="Nodes\IRenderable_Node.cs" />
+    <Compile Include="Nodes\FileTypeAttribute.cs" />
+    <Compile Include="Nodes\FileNode.cs" />
+    <Compile Include="Nodes\IRenderableNode.cs" />
     <Compile Include="Nodes\NUMDL_Node.cs" />
     <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />

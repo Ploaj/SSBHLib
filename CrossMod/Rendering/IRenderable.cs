@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CrossMod.Rendering
 {
-    public abstract class IRenderable
+    public interface IRenderable
     {
-        public abstract void Render();
+        void Render();
     }
 }

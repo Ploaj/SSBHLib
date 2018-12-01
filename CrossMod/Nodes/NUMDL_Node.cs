@@ -9,7 +9,7 @@ using SSBHLib.Formats;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numdlb")]
-    public class NUMDL_Node : IFileNode
+    public class NUMDL_Node : FileNode
     {
         private MODL _model;
 
