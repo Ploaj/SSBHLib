@@ -87,6 +87,8 @@ namespace CrossMod
                     _modelControl.RenderableNode = ((IRenderableNode)Node).GetRenderableNode();
                 }
             }
+
+            _modelControl.RenderFrame();
         }
     }
 }

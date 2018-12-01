@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.glViewport = new OpenTK.GLControl();
+            this.glViewport = new SFGraphics.Controls.GLViewport();
             this.SuspendLayout();
             // 
             // glViewport
@@ -52,6 +52,6 @@
 
         #endregion
 
-        private OpenTK.GLControl glViewport;
+        private SFGraphics.Controls.GLViewport glViewport;
     }
 }
