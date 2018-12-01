@@ -7,7 +7,7 @@ using OpenTK;
 
 namespace CrossMod.Rendering
 {
-    public class RSkeleton
+    public class RSkeleton : IRenderable
     {
         public List<RBone> Bones = new List<RBone>();
 
@@ -49,6 +49,11 @@ namespace CrossMod.Rendering
                 Transforms[i] = Bones[i].InvWorldTransform;
             }
             return Transforms;
+        }
+
+        public override void Render()
+        {
+            //TODO:
         }
     }
 

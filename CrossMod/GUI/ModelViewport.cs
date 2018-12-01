@@ -7,7 +7,7 @@ namespace CrossMod.GUI
     public partial class ModelViewport : UserControl
     {
         // Render-ables
-        public RSkeleton RenderSkeleton;
+        public IRenderable RenderableNode;
 
         public ModelViewport()
         {
@@ -16,7 +16,7 @@ namespace CrossMod.GUI
 
         public void Clear()
         {
-            RenderSkeleton = null;
+            RenderableNode = null;
         }
     }
 }

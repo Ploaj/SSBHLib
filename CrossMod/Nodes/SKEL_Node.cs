@@ -7,7 +7,7 @@ using OpenTK;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nusktb")]
-    public class SKEL_Node : ISkeleton_Node
+    public class SKEL_Node : IRenderableNode
     {
         private SKEL _skel;
 
@@ -29,7 +29,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public override RSkeleton GetSkeleton()
+        public override IRenderable GetRenderableNode()
         {
             if (_skel == null) return null;
 

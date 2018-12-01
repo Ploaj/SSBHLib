@@ -81,10 +81,10 @@ namespace CrossMod
 
             if(Node != null)
             {
-                if(Node is ISkeleton_Node)
+                if(Node is IRenderableNode)
                 {
                     ShowModelControl();
-                    _modelControl.RenderSkeleton = ((ISkeleton_Node)Node).GetSkeleton();
+                    _modelControl.RenderableNode = ((IRenderableNode)Node).GetRenderableNode();
                 }
             }
         }
