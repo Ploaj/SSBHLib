@@ -67,14 +67,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\FileTools.cs" />
+    <Compile Include="GUI\ModelViewport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\ModelViewport.Designer.cs">
+      <DependentUpon>ModelViewport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\OpenFolderDialog.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Nodes\IFileNode.cs" />
+    <Compile Include="Nodes\ISkeleton_Node.cs" />
+    <Compile Include="Nodes\NUMDL_Node.cs" />
+    <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\RSkeleton.cs" />
+    <EmbeddedResource Include="GUI\ModelViewport.resx">
+      <DependentUpon>ModelViewport.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,6 +130,12 @@
     <Content Include="lib\SFGraphics.Utils.dll" />
     <Content Include="lib\SFGraphics.Utils.xml" />
     <Content Include="lib\SFGraphics.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
+      <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
+      <Name>SSBHLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
