@@ -12,6 +12,8 @@ namespace CrossMod.Rendering
 
         public string Name;
 
+        public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
+
         public List<CustomVertexAttribute> VertexAttributes = new List<CustomVertexAttribute>();
 
         public int IndexOffset;
@@ -42,7 +44,7 @@ namespace CrossMod.Rendering
                 a.Bind(shader);
             }
 
-            GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementsType.UnsignedShort, IndexOffset);
+            GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementType, IndexOffset);
         }
 
         private void SetTextureUniforms(Shader shader)

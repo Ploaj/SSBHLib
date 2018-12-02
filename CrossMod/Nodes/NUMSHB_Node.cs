@@ -68,8 +68,11 @@ namespace CrossMod.Nodes
                 Model.Mesh.Add(Mesh);
                 Mesh.Name = o.Name;
                 Mesh.SingleBindName = o.ParentBoneName;
-                Mesh.IndexCount = o.PolygonCount;
-                Mesh.IndexOffset = (int)o.PolygonIndexOffset;
+                Mesh.IndexCount = o.IndexCount;
+                Mesh.IndexOffset = (int)o.ElementOffset;
+
+                if (o.DrawElementType == 1)
+                    Mesh.DrawElementType = DrawElementsType.UnsignedInt;
 
                 // Vertex Attributes
                 foreach (MESH_Attribute att in o.Attributes)
@@ -78,7 +81,7 @@ namespace CrossMod.Nodes
                     a.Name = att.AttributeStrings[0].Name;
                     a.Normalized = false;
                     a.Stride = att.BufferIndex == 1 ? o.Stride2 : o.Stride;
-                    a.Offset = BufferOffsets[att.BufferIndex] + (att.BufferIndex == 0 ? o.VertexIndexOffset : o.VertexIndexOffset2) + att.BufferOffset;
+                    a.Offset = BufferOffsets[att.BufferIndex] + (att.BufferIndex == 0 ? o.VertexOffset : o.VertexOffset2) + att.BufferOffset;
                     a.Size = 3;
                     if (a.Name.Equals("map1"))
                     {

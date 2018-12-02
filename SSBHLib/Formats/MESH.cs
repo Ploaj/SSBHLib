@@ -60,13 +60,13 @@ namespace SSBHLib.Formats
         
         public int VertexCount { get; set; }
         
-        public int PolygonCount { get; set; }
+        public int IndexCount { get; set; }
         
         public uint Unk2 { get; set; }
         
-        public int VertexIndexOffset { get; set; }
+        public int VertexOffset { get; set; }
         
-        public int VertexIndexOffset2 { get; set; }
+        public int VertexOffset2 { get; set; }
         
         public int Unk4 { get; set; }
         
@@ -80,11 +80,11 @@ namespace SSBHLib.Formats
         
         public int Unk7 { get; set; }
         
-        public uint PolygonIndexOffset { get; set; }
+        public uint ElementOffset { get; set; }
         
         public int Unk8 { get; set; }
     
-        public int Unk9 { get; set; }
+        public int DrawElementType { get; set; }
         
         public int Unk10 { get; set; }
         
