@@ -67,6 +67,7 @@ namespace CrossMod.Nodes
                 RMesh Mesh = new RMesh();
                 Model.Mesh.Add(Mesh);
                 Mesh.Name = o.Name;
+                Mesh.SingleBindName = o.ParentBoneName;
                 Mesh.IndexCount = o.PolygonCount;
                 Mesh.IndexOffset = (int)o.PolygonIndexOffset;
 

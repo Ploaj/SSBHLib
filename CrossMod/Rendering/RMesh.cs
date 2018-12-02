@@ -48,6 +48,13 @@ namespace CrossMod.Rendering
             Matrix4 View = Camera.MvpMatrix;
             RModelShader.SetMatrix4x4("mvp", ref View);
 
+            if(Skeleton != null)
+            {
+                Matrix4[] WorldTransforms = Skeleton.GetWorldTransforms();
+                //RModelShader.SetMatrix4x4("Transforms", WorldTransforms); // temp until ubo
+                GL.UniformMatrix4(RModelShader.GetUniformLocation("Transforms"), WorldTransforms.Length, false, ref WorldTransforms[0].Row0.X);
+            }
+
             // Bind Buffers
             IndexBuffer.Bind();
             VertexBuffer.Bind();
@@ -71,12 +78,14 @@ namespace CrossMod.Rendering
         public int IndexOffset;
         public int IndexCount;
 
-        public int SingleBindIndex;
+        public string SingleBindName = "";
+        public int SingleBindIndex = -1;
 
         public Material Material;
 
         public void Draw(Shader s, Camera c)
         {
+            s.SetInt("SingleBindIndex", SingleBindIndex);
             if(Material != null)
             {
                 if(Material.COL != null)

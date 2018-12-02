@@ -56,6 +56,16 @@ namespace CrossMod.Rendering
             return Transforms;
         }
 
+        public int GetBoneIndex(string BoneName)
+        {
+            for(int i = 0; i < Bones.Count; i++)
+            {
+                if (Bones[i].Name.Equals(BoneName))
+                    return i;
+            }
+            return -1;
+        }
+
         public void Render(Camera Camera)
         {
             //TODO:

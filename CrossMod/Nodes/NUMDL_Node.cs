@@ -44,6 +44,8 @@ namespace CrossMod.Nodes
             }
             if (Model.Material != null)
                 Model.UpdateMaterial();
+            if (Model.Skeleton != null)
+                Model.UpdateBinds();
             return Model;
         }
 

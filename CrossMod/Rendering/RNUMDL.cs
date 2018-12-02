@@ -18,6 +18,14 @@ namespace CrossMod.Rendering
         public RModel Model;
         public MTAL Material;
         
+        public void UpdateBinds()
+        {
+            foreach(RMesh m in Model.Mesh)
+            {
+                m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
+            }
+        }
+
         public void UpdateMaterial()
         {
             foreach (MODL_Entry e in MODL.ModelEntries)
