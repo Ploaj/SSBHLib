@@ -11,7 +11,7 @@ using OpenTK.Graphics.OpenGL;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numshb")]
-    public class NUMSHB_Node : IRenderableNode
+    public class NUMSHB_Node : FileNode, IRenderableNode
     {
         private MESH _mesh;
 
@@ -33,7 +33,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public override IRenderable GetRenderableNode()
+        public IRenderable GetRenderableNode()
         {
             RModel Model = new RModel();
 

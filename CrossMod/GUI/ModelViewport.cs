@@ -27,7 +27,7 @@ namespace CrossMod.GUI
 
             Application.Idle += AnimationRenderFrame;
 
-            glViewport.OnRenderFrame += RenderFrame;
+            glViewport.OnRenderFrame += RenderNode;
         }
 
         private void AnimationRenderFrame(object sender, EventArgs e)
@@ -35,7 +35,12 @@ namespace CrossMod.GUI
             glViewport.RenderFrame();
         }
 
-        private void RenderFrame(object sender, EventArgs e)
+        public void RenderFrame()
+        {
+            glViewport.RenderFrame();
+        }
+
+        private void RenderNode(object sender, EventArgs e)
         {
             //Clearing
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -71,8 +76,6 @@ namespace CrossMod.GUI
 
             if (RenderableNode != null)
                 RenderableNode.Render(Camera);
-
-            glViewport.SwapBuffers();
             
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
