@@ -95,5 +95,11 @@ namespace CrossMod
             Rendering.RModel.shader = null;
             Rendering.RTexture.textureShader = null;
         }
+
+        private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var settingsMenu = new RenderSettingsMenu();
+            settingsMenu.Show();
+        }
     }
 }

@@ -34,16 +34,19 @@
             this.reloadShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
+            this.viewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.viewportToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(551, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(872, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -78,7 +81,7 @@
             this.fileTree.ItemHeight = 24;
             this.fileTree.Location = new System.Drawing.Point(12, 27);
             this.fileTree.Name = "fileTree";
-            this.fileTree.Size = new System.Drawing.Size(241, 293);
+            this.fileTree.Size = new System.Drawing.Size(241, 538);
             this.fileTree.TabIndex = 2;
             this.fileTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.fileTree_AfterSelect);
             // 
@@ -89,16 +92,31 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.contentBox.Location = new System.Drawing.Point(259, 27);
             this.contentBox.Name = "contentBox";
-            this.contentBox.Size = new System.Drawing.Size(280, 293);
+            this.contentBox.Size = new System.Drawing.Size(601, 538);
             this.contentBox.TabIndex = 3;
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
+            // 
+            // viewportToolStripMenuItem
+            // 
+            this.viewportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.renderSettingsToolStripMenuItem});
+            this.viewportToolStripMenuItem.Name = "viewportToolStripMenuItem";
+            this.viewportToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.viewportToolStripMenuItem.Text = "Viewport";
+            // 
+            // renderSettingsToolStripMenuItem
+            // 
+            this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.renderSettingsToolStripMenuItem.Text = "Render Settings";
+            this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(551, 332);
+            this.ClientSize = new System.Drawing.Size(872, 577);
             this.Controls.Add(this.contentBox);
             this.Controls.Add(this.fileTree);
             this.Controls.Add(this.menuStrip1);
@@ -120,6 +138,8 @@
         private System.Windows.Forms.TreeView fileTree;
         private System.Windows.Forms.GroupBox contentBox;
         private System.Windows.Forms.ToolStripMenuItem reloadShadersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renderSettingsToolStripMenuItem;
     }
 }
 

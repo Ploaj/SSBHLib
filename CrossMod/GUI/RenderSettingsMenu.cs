@@ -1,0 +1,82 @@
+﻿using System;
+using System.Windows.Forms;
+using CrossMod.Rendering;
+
+namespace CrossMod.GUI
+{
+    public partial class RenderSettingsMenu : Form
+    {
+        public RenderSettingsMenu()
+        {
+            InitializeComponent();
+
+            renderModeComboBox.SelectedIndex = RenderSettings.renderMode;
+            redButton.ForeColor = RenderSettings.renderChannels.X == 1 ? System.Drawing.Color.Red : System.Drawing.Color.Gray;
+            greenButton.ForeColor = RenderSettings.renderChannels.Y == 1 ? System.Drawing.Color.Green : System.Drawing.Color.Gray;
+            blueButton.ForeColor = RenderSettings.renderChannels.Z == 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Gray;
+            alphaButton.ForeColor = RenderSettings.renderChannels.W == 1 ? System.Drawing.Color.Black : System.Drawing.Color.Gray;
+        }
+
+        private void renderModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RenderSettings.renderMode = renderModeComboBox.SelectedIndex;
+            RenderSettings.useDebugShading = RenderSettings.renderMode != 0;
+        }
+
+        private void redButton_Click(object sender, EventArgs e)
+        {
+            if (RenderSettings.renderChannels.X == 1)
+            {
+                RenderSettings.renderChannels.X = 0;
+                redButton.ForeColor = System.Drawing.Color.Gray;
+            }
+            else
+            {
+                RenderSettings.renderChannels.X = 1;
+                redButton.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+        private void greenButton_Click(object sender, EventArgs e)
+        {
+            if (RenderSettings.renderChannels.Y == 1)
+            {
+                RenderSettings.renderChannels.Y = 0;
+                greenButton.ForeColor = System.Drawing.Color.Gray;
+            }
+            else
+            {
+                RenderSettings.renderChannels.Y = 1;
+                greenButton.ForeColor = System.Drawing.Color.Green;
+            }
+        }
+
+        private void blueButton_Click(object sender, EventArgs e)
+        {
+            if (RenderSettings.renderChannels.Z == 1)
+            {
+                RenderSettings.renderChannels.Z = 0;
+                blueButton.ForeColor = System.Drawing.Color.Gray;
+            }
+            else
+            {
+                RenderSettings.renderChannels.Z = 1;
+                blueButton.ForeColor = System.Drawing.Color.Blue;
+            }
+        }
+
+        private void alphaButton_Click(object sender, EventArgs e)
+        {
+            if (RenderSettings.renderChannels.W == 1)
+            {
+                RenderSettings.renderChannels.W = 0;
+                alphaButton.ForeColor = System.Drawing.Color.Gray;
+            }
+            else
+            {
+                RenderSettings.renderChannels.W = 1;
+                alphaButton.ForeColor = System.Drawing.Color.Black;
+            }
+        }
+    }
+}
