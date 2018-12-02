@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
-using System.Collections.Generic;
+using CrossMod.Tools;
 
 namespace CrossMod.Nodes
 {
@@ -87,7 +87,6 @@ namespace CrossMod.Nodes
                     if (b != 0)
                         TexName += (char)b;
                 }
-                R.ReadInt32(); // padding?
                 Width = R.ReadInt32();
                 Height = R.ReadInt32();
                 int Unk = R.ReadInt32();
@@ -103,9 +102,9 @@ namespace CrossMod.Nodes
                 int MinorVersion = R.ReadInt16();
 
                 R.BaseStream.Position = 0;
-                foreach(int size in MipSizes)
+                for (int i = 0; i < MipCount; i++)
                 {
-                    Mipmaps.Add(R.ReadBytes(size));
+                    Mipmaps.Add(SwitchSwizzler.Deswizzle(Width >> i, Height >> i, 0x1E, R.ReadBytes(MipSizes[i])));
                 }
             }
         }

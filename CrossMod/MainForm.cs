@@ -45,6 +45,9 @@ namespace CrossMod
                          where typeof(FileNode).IsAssignableFrom(assemblyType)
                          select assemblyType).ToArray();
 
+            TreeNode Parent = new TreeNode(Path.GetDirectoryName(Folder));
+            fileTree.Nodes.Add(Parent);
+
             foreach (string s in Files)
             {
                 FileNode Node = null;
@@ -71,7 +74,7 @@ namespace CrossMod
                 Node.Open(s);
 
                 Node.Text = Path.GetFileName(s);
-                fileTree.Nodes.Add(Node);
+                Parent.Nodes.Add(Node);
             }
         }
 

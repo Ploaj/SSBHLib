@@ -28,7 +28,12 @@ namespace CrossMod.Rendering
 
         public void Render(Camera Camera)
         {
-            if(RModelShader == null)
+            Render(Camera, null);
+        }
+
+        public void Render(Camera Camera, RSkeleton Skeleton = null)
+        {
+            if (RModelShader == null)
             {
                 RModelShader = new Shader();
                 RModelShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
@@ -71,7 +76,7 @@ namespace CrossMod.Rendering
         public void Draw(Shader s, Camera c)
         {
 
-            foreach(CustomVertexAttribute a in VertexAttributes)
+            foreach (CustomVertexAttribute a in VertexAttributes)
             {
                 a.Bind(s);
             }

@@ -97,9 +97,11 @@
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\RMesh.cs" />
+    <Compile Include="Rendering\RNUMDL.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
     <Compile Include="Rendering\RTexture.cs" />
     <Compile Include="Rendering\ScreenTriangle.cs" />
+    <Compile Include="Tools\SwitchSwizzler.cs" />
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
     </EmbeddedResource>
