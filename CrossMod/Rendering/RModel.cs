@@ -11,7 +11,7 @@ namespace CrossMod.Rendering
     public class RModel : IRenderable
     {
         // Shaders
-        private static Shader shader;
+        public static Shader shader;
 
         // Buffers
         public BufferObject VertexBuffer;

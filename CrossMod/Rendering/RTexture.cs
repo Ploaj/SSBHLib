@@ -6,7 +6,7 @@ namespace CrossMod.Rendering
 {
     public class RTexture : IRenderable
     {
-        private static Shader textureShader = null;
+        public static Shader textureShader = null;
         private static ScreenTriangle triangle = null;
 
         public SFGraphics.GLObjects.Textures.Texture texture = null;

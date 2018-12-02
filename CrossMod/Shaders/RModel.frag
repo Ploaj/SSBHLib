@@ -103,5 +103,4 @@ void main()
 	fragColor.rgb *= prmColor.b;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
-
 }
