@@ -94,8 +94,8 @@ namespace CrossMod.Nodes
                 Format = (NUTEX_FORMAT)R.ReadByte();
                 R.ReadByte();
                 R.ReadInt16();
-                int MipCount = R.ReadInt32();
                 int Alignment = R.ReadInt32();
+                int MipCount = R.ReadInt32();
                 int Array = R.ReadInt32();
                 int ImageSize = R.ReadInt32();
                 char[] Magic = R.ReadChars(4);
@@ -103,7 +103,7 @@ namespace CrossMod.Nodes
                 int MinorVersion = R.ReadInt16();
 
                 R.BaseStream.Position = 0;
-                for (int i = 0; i < MipCount; i++)
+                for (int i = 0; i < 1; i++) // TODO: fix mip alignment v=MipCount
                 {
                     Mipmaps.Add(SwitchSwizzler.Deswizzle(Width >> i, Height >> i, 0x1E, R.ReadBytes(MipSizes[i])));
                 }

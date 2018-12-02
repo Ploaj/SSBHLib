@@ -1,4 +1,5 @@
 ﻿using CrossMod.GUI;
+using System.Windows.Forms;
 
 namespace CrossMod
 {
@@ -6,11 +7,11 @@ namespace CrossMod
     {
         public static string TryOpenFolder()
         {
-            OpenFolderDialog Dialog = new OpenFolderDialog();
+            FolderSelectDialog Dialog = new FolderSelectDialog();
 
-            if ((bool)Dialog.ShowDialog())
+            if (Dialog.ShowDialog() == DialogResult.OK)
             {
-                return Dialog.Folder;
+                return Dialog.SelectedPath;
             }
 
             return "";

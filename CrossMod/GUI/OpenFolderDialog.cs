@@ -1,277 +1,336 @@
-﻿// Copyright (c) 2011 Josip Medved <jmedved@jmedved.com>  http://www.jmedved.com
-// Source: http://www.jmedved.com/2011/12/openfolderdialog/
+﻿using System.ComponentModel;
+using System.Reflection;
 
-using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
-namespace CrossMod.GUI
+namespace System.Windows.Forms
 {
     /// <summary>
-    /// Provides a dialog to select a folder to open, similar to the OpenFileDialog. Uses the new
-    /// common dialog option for Windows Vista and later, falling back to FolderBrowserDialog on
-    /// older Windows versions.
+    /// Wraps System.Windows.Forms.OpenFileDialog to make it present
+    /// a vista-style dialog.
     /// </summary>
-    /// <remarks>
-    /// This class only depends on Windows Forms, it does not require WPF. To use it from a WPF
-    /// window, use the Wpf32Window wrapper class as an argument for the ShowDialog method.
-    /// </remarks>
-    internal class OpenFolderDialog
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Browsable(false)]
+    [DesignTimeVisible(false)]
+    public partial class FolderSelectDialog : Component
     {
-        /// <summary>
-        /// Gets or sets the title for the selection dialog.
-        /// </summary>
-        public string Title { get; set; }
+        // Wrapped dialog
+        System.Windows.Forms.OpenFileDialog ofd = null;
 
         /// <summary>
-        /// Gets or sets the initial folder of the dialog.
+        /// Default constructor
         /// </summary>
-        public string InitialFolder { get; set; }
-
-        /// <summary>
-        /// Gets or sets the directory in which dialog will be open if there is no recent directory available.
-        /// </summary>
-        public string DefaultFolder { get; set; }
-
-        /// <summary>
-        /// Gets the selected folder.
-        /// </summary>
-        public string Folder { get; private set; }
-
-        /// <summary>
-        /// Displays an OpenFolderDialog that is modal to the main window.
-        /// </summary>
-        /// <returns>true if the user clicked OK; false if the user clicked Cancel or closed the dialog box.</returns>
-        public bool? ShowDialog()
+        public FolderSelectDialog()
         {
-            return ShowDialog(null);
+            ofd = new System.Windows.Forms.OpenFileDialog();
+
+            ofd.Filter = "Folders|\n";
+            ofd.AddExtension = false;
+            ofd.CheckFileExists = false;
+            ofd.DereferenceLinks = true;
+            ofd.Multiselect = false;
+        }
+
+        #region Properties
+
+        /// <summary>
+        /// Gets/Sets the initial folder to be selected. A null value selects the current directory.
+        /// </summary>
+        public string InitialDirectory
+        {
+            get { return ofd.InitialDirectory; }
+            set { ofd.InitialDirectory = value == null || value.Length == 0 ? Environment.CurrentDirectory : value; }
         }
 
         /// <summary>
-        /// Displays an OpenFolderDialog that is modal to the specified window.
+        /// Gets/Sets the title to show in the dialog
         /// </summary>
-        /// <param name="owner">The window that serves as the top-level window for the dialog.</param>
-        /// <returns>true if the user clicked OK; false if the user clicked Cancel or closed the dialog box.</returns>
-        public bool? ShowDialog(IWin32Window owner)
+        public string Title
         {
+            get { return ofd.Title; }
+            set { ofd.Title = value == null ? "Select a folder" : value; }
+        }
+
+        /// <summary>
+        /// Gets the selected folder
+        /// </summary>
+        public string SelectedPath
+        {
+            get { return ofd.FileName; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Shows the dialog
+        /// </summary>
+        /// <returns>DialogResult.OK if user presses OK, else DialogResult.Cancel</returns>
+        public DialogResult ShowDialog()
+        {
+            return ShowDialog(IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// Shows the dialog
+        /// </summary>
+        /// <param name="hWndOwner">Handle of the control to be parent</param>
+        /// <returns>DialogResult.OK if user presses OK, else DialogResult.Cancel</returns>
+        public DialogResult ShowDialog(IntPtr hWndOwner)
+        {
+            bool flag = false;
+
             if (Environment.OSVersion.Version.Major >= 6)
             {
-                return ShowVistaDialog(owner);
+                var r = new Reflector("System.Windows.Forms");
+
+                uint num = 0;
+                Type typeIFileDialog = r.GetType("FileDialogNative.IFileDialog");
+                object dialog = r.Call(ofd, "CreateVistaDialog");
+                r.Call(ofd, "OnBeforeVistaDialog", dialog);
+
+                uint options = (uint)r.CallAs(typeof(System.Windows.Forms.FileDialog), ofd, "GetOptions");
+                options |= (uint)r.GetEnum("FileDialogNative.FOS", "FOS_PICKFOLDERS");
+                r.CallAs(typeIFileDialog, dialog, "SetOptions", options);
+
+                object pfde = r.New("FileDialog.VistaDialogEvents", ofd);
+                object[] parameters = new object[] { pfde, num };
+                r.CallAs2(typeIFileDialog, dialog, "Advise", parameters);
+                num = (uint)parameters[1];
+                try
+                {
+                    int num2 = (int)r.CallAs(typeIFileDialog, dialog, "Show", hWndOwner);
+                    flag = 0 == num2;
+                }
+                finally
+                {
+                    r.CallAs(typeIFileDialog, dialog, "Unadvise", num);
+                    GC.KeepAlive(pfde);
+                }
             }
             else
             {
-                return ShowLegacyDialog(owner);
+                var fbd = new FolderBrowserDialog();
+                fbd.Description = this.Title;
+                fbd.SelectedPath = this.InitialDirectory;
+                fbd.ShowNewFolderButton = false;
+                if (fbd.ShowDialog(new WindowWrapper(hWndOwner)) != DialogResult.OK) return DialogResult.Cancel;
+                ofd.FileName = fbd.SelectedPath;
+                flag = true;
             }
+
+            return flag ? DialogResult.OK : DialogResult.Cancel;
         }
 
-        private bool? ShowVistaDialog(IWin32Window owner)
+        #endregion
+    }
+
+    /// <summary>
+    /// Creates IWin32Window around an IntPtr
+    /// </summary>
+    public class WindowWrapper : System.Windows.Forms.IWin32Window
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="handle">Handle to wrap</param>
+        public WindowWrapper(IntPtr handle)
         {
-            var frm = (NativeMethods.IFileDialog)(new NativeMethods.FileOpenDialogRCW());
-            uint options;
-            frm.GetOptions(out options);
-            options |= NativeMethods.FOS_PICKFOLDERS | NativeMethods.FOS_FORCEFILESYSTEM | NativeMethods.FOS_NOVALIDATE |
-                NativeMethods.FOS_NOTESTFILECREATE | NativeMethods.FOS_DONTADDTORECENT;
-            frm.SetOptions(options);
-            //frm.SetTitle(Title);
-            if (InitialFolder != null)
-            {
-                NativeMethods.IShellItem directoryShellItem;
-                var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");   // IShellItem
-                if (NativeMethods.SHCreateItemFromParsingName(InitialFolder, IntPtr.Zero, ref riid, out directoryShellItem) == NativeMethods.S_OK)
-                {
-                    frm.SetFolder(directoryShellItem);
-                }
-            }
-            if (DefaultFolder != null)
-            {
-                NativeMethods.IShellItem directoryShellItem;
-                var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");   // IShellItem
-                if (NativeMethods.SHCreateItemFromParsingName(DefaultFolder, IntPtr.Zero, ref riid, out directoryShellItem) == NativeMethods.S_OK)
-                {
-                    frm.SetDefaultFolder(directoryShellItem);
-                }
-            }
-
-            IntPtr handle;
-            if (owner != null)
-            {
-                handle = owner.Handle;
-            }
-            else
-            {
-                handle = IntPtr.Zero;
-            }
-            if (frm.Show(handle) == NativeMethods.S_OK)
-            {
-                NativeMethods.IShellItem shellItem;
-                if (frm.GetResult(out shellItem) == NativeMethods.S_OK)
-                {
-                    IntPtr pszString;
-                    if (shellItem.GetDisplayName(NativeMethods.SIGDN_FILESYSPATH, out pszString) == NativeMethods.S_OK)
-                    {
-                        if (pszString != IntPtr.Zero)
-                        {
-                            try
-                            {
-                                Folder = Marshal.PtrToStringAuto(pszString);
-                                return true;
-                            }
-                            finally
-                            {
-                                Marshal.FreeCoTaskMem(pszString);
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
+            _hwnd = handle;
         }
 
-        private bool? ShowLegacyDialog(IWin32Window owner)
+        /// <summary>
+        /// Original ptr
+        /// </summary>
+        public IntPtr Handle
         {
-            using (var f = new FolderBrowserDialog())
-            {
-                f.Description = Title;
-                if (InitialFolder != null)
-                {
-                    f.SelectedPath = InitialFolder;
-                }
-                f.ShowNewFolderButton = true;
-                if (f.ShowDialog(owner) == DialogResult.OK)
-                {
-                    Folder = f.SelectedPath;
-                    return true;
-                }
-            }
-            return false;
+            get { return _hwnd; }
         }
 
-        private static class NativeMethods
+        private IntPtr _hwnd;
+    }
+
+    /// <summary>
+    /// This class is from the Front-End for Dosbox and is used to present a 'vista' dialog box to select folders.
+    /// Being able to use a vista style dialog box to select folders is much better then using the shell folder browser.
+    /// http://code.google.com/p/fed/
+    ///
+    /// Example:
+    /// var r = new Reflector("System.Windows.Forms");
+    /// </summary>
+    public class Reflector
+    {
+        #region variables
+
+        string m_ns;
+        Assembly m_asmb;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="ns">The namespace containing types to be used</param>
+        public Reflector(string ns)
+            : this(ns, ns)
+        { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="an">A specific assembly name (used if the assembly name does not tie exactly with the namespace)</param>
+        /// <param name="ns">The namespace containing types to be used</param>
+        public Reflector(string an, string ns)
         {
-            #region Constants
-
-            public const uint FOS_PICKFOLDERS = 0x00000020;
-            public const uint FOS_FORCEFILESYSTEM = 0x00000040;
-            public const uint FOS_NOVALIDATE = 0x00000100;
-            public const uint FOS_NOTESTFILECREATE = 0x00010000;
-            public const uint FOS_DONTADDTORECENT = 0x02000000;
-
-            public const uint S_OK = 0x0000;
-
-            public const uint SIGDN_FILESYSPATH = 0x80058000;
-
-            #endregion Constants
-
-            #region COM
-
-            [ComImport, ClassInterface(ClassInterfaceType.None), TypeLibType(TypeLibTypeFlags.FCanCreate), Guid("DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7")]
-            internal class FileOpenDialogRCW { }
-
-            [ComImport(), Guid("42F85136-DB7E-439C-85F1-E4075D135FC8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            internal interface IFileDialog
+            m_ns = ns;
+            m_asmb = null;
+            foreach (AssemblyName aN in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
             {
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                [PreserveSig()]
-                uint Show([In, Optional] IntPtr hwndOwner); //IModalWindow
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFileTypes([In] uint cFileTypes, [In, MarshalAs(UnmanagedType.LPArray)] string[] rgFilterSpec);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFileTypeIndex([In] uint iFileType);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetFileTypeIndex(out uint piFileType);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint Advise([In, MarshalAs(UnmanagedType.Interface)] IntPtr pfde, out uint pdwCookie);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint Unadvise([In] uint dwCookie);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetOptions([In] uint fos);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetOptions(out uint fos);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                void SetDefaultFolder([In, MarshalAs(UnmanagedType.Interface)] IShellItem psi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFolder([In, MarshalAs(UnmanagedType.Interface)] IShellItem psi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetFolder([MarshalAs(UnmanagedType.Interface)] out IShellItem ppsi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetCurrentSelection([MarshalAs(UnmanagedType.Interface)] out IShellItem ppsi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFileName([In, MarshalAs(UnmanagedType.LPWStr)] string pszName);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetFileName([MarshalAs(UnmanagedType.LPWStr)] out string pszName);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetTitle([In, MarshalAs(UnmanagedType.LPWStr)] string pszTitle);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetOkButtonLabel([In, MarshalAs(UnmanagedType.LPWStr)] string pszText);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFileNameLabel([In, MarshalAs(UnmanagedType.LPWStr)] string pszLabel);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetResult([MarshalAs(UnmanagedType.Interface)] out IShellItem ppsi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint AddPlace([In, MarshalAs(UnmanagedType.Interface)] IShellItem psi, uint fdap);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetDefaultExtension([In, MarshalAs(UnmanagedType.LPWStr)] string pszDefaultExtension);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint Close([MarshalAs(UnmanagedType.Error)] uint hr);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetClientGuid([In] ref Guid guid);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint ClearClientData();
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint SetFilter([MarshalAs(UnmanagedType.Interface)] IntPtr pFilter);
+                if (aN.FullName.StartsWith(an))
+                {
+                    m_asmb = Assembly.Load(aN);
+                    break;
+                }
             }
-
-            [ComImport, Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            internal interface IShellItem
-            {
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint BindToHandler([In] IntPtr pbc, [In] ref Guid rbhid, [In] ref Guid riid, [Out, MarshalAs(UnmanagedType.Interface)] out IntPtr ppvOut);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetParent([MarshalAs(UnmanagedType.Interface)] out IShellItem ppsi);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetDisplayName([In] uint sigdnName, out IntPtr ppszName);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint GetAttributes([In] uint sfgaoMask, out uint psfgaoAttribs);
-
-                [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-                uint Compare([In, MarshalAs(UnmanagedType.Interface)] IShellItem psi, [In] uint hint, out int piOrder);
-            }
-
-            #endregion COM
-
-            #region Shell functions
-
-            [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int SHCreateItemFromParsingName([MarshalAs(UnmanagedType.LPWStr)] string pszPath, IntPtr pbc, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] out IShellItem ppv);
-
-            #endregion Shell functions
         }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Return a Type instance for a type 'typeName'
+        /// </summary>
+        /// <param name="typeName">The name of the type</param>
+        /// <returns>A type instance</returns>
+        public Type GetType(string typeName)
+        {
+            Type type = null;
+            string[] names = typeName.Split('.');
+
+            if (names.Length > 0)
+                type = m_asmb.GetType(m_ns + "." + names[0]);
+
+            for (int i = 1; i < names.Length; ++i)
+            {
+                type = type.GetNestedType(names[i], BindingFlags.NonPublic);
+            }
+            return type;
+        }
+
+        /// <summary>
+        /// Create a new object of a named type passing along any params
+        /// </summary>
+        /// <param name="name">The name of the type to create</param>
+        /// <param name="parameters"></param>
+        /// <returns>An instantiated type</returns>
+        public object New(string name, params object[] parameters)
+        {
+            Type type = GetType(name);
+
+            ConstructorInfo[] ctorInfos = type.GetConstructors();
+            foreach (ConstructorInfo ci in ctorInfos)
+            {
+                try
+                {
+                    return ci.Invoke(parameters);
+                }
+                catch { }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Calls method 'func' on object 'obj' passing parameters 'parameters'
+        /// </summary>
+        /// <param name="obj">The object on which to excute function 'func'</param>
+        /// <param name="func">The function to execute</param>
+        /// <param name="parameters">The parameters to pass to function 'func'</param>
+        /// <returns>The result of the function invocation</returns>
+        public object Call(object obj, string func, params object[] parameters)
+        {
+            return Call2(obj, func, parameters);
+        }
+
+        /// <summary>
+        /// Calls method 'func' on object 'obj' passing parameters 'parameters'
+        /// </summary>
+        /// <param name="obj">The object on which to excute function 'func'</param>
+        /// <param name="func">The function to execute</param>
+        /// <param name="parameters">The parameters to pass to function 'func'</param>
+        /// <returns>The result of the function invocation</returns>
+        public object Call2(object obj, string func, object[] parameters)
+        {
+            return CallAs2(obj.GetType(), obj, func, parameters);
+        }
+
+        /// <summary>
+        /// Calls method 'func' on object 'obj' which is of type 'type' passing parameters 'parameters'
+        /// </summary>
+        /// <param name="type">The type of 'obj'</param>
+        /// <param name="obj">The object on which to excute function 'func'</param>
+        /// <param name="func">The function to execute</param>
+        /// <param name="parameters">The parameters to pass to function 'func'</param>
+        /// <returns>The result of the function invocation</returns>
+        public object CallAs(Type type, object obj, string func, params object[] parameters)
+        {
+            return CallAs2(type, obj, func, parameters);
+        }
+
+        /// <summary>
+        /// Calls method 'func' on object 'obj' which is of type 'type' passing parameters 'parameters'
+        /// </summary>
+        /// <param name="type">The type of 'obj'</param>
+        /// <param name="obj">The object on which to excute function 'func'</param>
+        /// <param name="func">The function to execute</param>
+        /// <param name="parameters">The parameters to pass to function 'func'</param>
+        /// <returns>The result of the function invocation</returns>
+        public object CallAs2(Type type, object obj, string func, object[] parameters)
+        {
+            MethodInfo methInfo = type.GetMethod(func, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return methInfo.Invoke(obj, parameters);
+        }
+
+        /// <summary>
+        /// Returns the value of property 'prop' of object 'obj'
+        /// </summary>
+        /// <param name="obj">The object containing 'prop'</param>
+        /// <param name="prop">The property name</param>
+        /// <returns>The property value</returns>
+        public object Get(object obj, string prop)
+        {
+            return GetAs(obj.GetType(), obj, prop);
+        }
+
+        /// <summary>
+        /// Returns the value of property 'prop' of object 'obj' which has type 'type'
+        /// </summary>
+        /// <param name="type">The type of 'obj'</param>
+        /// <param name="obj">The object containing 'prop'</param>
+        /// <param name="prop">The property name</param>
+        /// <returns>The property value</returns>
+        public static object GetAs(Type type, object obj, string prop)
+        {
+            PropertyInfo propInfo = type.GetProperty(prop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return propInfo.GetValue(obj, null);
+        }
+
+        /// <summary>
+        /// Returns an enum value
+        /// </summary>
+        /// <param name="typeName">The name of enum type</param>
+        /// <param name="name">The name of the value</param>
+        /// <returns>The enum value</returns>
+        public object GetEnum(string typeName, string name)
+        {
+            Type type = GetType(typeName);
+            FieldInfo fieldInfo = type.GetField(name);
+            return fieldInfo.GetValue(null);
+        }
+
+        #endregion
+
     }
 }
