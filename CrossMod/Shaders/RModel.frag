@@ -10,6 +10,9 @@ uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 
+uniform samplerCube diffusePbrCube;
+uniform samplerCube specularPbrCube;
+
 uniform mat4 mvp;
 
 vec3 GetBumpMapNormal(vec3 N)
@@ -88,4 +91,6 @@ void main()
 	fragColor.rgb *= prmColor.b;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
+
+	vec3 R = reflect(V, newNormal);
 }
