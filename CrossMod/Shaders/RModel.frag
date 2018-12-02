@@ -69,16 +69,23 @@ void main()
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 	vec4 norColor = texture(norMap, UV0).xyzw;
 
+	// Invert glossiness?
+	float roughness = clamp(1 - prmColor.g, 0, 1);
+	roughness += 0.20; // HACK: softer lighting.
+
+	float metalness = prmColor.r;
+
+	// Diffuse
 	fragColor = albedoColor;
 	fragColor.rgb *= LambertShading(newNormal, V);
-	fragColor.rgb *= prmColor.b; // AO?
+	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
 
-	// Invert glossiness?
-	// TODO: Use ambient occlusion?
-	float roughness = clamp(1 - prmColor.g, 0, 1);
-	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, prmColor.r);
+	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, metalness);
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 	fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
+
+	// Ambient Occlusion
+	fragColor.rgb *= prmColor.b;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }
