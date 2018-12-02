@@ -26,7 +26,6 @@ vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 	// Remap the normal map to the correct range.
 	vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
 
-
 	// TBN Matrix.
 	vec3 bitangent = cross(N, tangent);
 	mat3 tbnMatrix = mat3(tangent, bitangent, N);
