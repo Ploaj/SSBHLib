@@ -41,7 +41,8 @@ namespace CrossMod.Nodes
         public NUTEX_FORMAT Format;
         public string TexName;
 
-        public Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
+        // TODO: Fix these formats.
+        public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Rgba },
@@ -112,15 +113,11 @@ namespace CrossMod.Nodes
         public IRenderable GetRenderableNode()
         {
             var texture = new RTexture();
-            //if (glFormatByNuTexFormat.ContainsKey(Format))
+            if (glFormatByNuTexFormat.ContainsKey(Format))
             {
-                // TODO: Fix format loading.
-                // TOD: This requires a higher OpenGL version.
+                // TODO: This may require a higher OpenGL version for BC7.
                 var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
-                sfTex.MinFilter = TextureMinFilter.Nearest;
-                sfTex.MagFilter = TextureMagFilter.Nearest;
-                //sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
-                sfTex.LoadImageData(Width, Height, Mipmaps[0], InternalFormat.CompressedRgbaBptcUnorm);
+                sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
                 texture.texture = sfTex;
             }
 
