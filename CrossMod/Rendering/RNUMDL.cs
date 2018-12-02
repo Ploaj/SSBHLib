@@ -57,12 +57,13 @@ namespace CrossMod.Rendering
                     if (a.DataObject == null || a.DataType != 0xB)
                         continue;
 
+                    var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
                     if (colParamIds.Contains(a.ParamID))
-                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.col);
+                        sfTextureByName.TryGetValue(text, out meshMaterial.col);
                     else if (a.ParamID == (long)TextureParamId.Nor)
-                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.nor);
+                        sfTextureByName.TryGetValue(text, out meshMaterial.nor);
                     else if (a.ParamID == (long)TextureParamId.Prm)
-                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.prm);
+                        sfTextureByName.TryGetValue(text, out meshMaterial.prm);
                 }
 
                 int subindex = 0;
