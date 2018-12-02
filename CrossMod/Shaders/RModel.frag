@@ -40,6 +40,11 @@ vec3 GetSrgb(vec3 linear)
 	return pow(linear, vec3(0.4545));
 }
 
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 float GgxShading(vec3 N, vec3 H, float roughness)
 {
 	float a = roughness * roughness;
@@ -69,8 +74,11 @@ void main()
 	fragColor.rgb *= prmColor.b; // AO?
 
 	// Invert glossiness?
+	// TODO: Use ambient occlusion?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
-	fragColor.rgb += GgxShading(newNormal, V, roughness) * prmColor.a;
+	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, prmColor.r);
+	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
+	fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }

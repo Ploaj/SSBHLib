@@ -14,7 +14,9 @@ out vec2 UV0;
 
 void main()
 {
-	N = Normal0;
+	vec4 transformedNormal = transform * vec4(Normal0, 0);
+	N = transformedNormal.rgb;
+	
 	UV0 = map1;
 	tangent = Tangent0;
 
