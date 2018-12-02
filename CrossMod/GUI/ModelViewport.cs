@@ -60,16 +60,14 @@ namespace CrossMod.GUI
                 }
                 if (Mouse.GetState().IsButtonDown(MouseButton.Right))
                 {
-                    Camera.Position += new Vector3(-(NewMousePosition.X - MousePosition.X) / 10f,
-                        -(NewMousePosition.Y - MousePosition.Y) / -10f, 0);
+                    Camera.Pan((NewMousePosition.X - MousePosition.X), (NewMousePosition.Y - MousePosition.Y));
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.Up))
                     Camera.Zoom(0.5f);
                 if (Keyboard.GetState().IsKeyDown(Key.Down))
                     Camera.Zoom(-0.5f);
-                Camera.Position += new Vector3(0,
-                    0,
-                    (NewMouseScrollWheel - MouseScrollWheel) / 10);
+
+                Camera.Zoom((NewMouseScrollWheel - MouseScrollWheel) * 0.1f);
             }
             MousePosition = NewMousePosition;
             MouseScrollWheel = NewMouseScrollWheel;
@@ -93,6 +91,10 @@ namespace CrossMod.GUI
 
         private void glViewport_Resize(object sender, EventArgs e)
         {
+            // Adjust for changing render dimensions.
+            Camera.RenderWidth = glViewport.Width;
+            Camera.RenderHeight = glViewport.Height;
+
             glViewport.RenderFrame();
         }
     }
