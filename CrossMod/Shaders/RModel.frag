@@ -66,6 +66,7 @@ void main()
 {
 	vec3 newNormal = GetBumpMapNormal(N);
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
+	vec3 R = reflect(V, newNormal);
 
 	// TODO: Accessing unitialized textures may cause crashes.
 	vec4 albedoColor = texture(colMap, UV0).rgba;
@@ -74,23 +75,29 @@ void main()
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
-	roughness += 0.20; // HACK: softer lighting.
+
+	// Image based lighting.
+	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rgb * 1.75;
+	int maxLod = 10;
+	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * 1.75;
 
 	float metalness = prmColor.r;
 
 	// Diffuse
 	fragColor = albedoColor;
-	fragColor.rgb *= LambertShading(newNormal, V);
+	// fragColor.rgb *= LambertShading(newNormal, V);
+	fragColor.rgb *= diffuseIbl;
 	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
 
 	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, metalness);
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
-	fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
+	// fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
+	// TODO: Use proper GGX shading.
+	fragColor.rgb += specularIbl * kSpecular;
 
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 
-	vec3 R = reflect(V, newNormal);
 }
