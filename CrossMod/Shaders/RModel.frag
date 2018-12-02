@@ -17,14 +17,15 @@ uniform samplerCube specularPbrCube;
 
 uniform mat4 mvp;
 
-vec3 GetBumpMapNormal(vec3 N)
+vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {
 	// Calculate the resulting normal map.
 	// TODO: Proper calculation of B channel.
-	vec3 normalMapColor = vec3(texture(norMap, UV0).rg, 1);
+	vec3 normalMapColor = vec3(norColor.rg, 1);
 
 	// Remap the normal map to the correct range.
 	vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
+
 
 	// TBN Matrix.
 	vec3 bitangent = cross(N, tangent);
@@ -66,14 +67,16 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 
 void main()
 {
-	vec3 newNormal = GetBumpMapNormal(N);
+	vec4 norColor = texture(norMap, UV0).xyzw;
+	vec3 newNormal = GetBumpMapNormal(N, norColor);
+
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
 	vec3 R = reflect(V, newNormal);
 
 	// TODO: Accessing unitialized textures may cause crashes.
 	vec4 albedoColor = texture(colMap, UV0).rgba;
+
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
-	vec4 norColor = texture(norMap, UV0).xyzw;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
@@ -84,6 +87,16 @@ void main()
 	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * 2.5;
 
 	float metalness = prmColor.r;
+
+
+	// TODO: Ink map?
+	// float inkAmount = 0.5;
+	// if (norColor.b > inkAmount)
+	// {
+	// 	albedoColor.rgb = vec3(1, 0, 1);
+	// 	roughness = 0.0;
+	// 	metalness = 1;
+	// }
 
 	// Diffuse
 	fragColor = albedoColor;
@@ -101,6 +114,9 @@ void main()
 
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;
+
+	// Cavity map?
+	fragColor.rgb *= norColor.aaa;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }
