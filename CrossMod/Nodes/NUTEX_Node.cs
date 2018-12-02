@@ -118,6 +118,8 @@ namespace CrossMod.Nodes
                 // TODO: Fix format loading.
                 // TOD: This requires a higher OpenGL version.
                 var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
+                sfTex.MinFilter = TextureMinFilter.Nearest;
+                sfTex.MagFilter = TextureMagFilter.Nearest;
                 //sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
                 sfTex.LoadImageData(Width, Height, Mipmaps[0], InternalFormat.CompressedRgbaBptcUnorm);
                 texture.texture = sfTex;
