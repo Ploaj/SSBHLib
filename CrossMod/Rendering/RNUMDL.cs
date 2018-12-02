@@ -13,6 +13,13 @@ namespace CrossMod.Rendering
         public RSkeleton Skeleton;
         public RModel Model;
         public MTAL Material;
+
+        public enum TextureParamId
+        {
+            Prm = 0x62,
+            Nor = 0x60,
+            Col = 0x5C
+        }
         
         public void UpdateBinds()
         {
@@ -41,13 +48,17 @@ namespace CrossMod.Rendering
                 Material meshMaterial = new Material();
                 foreach (MTAL_Attribute a in currentEntry.MaterialData)
                 {
-                    if (a.DataObject == null) continue;
-                    if (a.ParamID == 0x5C)
-                    {
-                        if(!sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.col))
-                        {
-                        }
-                    }
+                    if (a.DataObject == null)
+                        continue;
+
+                    if (a.ParamID == (long)TextureParamId.Col)
+                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.col);
+
+                    if (a.ParamID == (long)TextureParamId.Nor)
+                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.nor);
+
+                    if (a.ParamID == (long)TextureParamId.Prm)
+                        sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.prm);
                 }
 
                 int subindex = 0;

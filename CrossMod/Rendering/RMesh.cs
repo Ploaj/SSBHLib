@@ -42,10 +42,10 @@ namespace CrossMod.Rendering
                 genericMaterial.AddTexture("colMap", Material.col);
 
             if (Material.prm != null)
-                genericMaterial.AddTexture("prmMap", Material.col);
+                genericMaterial.AddTexture("prmMap", Material.prm);
 
             if (Material.nor != null)
-                genericMaterial.AddTexture("norMap", Material.col);
+                genericMaterial.AddTexture("norMap", Material.nor);
 
             genericMaterial.SetShaderUniforms(shader);
         }
