@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFGraphics.Cameras;
+﻿using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using System.IO;
 
@@ -29,6 +24,7 @@ namespace CrossMod.Rendering
                 textureShader.LoadShader(File.ReadAllText("Shaders/texture.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
             }
 
+            // Texture unit 0 should be reserved for image preview.
             textureShader.UseProgram();
             if (texture != null)
                 textureShader.SetTexture("image", texture, 0);

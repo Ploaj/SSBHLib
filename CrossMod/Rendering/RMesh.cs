@@ -7,8 +7,6 @@ namespace CrossMod.Rendering
 {
     public class RMesh : IRenderable
     {
-        public static readonly int colMapIndex = 1;
-
         public string Name;
 
         public List<CustomVertexAttribute> VertexAttributes = new List<CustomVertexAttribute>();
@@ -21,20 +19,35 @@ namespace CrossMod.Rendering
 
         public Material Material;
 
-        public void Draw(Shader s, Camera c)
+        public void Draw(Shader shader, Camera camera)
         {
-            s.SetInt("SingleBindIndex", SingleBindIndex);
+            shader.SetInt("SingleBindIndex", SingleBindIndex);
             if (Material != null)
             {
-                if (Material.COL != null)
-                    s.SetTexture("_col", Material.COL, colMapIndex);
+                SetTextureUniforms(shader);
             }
             foreach (CustomVertexAttribute a in VertexAttributes)
             {
-                a.Bind(s);
+                a.Bind(shader);
             }
 
             GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementsType.UnsignedShort, IndexOffset);
+        }
+
+        private void SetTextureUniforms(Shader shader)
+        {
+            // Don't use the default texture unit.
+            var genericMaterial = new SFGenericModel.Materials.GenericMaterial(1);
+            if (Material.col != null)
+                genericMaterial.AddTexture("colMap", Material.col);
+
+            if (Material.prm != null)
+                genericMaterial.AddTexture("prmMap", Material.col);
+
+            if (Material.nor != null)
+                genericMaterial.AddTexture("norMap", Material.col);
+
+            genericMaterial.SetShaderUniforms(shader);
         }
 
         public void Render(Camera Camera)

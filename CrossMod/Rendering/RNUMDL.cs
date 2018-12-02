@@ -44,7 +44,7 @@ namespace CrossMod.Rendering
                     if (a.DataObject == null) continue;
                     if (a.ParamID == 0x5C)
                     {
-                        if(!sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.COL))
+                        if(!sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.col))
                         {
                         }
                     }

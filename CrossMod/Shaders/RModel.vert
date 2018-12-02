@@ -1,4 +1,4 @@
-﻿#version 330
+#version 330
 
 in vec3 Position0;
 in vec3 Normal0;
