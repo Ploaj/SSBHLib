@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
@@ -39,6 +40,28 @@ namespace CrossMod.Nodes
         public int Height;
         public NUTEX_FORMAT Format;
         public string TexName;
+
+        public Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
+        {
+            { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC1_UNORM, InternalFormat.CompressedRgbaS3tcDxt1Ext },
+            { NUTEX_FORMAT.BC1_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt1Ext },
+            { NUTEX_FORMAT.BC2_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC2_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC3_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC3_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC4_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC4_SNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC5_UNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC5_SNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC6_UFLOAT, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC7_UNORM, InternalFormat.CompressedRgbaBptcUnorm },
+            { NUTEX_FORMAT.BC7_SRGB, InternalFormat.CompressedSrgbAlphaBptcUnorm }
+        };
 
         public NUTEX_Node()
         {
@@ -89,9 +112,18 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            RTexture Texture = new RTexture();
+            var texture = new RTexture();
+            //if (glFormatByNuTexFormat.ContainsKey(Format))
+            {
+                // TODO: Fix format loading.
+                // TOD: This requires a higher OpenGL version.
+                var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
+                //sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
+                sfTex.LoadImageData(Width, Height, Mipmaps[0], InternalFormat.CompressedRgbaBptcUnorm);
+                texture.texture = sfTex;
+            }
 
-            return Texture;
+            return texture;
         }
 
     }

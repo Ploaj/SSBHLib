@@ -49,6 +49,17 @@ namespace CrossMod.GUI
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
 
+            UpdateCamera();
+
+            if (RenderableNode != null)
+                RenderableNode.Render(Camera);
+
+            // Clean up any unused resources.
+            GLObjectManager.DeleteUnusedGLObjects();
+        }
+
+        private void UpdateCamera()
+        {
             Vector2 NewMousePosition = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             float NewMouseScrollWheel = Mouse.GetState().Wheel;
             if (glViewport.Focused)
@@ -71,12 +82,6 @@ namespace CrossMod.GUI
             }
             MousePosition = NewMousePosition;
             MouseScrollWheel = NewMouseScrollWheel;
-
-            if (RenderableNode != null)
-                RenderableNode.Render(Camera);
-            
-            // Clean up any unused resources.
-            GLObjectManager.DeleteUnusedGLObjects();
         }
 
         public void Clear()

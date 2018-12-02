@@ -54,6 +54,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="SFShapes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SFShapes.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -95,6 +99,7 @@
     <Compile Include="Rendering\RMesh.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
     <Compile Include="Rendering\RTexture.cs" />
+    <Compile Include="Rendering\ScreenTriangle.cs" />
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
     </EmbeddedResource>
@@ -127,6 +132,12 @@
     <None Include="Shaders\RModel.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Shaders\texture.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\texture.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -141,6 +152,7 @@
     <Content Include="lib\SFGraphics.Utils.dll" />
     <Content Include="lib\SFGraphics.Utils.xml" />
     <Content Include="lib\SFGraphics.xml" />
+    <Content Include="lib\SFShapes.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
