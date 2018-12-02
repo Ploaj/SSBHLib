@@ -7,7 +7,7 @@ using OpenTK;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nusktb")]
-    public class SKEL_Node : IRenderableNode
+    public class SKEL_Node : FileNode, IRenderableNode
     {
         private SKEL _skel;
 
@@ -29,7 +29,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public override IRenderable GetRenderableNode()
+        public IRenderable GetRenderableNode()
         {
             if (_skel == null) return null;
 

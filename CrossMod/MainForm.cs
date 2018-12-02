@@ -42,12 +42,12 @@ namespace CrossMod
             
             var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                          from assemblyType in domainAssembly.GetTypes()
-                         where typeof(IFileNode).IsAssignableFrom(assemblyType)
+                         where typeof(FileNode).IsAssignableFrom(assemblyType)
                          select assemblyType).ToArray();
 
             foreach (string s in Files)
             {
-                IFileNode Node = null;
+                FileNode Node = null;
 
                 string Extension = Path.GetExtension(s);
 
@@ -60,13 +60,13 @@ namespace CrossMod
                     {
                         if (attr.Extension.Equals(Extension))
                         {
-                            Node = (IFileNode)Activator.CreateInstance(c);
+                            Node = (FileNode)Activator.CreateInstance(c);
                         }
                     }
                 }
 
                 if(Node == null)
-                    Node = new IFileNode();
+                    Node = new FileNode();
 
                 Node.Open(s);
 
@@ -87,6 +87,8 @@ namespace CrossMod
                     _modelControl.RenderableNode = ((IRenderableNode)Node).GetRenderableNode();
                 }
             }
+
+            _modelControl.RenderFrame();
         }
     }
 }
