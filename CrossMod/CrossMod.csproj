@@ -84,10 +84,13 @@
     <Compile Include="Nodes\IFileNode.cs" />
     <Compile Include="Nodes\IRenderable_Node.cs" />
     <Compile Include="Nodes\NUMDL_Node.cs" />
+    <Compile Include="Nodes\NUMSHB_Node.cs" />
     <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Rendering\RMesh.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
@@ -115,13 +118,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Shaders\RModel.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\RModel.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Shaders\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="lib\SFGenericModel.dll" />
     <Content Include="lib\SFGenericModel.xml" />

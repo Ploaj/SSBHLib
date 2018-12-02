@@ -28,16 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.glViewport = new OpenTK.GLControl();
+            this.glViewport = new SFGraphics.Controls.GLViewport();
             this.SuspendLayout();
             // 
             // glViewport
             // 
+            this.glViewport.BackColor = System.Drawing.Color.Black;
             this.glViewport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glViewport.Location = new System.Drawing.Point(0, 0);
             this.glViewport.Name = "glViewport";
             this.glViewport.Size = new System.Drawing.Size(439, 402);
             this.glViewport.TabIndex = 0;
+            this.glViewport.VSync = false;
+            this.glViewport.Load += new System.EventHandler(this.glViewport_Load);
+            this.glViewport.Resize += new System.EventHandler(this.glViewport_Resize);
             // 
             // ModelViewport
             // 
@@ -52,6 +56,6 @@
 
         #endregion
 
-        private OpenTK.GLControl glViewport;
+        private SFGraphics.Controls.GLViewport glViewport;
     }
 }

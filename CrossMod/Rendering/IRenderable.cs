@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFGraphics.GLObjects.Shaders;
+using SFGraphics.Cameras;
 
 namespace CrossMod.Rendering
 {
-    public abstract class IRenderable
+    public interface IRenderable
     {
-        public abstract void Render();
+        void Render(Camera Camera);
     }
 }

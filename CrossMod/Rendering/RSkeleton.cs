@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using SFGraphics.GLObjects.Shaders;
+using SFGraphics.Cameras;
+using SFGenericModel;
+using SFGenericModel.VertexAttributes;
+using OpenTK.Graphics.OpenGL;
 
 namespace CrossMod.Rendering
 {
@@ -51,7 +56,7 @@ namespace CrossMod.Rendering
             return Transforms;
         }
 
-        public override void Render()
+        public void Render(Camera Camera)
         {
             //TODO:
         }
