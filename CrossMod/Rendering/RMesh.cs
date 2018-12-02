@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFGraphics;
-using SFGenericModel;
-using SFGraphics.GLObjects.Shaders;
-using SFGraphics.Cameras;
-using SFGenericModel.VertexAttributes;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SFGraphics.Cameras;
 using SFGraphics.GLObjects.BufferObjects;
+using SFGraphics.GLObjects.Shaders;
+using System;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
     public class RModel : IRenderable
     {
         // Shaders
-        public static Shader RModelShader;
+        private static Shader shader;
 
         // Buffers
         public BufferObject VertexBuffer;
@@ -33,26 +27,26 @@ namespace CrossMod.Rendering
 
         public void Render(Camera Camera, RSkeleton Skeleton = null)
         {
-            if (RModelShader == null)
+            if (shader == null)
             {
-                RModelShader = new Shader();
-                RModelShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
-                RModelShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
-                Console.WriteLine(RModelShader.GetErrorLog());
+                shader = new Shader();
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
+                Console.WriteLine(shader.GetErrorLog());
             }
-            RModelShader.UseProgram();
+            shader.UseProgram();
 
-            RModelShader.EnableVertexAttributes();
+            shader.EnableVertexAttributes();
 
             // Camera
             Matrix4 View = Camera.MvpMatrix;
-            RModelShader.SetMatrix4x4("mvp", ref View);
+            shader.SetMatrix4x4("mvp", ref View);
 
-            if(Skeleton != null)
+            if (Skeleton != null)
             {
                 Matrix4[] WorldTransforms = Skeleton.GetWorldTransforms();
                 //RModelShader.SetMatrix4x4("Transforms", WorldTransforms); // temp until ubo
-                GL.UniformMatrix4(RModelShader.GetUniformLocation("Transforms"), WorldTransforms.Length, false, ref WorldTransforms[0].Row0.X);
+                shader.SetMatrix4x4("Transforms", WorldTransforms);
             }
 
             // Bind Buffers
@@ -62,10 +56,10 @@ namespace CrossMod.Rendering
             // Draw Mesh
             foreach (RMesh m in Mesh)
             {
-                m.Draw(RModelShader, Camera);
+                m.Draw(shader, Camera);
             }
 
-            RModelShader.DisableVertexAttributes();
+            shader.DisableVertexAttributes();
         }
     }
 
