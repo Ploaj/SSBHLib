@@ -20,7 +20,12 @@ namespace CrossMod.Rendering
             Nor = 0x60,
             Col = 0x5C
         }
-        
+
+        private HashSet<long> colParamIds = new HashSet<long>()
+        {
+            0x5C, 0x5D, 0x64, 0x66, 0x67, 0x68, 0x69, 0x6A 
+        };
+
         public void UpdateBinds()
         {
             foreach(RMesh m in Model.Mesh)
@@ -46,18 +51,17 @@ namespace CrossMod.Rendering
                     continue;
 
                 Material meshMaterial = new Material();
+ 
                 foreach (MTAL_Attribute a in currentEntry.MaterialData)
                 {
-                    if (a.DataObject == null)
+                    if (a.DataObject == null || a.DataType != 0xB)
                         continue;
 
-                    if (a.ParamID == (long)TextureParamId.Col)
+                    if (colParamIds.Contains(a.ParamID))
                         sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.col);
-
-                    if (a.ParamID == (long)TextureParamId.Nor)
+                    else if (a.ParamID == (long)TextureParamId.Nor)
                         sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.nor);
-
-                    if (a.ParamID == (long)TextureParamId.Prm)
+                    else if (a.ParamID == (long)TextureParamId.Prm)
                         sfTextureByName.TryGetValue(((MTAL_Attribute.MTAL_String)a.DataObject).Text, out meshMaterial.prm);
                 }
 

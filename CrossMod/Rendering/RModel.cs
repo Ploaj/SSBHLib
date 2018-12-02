@@ -42,12 +42,6 @@ namespace CrossMod.Rendering
             Matrix4 View = Camera.MvpMatrix;
             shader.SetMatrix4x4("mvp", ref View);
 
-            if (Skeleton != null)
-            {
-                Matrix4[] WorldTransforms = Skeleton.GetWorldTransforms();
-                shader.SetMatrix4x4("Transforms", WorldTransforms);
-            }
-
             // Bind Buffers
             IndexBuffer.Bind();
             VertexBuffer.Bind();
@@ -55,7 +49,7 @@ namespace CrossMod.Rendering
             // Draw Mesh
             foreach (RMesh m in Mesh)
             {
-                m.Draw(shader, Camera);
+                m.Draw(shader, Camera, Skeleton);
             }
 
             shader.DisableVertexAttributes();

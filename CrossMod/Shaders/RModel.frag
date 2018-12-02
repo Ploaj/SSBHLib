@@ -66,10 +66,11 @@ void main()
 
 	fragColor = albedoColor;
 	fragColor.rgb *= LambertShading(newNormal, V);
+	fragColor.rgb *= prmColor.b; // AO?
 
 	// Invert glossiness?
 	float roughness = clamp(prmColor.g - 1, 0, 1);
-	fragColor.rgb += GgxShading(newNormal, V, 0.5) * prmColor.a;
+	fragColor.rgb += GgxShading(newNormal, V, roughness) * prmColor.a;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }

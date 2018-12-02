@@ -78,7 +78,9 @@
     <Compile Include="GUI\ModelViewport.Designer.cs">
       <DependentUpon>ModelViewport.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\OpenFolderDialog.cs" />
+    <Compile Include="GUI\OpenFolderDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +98,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
+    <Compile Include="Rendering\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RMesh.cs" />
@@ -149,6 +152,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="DefaultTextures\default_normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DefaultTextures\default_White.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\SFGenericModel.dll" />
     <Content Include="lib\SFGenericModel.xml" />
     <Content Include="lib\SFGraphics.Controls.dll" />

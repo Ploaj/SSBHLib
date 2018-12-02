@@ -5,9 +5,8 @@ in vec3 Tangent0;
 in vec3 Normal0;
 in vec2 map1;
 
-uniform int SingleBindIndex;
 uniform mat4 mvp;
-uniform mat4 Transforms[100];
+uniform mat4 transform;
 
 out vec3 N;
 out vec3 tangent;
@@ -19,10 +18,8 @@ void main()
 	UV0 = map1;
 	tangent = Tangent0;
 
-	vec4 Position = vec4(Position0, 1);
+	vec4 position = vec4(Position0, 1);
+	position = transform * vec4(Position0, 1);
 
-	if(SingleBindIndex != -1)
-		Position = Transforms[SingleBindIndex] * vec4(Position0, 1);
-
-	gl_Position = mvp * vec4(Position.xyz, 1);
+	gl_Position = mvp * vec4(position.xyz, 1);
 }
