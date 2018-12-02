@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFGraphics.GLObjects.Textures;
+﻿using SFGraphics.GLObjects.Textures;
 
 namespace CrossMod.Rendering
 {
     public class Material
     {
-        public Texture COL;
-        public Texture NRM;
-        public Texture PRM;
+        public Texture col = null;
+        public Texture nor = null;
+        public Texture prm = null;
 
-        // other stuffs
+        // TODO: other stuffs
     }
 }

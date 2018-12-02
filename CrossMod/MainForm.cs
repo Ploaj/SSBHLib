@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using SFGraphics;
-using System.IO;
+﻿using CrossMod.GUI;
 using CrossMod.Nodes;
-using CrossMod.GUI;
+using System;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace CrossMod
 {
