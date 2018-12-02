@@ -98,7 +98,10 @@
             "Shaded",
             "Col",
             "Prm",
-            "Nor"});
+            "Nor",
+            "Vertex Color",
+            "Normals",
+            "Tangents"});
             this.renderModeComboBox.Location = new System.Drawing.Point(3, 32);
             this.renderModeComboBox.Name = "renderModeComboBox";
             this.renderModeComboBox.Size = new System.Drawing.Size(318, 21);

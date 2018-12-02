@@ -3,8 +3,7 @@
 in vec3 N;
 in vec3 tangent;
 in vec2 UV0;
-
-out vec4 fragColor;
+in vec3 vertexColor;
 
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
@@ -16,6 +15,8 @@ uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
 uniform mat4 mvp;
+
+out vec4 fragColor;
 
 vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {

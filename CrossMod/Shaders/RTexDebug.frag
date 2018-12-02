@@ -3,6 +3,7 @@
 in vec3 N;
 in vec3 tangent;
 in vec2 UV0;
+in vec3 vertexColor;
 
 out vec4 fragColor;
 
@@ -90,10 +91,13 @@ void main()
 
 	float metalness = prmColor.r;
 
+	// Just gamma correct albedo maps.
+	fragColor = vec4(1);
 	switch (renderMode)
 	{
 		case 1:
 			fragColor = albedoColor;
+			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 2:
 			fragColor = prmColor;
@@ -101,11 +105,20 @@ void main()
 		case 3:
 			fragColor = norColor;
 			break;
+		case 4:
+			fragColor = vec4(vertexColor, 1);
+			fragColor.rgb = GetSrgb(fragColor.rgb);
+			break;
+		case 5:
+			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			break;
+		case 6:
+				fragColor = vec4(tangent * 0.5 + 0.5, 1);
+				break;
 		default:
-			fragColor = vec4(1);
+			fragColor = vec4(0, 0, 0, 1);
+			break;
 	}
-
-	fragColor.rgb = GetSrgb(fragColor.rgb);
 
     fragColor.rgb *= renderChannels.rgb;
     if (renderChannels.r == 1 && renderChannels.g == 0 && renderChannels.b == 0)
@@ -115,9 +128,9 @@ void main()
     else if (renderChannels.b == 1 && renderChannels.r == 0 && renderChannels.g == 0)
         fragColor.rgb = fragColor.bbb;
 
-    if (renderChannels.a == 0)
-        fragColor.a = 1;
-
     if (renderChannels.a == 1 && renderChannels.r == 0 && renderChannels.g == 0 && renderChannels.b == 0)
         fragColor = vec4(fragColor.aaa, 1);
+
+	// Don't use alpha blending with debug shading.
+	fragColor.a = 1;
 }
