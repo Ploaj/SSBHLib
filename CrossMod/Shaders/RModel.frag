@@ -22,6 +22,20 @@ vec3 GetSrgb(vec3 linear)
 	return pow(linear, vec3(0.4545));
 }
 
+float GgxShading(vec3 N, vec3 H, float roughness)
+{
+	float a = roughness * roughness;
+    float a2 = a * a;
+    float nDotH = max(dot(N, H), 0.0);
+    float nDotH2 = nDotH * nDotH;
+
+    float numerator = a2;
+    float denominator = (nDotH2 * (a2 - 1.0) + 1.0);
+    denominator = 3.14159 * denominator * denominator;
+
+    return numerator / denominator;
+}
+
 void main()
 {
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
@@ -31,7 +45,11 @@ void main()
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 	vec4 norColor = texture(norMap, UV0).xyzw;
 
-	fragColor = albedoColor * LambertShading(N, V);
+	fragColor = albedoColor;
+	fragColor.rgb *= LambertShading(N, V);
+
+	float roughness = clamp(prmColor.g - 1, 0, 1);
+	fragColor.rgb += GgxShading(N, V, 0.5) * prmColor.a;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }
