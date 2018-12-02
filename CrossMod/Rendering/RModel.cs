@@ -12,6 +12,7 @@ namespace CrossMod.Rendering
     {
         // Shaders
         public static Shader shader;
+        public static Shader textureDebugShader;
 
         // Buffers
         public BufferObject VertexBuffer;
@@ -27,20 +28,22 @@ namespace CrossMod.Rendering
 
         public void Render(Camera Camera, RSkeleton Skeleton = null)
         {
-            if (shader == null)
-            {
-                shader = new Shader();
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
-                Console.WriteLine(shader.GetErrorLog());
-            }
-            shader.UseProgram();
+            SetUpShaders();
 
-            shader.EnableVertexAttributes();
+            Shader currentShader = GetCurrentShader();
+            if (!currentShader.LinkStatusIsOk)
+                return;
+
+            currentShader.UseProgram();
+
+            currentShader.SetVector4("renderChannels", RenderSettings.renderChannels);
+            currentShader.SetInt("renderMode", RenderSettings.renderMode);
+
+            currentShader.EnableVertexAttributes();
 
             // Camera
             Matrix4 View = Camera.MvpMatrix;
-            shader.SetMatrix4x4("mvp", ref View);
+            currentShader.SetMatrix4x4("mvp", ref View);
 
             // Bind Buffers
             IndexBuffer.Bind();
@@ -49,10 +52,36 @@ namespace CrossMod.Rendering
             // Draw Mesh
             foreach (RMesh m in Mesh)
             {
-                m.Draw(shader, Camera, Skeleton);
+                m.Draw(currentShader, Camera, Skeleton);
             }
 
-            shader.DisableVertexAttributes();
+            currentShader.DisableVertexAttributes();
+        }
+
+        private static Shader GetCurrentShader()
+        {
+            Shader currentShader = shader;
+            if (RenderSettings.useDebugShading)
+                currentShader = textureDebugShader;
+            return currentShader;
+        }
+
+        private static void SetUpShaders()
+        {
+            if (shader == null)
+            {
+                shader = new Shader();
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
+                System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
+            }
+            if (textureDebugShader == null)
+            {
+                textureDebugShader = new Shader();
+                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RTexDebug.frag"), ShaderType.FragmentShader);
+                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
+                System.Diagnostics.Debug.WriteLine(textureDebugShader.GetErrorLog());
+            }
         }
     }
 }

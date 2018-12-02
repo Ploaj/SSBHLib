@@ -5,6 +5,8 @@ in vec3 tangent;
 in vec2 UV0;
 in vec3 vertexColor;
 
+out vec4 fragColor;
+
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
@@ -14,9 +16,10 @@ uniform sampler2D iblLut;
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
-uniform mat4 mvp;
+uniform vec4 renderChannels;
+uniform int renderMode;
 
-out vec4 fragColor;
+uniform mat4 mvp;
 
 vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {
@@ -88,35 +91,46 @@ void main()
 
 	float metalness = prmColor.r;
 
+	// Just gamma correct albedo maps.
+	fragColor = vec4(1);
+	switch (renderMode)
+	{
+		case 1:
+			fragColor = albedoColor;
+			fragColor.rgb = GetSrgb(fragColor.rgb);
+			break;
+		case 2:
+			fragColor = prmColor;
+			break;
+		case 3:
+			fragColor = norColor;
+			break;
+		case 4:
+			fragColor = vec4(vertexColor, 1);
+			fragColor.rgb = GetSrgb(fragColor.rgb);
+			break;
+		case 5:
+			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			break;
+		case 6:
+				fragColor = vec4(tangent * 0.5 + 0.5, 1);
+				break;
+		default:
+			fragColor = vec4(0, 0, 0, 1);
+			break;
+	}
 
-	// TODO: Ink map?
-	// float inkAmount = 0.5;
-	// if (norColor.b > inkAmount)
-	// {
-	// 	albedoColor.rgb = vec3(1, 0, 1);
-	// 	roughness = 0.0;
-	// 	metalness = 1;
-	// }
+    fragColor.rgb *= renderChannels.rgb;
+    if (renderChannels.r == 1 && renderChannels.g == 0 && renderChannels.b == 0)
+        fragColor.rgb = fragColor.rrr;
+    else if (renderChannels.g == 1 && renderChannels.r == 0 && renderChannels.b == 0)
+        fragColor.rgb = fragColor.ggg;
+    else if (renderChannels.b == 1 && renderChannels.r == 0 && renderChannels.g == 0)
+        fragColor.rgb = fragColor.bbb;
 
-	// Diffuse
-	fragColor = albedoColor;
-	// fragColor.rgb *= LambertShading(newNormal, V);
-	fragColor.rgb *= diffuseIbl;
-	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
+    if (renderChannels.a == 1 && renderChannels.r == 0 && renderChannels.g == 0 && renderChannels.b == 0)
+        fragColor = vec4(fragColor.aaa, 1);
 
-	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, metalness);
-	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
-	// fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
-	vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-	vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
-	fragColor.rgb += specularTerm * kSpecular;
-
-	// Ambient Occlusion
-	fragColor.rgb *= prmColor.b;
-
-	// Cavity map?
-	fragColor.rgb *= norColor.aaa;
-
-	fragColor.rgb = GetSrgb(fragColor.rgb);
+	// Don't use alpha blending with debug shading.
+	fragColor.a = 1;
 }

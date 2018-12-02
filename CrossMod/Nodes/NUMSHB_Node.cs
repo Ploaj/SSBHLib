@@ -97,6 +97,7 @@ namespace CrossMod.Nodes
                             a.Type = VertexAttribPointerType.Float;
                             break;
                     }
+                    System.Diagnostics.Debug.WriteLine($"{a.Name} {a.Size}");
                     Mesh.VertexAttributes.Add(a);
                 }
             }
