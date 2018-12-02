@@ -73,9 +73,15 @@ namespace CrossMod.Rendering
 
         public int SingleBindIndex;
 
+        public Material Material;
+
         public void Draw(Shader s, Camera c)
         {
-
+            if(Material != null)
+            {
+                if(Material.COL != null)
+                    s.SetTexture("_col", Material.COL, 0);
+            }
             foreach (CustomVertexAttribute a in VertexAttributes)
             {
                 a.Bind(s);

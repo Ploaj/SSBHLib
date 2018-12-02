@@ -5,7 +5,7 @@ namespace SSBHLib
     public abstract class ISSBH_File
     {
 
-        public void PostProcess(SSBHParser Parser)
+        public virtual void PostProcess(SSBHParser Parser)
         {
 
         }

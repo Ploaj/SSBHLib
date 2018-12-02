@@ -7,6 +7,28 @@ using System.Diagnostics;
 
 namespace SSBHLib.IO
 {
+    public struct SSBHOffset
+    {
+        private readonly long value;
+
+        public SSBHOffset(long value)
+        {
+            this.value = value;
+        }
+
+        public long Value { get { return value; } }
+
+        public static implicit operator SSBHOffset(long s)
+        {
+            return new SSBHOffset(s);
+        }
+
+        public static implicit operator long(SSBHOffset p)
+        {
+            return p.Value;
+        }
+    }
+
     public class SSBHParser : BinaryReader
     {
         public long Position { get { return BaseStream.Position; } }
@@ -165,6 +187,10 @@ namespace SSBHLib.IO
 
         public object ReadProperty(Type t)
         {
+            if(t == typeof(SSBHOffset))
+            {
+                return new SSBHOffset(Position + ReadInt64());
+            }
             if (t == typeof(byte))
                 return ReadByte();
             else

@@ -88,6 +88,7 @@
     <Compile Include="Nodes\FileTypeAttribute.cs" />
     <Compile Include="Nodes\FileNode.cs" />
     <Compile Include="Nodes\IRenderableNode.cs" />
+    <Compile Include="Nodes\MTAL_Node.cs" />
     <Compile Include="Nodes\NUMDL_Node.cs" />
     <Compile Include="Nodes\NUMSHB_Node.cs" />
     <Compile Include="Nodes\NUTEX_Node.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RMesh.cs" />
     <Compile Include="Rendering\RNUMDL.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />

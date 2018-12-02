@@ -37,6 +37,7 @@ namespace CrossMod
         private void openModelFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string Folder = FileTools.TryOpenFolder();
+            if (Folder.Equals("")) return;
 
             string[] Files = Directory.GetFiles(Folder);
             

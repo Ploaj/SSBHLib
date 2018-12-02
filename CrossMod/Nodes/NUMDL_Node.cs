@@ -22,11 +22,12 @@ namespace CrossMod.Nodes
         public IRenderable GetRenderableNode()
         {
             RNUMDL Model = new RNUMDL();
+            Model.MODL = _model;
             foreach (FileNode n in Parent.Nodes)
             {
                 if (n is NUTEX_Node)
                 {
-                    Model.TextureBank.Add(((NUTEX_Node)n).Text, (RTexture)((NUTEX_Node)n).GetRenderableNode());
+                    Model.TextureBank.Add(((NUTEX_Node)n).TexName, ((RTexture)((NUTEX_Node)n).GetRenderableNode()).texture);
                 }
                 if (n.Text.Equals(_model.MeshString))
                 {
@@ -36,12 +37,13 @@ namespace CrossMod.Nodes
                 {
                     Model.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
                 }
-                // TODO: Materials
                 if (n.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-
+                    Model.Material = ((MTAL_Node)n)._material;
                 }
             }
+            if (Model.Material != null)
+                Model.UpdateMaterial();
             return Model;
         }
 

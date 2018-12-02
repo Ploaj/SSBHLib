@@ -27,16 +27,16 @@ namespace SSBHLib.Formats
 
     public class MTAL_Attribute : ISSBH_File
     {
-        public long Unknown { get; set; }
+        public long ParamID { get; set; }
 
-        public long OffsetToData { get; set; }
+        public SSBHOffset OffsetToData { get; set; }
 
         public long DataType { get; set; }
 
         // not part of the entry
         public object DataObject;
 
-        public void PostProcess(SSBHParser R)
+        public override void PostProcess(SSBHParser R)
         {
             R.Seek((int)OffsetToData);
             if (DataType == 0x01)
@@ -84,11 +84,6 @@ namespace SSBHLib.Formats
         public class MTAL_String : ISSBH_File
         {
             public string Text { get; set; }
-
-            public override string ToString()
-            {
-                return Text;
-            }
         }
 
         public class MTAL_Unk_0E : ISSBH_File
