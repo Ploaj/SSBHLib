@@ -86,6 +86,7 @@
     <Compile Include="Nodes\IRenderableNode.cs" />
     <Compile Include="Nodes\NUMDL_Node.cs" />
     <Compile Include="Nodes\NUMSHB_Node.cs" />
+    <Compile Include="Nodes\NUTEX_Node.cs" />
     <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\RMesh.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
+    <Compile Include="Rendering\RTexture.cs" />
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
     </EmbeddedResource>
