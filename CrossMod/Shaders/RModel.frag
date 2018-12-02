@@ -69,7 +69,7 @@ void main()
 	fragColor.rgb *= prmColor.b; // AO?
 
 	// Invert glossiness?
-	float roughness = clamp(prmColor.g - 1, 0, 1);
+	float roughness = clamp(1 - prmColor.g, 0, 1);
 	fragColor.rgb += GgxShading(newNormal, V, roughness) * prmColor.a;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
