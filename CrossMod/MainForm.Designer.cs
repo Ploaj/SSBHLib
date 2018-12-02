@@ -31,10 +31,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openModelFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
-            this.reloadShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,7 +51,6 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openModelFolderToolStripMenuItem,
-            this.clearFilesToolStripMenuItem,
             this.reloadShadersToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -66,11 +64,12 @@
             this.openModelFolderToolStripMenuItem.Text = "Open Model Folder";
             this.openModelFolderToolStripMenuItem.Click += new System.EventHandler(this.openModelFolderToolStripMenuItem_Click);
             // 
-            // clearFilesToolStripMenuItem
+            // reloadShadersToolStripMenuItem
             // 
-            this.clearFilesToolStripMenuItem.Name = "clearFilesToolStripMenuItem";
-            this.clearFilesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.clearFilesToolStripMenuItem.Text = "Clear Files";
+            this.reloadShadersToolStripMenuItem.Name = "reloadShadersToolStripMenuItem";
+            this.reloadShadersToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.reloadShadersToolStripMenuItem.Text = "Reload Shaders";
+            this.reloadShadersToolStripMenuItem.Click += new System.EventHandler(this.reloadShadersToolStripMenuItem_Click);
             // 
             // fileTree
             // 
@@ -95,13 +94,6 @@
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
             // 
-            // reloadShadersToolStripMenuItem
-            // 
-            this.reloadShadersToolStripMenuItem.Name = "reloadShadersToolStripMenuItem";
-            this.reloadShadersToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.reloadShadersToolStripMenuItem.Text = "Reload Shaders";
-            this.reloadShadersToolStripMenuItem.Click += new System.EventHandler(this.reloadShadersToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,7 +117,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openModelFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clearFilesToolStripMenuItem;
         private System.Windows.Forms.TreeView fileTree;
         private System.Windows.Forms.GroupBox contentBox;
         private System.Windows.Forms.ToolStripMenuItem reloadShadersToolStripMenuItem;
