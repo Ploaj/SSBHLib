@@ -356,6 +356,9 @@
     <Content Include="DefaultTextures\default_White.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="DefaultTextures\ibl_brdf_lut.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\SFGenericModel.dll" />
     <Content Include="lib\SFGenericModel.xml" />
     <Content Include="lib\SFGraphics.Controls.dll" />

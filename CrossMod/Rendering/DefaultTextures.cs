@@ -9,6 +9,9 @@ namespace CrossMod.Rendering
     {
         public Texture2D defaultWhite = null;
         public Texture2D defaultNormal = null;
+
+        public Texture2D iblLut = null;
+
         public TextureCubeMap diffusePbr = null;
         public TextureCubeMap specularPbr = null;
 
@@ -24,6 +27,12 @@ namespace CrossMod.Rendering
             using (var nrmBmp = new Bitmap("DefaultTextures/default_normal.png"))
             {
                 defaultNormal.LoadImageData(nrmBmp);
+            }
+
+            iblLut = new Texture2D();
+            using (var lutBmp = new Bitmap("DefaultTextures/ibl_brdf_lut.png"))
+            {
+                iblLut.LoadImageData(lutBmp);
             }
 
             LoadDiffusePbr();
