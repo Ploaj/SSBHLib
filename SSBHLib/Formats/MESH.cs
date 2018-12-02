@@ -1,4 +1,6 @@
 ﻿
+using SSBHLib.IO;
+
 namespace SSBHLib.Formats
 {
     [SSBHFileAttribute("HSEM")]
@@ -14,16 +16,22 @@ namespace SSBHLib.Formats
         
         public float[] HeaderFloats { get; set; } = new float[26];
 
+        [ParseTag("VersionMinor>8")]
         public MESH_Object[] Objects { get; set; }
 
+        [ParseTag("VersionMinor>8")]
         public int[] BufferSizes { get; set; }
 
+        [ParseTag("VersionMinor>8")]
         public long UnknownSize { get; set; }
 
+        [ParseTag("VersionMinor>8")]
         public MESH_Buffer[] VertexBuffers { get; set; }
 
+        [ParseTag("VersionMinor>8")]
         public byte[] PolygonBuffer { get; set; }
 
+        [ParseTag("VersionMinor>8")]
         public MESH_RiggingGroup[] RiggingBuffers { get; set; }
     }
 
@@ -110,7 +118,7 @@ namespace SSBHLib.Formats
         public int Unk5_0 { get; set; }
 
         public string Name { get; set; }
-
+        
         public MESH_AttributeString[] AttributeStrings { get; set; }
     }
 

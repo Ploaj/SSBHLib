@@ -4,6 +4,7 @@ using SSBHLib.Formats;
 using System.Xml;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace HBSSTester
 {
@@ -11,11 +12,70 @@ namespace HBSSTester
     {
         static void Main(string[] args)
         {
-            ISSBH_File File;
+            string[] files = Directory.GetFiles("", "*.numshb*", SearchOption.AllDirectories);
+
+            List<string> ErrorReading = new List<string>();
+            List<string> VertexAttributes = new List<string>();
+            int Unk8 = 0;
+            int Bid = 0;
+            int VersionM = 0;
+            int Versionm = 0;
+            foreach(string s in files)
+            {
+                ISSBH_File File;
+                try
+                {
+                    if (SSBH.TryParseSSBHFile(s, out File))
+                    {
+                        if (File is MESH)
+                        {
+                            VersionM = Math.Max(VersionM, ((MESH)File).VersionMajor);
+                            Versionm = Math.Max(Versionm, ((MESH)File).VersionMinor);
+                            foreach (MESH_Object o in ((MESH)File).Objects)
+                            {
+                                Unk8 = Math.Max(Unk8, o.Unk8);
+                                Bid = Math.Max(Bid, o.BID);
+                                foreach (MESH_Attribute a in o.Attributes)
+                                {
+                                    if (!VertexAttributes.Contains(a.AttributeStrings[0].Name))
+                                        VertexAttributes.Add(a.AttributeStrings[0].Name);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception)
+                {
+                    ErrorReading.Add(s);
+                }
+                
+            }
+
+            StreamWriter w = new StreamWriter(new FileStream("outmsh.txt", FileMode.Create));
+
+            w.WriteLine("Unk8 " + Unk8.ToString("X"));
+            w.WriteLine("M " + VersionM.ToString("X"));
+            w.WriteLine(", " + Versionm.ToString("X"));
+            w.WriteLine("BID " + Bid.ToString("X"));
+            w.WriteLine("Attributes: ");
+            foreach(string s in VertexAttributes)
+            {
+                w.WriteLine(s);
+            }
+
+            w.WriteLine("Errors: ");
+            foreach (string s in ErrorReading)
+            {
+                w.WriteLine(s);
+            }
+
+            w.Close();
+
+            /*ISSBH_File File;
             if(SSBH.TryParseSSBHFile("", out File))
             {
                 ExportFileAsXML("Test.xml", File);
-            }
+            }*/
             //Console.ReadLine();
         }
 

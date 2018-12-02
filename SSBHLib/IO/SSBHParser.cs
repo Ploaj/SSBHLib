@@ -125,10 +125,45 @@ namespace SSBHLib.IO
         public T Parse<T>() where T : ISSBH_File
         {
             T Object = Activator.CreateInstance<T>();
+            Console.WriteLine(Object.GetType().ToString() + " " + Position.ToString("X"));
 
             //Reading Object
             foreach (var prop in Object.GetType().GetProperties())
             {
+                object[] attrs = prop.GetCustomAttributes(true);
+                bool skip = false;
+                foreach (object attr in attrs)
+                {
+                    ParseTag tag = attr as ParseTag;
+                    if (tag != null)
+                    {
+                        if (!tag.IF.Equals(""))
+                        {
+                            string[] args = tag.IF.Split('>');
+                            PropertyInfo checkprop = null;
+                            foreach (PropertyInfo pi in Object.GetType().GetProperties())
+                            {
+                                if (pi.Name.Equals(args[0]))
+                                {
+                                    checkprop = pi;
+                                    break;
+                                }
+                            }
+                            skip = true;
+                            if (checkprop != null)
+                            {
+                                if((ushort)checkprop.GetValue(Object) > int.Parse(args[1]))
+                                {
+                                    skip = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (skip)
+                    continue;
+
                 if (prop.PropertyType == typeof(string))
                 {
                     long StringOffset = Position + ReadInt64();
