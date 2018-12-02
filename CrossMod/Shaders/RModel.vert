@@ -13,13 +13,13 @@ out vec2 UV0;
 
 void main()
 {
-N = Normal0;
-UV0 = map1;
+	N = Normal0;
+	UV0 = map1;
 
-vec4 Position = vec4(Position0, 1);
+	vec4 Position = vec4(Position0, 1);
 
-if(SingleBindIndex != -1)
-	Position = Transforms[SingleBindIndex] * vec4(Position0, 1);
+	if(SingleBindIndex != -1)
+		Position = Transforms[SingleBindIndex] * vec4(Position0, 1);
 
-gl_Position = mvp * vec4(Position.xyz, 1);
+	gl_Position = mvp * vec4(Position.xyz, 1);
 }

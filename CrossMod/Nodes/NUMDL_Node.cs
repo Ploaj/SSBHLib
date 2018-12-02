@@ -27,7 +27,7 @@ namespace CrossMod.Nodes
             {
                 if (n is NUTEX_Node)
                 {
-                    Model.TextureBank.Add(((NUTEX_Node)n).TexName, ((RTexture)((NUTEX_Node)n).GetRenderableNode()).texture);
+                    Model.sfTextureByName.Add(((NUTEX_Node)n).TexName, ((RTexture)((NUTEX_Node)n).GetRenderableNode()).texture);
                 }
                 if (n.Text.Equals(_model.MeshString))
                 {

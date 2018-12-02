@@ -99,6 +99,7 @@
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RMesh.cs" />
+    <Compile Include="Rendering\RModel.cs" />
     <Compile Include="Rendering\RNUMDL.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
     <Compile Include="Rendering\RTexture.cs" />
