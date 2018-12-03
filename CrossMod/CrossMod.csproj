@@ -77,6 +77,7 @@
     <Compile Include="GUI\AnimationBar.Designer.cs">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\IO_OBJ.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">

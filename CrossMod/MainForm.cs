@@ -126,7 +126,7 @@ namespace CrossMod
                     // gather all options for this node
                     if(node is IExportableModelNode exportableNode)
                     {
-                        MenuItem ExportSMD = new MenuItem("Export As SMD");
+                        MenuItem ExportSMD = new MenuItem("Export As");
                         ExportSMD.Click += exportExportableModelAsSMD;
                         ExportSMD.Tag = exportableNode;
                         fileTreeContextMenu.MenuItems.Add(ExportSMD);
@@ -142,9 +142,12 @@ namespace CrossMod
         private void exportExportableModelAsSMD(object sender, EventArgs args)
         {
             string FileName;
-            if (FileTools.TrySaveFile(out FileName, "Source MDL(.smd)|*.smd"))
+            if (FileTools.TrySaveFile(out FileName, "Supported Files(*.smd*.obj)|*.smd;*.obj"))
             {
+                if(FileName.EndsWith(".smd"))
                 IO_SMD.ExportIOModelAsSMD(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (FileName.EndsWith(".obj"))
+                    IO_OBJ.ExportIOModelAsOBJ(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
             }
         }
     }

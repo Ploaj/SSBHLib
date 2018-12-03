@@ -11,8 +11,9 @@ namespace CrossMod.IO
         public Vector3 Tangent;
         public Vector2 UV0;
         public Vector2 UV1;
-        public Vector3 UV2;
-        public Vector3 UV3;
+        public Vector2 UV2;
+        public Vector2 UV3;
+        public Vector4 Color;
         public Vector4 BoneIndices;
         public Vector4 BoneWeights;
     }
@@ -29,6 +30,7 @@ namespace CrossMod.IO
         public bool HasUV1 { get; set; } = false;
         public bool HasUV2 { get; set; } = false;
         public bool HasUV3 { get; set; } = false;
+        public bool HasColor { get; set; } = false;
         public bool HasBoneWeights { get; set; } = false;
     }
 }

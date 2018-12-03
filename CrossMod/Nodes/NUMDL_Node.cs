@@ -65,7 +65,6 @@ namespace CrossMod.Nodes
                 }
             }
         }
-
         
         public IOModel GetIOModel()
         {
@@ -87,48 +86,72 @@ namespace CrossMod.Nodes
             
             if(MeshFile != null)
             {
-                SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(MeshFile);
-
-                foreach(MESH_Object obj in MeshFile.Objects)
+                using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(MeshFile))
                 {
-                    IOMesh outMesh = new IOMesh()
+                    foreach (MESH_Object obj in MeshFile.Objects)
                     {
-                        Name = obj.Name,
-                    };
-                    OutModel.Meshes.Add(outMesh);
-
-                    IOVertex[] Vertices = new IOVertex[obj.VertexCount];
-                    for (int i = 0; i < Vertices.Length; i++)
-                        Vertices[i] = new IOVertex();
-
-                    foreach(MESH_Attribute attr in obj.Attributes)
-                    {
-                        SSBHVertexAttribute[] values = vertexAccessor.ReadAttribute(attr.AttributeStrings[0].Name, 0, obj.VertexCount, obj);
-
-                        if (attr.AttributeStrings[0].Name.Equals("Position0"))
+                        IOMesh outMesh = new IOMesh()
                         {
-                            outMesh.HasPositions = true;
-                            for (int i = 0; i < values.Length; i++)
+                            Name = obj.Name,
+                        };
+                        OutModel.Meshes.Add(outMesh);
+
+                        IOVertex[] Vertices = new IOVertex[obj.VertexCount];
+                        for (int i = 0; i < Vertices.Length; i++)
+                            Vertices[i] = new IOVertex();
+
+                        foreach (MESH_Attribute attr in obj.Attributes)
+                        {
+                            SSBHVertexAttribute[] values = vertexAccessor.ReadAttribute(attr.AttributeStrings[0].Name, 0, obj.VertexCount, obj);
+
+                            if (attr.AttributeStrings[0].Name.Equals("Position0"))
                             {
-                                Vertices[i].Position = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
+                                outMesh.HasPositions = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].Position = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("Normal0"))
+                            {
+                                outMesh.HasNormals = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].Normal = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("map1"))
+                            {
+                                outMesh.HasUV0 = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].UV0 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("uvSet"))
+                            {
+                                outMesh.HasUV1 = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].UV1 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("uvSet1"))
+                            {
+                                outMesh.HasUV2 = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].UV2 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("uvSet2"))
+                            {
+                                outMesh.HasUV3 = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].UV3 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                            }
+                            if (attr.AttributeStrings[0].Name.Equals("colorSet1"))
+                            {
+                                outMesh.HasColor = true;
+                                for (int i = 0; i < values.Length; i++)
+                                    Vertices[i].Color = new OpenTK.Vector4(values[i].X, values[i].Y, values[i].Z, values[i].W);
                             }
                         }
-                        if (attr.AttributeStrings[0].Name.Equals("Normal0"))
-                        {
-                            outMesh.HasNormals = true;
-                            for (int i = 0; i < values.Length; i++)
-                                Vertices[i].Normal = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
-                        }
-                        if (attr.AttributeStrings[0].Name.Equals("map1"))
-                        {
-                            outMesh.HasUV0 = true;
-                            for (int i = 0; i < values.Length; i++)
-                                Vertices[i].UV0 = new OpenTK.Vector2(values[i].X, values[i].Y);
-                        }
+
+                        outMesh.Vertices.AddRange(Vertices);
+                        outMesh.Indicies.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
                     }
 
-                    outMesh.Vertices.AddRange(Vertices);
-                    outMesh.Indicies.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
                 }
             }
 
