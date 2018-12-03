@@ -8,6 +8,7 @@ in vec3 vertexColor;
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
+uniform sampler2D emiMap;
 
 uniform vec4 vec4Param;
 
@@ -83,6 +84,8 @@ void main()
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 
+	vec4 emiColor = texture(emiMap, UV0).rgba;
+
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
@@ -108,16 +111,20 @@ void main()
 			fragColor = norColor;
 			break;
 		case 4:
-			fragColor = vec4(vertexColor, 1);
+			fragColor = emiColor;
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 5:
-			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			fragColor = vec4(vertexColor, 1);
+			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 6:
-			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
 			break;
 		case 7:
+			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			break;
+		case 8:
 			fragColor = vec4Param;
 			break;
 		default:

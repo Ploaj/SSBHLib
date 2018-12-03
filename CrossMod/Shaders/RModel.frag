@@ -8,6 +8,7 @@ in vec3 vertexColor;
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
+uniform sampler2D emiMap;
 
 uniform sampler2D iblLut;
 
@@ -88,7 +89,6 @@ void main()
 
 	float metalness = prmColor.r;
 
-
 	// TODO: Ink map?
 	// float inkAmount = 0.5;
 	// if (norColor.b > inkAmount)
@@ -100,7 +100,6 @@ void main()
 
 	// Diffuse
 	fragColor = albedoColor;
-	// fragColor.rgb *= LambertShading(newNormal, V);
 	fragColor.rgb *= diffuseIbl;
 	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
 
@@ -119,5 +118,9 @@ void main()
 	// Cavity Map
 	fragColor.rgb *= norColor.aaa;
 
+	// Emission
+	fragColor.rgb += texture(emiMap, UV0).rgb;
+
+	// Gamma correction.
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }

@@ -77,6 +77,11 @@ namespace CrossMod.Rendering
             else
                 genericMaterial.AddTexture("norMap", defaultTextures.defaultNormal);
 
+            if (material.emi != null)
+                genericMaterial.AddTexture("emiMap", material.emi);
+            else
+                genericMaterial.AddTexture("emiMap", defaultTextures.defaultBlack);
+
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
             genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);

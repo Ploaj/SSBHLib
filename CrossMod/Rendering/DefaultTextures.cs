@@ -9,6 +9,7 @@ namespace CrossMod.Rendering
     {
         public Texture2D defaultWhite = null;
         public Texture2D defaultNormal = null;
+        public Texture2D defaultBlack = null;
 
         public Texture2D iblLut = null;
 
@@ -27,6 +28,12 @@ namespace CrossMod.Rendering
             using (var nrmBmp = new Bitmap("DefaultTextures/default_normal.png"))
             {
                 defaultNormal.LoadImageData(nrmBmp);
+            }
+
+            defaultBlack = new Texture2D();
+            using (var blackBmp = new Bitmap("DefaultTextures/default_black.png"))
+            {
+                defaultBlack.LoadImageData(blackBmp);
             }
 
             iblLut = new Texture2D();

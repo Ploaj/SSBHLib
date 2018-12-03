@@ -101,10 +101,11 @@
             "Col",
             "Prm",
             "Nor",
+            "Emi",
             "Vertex Color",
             "Normals",
-            "Tangents",
-            "Param ID (Vector4 Only)"});
+            "Tangent",
+            "Param ID (Vector 4 Only)"});
             this.renderModeComboBox.Location = new System.Drawing.Point(3, 32);
             this.renderModeComboBox.Name = "renderModeComboBox";
             this.renderModeComboBox.Size = new System.Drawing.Size(318, 21);
