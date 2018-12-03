@@ -104,9 +104,7 @@ namespace CrossMod.Nodes
                 int MajorVersion = R.ReadInt16();
                 int MinorVersion = R.ReadInt16();
 
-
-                if (Format != NUTEX_FORMAT.BC7_UNORM && Format != NUTEX_FORMAT.BC7_SRGB)
-                    return;
+                
 
                 uint blkWidth = (uint)blkdims[Format].X;
                 uint blkHeight = (uint)blkdims[Format].Y;
@@ -156,12 +154,12 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.R8G8B8A8_UNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, new Vector2(1, 1) },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC1_UNORM, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC1_SRGB, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC2_UNORM, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC2_SRGB, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC3_UNORM, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC3_SRGB, new Vector2(1, 1) },
+            { NUTEX_FORMAT.BC1_UNORM, new Vector2(4, 4) },
+            { NUTEX_FORMAT.BC1_SRGB, new Vector2(4, 4) },
+            { NUTEX_FORMAT.BC2_UNORM, new Vector2(4, 4) },
+            { NUTEX_FORMAT.BC2_SRGB, new Vector2(4, 4) },
+            { NUTEX_FORMAT.BC3_UNORM, new Vector2(4, 4) },
+            { NUTEX_FORMAT.BC3_SRGB, new Vector2(4, 4) },
             { NUTEX_FORMAT.BC4_UNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.BC4_SNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.BC5_UNORM, new Vector2(1, 1) },
@@ -180,11 +178,13 @@ namespace CrossMod.Nodes
                     return 4;
 
                 case NUTEX_FORMAT.BC1_UNORM:
+                    return 8;
                 case NUTEX_FORMAT.BC1_SRGB:
+                    return 8;
                 case NUTEX_FORMAT.BC4_UNORM:
+                    return 8;
                 case NUTEX_FORMAT.BC4_SNORM:
                     return 8;
-
                 case NUTEX_FORMAT.R32G32B32A32_FLOAT:
                 case NUTEX_FORMAT.BC2_UNORM:
                 case NUTEX_FORMAT.BC2_SRGB:
