@@ -92,6 +92,7 @@ namespace CrossMod.Rendering
                 else if (a.DataType == (long)ParamDataType.Vector4)
                 {
                     meshMaterial.vec4ByParamId[a.ParamID] = (MTAL_Attribute.MTAL_Vector4)a.DataObject;
+                    System.Diagnostics.Debug.WriteLine($"Vec4 Param: {a.ParamID.ToString("X")}");
                 }
             }
 
