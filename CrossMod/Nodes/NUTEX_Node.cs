@@ -54,7 +54,7 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC2_UNORM, InternalFormat.CompressedRgbaS3tcDxt3Ext },
             { NUTEX_FORMAT.BC2_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt3Ext },
             { NUTEX_FORMAT.BC3_UNORM, InternalFormat.CompressedRgbaS3tcDxt5Ext },
-            { NUTEX_FORMAT.BC3_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC3_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt5Ext },
             { NUTEX_FORMAT.BC4_UNORM, InternalFormat.Rgba },
             { NUTEX_FORMAT.BC4_SNORM, InternalFormat.Rgba },
             { NUTEX_FORMAT.BC5_UNORM, InternalFormat.Rgba },
