@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using CrossMod.Rendering;
 using System.Globalization;
@@ -7,15 +8,33 @@ namespace CrossMod.GUI
 {
     public partial class RenderSettingsMenu : Form
     {
+        private readonly List<string> renderModes = new List<string>()
+        {
+            "Shaded",
+            "Col",
+            "Prm",
+            "Nor",
+            "Emi",
+            "Bake Lit",
+            "Vertex Color",
+            "Normals",
+            "Tangents",
+            "Bake Color",
+            "Param ID (Vec4 or Booleans)"
+        };
+
         public RenderSettingsMenu()
         {
             InitializeComponent();
 
-            renderModeComboBox.SelectedIndex = RenderSettings.renderMode;
             redButton.ForeColor = RenderSettings.renderChannels.X == 1 ? System.Drawing.Color.Red : System.Drawing.Color.Gray;
             greenButton.ForeColor = RenderSettings.renderChannels.Y == 1 ? System.Drawing.Color.Green : System.Drawing.Color.Gray;
             blueButton.ForeColor = RenderSettings.renderChannels.Z == 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Gray;
             alphaButton.ForeColor = RenderSettings.renderChannels.W == 1 ? System.Drawing.Color.Black : System.Drawing.Color.Gray;
+
+            renderModeComboBox.Items.Clear();
+            renderModeComboBox.Items.AddRange(renderModes.ToArray());
+            renderModeComboBox.SelectedIndex = RenderSettings.renderMode;
         }
 
         private void renderModeComboBox_SelectedIndexChanged(object sender, EventArgs e)

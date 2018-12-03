@@ -19,7 +19,8 @@ namespace CrossMod.Rendering
             PrmMap = 0x62,
             NorMap = 0x60,
             ColMap = 0x5C,
-            EmiMap = 0x61
+            EmiMap = 0x61,
+            BakeLitMap = 0x65
         }
 
         public enum ParamDataType
@@ -120,6 +121,8 @@ namespace CrossMod.Rendering
                 sfTextureByName.TryGetValue(text, out meshMaterial.prm);
             else if (a.ParamID == (long)ParamId.EmiMap)
                 sfTextureByName.TryGetValue(text, out meshMaterial.emi);
+            else if (a.ParamID == (long)ParamId.BakeLitMap)
+                sfTextureByName.TryGetValue(text, out meshMaterial.bakeLit);
         }
 
         public void Render(Camera Camera)
