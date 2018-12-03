@@ -82,9 +82,13 @@ namespace CrossMod.Nodes
                         Size = 3
                     };
 
-                    if (customAttribute.Name.Equals("map1"))
+                    if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
                     {
                         customAttribute.Size = 2;
+                    }
+                    if (customAttribute.Name.Contains("colorSet"))
+                    {
+                        customAttribute.Size = 4;
                     }
 
                     switch (meshAttribute.DataType)
@@ -93,7 +97,7 @@ namespace CrossMod.Nodes
                             customAttribute.Type = VertexAttribPointerType.Float;
                             break;
                         case 2:
-                            customAttribute.Type = VertexAttribPointerType.Byte; customAttribute.Normalized = true;
+                            customAttribute.Type = VertexAttribPointerType.Byte;
                             break; // color
                         case 5:
                             customAttribute.Type = VertexAttribPointerType.HalfFloat;

@@ -83,11 +83,21 @@ namespace CrossMod.Nodes
                     OutModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
                 }
             }
+
+            Dictionary<string, int> boneNameToIndex = new Dictionary<string, int>();
+            if(OutModel.Skeleton != null)
+            {
+                for(int i = 0; i < OutModel.Skeleton.Bones.Count; i++)
+                {
+                    boneNameToIndex.Add(OutModel.Skeleton.Bones[i].Name, i);
+                }
+            }
             
             if(MeshFile != null)
             {
                 using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(MeshFile))
                 {
+                    SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(MeshFile);
                     foreach (MESH_Object obj in MeshFile.Objects)
                     {
                         IOMesh outMesh = new IOMesh()
@@ -157,7 +167,36 @@ namespace CrossMod.Nodes
                                 {
                                     Vertices[i].Position = OpenTK.Vector3.TransformPosition(Vertices[i].Position, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
                                     Vertices[i].Normal = OpenTK.Vector3.TransformNormal(Vertices[i].Normal, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
+                                    Vertices[i].BoneIndices.X = boneNameToIndex[obj.ParentBoneName];
+                                    Vertices[i].BoneWeights.X = 1;
                                 }
+                        }
+
+                        // Apply Rigging
+                        SSBHVertexInfluence[] Influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
+    
+                        foreach(SSBHVertexInfluence influence in Influences)
+                        {
+                            if (Vertices[influence.VertexIndex].BoneWeights.X == 0)
+                            {
+                                Vertices[influence.VertexIndex].BoneIndices.X = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneWeights.X = influence.Weight;
+                            }
+                            else if(Vertices[influence.VertexIndex].BoneWeights.Y == 0)
+                            {
+                                Vertices[influence.VertexIndex].BoneIndices.Y = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneWeights.Y = influence.Weight;
+                            }
+                            else if(Vertices[influence.VertexIndex].BoneWeights.Z == 0)
+                            {
+                                Vertices[influence.VertexIndex].BoneIndices.Z = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneWeights.Z = influence.Weight;
+                            }
+                            else if(Vertices[influence.VertexIndex].BoneWeights.W == 0)
+                            {
+                                Vertices[influence.VertexIndex].BoneIndices.W = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneWeights.W = influence.Weight;
+                            }
                         }
 
                         outMesh.Vertices.AddRange(Vertices);

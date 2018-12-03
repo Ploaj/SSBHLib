@@ -65,15 +65,15 @@ namespace CrossMod.IO
                         o.AppendLine(Meshname);
                         {
                             IOVertex v = mesh.Vertices[(int)mesh.Indicies[i]];
-                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} 0");
+                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                         {
                             IOVertex v = mesh.Vertices[(int)mesh.Indicies[i+1]];
-                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} 0");
+                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                         {
                             IOVertex v = mesh.Vertices[(int)mesh.Indicies[i+2]];
-                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} 0");
+                            o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                     }
                 }
@@ -83,6 +83,26 @@ namespace CrossMod.IO
             }
             
             File.WriteAllText(FileName, o.ToString());
+        }
+
+        private static string CreateWeightList(IOVertex v, int Count)
+        {
+            StringBuilder WeightList = new StringBuilder();
+            for(int i = 0; i < Count; i++)
+            {
+                WeightList.Append($"{v.BoneIndices[i]} {v.BoneWeights[i]} ");
+            }
+            return WeightList.ToString();
+        }
+
+        private static int CountWeights(Vector4 Weight)
+        {
+            int c = 0;
+            if (Weight.X != 0) c += 1; else return c;
+            if (Weight.Y != 0) c += 1; else return c;
+            if (Weight.Z != 0) c += 1; else return c;
+            if (Weight.W != 0) c += 1; else return c;
+            return c;
         }
     }
 }

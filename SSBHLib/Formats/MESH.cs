@@ -70,7 +70,7 @@ namespace SSBHLib.Formats
     {
         public string Name { get; set; }
         
-        public long Unk { get; set; }
+        public long SubMeshIndex { get; set; }
         
         public string ParentBoneName { get; set; }
         
