@@ -13,7 +13,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numshb")]
     public class NUMSHB_Node : FileNode, IRenderableNode
     {
-        private MESH _mesh;
+        public MESH _mesh;
 
         public NUMSHB_Node()
         {

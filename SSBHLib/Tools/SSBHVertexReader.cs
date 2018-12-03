@@ -13,13 +13,14 @@ namespace SSBHLib.Tools
     {
         private BinaryReader[] Buffers;
         private BinaryReader IndexBuffer;
-
-        private MESH_Object MeshObject;
+        
         private MESH MeshFile;
 
-        public SSBHVertexAccessor(MESH MeshFile, MESH_Object MeshObject)
+        public SSBHVertexAccessor(MESH MeshFile)
         {
-            if (MeshFile == null || MeshObject == null) return;
+            if (MeshFile == null) return;
+
+            this.MeshFile = MeshFile;
 
             Buffers = new BinaryReader[MeshFile.VertexBuffers.Length];
             for(int i = 0; i < MeshFile.VertexBuffers.Length; i++)
@@ -29,13 +30,13 @@ namespace SSBHLib.Tools
             IndexBuffer = new BinaryReader(new MemoryStream(MeshFile.PolygonBuffer));
         }
 
-        private MESH_Attribute GetAttribute(string AttributeName)
+        private MESH_Attribute GetAttribute(string AttributeName, MESH_Object MeshObject)
         {
             foreach (MESH_Attribute a in MeshObject.Attributes)
             {
                 foreach (MESH_AttributeString s in a.AttributeStrings)
                 {
-                    if (s.Equals(AttributeName))
+                    if (s.Name.Equals(AttributeName))
                     {
                         return a;
                     }
@@ -44,40 +45,46 @@ namespace SSBHLib.Tools
             return null;
         }
 
-        public uint[] ReadIndices(int Position, int Count)
+        public uint[] ReadIndices(int Position, int Count, MESH_Object MeshObject)
         {
             uint[] indicies = new uint[Count];
 
-            IndexBuffer.BaseStream.Position = Position;
-            for(int i = 0; i < Position; i++)
+            IndexBuffer.BaseStream.Position = MeshObject.ElementOffset + Position * (MeshObject.DrawElementType == 1 ? 4 : 2);
+            for(int i = 0; i < Count; i++)
             {
                 indicies[i] = MeshObject.DrawElementType == 1 ? IndexBuffer.ReadUInt32() : IndexBuffer.ReadUInt16();
             }
             return indicies;
         }
 
-        public SSBHVertexAttribute[] ReadAttribute(string AttributeName, int Position, int Count)
+        public SSBHVertexAttribute[] ReadAttribute(string AttributeName, int Position, int Count, MESH_Object MeshObject)
         {
-            MESH_Attribute attr = GetAttribute(AttributeName);
+            MESH_Attribute attr = GetAttribute(AttributeName, MeshObject);
 
+            if(attr == null)
+            {
+                return new SSBHVertexAttribute[0];
+            }
             BinaryReader SelectedBuffer = Buffers[attr.BufferIndex];
 
             int Offset = MeshObject.VertexOffset;
             int Stride = MeshObject.Stride;
-            if(attr.BufferIndex == 2)
+            if(attr.BufferIndex == 1)
             {
                 Offset = MeshObject.VertexOffset2;
                 Stride = MeshObject.Stride2;
             }
 
             int Size = 3;
-            if (AttributeName.Equals("map1"))
+            if (AttributeName.Contains("colorSet"))
+                Size = 4;
+            if (AttributeName.Equals("map1") || AttributeName.Contains("uvSet"))
                 Size = 2;
 
             SSBHVertexAttribute[] a = new SSBHVertexAttribute[Count];
             for(int i = 0; i < Count; i++)
             {
-                SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset * Stride;
+                SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset + Stride * (Position + i);
                 a[i] = new SSBHVertexAttribute();
 
                 if (Size > 0)
@@ -90,7 +97,7 @@ namespace SSBHLib.Tools
                     a[i].W = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
             }
 
-            return null;
+            return a;
         }
 
         private float ReadAttribute(BinaryReader buffer, SSBVertexAttribFormat format)

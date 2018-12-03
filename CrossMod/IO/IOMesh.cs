@@ -6,15 +6,15 @@ namespace CrossMod.IO
 {
     public struct IOVertex
     {
-        Vector3 Position;
-        Vector3 Normal;
-        Vector3 Tangent;
-        Vector2 UV0;
-        Vector2 UV1;
-        Vector3 UV2;
-        Vector3 UV3;
-        Vector4 BoneIndices;
-        Vector4 BoneWeights;
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector3 Tangent;
+        public Vector2 UV0;
+        public Vector2 UV1;
+        public Vector3 UV2;
+        public Vector3 UV3;
+        public Vector4 BoneIndices;
+        public Vector4 BoneWeights;
     }
 
     public class IOMesh
@@ -29,6 +29,6 @@ namespace CrossMod.IO
         public bool HasUV1 { get; set; } = false;
         public bool HasUV2 { get; set; } = false;
         public bool HasUV3 { get; set; } = false;
-        public bool HasWeights { get; set; } = false;
+        public bool HasBoneWeights { get; set; } = false;
     }
 }
