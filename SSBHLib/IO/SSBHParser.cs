@@ -125,7 +125,6 @@ namespace SSBHLib.IO
         public T Parse<T>() where T : ISSBH_File
         {
             T Object = Activator.CreateInstance<T>();
-            Console.WriteLine(Object.GetType().ToString() + " " + Position.ToString("X"));
 
             //Reading Object
             foreach (var prop in Object.GetType().GetProperties())

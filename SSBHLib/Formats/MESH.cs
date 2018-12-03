@@ -10,7 +10,7 @@ namespace SSBHLib.Formats
         
         public ushort VersionMajor { get; set; } // 0x0001
         
-        public ushort VersionMinor { get; set; } // 0x000A
+        public ushort VersionMinor { get; set; } // 0x000A and 0x0008
         
         public long HeaderSize { get; set; }
         
