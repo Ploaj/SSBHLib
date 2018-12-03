@@ -4,11 +4,13 @@ in vec3 N;
 in vec3 tangent;
 in vec2 UV0;
 in vec3 vertexColor;
+in vec3 bakeColor;
 
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
+uniform sampler2D bakeLitMap;
 
 uniform vec4 vec4Param;
 
@@ -86,6 +88,8 @@ void main()
 
 	vec4 emiColor = texture(emiMap, UV0).rgba;
 
+	vec4 bakeLitColor = texture(bakeLitMap, UV0).rgba;
+
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
@@ -115,16 +119,23 @@ void main()
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 5:
-			fragColor = vec4(vertexColor, 1);
+			fragColor = bakeLitColor;
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 6:
-			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			fragColor = vec4(vertexColor, 1);
+			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 7:
-			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
 			break;
 		case 8:
+			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			break;
+		case 9:
+			fragColor = vec4(bakeColor, 1);
+			break;
+		case 10:
 			fragColor = vec4Param;
 			break;
 		default:

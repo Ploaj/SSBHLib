@@ -98,6 +98,8 @@ namespace CrossMod.Nodes
                             break;
                     }
                     Mesh.VertexAttributes.Add(a);
+
+                    System.Diagnostics.Debug.WriteLine($"{a.Name} {a.Size}");
                 }
             }
 

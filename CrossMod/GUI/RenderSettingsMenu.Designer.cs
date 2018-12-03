@@ -105,6 +105,7 @@
             "Vertex Color",
             "Normals",
             "Tangent",
+            "Bake Color",
             "Param ID (Vector 4 Only)"});
             this.renderModeComboBox.Location = new System.Drawing.Point(3, 32);
             this.renderModeComboBox.Name = "renderModeComboBox";
