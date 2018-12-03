@@ -8,6 +8,7 @@ in vec3 vertexColor;
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
+uniform sampler2D emiMap;
 
 uniform sampler2D iblLut;
 
@@ -88,7 +89,6 @@ void main()
 
 	float metalness = prmColor.r;
 
-
 	// TODO: Ink map?
 	// float inkAmount = 0.5;
 	// if (norColor.b > inkAmount)
@@ -100,12 +100,12 @@ void main()
 
 	// Diffuse
 	fragColor = albedoColor;
-	// fragColor.rgb *= LambertShading(newNormal, V);
 	fragColor.rgb *= diffuseIbl;
 	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
 
 	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-	vec3 f0 = mix(prmColor.aaa, albedoColor.rgb, metalness);
+	float maxF0Dialectric = 0.08;
+	vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 	// fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
 	vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
@@ -115,8 +115,12 @@ void main()
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;
 
-	// Cavity map?
+	// Cavity Map
 	fragColor.rgb *= norColor.aaa;
 
+	// Emission
+	fragColor.rgb += texture(emiMap, UV0).rgb;
+
+	// Gamma correction.
 	fragColor.rgb = GetSrgb(fragColor.rgb);
 }

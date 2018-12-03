@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using CrossMod.Rendering;
+using System.Globalization;
 
 namespace CrossMod.GUI
 {
@@ -77,6 +78,12 @@ namespace CrossMod.GUI
                 RenderSettings.renderChannels.W = 1;
                 alphaButton.ForeColor = System.Drawing.Color.Black;
             }
+        }
+
+        private void paramTextBox_TextChanged(object sender, EventArgs e)
+        {
+            long.TryParse(paramTextBox.Text, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out long id);
+            RenderSettings.paramId = id;
         }
     }
 }
