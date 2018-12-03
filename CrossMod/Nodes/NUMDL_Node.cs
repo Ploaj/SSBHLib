@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using SSBHLib;
 using SSBHLib.Formats;
 using CrossMod.Rendering;
+using CrossMod.IO;
 
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numdlb")]
-    public class NUMDL_Node : FileNode, IRenderableNode
+    public class NUMDL_Node : FileNode, IRenderableNode, IExportableModelNode
     {
         private MODL _model;
 
@@ -19,6 +20,7 @@ namespace CrossMod.Nodes
             ImageKey = "model";
             SelectedImageKey = "model";
         }
+
         public IRenderable GetRenderableNode()
         {
             RNUMDL Model = new RNUMDL();
@@ -59,6 +61,12 @@ namespace CrossMod.Nodes
                     _model = (MODL)SSBHFile;
                 }
             }
+        }
+
+        
+        public IOModel GetIOModel()
+        {
+            return new IOModel();
         }
     }
 }

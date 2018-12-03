@@ -3,6 +3,14 @@ using SSBHLib.IO;
 
 namespace SSBHLib.Formats
 {
+    public enum SSBVertexAttribFormat
+    {
+        Float = 0,
+        Byte = 2,
+        HalfFloat = 5,
+        HalfFloat2 = 8,
+    }
+
     [SSBHFileAttribute("HSEM")]
     public class MESH : ISSBH_File
     {

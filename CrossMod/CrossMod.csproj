@@ -93,6 +93,8 @@
     <Compile Include="GUI\RenderSettingsMenu.Designer.cs">
       <DependentUpon>RenderSettingsMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\IOMesh.cs" />
+    <Compile Include="IO\IOModel.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +103,7 @@
     </Compile>
     <Compile Include="Nodes\FileTypeAttribute.cs" />
     <Compile Include="Nodes\FileNode.cs" />
+    <Compile Include="Nodes\IExportableModelNode.cs" />
     <Compile Include="Nodes\IRenderableNode.cs" />
     <Compile Include="Nodes\MTAL_Node.cs" />
     <Compile Include="Nodes\NUMDL_Node.cs" />
