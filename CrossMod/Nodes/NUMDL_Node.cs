@@ -148,6 +148,18 @@ namespace CrossMod.Nodes
                             }
                         }
 
+                        // Fix SingleBinds
+                        if(OutModel.Skeleton != null && !obj.ParentBoneName.Equals(""))
+                        {
+                            int parentIndex = OutModel.Skeleton.GetBoneIndex(obj.ParentBoneName);
+                            if(parentIndex != -1)
+                                for(int i = 0; i < Vertices.Length; i++)
+                                {
+                                    Vertices[i].Position = OpenTK.Vector3.TransformPosition(Vertices[i].Position, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
+                                    Vertices[i].Normal = OpenTK.Vector3.TransformNormal(Vertices[i].Normal, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
+                                }
+                        }
+
                         outMesh.Vertices.AddRange(Vertices);
                         outMesh.Indicies.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
                     }
