@@ -4,6 +4,7 @@ in vec3 N;
 in vec3 tangent;
 in vec2 UV0;
 in vec3 vertexColor;
+in vec3 bakeColor;
 
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
@@ -125,6 +126,9 @@ void main()
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);
 			break;
 		case 8:
+			fragColor = vec4(bakeColor, 1);
+			break;
+		case 9:
 			fragColor = vec4Param;
 			break;
 		default:
