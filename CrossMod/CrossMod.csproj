@@ -71,6 +71,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\AnimationBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\AnimationBar.Designer.cs">
+      <DependentUpon>AnimationBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">
       <SubType>UserControl</SubType>
@@ -106,6 +112,7 @@
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Rendering\IRenderableAnimation.cs" />
     <Compile Include="Rendering\IRenderableModel.cs" />
     <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RenderSettings.cs" />
@@ -116,6 +123,9 @@
     <Compile Include="Rendering\RTexture.cs" />
     <Compile Include="Rendering\ScreenTriangle.cs" />
     <Compile Include="Tools\SwitchSwizzler.cs" />
+    <EmbeddedResource Include="GUI\AnimationBar.resx">
+      <DependentUpon>AnimationBar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
     </EmbeddedResource>

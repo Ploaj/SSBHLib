@@ -103,9 +103,7 @@ namespace CrossMod.Nodes
                 char[] Magic = R.ReadChars(4);
                 int MajorVersion = R.ReadInt16();
                 int MinorVersion = R.ReadInt16();
-
                 
-
                 uint blkWidth = (uint)blkdims[Format].X;
                 uint blkHeight = (uint)blkdims[Format].Y;
 
@@ -176,7 +174,6 @@ namespace CrossMod.Nodes
                 case NUTEX_FORMAT.R8G8B8A8_UNORM:
                 case NUTEX_FORMAT.R8G8B8A8_SRGB:
                     return 4;
-
                 case NUTEX_FORMAT.BC1_UNORM:
                     return 8;
                 case NUTEX_FORMAT.BC1_SRGB:
@@ -187,9 +184,13 @@ namespace CrossMod.Nodes
                     return 8;
                 case NUTEX_FORMAT.R32G32B32A32_FLOAT:
                 case NUTEX_FORMAT.BC2_UNORM:
+                    return 8;
                 case NUTEX_FORMAT.BC2_SRGB:
+                    return 8;
                 case NUTEX_FORMAT.BC3_UNORM:
+                    return 8;
                 case NUTEX_FORMAT.BC3_SRGB:
+                    return 8;
                 case NUTEX_FORMAT.BC5_UNORM:
                 case NUTEX_FORMAT.BC5_SNORM:
                 case NUTEX_FORMAT.BC6_UFLOAT:

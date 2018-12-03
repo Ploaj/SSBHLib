@@ -19,9 +19,18 @@ namespace CrossMod.GUI
             set
             {
                 if (value == null) return;
+                if(value is IRenderableAnimation)
+                {
+                    _animationBar.Animation = (IRenderableAnimation)value;
+                    controlBox.Visible = true;
+                }
+                else
+                {
+                    controlBox.Visible = false;
+                    ClearDisplay();
+                }
                 _renderableObject = value.GetRenderableNode();
-                ClearDisplay();
-                if(_renderableObject is RSkeleton)
+                if (_renderableObject is RSkeleton)
                 {
                     DisplaySkeleton((RSkeleton)_renderableObject);
                 }
@@ -43,6 +52,8 @@ namespace CrossMod.GUI
         Vector2 MousePosition = new Vector2();
         float MouseScrollWheel = 0;
 
+        private AnimationBar _animationBar;
+
         public ModelViewport()
         {
             InitializeComponent();
@@ -53,11 +64,16 @@ namespace CrossMod.GUI
             Application.Idle += AnimationRenderFrame;
 
             glViewport.OnRenderFrame += RenderNode;
-        }
 
+            _animationBar = new AnimationBar();
+            _animationBar.Dock = DockStyle.Fill;
+            _animationBar.AutoSize = true;
+            controlBox.Controls.Add(_animationBar);
+        }
         
         private void DisplayMeshes(RModel Model)
         {
+            _animationBar.Model = Model;
             foreach(RMesh m in Model.Mesh)
             {
                 ListViewItem item = new ListViewItem();
@@ -70,6 +86,7 @@ namespace CrossMod.GUI
 
         private void DisplaySkeleton(RSkeleton Skeleton)
         {
+            _animationBar.Skeleton = Skeleton;
             Dictionary<int, TreeNode> IdBone = new Dictionary<int, TreeNode>();
             foreach(RBone b in Skeleton.Bones)
             {
@@ -90,6 +107,7 @@ namespace CrossMod.GUI
         {
             boneTree.Nodes.Clear();
             meshList.Items.Clear();
+            controlBox.Visible = false;
         }
 
         private void AnimationRenderFrame(object sender, EventArgs e)
