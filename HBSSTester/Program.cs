@@ -12,7 +12,7 @@ namespace HBSSTester
     {
         static void Main(string[] args)
         {
-            string[] files = Directory.GetFiles("", "*.numshb*", SearchOption.AllDirectories);
+            /*string[] files = Directory.GetFiles("", "*.numshb*", SearchOption.AllDirectories);
 
             List<string> ErrorReading = new List<string>();
             List<string> VertexAttributes = new List<string>();
@@ -69,13 +69,13 @@ namespace HBSSTester
                 w.WriteLine(s);
             }
 
-            w.Close();
+            w.Close();*/
 
-            /*ISSBH_File File;
+            ISSBH_File File;
             if(SSBH.TryParseSSBHFile("", out File))
             {
                 ExportFileAsXML("Test.xml", File);
-            }*/
+            }
             //Console.ReadLine();
         }
 

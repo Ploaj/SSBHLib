@@ -23,7 +23,7 @@ namespace SSBHLib.Formats
         public int[] BufferSizes { get; set; }
 
         [ParseTag("VersionMinor>8")]
-        public long UnknownSize { get; set; }
+        public long UnknownSize { get; set; } // seems to match index count?
 
         [ParseTag("VersionMinor>8")]
         public MESH_Buffer[] VertexBuffers { get; set; }

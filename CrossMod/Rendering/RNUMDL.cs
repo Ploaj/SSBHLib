@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
-    public class RNUMDL : IRenderable
+    public class RNUMDL : IRenderableModel
     {
         public MODL MODL;
 
@@ -121,6 +121,21 @@ namespace CrossMod.Rendering
             }
 
             //Render Skeleton with no depth buffer
+        }
+
+        public RModel GetModel()
+        {
+            return Model;
+        }
+
+        public RSkeleton GetSkeleton()
+        {
+            return Skeleton;
+        }
+
+        public RTexture[] GetTextures()
+        {
+            return null;
         }
     }
 }

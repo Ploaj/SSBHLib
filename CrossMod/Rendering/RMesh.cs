@@ -24,8 +24,11 @@ namespace CrossMod.Rendering
 
         public Material Material;
 
+        public bool Visible = true;
+
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
         {
+            if (!Visible) return;
             if (skeleton != null)
             {
                 var transforms = skeleton.GetWorldTransforms();

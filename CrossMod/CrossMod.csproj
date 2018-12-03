@@ -106,6 +106,7 @@
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Rendering\IRenderableModel.cs" />
     <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RenderSettings.cs" />
     <Compile Include="Rendering\RMesh.cs" />

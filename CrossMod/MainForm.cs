@@ -82,7 +82,7 @@ namespace CrossMod
                 if(Node is IRenderableNode)
                 {
                     ShowModelControl();
-                    _modelControl.RenderableNode = ((IRenderableNode)Node).GetRenderableNode();
+                    _modelControl.RenderableNode = (IRenderableNode)Node;
                 }
             }
 
