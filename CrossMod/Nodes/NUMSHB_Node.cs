@@ -23,12 +23,11 @@ namespace CrossMod.Nodes
 
         public override void Open(string Path)
         {
-            ISSBH_File SSBHFile;
-            if (SSBH.TryParseSSBHFile(Path, out SSBHFile))
+            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
             {
-                if (SSBHFile is MESH)
+                if (ssbhFile is MESH)
                 {
-                    _mesh = (MESH)SSBHFile;
+                    _mesh = (MESH)ssbhFile;
                 }
             }
         }
@@ -37,69 +36,78 @@ namespace CrossMod.Nodes
         {
             RModel Model = new RModel();
 
-            RSkeleton Skeleton = null; // gonna need this eventually.....
+            // Merge buffers into one because Opengl can't do multiple array buffers.
+            int[] bufferOffsets = new int[_mesh.VertexBuffers.Length];
+            byte[] vertexBuffer = new byte[0];
+            int bufferOffset = 0;
+            int bufferIndex = 0;
 
-            //Prepare Buffers
-            // Merge them into 1
-            // Opengl can't do multiple array buffers
-            int[] BufferOffsets = new int[_mesh.VertexBuffers.Length];
-            byte[] VertexBuffer = new byte[0];
-            int bufferoffset = 0;
-            int bufferindex = 0;
-            foreach (MESH_Buffer b in _mesh.VertexBuffers)
+            foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
             {
-                byte[] nfinalBuffer = new byte[b.Buffer.Length + VertexBuffer.Length];
-                Array.Copy(VertexBuffer, 0, nfinalBuffer, 0, VertexBuffer.Length);
-                Array.Copy(b.Buffer, 0, nfinalBuffer, VertexBuffer.Length, b.Buffer.Length);
-                VertexBuffer = nfinalBuffer;
-                BufferOffsets[bufferindex++] = bufferoffset;
-                bufferoffset += b.Buffer.Length;
+                byte[] nfinalBuffer = new byte[meshBuffer.Buffer.Length + vertexBuffer.Length];
+                Array.Copy(vertexBuffer, 0, nfinalBuffer, 0, vertexBuffer.Length);
+                Array.Copy(meshBuffer.Buffer, 0, nfinalBuffer, vertexBuffer.Length, meshBuffer.Buffer.Length);
+                vertexBuffer = nfinalBuffer;
+                bufferOffsets[bufferIndex++] = bufferOffset;
+                bufferOffset += meshBuffer.Buffer.Length;
             }
 
-            Model.IndexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
-            Model.IndexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
+            Model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
+            Model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
 
-            Model.VertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
-            Model.VertexBuffer.SetData(VertexBuffer, BufferUsageHint.StaticDraw);
+            Model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
+            Model.vertexBuffer.SetData(vertexBuffer, BufferUsageHint.StaticDraw);
             
-            foreach (MESH_Object o in _mesh.Objects)
+            foreach (MESH_Object meshObject in _mesh.Objects)
             {
                 RMesh Mesh = new RMesh();
-                Model.Mesh.Add(Mesh);
-                Mesh.Name = o.Name;
-                Mesh.SingleBindName = o.ParentBoneName;
-                Mesh.IndexCount = o.IndexCount;
-                Mesh.IndexOffset = (int)o.ElementOffset;
+                Model.subMeshes.Add(Mesh);
+                Mesh.Name = meshObject.Name;
+                Mesh.SingleBindName = meshObject.ParentBoneName;
+                Mesh.IndexCount = meshObject.IndexCount;
+                Mesh.IndexOffset = (int)meshObject.ElementOffset;
 
-                if (o.DrawElementType == 1)
+                if (meshObject.DrawElementType == 1)
                     Mesh.DrawElementType = DrawElementsType.UnsignedInt;
 
                 // Vertex Attributes
-                foreach (MESH_Attribute att in o.Attributes)
+                foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
                 {
-                    CustomVertexAttribute a = new CustomVertexAttribute();
-                    a.Name = att.AttributeStrings[0].Name;
-                    a.Normalized = false;
-                    a.Stride = att.BufferIndex == 1 ? o.Stride2 : o.Stride;
-                    a.Offset = BufferOffsets[att.BufferIndex] + (att.BufferIndex == 0 ? o.VertexOffset : o.VertexOffset2) + att.BufferOffset;
-                    a.Size = 3;
-                    if (a.Name.Equals("map1"))
+                    CustomVertexAttribute customAttribute = new CustomVertexAttribute
                     {
-                        a.Size = 2;
+                        Name = meshAttribute.AttributeStrings[0].Name,
+                        Normalized = false,
+                        Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
+                        Offset = bufferOffsets[meshAttribute.BufferIndex] + (meshAttribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + meshAttribute.BufferOffset,
+                        Size = 3
+                    };
+
+                    if (customAttribute.Name.Equals("map1"))
+                    {
+                        customAttribute.Size = 2;
                     }
-                    switch (att.DataType)
+
+                    switch (meshAttribute.DataType)
                     {
-                        case 0: a.Type = VertexAttribPointerType.Float; break;
-                        case 2: a.Type = VertexAttribPointerType.Byte; a.Normalized = true; break; // color
-                        case 5: a.Type = VertexAttribPointerType.HalfFloat; break;
-                        case 8: a.Type = VertexAttribPointerType.HalfFloat; break;
+                        case 0:
+                            customAttribute.Type = VertexAttribPointerType.Float;
+                            break;
+                        case 2:
+                            customAttribute.Type = VertexAttribPointerType.Byte; customAttribute.Normalized = true;
+                            break; // color
+                        case 5:
+                            customAttribute.Type = VertexAttribPointerType.HalfFloat;
+                            break;
+                        case 8:
+                            customAttribute.Type = VertexAttribPointerType.HalfFloat;
+                            break;
                         default:
-                            a.Type = VertexAttribPointerType.Float;
+                            customAttribute.Type = VertexAttribPointerType.Float;
                             break;
                     }
-                    Mesh.VertexAttributes.Add(a);
+                    Mesh.VertexAttributes.Add(customAttribute);
 
-                    System.Diagnostics.Debug.WriteLine($"{a.Name} {a.Size}");
+                    System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size}");
                 }
             }
 

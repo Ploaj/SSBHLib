@@ -10,21 +10,21 @@ namespace CrossMod.Rendering
     {
         private static DefaultTextures defaultTextures = null;
 
-        public string Name;
+        public string Name { get; set; }
 
         public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
 
         public List<CustomVertexAttribute> VertexAttributes = new List<CustomVertexAttribute>();
 
-        public int IndexOffset;
-        public int IndexCount;
+        public int IndexOffset { get; set; }
+        public int IndexCount { get; set; }
 
-        public string SingleBindName = "";
-        public int SingleBindIndex = -1;
+        public string SingleBindName { get; set; } = "";
+        public int SingleBindIndex { get; set; } = -1;
 
-        public Material Material;
+        public Material Material { get; set; } = null;
 
-        public bool Visible = true;
+        public bool Visible { get; set; } = true;
 
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
         {

@@ -23,25 +23,28 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            RNUMDL Model = new RNUMDL();
-            Model.MODL = _model;
-            foreach (FileNode n in Parent.Nodes)
+            RNUMDL Model = new RNUMDL
             {
-                if (n is NUTEX_Node)
+                MODL = _model
+            };
+
+            foreach (FileNode fileNode in Parent.Nodes)
+            {
+                if (fileNode is NUTEX_Node)
                 {
-                    Model.sfTextureByName.Add(((NUTEX_Node)n).TexName.ToLower(), ((RTexture)((NUTEX_Node)n).GetRenderableNode()).renderTexture);
+                    Model.sfTextureByName.Add(((NUTEX_Node)fileNode).TexName.ToLower(), ((RTexture)((NUTEX_Node)fileNode).GetRenderableNode()).renderTexture);
                 }
-                if (n.Text.Equals(_model.MeshString))
+                if (fileNode.Text.Equals(_model.MeshString))
                 {
-                    Model.Model = (RModel)((NUMSHB_Node)n).GetRenderableNode();
+                    Model.Model = (RModel)((NUMSHB_Node)fileNode).GetRenderableNode();
                 }
-                if (n.Text.Equals(_model.SkeletonFileName))
+                if (fileNode.Text.Equals(_model.SkeletonFileName))
                 {
-                    Model.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
+                    Model.Skeleton = (RSkeleton)((SKEL_Node)fileNode).GetRenderableNode();
                 }
-                if (n.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
+                if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-                    Model.Material = ((MTAL_Node)n)._material;
+                    Model.Material = ((MTAL_Node)fileNode)._material;
                 }
             }
             if (Model.Material != null)
@@ -53,12 +56,11 @@ namespace CrossMod.Nodes
 
         public override void Open(string Path)
         {
-            ISSBH_File SSBHFile;
-            if (SSBH.TryParseSSBHFile(Path, out SSBHFile))
+            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
             {
-                if (SSBHFile is MODL)
+                if (ssbhFile is MODL)
                 {
-                    _model = (MODL)SSBHFile;
+                    _model = (MODL)ssbhFile;
                 }
             }
         }

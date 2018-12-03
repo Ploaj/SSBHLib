@@ -1,13 +1,10 @@
 ﻿using CrossMod.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL;
-using System.IO;
 using CrossMod.Tools;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace CrossMod.Nodes
 {
@@ -104,8 +101,8 @@ namespace CrossMod.Nodes
                 int MajorVersion = R.ReadInt16();
                 int MinorVersion = R.ReadInt16();
                 
-                uint blkWidth = (uint)blkdims[Format].X;
-                uint blkHeight = (uint)blkdims[Format].Y;
+                uint blkWidth = (uint)blkDims[Format].X;
+                uint blkHeight = (uint)blkDims[Format].Y;
 
                 uint blockHeight = SwitchSwizzler.GetBlockHeight(SwitchSwizzler.DIV_ROUND_UP((uint)Height, blkHeight));
                 uint BlockHeightLog2 = (uint)Convert.ToString(blockHeight, 2).Length - 1;
@@ -113,7 +110,7 @@ namespace CrossMod.Nodes
 
                 //int linesPerBlockHeight = (1 << (int)BlockHeightLog2) * 8;
 
-                uint bpp = bpps(Format);
+                uint bpp = GetBpps(Format);
 
                 R.BaseStream.Position = 0;
                 int blockHeightShift = 0;
@@ -145,7 +142,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public static Dictionary<NUTEX_FORMAT, Vector2> blkdims = new Dictionary<NUTEX_FORMAT, Vector2>()
+        public static readonly Dictionary<NUTEX_FORMAT, Vector2> blkDims = new Dictionary<NUTEX_FORMAT, Vector2>()
         {
             { NUTEX_FORMAT.B8G8R8A8_UNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.B8G8R8A8_SRGB, new Vector2(1, 1) },
@@ -167,7 +164,7 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC7_UNORM, new Vector2(4, 4) },
         };
 
-        public static uint bpps(NUTEX_FORMAT format)
+        public static uint GetBpps(NUTEX_FORMAT format)
         {
             switch (format)
             {

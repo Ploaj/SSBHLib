@@ -3,23 +3,19 @@ using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.BufferObjects;
 using SFGraphics.GLObjects.Shaders;
-using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
     public class RModel : IRenderable
     {
-        // Shaders
         public static Shader shader;
         public static Shader textureDebugShader;
 
-        // Buffers
-        public BufferObject VertexBuffer;
-        public BufferObject IndexBuffer;
+        public BufferObject vertexBuffer;
+        public BufferObject indexBuffer;
 
-        // Sub Meshes
-        public List<RMesh> Mesh = new List<RMesh>();
+        public List<RMesh> subMeshes = new List<RMesh>();
 
         public void Render(Camera Camera)
         {
@@ -46,16 +42,20 @@ namespace CrossMod.Rendering
             currentShader.SetMatrix4x4("mvp", ref View);
 
             // Bind Buffers
-            IndexBuffer.Bind();
-            VertexBuffer.Bind();
+            indexBuffer.Bind();
+            vertexBuffer.Bind();
 
-            // Draw Mesh
-            foreach (RMesh m in Mesh)
+            DrawMeshes(Camera, Skeleton, currentShader);
+
+            currentShader.DisableVertexAttributes();
+        }
+
+        private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
+        {
+            foreach (RMesh m in subMeshes)
             {
                 m.Draw(currentShader, Camera, Skeleton);
             }
-
-            currentShader.DisableVertexAttributes();
         }
 
         private static Shader GetCurrentShader()
@@ -75,6 +75,7 @@ namespace CrossMod.Rendering
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
                 System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
             }
+
             if (textureDebugShader == null)
             {
                 textureDebugShader = new Shader();

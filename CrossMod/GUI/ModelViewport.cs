@@ -86,12 +86,15 @@ namespace CrossMod.GUI
         private void DisplayMeshes(RModel Model)
         {
             animationBar.Model = Model;
-            foreach(RMesh m in Model.Mesh)
+            foreach(RMesh m in Model.subMeshes)
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = m.Name;
-                item.Tag = m;
-                item.Checked = true;
+                ListViewItem item = new ListViewItem
+                {
+                    Text = m.Name,
+                    Tag = m,
+                    Checked = true
+                };
+
                 meshList.Items.Add(item);
             }
         }
@@ -103,8 +106,11 @@ namespace CrossMod.GUI
 
             foreach(RBone b in skeleton.Bones)
             {
-                TreeNode node = new TreeNode();
-                node.Text = b.Name;
+                TreeNode node = new TreeNode
+                {
+                    Text = b.Name
+                };
+
                 boneById.Add(b.ID, node);
                 if (b.ParentID == -1)
                     boneTree.Nodes.Add(node);

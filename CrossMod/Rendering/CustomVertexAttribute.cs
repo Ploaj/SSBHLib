@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Rendering
 {
     public class CustomVertexAttribute
     {
-        public string Name;
-        public int Size;
-        public VertexAttribPointerType Type;
-        public bool Normalized = false;
-        public int Stride;
-        public int Offset;
+        public string Name { get; set; }
+        public int Size { get; set; }
+        public VertexAttribPointerType Type { get; set; }
+        public bool Normalized { get; set; } = false;
+        public int Stride { get; set; }
+        public int Offset { get; set; }
 
         public void Bind(Shader shader)
         {
