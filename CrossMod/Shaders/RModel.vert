@@ -6,6 +6,8 @@ in vec3 Normal0;
 in vec3 colorSet1;
 in vec3 bake1;
 in vec2 map1;
+in vec4 Bone;
+in vec4 Weight;
 
 uniform mat4 mvp;
 uniform mat4 transform;

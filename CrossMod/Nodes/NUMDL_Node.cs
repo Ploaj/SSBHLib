@@ -29,6 +29,7 @@ namespace CrossMod.Nodes
                 MODL = _model
             };
 
+            NUMSHB_Node ModelNode = null;
             foreach (FileNode fileNode in Parent.Nodes)
             {
                 if (fileNode is NUTEX_Node)
@@ -37,7 +38,7 @@ namespace CrossMod.Nodes
                 }
                 if (fileNode.Text.Equals(_model.MeshString))
                 {
-                    Model.Model = (RModel)((NUMSHB_Node)fileNode).GetRenderableNode();
+                    ModelNode = (NUMSHB_Node)fileNode;
                 }
                 if (fileNode.Text.Equals(_model.SkeletonFileName))
                 {
@@ -48,6 +49,8 @@ namespace CrossMod.Nodes
                     Model.Material = ((MTAL_Node)fileNode)._material;
                 }
             }
+            if(ModelNode != null)
+                Model.Model = (RModel)ModelNode.GetRenderableNode(Model.Skeleton);
             if (Model.Material != null)
                 Model.UpdateMaterial();
             if (Model.Skeleton != null)
