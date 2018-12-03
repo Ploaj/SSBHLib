@@ -5,11 +5,11 @@ in vec3 tangent;
 in vec2 UV0;
 in vec3 vertexColor;
 
-out vec4 fragColor;
-
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
+
+uniform vec4 vec4Param;
 
 uniform sampler2D iblLut;
 
@@ -20,6 +20,8 @@ uniform vec4 renderChannels;
 uniform int renderMode;
 
 uniform mat4 mvp;
+
+out vec4 fragColor;
 
 vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {
@@ -113,8 +115,11 @@ void main()
 			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
 			break;
 		case 6:
-				fragColor = vec4(tangent * 0.5 + 0.5, 1);
-				break;
+			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			break;
+		case 7:
+			fragColor = vec4Param;
+			break;
 		default:
 			fragColor = vec4(0, 0, 0, 1);
 			break;

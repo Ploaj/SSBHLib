@@ -52,20 +52,28 @@ namespace CrossMod.Rendering
             if (defaultTextures == null)
                 defaultTextures = new DefaultTextures();
 
+            var genericMaterial = CreateGenericMaterial(Material);
+
+            genericMaterial.SetShaderUniforms(shader);
+        }
+
+        private SFGenericModel.Materials.GenericMaterial CreateGenericMaterial(Material material)
+        {
             // Don't use the default texture unit.
             var genericMaterial = new SFGenericModel.Materials.GenericMaterial(1);
-            if (Material.col != null)
-                genericMaterial.AddTexture("colMap", Material.col);
+
+            if (material.col != null)
+                genericMaterial.AddTexture("colMap", material.col);
             else
                 genericMaterial.AddTexture("colMap", defaultTextures.defaultWhite);
 
-            if (Material.prm != null)
-                genericMaterial.AddTexture("prmMap", Material.prm);
+            if (material.prm != null)
+                genericMaterial.AddTexture("prmMap", material.prm);
             else
                 genericMaterial.AddTexture("prmMap", defaultTextures.defaultWhite);
 
-            if (Material.nor != null)
-                genericMaterial.AddTexture("norMap", Material.nor);
+            if (material.nor != null)
+                genericMaterial.AddTexture("norMap", material.nor);
             else
                 genericMaterial.AddTexture("norMap", defaultTextures.defaultNormal);
 
@@ -73,7 +81,23 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
 
-            genericMaterial.SetShaderUniforms(shader);
+            // Set specific parameters and use a default value if not present.
+            AddMtalVec4(genericMaterial, material, RenderSettings.paramId, new Vector4(0));
+
+            return genericMaterial;
+        }
+
+        private static void AddMtalVec4(SFGenericModel.Materials.GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
+        {
+            if (source.vec4ByParamId.ContainsKey(paramId))
+            {
+                var value = source.vec4ByParamId[paramId];
+                genericMaterial.AddVector4($"vec4Param", new Vector4(value.X, value.Y, value.Z, value.W));
+            }
+            else
+            {
+                genericMaterial.AddVector4($"vec4Param", defaultValue);
+            }
         }
 
         public void Render(Camera Camera)

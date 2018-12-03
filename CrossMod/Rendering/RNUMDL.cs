@@ -14,11 +14,17 @@ namespace CrossMod.Rendering
         public RModel Model;
         public MTAL Material;
 
-        public enum TextureParamId
+        public enum ParamId
         {
-            Prm = 0x62,
-            Nor = 0x60,
-            Col = 0x5C
+            PrmMap = 0x62,
+            NorMap = 0x60,
+            ColMap = 0x5C
+        }
+
+        public enum ParamDataType
+        {
+            Texture = 0xB,
+            Vector4 = 0x5
         }
 
         private HashSet<long> colParamIds = new HashSet<long>()
@@ -50,21 +56,7 @@ namespace CrossMod.Rendering
                 if (currentEntry == null)
                     continue;
 
-                Material meshMaterial = new Material();
- 
-                foreach (MTAL_Attribute a in currentEntry.MaterialData)
-                {
-                    if (a.DataObject == null || a.DataType != 0xB)
-                        continue;
-
-                    var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
-                    if (colParamIds.Contains(a.ParamID))
-                        sfTextureByName.TryGetValue(text, out meshMaterial.col);
-                    else if (a.ParamID == (long)TextureParamId.Nor)
-                        sfTextureByName.TryGetValue(text, out meshMaterial.nor);
-                    else if (a.ParamID == (long)TextureParamId.Prm)
-                        sfTextureByName.TryGetValue(text, out meshMaterial.prm);
-                }
+                Material meshMaterial = GetMaterial(currentEntry);
 
                 int subindex = 0;
                 string prevMesh = "";
@@ -82,6 +74,39 @@ namespace CrossMod.Rendering
                     }
                 }
             }
+        }
+
+        private Material GetMaterial(MTAL_Entry currentEntry)
+        {
+            Material meshMaterial = new Material();
+
+            foreach (MTAL_Attribute a in currentEntry.MaterialData)
+            {
+                if (a.DataObject == null)
+                    continue;
+
+                if (a.DataType == (long)ParamDataType.Texture)
+                {
+                    SetTextureParameter(meshMaterial, a);
+                }
+                else if (a.DataType == (long)ParamDataType.Vector4)
+                {
+                    meshMaterial.vec4ByParamId[a.ParamID] = (MTAL_Attribute.MTAL_Vector4)a.DataObject;
+                }
+            }
+
+            return meshMaterial;
+        }
+
+        private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)
+        {
+            var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
+            if (colParamIds.Contains(a.ParamID))
+                sfTextureByName.TryGetValue(text, out meshMaterial.col);
+            else if (a.ParamID == (long)ParamId.NorMap)
+                sfTextureByName.TryGetValue(text, out meshMaterial.nor);
+            else if (a.ParamID == (long)ParamId.PrmMap)
+                sfTextureByName.TryGetValue(text, out meshMaterial.prm);
         }
 
         public void Render(Camera Camera)

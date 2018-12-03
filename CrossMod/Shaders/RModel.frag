@@ -115,7 +115,7 @@ void main()
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;
 
-	// Cavity map?
+	// Cavity Map
 	fragColor.rgb *= norColor.aaa;
 
 	fragColor.rgb = GetSrgb(fragColor.rgb);
