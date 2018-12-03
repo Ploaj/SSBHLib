@@ -45,57 +45,35 @@ namespace CrossMod.GUI
 
         private void redButton_Click(object sender, EventArgs e)
         {
-            if (RenderSettings.renderChannels.X == 1)
-            {
-                RenderSettings.renderChannels.X = 0;
-                redButton.ForeColor = System.Drawing.Color.Gray;
-            }
-            else
-            {
-                RenderSettings.renderChannels.X = 1;
-                redButton.ForeColor = System.Drawing.Color.Red;
-            }
+            SetChannel(redButton, System.Drawing.Color.Red, 0);
         }
 
         private void greenButton_Click(object sender, EventArgs e)
         {
-            if (RenderSettings.renderChannels.Y == 1)
-            {
-                RenderSettings.renderChannels.Y = 0;
-                greenButton.ForeColor = System.Drawing.Color.Gray;
-            }
-            else
-            {
-                RenderSettings.renderChannels.Y = 1;
-                greenButton.ForeColor = System.Drawing.Color.Green;
-            }
+            SetChannel(greenButton, System.Drawing.Color.Green, 1);
         }
 
         private void blueButton_Click(object sender, EventArgs e)
         {
-            if (RenderSettings.renderChannels.Z == 1)
-            {
-                RenderSettings.renderChannels.Z = 0;
-                blueButton.ForeColor = System.Drawing.Color.Gray;
-            }
-            else
-            {
-                RenderSettings.renderChannels.Z = 1;
-                blueButton.ForeColor = System.Drawing.Color.Blue;
-            }
+            SetChannel(blueButton, System.Drawing.Color.Blue, 2);
         }
 
         private void alphaButton_Click(object sender, EventArgs e)
         {
-            if (RenderSettings.renderChannels.W == 1)
+            SetChannel(alphaButton, System.Drawing.Color.Black, 3);
+        }
+
+        private void SetChannel(Button button, System.Drawing.Color activeColor, int channelIndex)
+        {
+            if (RenderSettings.renderChannels[channelIndex] == 1)
             {
-                RenderSettings.renderChannels.W = 0;
-                alphaButton.ForeColor = System.Drawing.Color.Gray;
+                RenderSettings.renderChannels[channelIndex] = 0;
+                button.ForeColor = System.Drawing.Color.Gray;
             }
             else
             {
-                RenderSettings.renderChannels.W = 1;
-                alphaButton.ForeColor = System.Drawing.Color.Black;
+                RenderSettings.renderChannels[channelIndex] = 1;
+                button.ForeColor = activeColor;
             }
         }
 

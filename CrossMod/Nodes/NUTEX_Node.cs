@@ -207,12 +207,16 @@ namespace CrossMod.Nodes
             if (glFormatByNuTexFormat.ContainsKey(Format))
             {
                 // TODO: This may require a higher OpenGL version for BC7.
-                var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
+                var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                {
+                    TextureWrapS = TextureWrapMode.Repeat,
+                    TextureWrapT = TextureWrapMode.Repeat
+                };
+
                 if(glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
                     sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
-                texture.texture = sfTex;
-                sfTex.TextureWrapS = TextureWrapMode.Repeat;
-                sfTex.TextureWrapT = TextureWrapMode.Repeat;
+
+                texture.renderTexture = sfTex;
             }
 
             return texture;

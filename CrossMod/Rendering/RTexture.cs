@@ -9,7 +9,7 @@ namespace CrossMod.Rendering
         public static Shader textureShader = null;
         private static ScreenTriangle triangle = null;
 
-        public SFGraphics.GLObjects.Textures.Texture texture = null;
+        public SFGraphics.GLObjects.Textures.Texture renderTexture = null;
 
         public void Render(Camera Camera)
         {
@@ -26,8 +26,8 @@ namespace CrossMod.Rendering
 
             // Texture unit 0 should be reserved for image preview.
             textureShader.UseProgram();
-            if (texture != null)
-                textureShader.SetTexture("image", texture, 0);
+            if (renderTexture != null)
+                textureShader.SetTexture("image", renderTexture, 0);
 
             triangle.Draw(textureShader, null);
         }
