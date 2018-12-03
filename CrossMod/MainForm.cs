@@ -2,9 +2,11 @@
 using CrossMod.Nodes;
 using System;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CrossMod.IO;
 
 namespace CrossMod
 {
@@ -13,12 +15,16 @@ namespace CrossMod
         // Controls
         private ModelViewport _modelControl;
 
+        private ContextMenu fileTreeContextMenu;
+
         public MainForm()
         {
             InitializeComponent();
 
             _modelControl = new ModelViewport();
             _modelControl.Dock = DockStyle.Fill;
+
+            fileTreeContextMenu = new ContextMenu();
         }
 
         public void ShowModelControl()
@@ -101,6 +107,45 @@ namespace CrossMod
         {
             var settingsMenu = new RenderSettingsMenu();
             settingsMenu.Show();
+        }
+
+        private void fileTree_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Point where the mouse is clicked.
+                Point p = new Point(e.X, e.Y);
+
+                // Get the node that the user has clicked.
+                TreeNode node = fileTree.GetNodeAt(p);
+                if (node != null)
+                {
+                    fileTree.SelectedNode = node;
+                    fileTreeContextMenu.MenuItems.Clear();
+
+                    // gather all options for this node
+                    if(node is IExportableModelNode exportableNode)
+                    {
+                        MenuItem ExportSMD = new MenuItem("Export As SMD");
+                        ExportSMD.Click += exportExportableModelAsSMD;
+                        ExportSMD.Tag = exportableNode;
+                        fileTreeContextMenu.MenuItems.Add(ExportSMD);
+                    }
+
+                    // show if it has at least 1 option
+                    if(fileTreeContextMenu.MenuItems.Count != 0)
+                        fileTreeContextMenu.Show(fileTree, p);
+                }
+            }
+        }
+
+        private void exportExportableModelAsSMD(object sender, EventArgs args)
+        {
+            string FileName;
+            if (FileTools.TrySaveFile(out FileName, "Source MDL(.smd)|*.smd"))
+            {
+                IO_SMD.ExportIOModelAsSMD(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+            }
         }
     }
 }

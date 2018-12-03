@@ -16,9 +16,9 @@ namespace SSBHLib.Formats
 
         public SKEL_Matrix[] InvWorldTransform { get; set; }
 
-        public SKEL_Matrix[] InvTransform { get; set; }
-
         public SKEL_Matrix[] Transform { get; set; }
+
+        public SKEL_Matrix[] InvTransform { get; set; }
     }
 
     public class SKEL_BoneEntry : ISSBH_File

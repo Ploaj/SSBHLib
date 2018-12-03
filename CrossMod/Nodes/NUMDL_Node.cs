@@ -68,7 +68,22 @@ namespace CrossMod.Nodes
         
         public IOModel GetIOModel()
         {
-            return new IOModel();
+            IOModel OutModel = new IOModel();
+            NUMSHB_Node MeshNode;
+
+            foreach (FileNode n in Parent.Nodes)
+            {
+                if (n.Text.Equals(_model.MeshString))
+                {
+                    MeshNode = ((NUMSHB_Node)n);
+                }
+                if (n.Text.Equals(_model.SkeletonFileName))
+                {
+                    OutModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
+                }
+            }
+
+            return OutModel;
         }
     }
 }

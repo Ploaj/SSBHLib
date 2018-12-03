@@ -97,12 +97,46 @@ namespace CrossMod.Rendering
                 return Transform.ExtractRotation();
             }
         }
+        public Vector3 EulerRotation
+        {
+            get
+            {
+                return ToEulerAngles(InvTransform.ExtractRotation());
+            }
+        }
         public Vector3 Scale
         {
             get
             {
                 return Transform.ExtractScale();
             }
+        }
+
+        private static float Clamp(float v, float min, float max)
+        {
+            if (v < min) return min;
+            if (v > max) return max;
+            return v;
+        }
+
+        private static Vector3 ToEulerAngles(Quaternion q)
+        {
+            Matrix4 mat = Matrix4.CreateFromQuaternion(q);
+            float x, y, z;
+
+            y = (float)Math.Asin(-Clamp(mat.M31, -1, 1));
+
+            if (Math.Abs(mat.M31) < 0.99999)
+            {
+                x = (float)Math.Atan2(mat.M32, mat.M33);
+                z = (float)Math.Atan2(mat.M21, mat.M11);
+            }
+            else
+            {
+                x = 0;
+                z = (float)Math.Atan2(-mat.M12, mat.M22);
+            }
+            return new Vector3(x, y, z);
         }
     }
 }

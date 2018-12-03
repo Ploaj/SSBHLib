@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CrossMod.Rendering;
-using OpenTK;
 
 namespace CrossMod.IO
 {
@@ -9,9 +8,9 @@ namespace CrossMod.IO
     {
         public string Name;
         public RSkeleton Skeleton;
+        public List<IOMesh> Meshes = new List<IOMesh>();
 
         public bool HasSkeleton { get { return Skeleton != null; } }
-
-        public List<IOMesh> Meshes = new List<IOMesh>();
+        public bool HasMeshes { get { return Meshes != null; } }
     }
 }
