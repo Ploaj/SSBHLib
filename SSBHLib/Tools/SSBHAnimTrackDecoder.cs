@@ -190,9 +190,9 @@ namespace SSBHLib.Tools
                                 {
                                     switch (j)
                                     {
-                                        case 6: Transform.X = FrameValue; break;
-                                        case 7: Transform.Y = FrameValue; break;
-                                        case 8: Transform.Z = FrameValue; break;
+                                        case 6: if (ValueBitCount > 0) Transform.X = FrameValue; else Transform.X = XPOS; break;
+                                        case 7: if (ValueBitCount > 0) Transform.Y = FrameValue; else Transform.Y = YPOS; break;
+                                        case 8: if (ValueBitCount > 0) Transform.Z = FrameValue; else Transform.Z = ZPOS; break;
                                     }
                                 }
                                 else
