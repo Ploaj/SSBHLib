@@ -166,9 +166,10 @@ namespace CrossMod.Nodes
                     {
                         Name = "Bone",
                         Size = 4,
-                        Type = VertexAttribPointerType.UnsignedShort,
+                        IType = VertexAttribIntegerType.UnsignedShort,
                         Offset = vertexBuffer.Length,
-                        Stride = 4 * 6
+                        Stride = 4 * 6,
+                        Integer = true
                     });
                     Mesh.VertexAttributes.Add(new CustomVertexAttribute()
                     {
