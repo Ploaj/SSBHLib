@@ -35,9 +35,10 @@
             this.alphaButton = new System.Windows.Forms.Button();
             this.diffuseCB = new System.Windows.Forms.CheckBox();
             this.specularCB = new System.Windows.Forms.CheckBox();
+            this.wireframeCB = new System.Windows.Forms.CheckBox();
             this.renderModeComboBox = new System.Windows.Forms.ComboBox();
             this.paramTextBox = new System.Windows.Forms.TextBox();
-            this.wireframeCB = new System.Windows.Forms.CheckBox();
+            this.dittoCB = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,6 +51,7 @@
             this.flowLayoutPanel1.Controls.Add(this.diffuseCB);
             this.flowLayoutPanel1.Controls.Add(this.specularCB);
             this.flowLayoutPanel1.Controls.Add(this.wireframeCB);
+            this.flowLayoutPanel1.Controls.Add(this.dittoCB);
             this.flowLayoutPanel1.Controls.Add(this.renderModeComboBox);
             this.flowLayoutPanel1.Controls.Add(this.paramTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -120,6 +122,17 @@
             this.specularCB.UseVisualStyleBackColor = true;
             this.specularCB.CheckedChanged += new System.EventHandler(this.specularCB_CheckedChanged);
             // 
+            // wireframeCB
+            // 
+            this.wireframeCB.AutoSize = true;
+            this.wireframeCB.Location = new System.Drawing.Point(3, 55);
+            this.wireframeCB.Name = "wireframeCB";
+            this.wireframeCB.Size = new System.Drawing.Size(112, 17);
+            this.wireframeCB.TabIndex = 8;
+            this.wireframeCB.Text = "Render Wireframe";
+            this.wireframeCB.UseVisualStyleBackColor = true;
+            this.wireframeCB.CheckedChanged += new System.EventHandler(this.wireframeCB_CheckedChanged);
+            // 
             // renderModeComboBox
             // 
             this.renderModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -149,16 +162,16 @@
             this.paramTextBox.TabIndex = 5;
             this.paramTextBox.TextChanged += new System.EventHandler(this.paramTextBox_TextChanged);
             // 
-            // wireframeCB
+            // dittoCB
             // 
-            this.wireframeCB.AutoSize = true;
-            this.wireframeCB.Location = new System.Drawing.Point(3, 55);
-            this.wireframeCB.Name = "wireframeCB";
-            this.wireframeCB.Size = new System.Drawing.Size(112, 17);
-            this.wireframeCB.TabIndex = 8;
-            this.wireframeCB.Text = "Render Wireframe";
-            this.wireframeCB.UseVisualStyleBackColor = true;
-            this.wireframeCB.CheckedChanged += new System.EventHandler(this.wireframeCB_CheckedChanged);
+            this.dittoCB.AutoSize = true;
+            this.dittoCB.Location = new System.Drawing.Point(121, 55);
+            this.dittoCB.Name = "dittoCB";
+            this.dittoCB.Size = new System.Drawing.Size(127, 17);
+            this.dittoCB.TabIndex = 9;
+            this.dittoCB.Text = "Metamon Form (Ditto)";
+            this.dittoCB.UseVisualStyleBackColor = true;
+            this.dittoCB.CheckedChanged += new System.EventHandler(this.dittoCB_CheckedChanged);
             // 
             // RenderSettingsMenu
             // 
@@ -187,5 +200,6 @@
         private System.Windows.Forms.CheckBox diffuseCB;
         private System.Windows.Forms.CheckBox specularCB;
         private System.Windows.Forms.CheckBox wireframeCB;
+        private System.Windows.Forms.CheckBox dittoCB;
     }
 }

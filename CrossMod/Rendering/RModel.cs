@@ -44,6 +44,7 @@ namespace CrossMod.Rendering
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.enableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.enableSpecular);
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.enableWireframe);
+            currentShader.SetBoolToInt("useDittoForm", RenderSettings.useDittoForm);
 
             currentShader.EnableVertexAttributes();
 

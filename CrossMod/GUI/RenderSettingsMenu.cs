@@ -35,6 +35,8 @@ namespace CrossMod.GUI
             specularCB.Checked = RenderSettings.enableSpecular;
             diffuseCB.Checked = RenderSettings.enableDiffuse;
             wireframeCB.Checked = RenderSettings.enableWireframe;
+            dittoCB.Enabled = !RenderSettings.useDebugShading;
+            dittoCB.Checked = RenderSettings.useDittoForm;
 
             renderModeComboBox.Items.Clear();
             renderModeComboBox.Items.AddRange(renderModes.ToArray());
@@ -45,6 +47,7 @@ namespace CrossMod.GUI
         {
             RenderSettings.renderMode = renderModeComboBox.SelectedIndex;
             RenderSettings.useDebugShading = RenderSettings.renderMode != 0;
+            dittoCB.Enabled = !RenderSettings.useDebugShading;
         }
 
         private void redButton_Click(object sender, EventArgs e)
@@ -100,6 +103,11 @@ namespace CrossMod.GUI
         private void wireframeCB_CheckedChanged(object sender, EventArgs e)
         {
             RenderSettings.enableWireframe = wireframeCB.Checked;
+        }
+
+        private void dittoCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderSettings.useDittoForm = dittoCB.Checked;
         }
     }
 }

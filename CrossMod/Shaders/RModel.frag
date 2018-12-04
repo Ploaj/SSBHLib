@@ -21,6 +21,7 @@ uniform samplerCube specularPbrCube;
 uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderWireframe;
+uniform int useDittoForm;
 
 uniform mat4 mvp;
 
@@ -100,8 +101,13 @@ void main()
 	vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
+    // Ditto color in linear gamma.
+    if (useDittoForm == 1)
+        albedoColor.rgb = vec3(0.302, 0.242, 0.374);
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
+    if (useDittoForm == 1)
+        prmColor = vec4(1, 0.255, 1, 1);
 
 	float directLightIntensity = 1.25;
 
@@ -109,7 +115,7 @@ void main()
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
 	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rrr * 2.5;
+	vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
 	int maxLod = 10;
 	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
 
@@ -122,11 +128,14 @@ void main()
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 
 	// Diffuse
-	vec3 kDiffuse = (1 - kSpecular);
+    // TODO: Causes discoloration.
+	vec3 kDiffuse = (1 - kSpecular.rrr);
+    //kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
 	vec3 diffuseLight = diffuseIbl;
 
 	// Direct lighting.
 	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
+
 
 	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
 
@@ -146,10 +155,10 @@ void main()
 	fragColor.rgb *= prmColor.b;
 
 	// Cavity Map
-	fragColor.rgb *= norColor.aaa;
+	//fragColor.rgb *= norColor.aaa;
 
 	// Emission
-	fragColor.rgb += texture(emiMap, UV0).rgb;
+	//fragColor.rgb += texture(emiMap, UV0).rgb;
 
 	// Gamma correction.
 	fragColor.rgb = GetSrgb(fragColor.rgb);
