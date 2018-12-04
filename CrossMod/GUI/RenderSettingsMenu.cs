@@ -34,6 +34,7 @@ namespace CrossMod.GUI
 
             specularCB.Checked = RenderSettings.enableSpecular;
             diffuseCB.Checked = RenderSettings.enableDiffuse;
+            wireframeCB.Checked = RenderSettings.enableWireframe;
 
             renderModeComboBox.Items.Clear();
             renderModeComboBox.Items.AddRange(renderModes.ToArray());
@@ -94,6 +95,11 @@ namespace CrossMod.GUI
         private void specularCB_CheckedChanged(object sender, EventArgs e)
         {
             RenderSettings.enableSpecular = specularCB.Checked;
+        }
+
+        private void wireframeCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderSettings.enableWireframe = wireframeCB.Checked;
         }
     }
 }

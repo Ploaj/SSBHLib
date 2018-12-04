@@ -33,10 +33,11 @@
             this.greenButton = new System.Windows.Forms.Button();
             this.blueButton = new System.Windows.Forms.Button();
             this.alphaButton = new System.Windows.Forms.Button();
-            this.renderModeComboBox = new System.Windows.Forms.ComboBox();
-            this.paramTextBox = new System.Windows.Forms.TextBox();
             this.diffuseCB = new System.Windows.Forms.CheckBox();
             this.specularCB = new System.Windows.Forms.CheckBox();
+            this.renderModeComboBox = new System.Windows.Forms.ComboBox();
+            this.paramTextBox = new System.Windows.Forms.TextBox();
+            this.wireframeCB = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +49,7 @@
             this.flowLayoutPanel1.Controls.Add(this.alphaButton);
             this.flowLayoutPanel1.Controls.Add(this.diffuseCB);
             this.flowLayoutPanel1.Controls.Add(this.specularCB);
+            this.flowLayoutPanel1.Controls.Add(this.wireframeCB);
             this.flowLayoutPanel1.Controls.Add(this.renderModeComboBox);
             this.flowLayoutPanel1.Controls.Add(this.paramTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -96,35 +98,6 @@
             this.alphaButton.UseVisualStyleBackColor = true;
             this.alphaButton.Click += new System.EventHandler(this.alphaButton_Click);
             // 
-            // renderModeComboBox
-            // 
-            this.renderModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.renderModeComboBox.FormattingEnabled = true;
-            this.renderModeComboBox.Items.AddRange(new object[] {
-            "Shaded",
-            "Col",
-            "Prm",
-            "Nor",
-            "Emi",
-            "Vertex Color",
-            "Normals",
-            "Tangent",
-            "Bake Color",
-            "Param ID (Vector 4 Only)"});
-            this.renderModeComboBox.Location = new System.Drawing.Point(3, 55);
-            this.renderModeComboBox.Name = "renderModeComboBox";
-            this.renderModeComboBox.Size = new System.Drawing.Size(318, 21);
-            this.renderModeComboBox.TabIndex = 4;
-            this.renderModeComboBox.SelectedIndexChanged += new System.EventHandler(this.renderModeComboBox_SelectedIndexChanged);
-            // 
-            // paramTextBox
-            // 
-            this.paramTextBox.Location = new System.Drawing.Point(3, 82);
-            this.paramTextBox.Name = "paramTextBox";
-            this.paramTextBox.Size = new System.Drawing.Size(318, 20);
-            this.paramTextBox.TabIndex = 5;
-            this.paramTextBox.TextChanged += new System.EventHandler(this.paramTextBox_TextChanged);
-            // 
             // diffuseCB
             // 
             this.diffuseCB.AutoSize = true;
@@ -146,6 +119,46 @@
             this.specularCB.Text = "Enable Specular";
             this.specularCB.UseVisualStyleBackColor = true;
             this.specularCB.CheckedChanged += new System.EventHandler(this.specularCB_CheckedChanged);
+            // 
+            // renderModeComboBox
+            // 
+            this.renderModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.renderModeComboBox.FormattingEnabled = true;
+            this.renderModeComboBox.Items.AddRange(new object[] {
+            "Shaded",
+            "Col",
+            "Prm",
+            "Nor",
+            "Emi",
+            "Vertex Color",
+            "Normals",
+            "Tangent",
+            "Bake Color",
+            "Param ID (Vector 4 Only)"});
+            this.renderModeComboBox.Location = new System.Drawing.Point(3, 78);
+            this.renderModeComboBox.Name = "renderModeComboBox";
+            this.renderModeComboBox.Size = new System.Drawing.Size(318, 21);
+            this.renderModeComboBox.TabIndex = 4;
+            this.renderModeComboBox.SelectedIndexChanged += new System.EventHandler(this.renderModeComboBox_SelectedIndexChanged);
+            // 
+            // paramTextBox
+            // 
+            this.paramTextBox.Location = new System.Drawing.Point(3, 105);
+            this.paramTextBox.Name = "paramTextBox";
+            this.paramTextBox.Size = new System.Drawing.Size(318, 20);
+            this.paramTextBox.TabIndex = 5;
+            this.paramTextBox.TextChanged += new System.EventHandler(this.paramTextBox_TextChanged);
+            // 
+            // wireframeCB
+            // 
+            this.wireframeCB.AutoSize = true;
+            this.wireframeCB.Location = new System.Drawing.Point(3, 55);
+            this.wireframeCB.Name = "wireframeCB";
+            this.wireframeCB.Size = new System.Drawing.Size(112, 17);
+            this.wireframeCB.TabIndex = 8;
+            this.wireframeCB.Text = "Render Wireframe";
+            this.wireframeCB.UseVisualStyleBackColor = true;
+            this.wireframeCB.CheckedChanged += new System.EventHandler(this.wireframeCB_CheckedChanged);
             // 
             // RenderSettingsMenu
             // 
@@ -173,5 +186,6 @@
         private System.Windows.Forms.TextBox paramTextBox;
         private System.Windows.Forms.CheckBox diffuseCB;
         private System.Windows.Forms.CheckBox specularCB;
+        private System.Windows.Forms.CheckBox wireframeCB;
     }
 }
