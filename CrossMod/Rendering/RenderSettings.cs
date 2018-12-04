@@ -4,6 +4,8 @@
     {
         public static bool useDebugShading = false;
 
+        public static bool useDittoForm = false;
+
         public static bool enableDiffuse = true;
         public static bool enableSpecular = true;
 

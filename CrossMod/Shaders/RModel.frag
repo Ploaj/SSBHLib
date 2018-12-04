@@ -21,6 +21,7 @@ uniform samplerCube specularPbrCube;
 uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderWireframe;
+uniform int useDittoForm;
 
 uniform mat4 mvp;
 
@@ -100,8 +101,13 @@ void main()
 	vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
+    // Ditto color in linear gamma.
+    if (useDittoForm == 1)
+        albedoColor.rgb = vec3(0.302, 0.242, 0.374);
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
+    if (useDittoForm == 1)
+        prmColor = vec4(1, 0.255, 1, 1);
 
 	float directLightIntensity = 1.25;
 
