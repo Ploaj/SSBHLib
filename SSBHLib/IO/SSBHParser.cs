@@ -225,6 +225,9 @@ namespace SSBHLib.IO
             {
                 return new SSBHOffset(Position + ReadInt64());
             }
+            if (t == typeof(ANIM_TRACKFLAGS))
+                return (ANIM_TRACKFLAGS)ReadUInt32();
+            else
             if (t == typeof(byte))
                 return ReadByte();
             else
