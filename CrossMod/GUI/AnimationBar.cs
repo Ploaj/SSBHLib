@@ -46,10 +46,32 @@ namespace CrossMod.GUI
         public RSkeleton Skeleton;
         public IRenderableAnimation Animation;
 
+        private Timer AnimationPlayer;
+
         public AnimationBar()
         {
             InitializeComponent();
             animationTrack.TickFrequency = 1;
+            SetupTimer();
+        }
+
+        private void SetupTimer()
+        {
+            AnimationPlayer = new Timer();
+            AnimationPlayer.Interval = 100 / 60;
+            AnimationPlayer.Tick += new EventHandler(animationTimer_Tick);
+        }
+
+        private void animationTimer_Tick(object sender, EventArgs e)
+        {
+            if(animationTrack.Value == animationTrack.Maximum)
+            {
+                animationTrack.Value = 0;
+            }
+            else
+            {
+                animationTrack.Value++;
+            }
         }
 
         private void animationTrack_ValueChanged(object sender, EventArgs e)
@@ -61,7 +83,16 @@ namespace CrossMod.GUI
 
         private void playButton_Click(object sender, EventArgs e)
         {
-
+            if (playButton.Text.Equals(">"))
+            {
+                playButton.Text = "||";
+                AnimationPlayer.Start();
+            }
+            else
+            {
+                playButton.Text = ">";
+                AnimationPlayer.Stop();
+            }
         }
     }
 }
