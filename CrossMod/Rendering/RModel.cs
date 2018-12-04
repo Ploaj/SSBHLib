@@ -93,6 +93,7 @@ namespace CrossMod.Rendering
             {
                 shader = new Shader();
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
                 System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
             }
@@ -101,6 +102,7 @@ namespace CrossMod.Rendering
             {
                 textureDebugShader = new Shader();
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RTexDebug.frag"), ShaderType.FragmentShader);
+                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
                 System.Diagnostics.Debug.WriteLine(textureDebugShader.GetErrorLog());
             }

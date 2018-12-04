@@ -4,6 +4,7 @@ in vec3 N;
 in vec3 tangent;
 in vec2 UV0;
 in vec3 vertexColor;
+noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
 uniform sampler2D prmMap;
