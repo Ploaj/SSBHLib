@@ -15,6 +15,9 @@ uniform sampler2D iblLut;
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
+uniform int renderDiffuse;
+uniform int renderSpecular;
+
 uniform mat4 mvp;
 
 out vec4 fragColor;
@@ -79,38 +82,44 @@ void main()
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 
+	float directLightIntensity = 1.25;
+
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
 	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rgb * 2.5;
+	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rrr * 2.5;
 	int maxLod = 10;
-	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * 2.5;
+	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
 
 	float metalness = prmColor.r;
 
-	// TODO: Ink map?
-	// float inkAmount = 0.5;
-	// if (norColor.b > inkAmount)
-	// {
-	// 	albedoColor.rgb = vec3(1, 0, 1);
-	// 	roughness = 0.0;
-	// 	metalness = 1;
-	// }
+	fragColor = vec4(0, 0, 0, 1);
 
-	// Diffuse
-	fragColor = albedoColor;
-	fragColor.rgb *= diffuseIbl;
-	// fragColor.rgb *= (1 - metalness); // TODO: Doesn't work for skin.
-
-	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
 	float maxF0Dialectric = 0.08;
 	vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
-	// fragColor.rgb += GgxShading(newNormal, V, roughness) * kSpecular;
+
+	// Diffuse
+	vec3 kDiffuse = (1 - kSpecular);
+	vec3 diffuseLight = diffuseIbl;
+
+	// Direct lighting.
+	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
+
+	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
+
+	// TODO: Doesn't work for skin.
+	fragColor.a = albedoColor.a;
+
+	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
 	vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
 	vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
-	fragColor.rgb += specularTerm * kSpecular;
+
+	// Direct lighting.
+	specularTerm += GgxShading(newNormal, V, roughness + 0.25) * directLightIntensity;
+
+	fragColor.rgb += specularTerm * kSpecular * renderSpecular;
 
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;

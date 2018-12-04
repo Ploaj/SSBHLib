@@ -35,6 +35,8 @@
             this.alphaButton = new System.Windows.Forms.Button();
             this.renderModeComboBox = new System.Windows.Forms.ComboBox();
             this.paramTextBox = new System.Windows.Forms.TextBox();
+            this.diffuseCB = new System.Windows.Forms.CheckBox();
+            this.specularCB = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,12 +46,14 @@
             this.flowLayoutPanel1.Controls.Add(this.greenButton);
             this.flowLayoutPanel1.Controls.Add(this.blueButton);
             this.flowLayoutPanel1.Controls.Add(this.alphaButton);
+            this.flowLayoutPanel1.Controls.Add(this.diffuseCB);
+            this.flowLayoutPanel1.Controls.Add(this.specularCB);
             this.flowLayoutPanel1.Controls.Add(this.renderModeComboBox);
             this.flowLayoutPanel1.Controls.Add(this.paramTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(327, 86);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(327, 146);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // redButton
@@ -107,7 +111,7 @@
             "Tangent",
             "Bake Color",
             "Param ID (Vector 4 Only)"});
-            this.renderModeComboBox.Location = new System.Drawing.Point(3, 32);
+            this.renderModeComboBox.Location = new System.Drawing.Point(3, 55);
             this.renderModeComboBox.Name = "renderModeComboBox";
             this.renderModeComboBox.Size = new System.Drawing.Size(318, 21);
             this.renderModeComboBox.TabIndex = 4;
@@ -115,17 +119,39 @@
             // 
             // paramTextBox
             // 
-            this.paramTextBox.Location = new System.Drawing.Point(3, 59);
+            this.paramTextBox.Location = new System.Drawing.Point(3, 82);
             this.paramTextBox.Name = "paramTextBox";
             this.paramTextBox.Size = new System.Drawing.Size(318, 20);
             this.paramTextBox.TabIndex = 5;
             this.paramTextBox.TextChanged += new System.EventHandler(this.paramTextBox_TextChanged);
             // 
+            // diffuseCB
+            // 
+            this.diffuseCB.AutoSize = true;
+            this.diffuseCB.Location = new System.Drawing.Point(3, 32);
+            this.diffuseCB.Name = "diffuseCB";
+            this.diffuseCB.Size = new System.Drawing.Size(95, 17);
+            this.diffuseCB.TabIndex = 6;
+            this.diffuseCB.Text = "Enable Diffuse";
+            this.diffuseCB.UseVisualStyleBackColor = true;
+            this.diffuseCB.CheckedChanged += new System.EventHandler(this.diffuseCB_CheckedChanged);
+            // 
+            // specularCB
+            // 
+            this.specularCB.AutoSize = true;
+            this.specularCB.Location = new System.Drawing.Point(104, 32);
+            this.specularCB.Name = "specularCB";
+            this.specularCB.Size = new System.Drawing.Size(104, 17);
+            this.specularCB.TabIndex = 7;
+            this.specularCB.Text = "Enable Specular";
+            this.specularCB.UseVisualStyleBackColor = true;
+            this.specularCB.CheckedChanged += new System.EventHandler(this.specularCB_CheckedChanged);
+            // 
             // RenderSettingsMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 86);
+            this.ClientSize = new System.Drawing.Size(327, 146);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "RenderSettingsMenu";
@@ -145,5 +171,7 @@
         private System.Windows.Forms.Button alphaButton;
         private System.Windows.Forms.ComboBox renderModeComboBox;
         private System.Windows.Forms.TextBox paramTextBox;
+        private System.Windows.Forms.CheckBox diffuseCB;
+        private System.Windows.Forms.CheckBox specularCB;
     }
 }
