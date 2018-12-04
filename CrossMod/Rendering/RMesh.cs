@@ -70,6 +70,14 @@ namespace CrossMod.Rendering
             else
                 genericMaterial.AddTexture("colMap", defaultTextures.defaultWhite);
 
+            // Use the first texture for both layers if the second layer isn't present.
+            if (material.col2 != null)
+                genericMaterial.AddTexture("col2Map", material.col2);
+            else if (material.col != null)
+                genericMaterial.AddTexture("col2Map", material.col);
+            else
+                genericMaterial.AddTexture("col2Map", defaultTextures.defaultWhite);
+
             if (material.prm != null)
                 genericMaterial.AddTexture("prmMap", material.prm);
             else

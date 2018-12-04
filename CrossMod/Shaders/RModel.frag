@@ -7,6 +7,7 @@ in vec3 vertexColor;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
+uniform sampler2D col2Map;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
@@ -94,8 +95,11 @@ void main()
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
 	vec3 R = reflect(V, newNormal);
 
-	// TODO: Accessing unitialized textures may cause crashes.
+	// BLend two diffuse layers based on alpha.
+    // The second layer is set using the first layer if not present.
 	vec4 albedoColor = texture(colMap, UV0).rgba;
+    vec4 albedoColor2 = texture(col2Map, UV0).rgba;
+    albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 

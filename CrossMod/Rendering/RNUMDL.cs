@@ -19,6 +19,7 @@ namespace CrossMod.Rendering
             PrmMap = 0x62,
             NorMap = 0x60,
             ColMap = 0x5C,
+            ColMap2 = 0x5D,
             EmiMap = 0x61,
             BakeLitMap = 0x65
         }
@@ -113,8 +114,10 @@ namespace CrossMod.Rendering
         private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)
         {
             var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
-            if (colParamIds.Contains(a.ParamID))
+            if (a.ParamID == (long)ParamId.ColMap)
                 sfTextureByName.TryGetValue(text, out meshMaterial.col);
+            else if (a.ParamID == (long)ParamId.ColMap2)
+                sfTextureByName.TryGetValue(text, out meshMaterial.col2);
             else if (a.ParamID == (long)ParamId.NorMap)
                 sfTextureByName.TryGetValue(text, out meshMaterial.nor);
             else if (a.ParamID == (long)ParamId.PrmMap)
