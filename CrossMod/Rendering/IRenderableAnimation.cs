@@ -7,6 +7,6 @@ namespace CrossMod.Rendering
 
         void SetFrameSkeleton(RSkeleton Skeleton, float Frame);
 
-        void SetFrameModel(RSkeleton Skeleton, float Frame);
+        void SetFrameModel(RModel Model, float Frame);
     }
 }

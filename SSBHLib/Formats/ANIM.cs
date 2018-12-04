@@ -6,13 +6,21 @@ using System.Threading.Tasks;
 
 namespace SSBHLib.Formats
 {
+    public enum ANIM_TYPE
+    {
+        Transform = 1,
+        Visibilty = 2, 
+        Material = 4
+    }
+
     [Flags]
     public enum ANIM_TRACKFLAGS
     {
-        None = 0,
-        Has_Scale = 0x2,
-        Has_Rotation = 0x4,
-        Has_Position = 0x8
+        Transform = 0x1,
+        Visibilty = 0x8,
+        SingleTransform = 0x0200,
+        HasTracks = 0x0400,
+        SingleTrack = 0x0500,
     }
 
     [SSBHFileAttribute("MINA")]

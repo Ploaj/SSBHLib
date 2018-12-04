@@ -20,19 +20,20 @@ namespace CrossMod.GUI
             {
                 if (value == null)
                     return;
-
-                if (value is IRenderableAnimation)
+                
+                if (value.GetRenderableNode() is IRenderableAnimation anim)
                 {
-                    animationBar.Animation = (IRenderableAnimation)value;
+                    animationBar.Animation = anim;
+                    animationBar.FrameCount = anim.GetFrameCount();
+                    ClearDisplay();
                     controlBox.Visible = true;
                 }
                 else
                 {
-                    controlBox.Visible = false;
+                    renderableNode = value.GetRenderableNode();
                     ClearDisplay();
                 }
 
-                renderableNode = value.GetRenderableNode();
                 if (renderableNode is RSkeleton skeleton)
                 {
                     DisplaySkeleton(skeleton);
@@ -145,7 +146,10 @@ namespace CrossMod.GUI
             SetUpViewport();
 
             if (renderableNode != null)
+            {
                 renderableNode.Render(camera);
+            }
+
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
@@ -195,9 +199,9 @@ namespace CrossMod.GUI
                 {
                     camera.Pan((newMousePosition.X - mousePosition.X), (newMousePosition.Y - mousePosition.Y));
                 }
-                if (Keyboard.GetState().IsKeyDown(Key.Up))
+                if (Keyboard.GetState().IsKeyDown(Key.W))
                     camera.Zoom(0.5f);
-                if (Keyboard.GetState().IsKeyDown(Key.Down))
+                if (Keyboard.GetState().IsKeyDown(Key.S))
                     camera.Zoom(-0.5f);
 
                 camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
