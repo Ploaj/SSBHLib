@@ -79,11 +79,21 @@ namespace SSBHLib.Formats
             public float Y { get; set; }
             public float Z { get; set; }
             public float W { get; set; }
+
+            public override string ToString()
+            {
+                return $"({X}, {Y}, {Z}, {W})";
+            }
         }
 
         public class MTAL_String : ISSBH_File
         {
             public string Text { get; set; }
+
+            public override string ToString()
+            {
+                return Text;
+            }
         }
 
         public class MTAL_Unk_0E : ISSBH_File
