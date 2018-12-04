@@ -6,6 +6,7 @@ namespace CrossMod.Rendering
     public class Material
     {
         public Texture col = null;
+        public Texture col2 = null;
         public Texture nor = null;
         public Texture prm = null;
         public Texture emi = null;
