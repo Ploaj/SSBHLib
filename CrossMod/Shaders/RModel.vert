@@ -42,10 +42,22 @@ void main()
 
 
 	// skin
-	if(Weight.x != 0) position = bones_.transforms[Bone.x] * vec4(Position0, 1) * Weight.x;
-	if(Weight.y != 0) position += bones_.transforms[Bone.y] * vec4(Position0, 1) * Weight.y;
-	if(Weight.z != 0) position += bones_.transforms[Bone.z] * vec4(Position0, 1) * Weight.z;
-	if(Weight.w != 0) position += bones_.transforms[Bone.w] * vec4(Position0, 1) * Weight.w;
+	if(Weight.x != 0) {
+		position = bones_.transforms[Bone.x] * vec4(Position0, 1) * Weight.x;
+		geomN.xyz = (inverse(transpose(bones_.transforms[Bone.x])) * vec4(Normal0, 1) * Weight.x).xyz;
+	}
+	if(Weight.y != 0) {
+		position += bones_.transforms[Bone.y] * vec4(Position0, 1) * Weight.y;
+		geomN.xyz += (inverse(transpose(bones_.transforms[Bone.y])) * vec4(Normal0, 1) * Weight.y).xyz;
+	}
+	if(Weight.z != 0) {
+		position += bones_.transforms[Bone.z] * vec4(Position0, 1) * Weight.z;
+		geomN.xyz += (inverse(transpose(bones_.transforms[Bone.z])) * vec4(Normal0, 1) * Weight.z).xyz;
+	}
+	if(Weight.w != 0) {
+		position += bones_.transforms[Bone.w] * vec4(Position0, 1) * Weight.w;
+		geomN.xyz += (inverse(transpose(bones_.transforms[Bone.w])) * vec4(Normal0, 1) * Weight.w).xyz;
+	}
 
 	gl_Position = mvp * vec4(position.xyz, 1);
 }

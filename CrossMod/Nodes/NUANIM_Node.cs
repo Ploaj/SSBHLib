@@ -82,7 +82,6 @@ namespace CrossMod.Nodes
                                 for (int i = 0; i < Transform.Length; i++)
                                 {
                                     AnimTrackTransform t = (AnimTrackTransform)Transform[i];
-                                    System.Console.WriteLine($"{t.SX} {t.SY} {t.SZ}");
                                     tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
                                     {
                                         Frame = i,
