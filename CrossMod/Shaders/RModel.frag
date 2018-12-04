@@ -103,7 +103,7 @@ void main()
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 
-	float directLightIntensity = 1.5;
+	float directLightIntensity = 1.25;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
@@ -122,12 +122,14 @@ void main()
 	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 
 	// Diffuse
-	vec3 kDiffuse = (1 - kSpecular);
+    // TODO: Causes discoloration.
+	vec3 kDiffuse = (1 - kSpecular.rrr);
     //kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
 	vec3 diffuseLight = diffuseIbl;
 
 	// Direct lighting.
 	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
+
 
 	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
 
@@ -147,10 +149,10 @@ void main()
 	fragColor.rgb *= prmColor.b;
 
 	// Cavity Map
-	fragColor.rgb *= norColor.aaa;
+	//fragColor.rgb *= norColor.aaa;
 
 	// Emission
-	fragColor.rgb += texture(emiMap, UV0).rgb;
+	//fragColor.rgb += texture(emiMap, UV0).rgb;
 
 	// Gamma correction.
 	fragColor.rgb = GetSrgb(fragColor.rgb);
