@@ -17,22 +17,22 @@ uniform bones
     mat4 transforms[200];
 } bones_;
 
-out vec3 N;
-out vec3 tangent;
-out vec2 UV0;
-out vec3 vertexColor;
-out vec3 bakeColor;
+out vec3 geomN;
+out vec3 geomTangent;
+out vec2 geomUV0;
+out vec3 geomVertexColor;
+out vec3 geomBakeColor;
 
 void main()
 {
 	vec4 transformedNormal = transform * vec4(Normal0, 0);
-	N = transformedNormal.rgb;
+	geomN = transformedNormal.rgb;
 
-	vertexColor = colorSet1;
-	bakeColor = bake1;
+	geomVertexColor = colorSet1;
+	geomBakeColor = bake1;
 
-	UV0 = map1;
-	tangent = Tangent0;
+	geomUV0 = map1;
+	geomTangent = Tangent0;
 
 	// default
 	vec4 position = vec4(Position0, 1);

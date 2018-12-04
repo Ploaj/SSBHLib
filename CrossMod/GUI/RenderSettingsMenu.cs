@@ -32,6 +32,10 @@ namespace CrossMod.GUI
             blueButton.ForeColor = RenderSettings.renderChannels.Z == 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Gray;
             alphaButton.ForeColor = RenderSettings.renderChannels.W == 1 ? System.Drawing.Color.Black : System.Drawing.Color.Gray;
 
+            specularCB.Checked = RenderSettings.enableSpecular;
+            diffuseCB.Checked = RenderSettings.enableDiffuse;
+            wireframeCB.Checked = RenderSettings.enableWireframe;
+
             renderModeComboBox.Items.Clear();
             renderModeComboBox.Items.AddRange(renderModes.ToArray());
             renderModeComboBox.SelectedIndex = RenderSettings.renderMode;
@@ -81,6 +85,21 @@ namespace CrossMod.GUI
         {
             long.TryParse(paramTextBox.Text, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out long id);
             RenderSettings.paramId = id;
+        }
+
+        private void diffuseCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderSettings.enableDiffuse = diffuseCB.Checked;
+        }
+
+        private void specularCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderSettings.enableSpecular = specularCB.Checked;
+        }
+
+        private void wireframeCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderSettings.enableWireframe = wireframeCB.Checked;
         }
     }
 }
