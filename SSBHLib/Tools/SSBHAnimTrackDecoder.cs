@@ -75,6 +75,8 @@ namespace SSBHLib.Tools
                         int DataStart = parser.ReadInt32();
                         int FrameCount = parser.ReadInt32();
 
+                        //Console.WriteLine(TrackFlag.ToString("X"));
+
                         int[] ByteCounts = new int[9];
                         int[] BitCounts = new int[9];
                         float[] Start = new float[9];
@@ -86,14 +88,17 @@ namespace SSBHLib.Tools
                             long Count = parser.ReadInt64();
                             long bytes = (Count >> 3);
                             int bits = ((int)Count & 0x7);
-                            
-                            if (i >= 0 && i <= 2 && (TrackFlag & 0x1) > 0
-                                || i > 2 && i <= 5 && (TrackFlag & 0x4) > 0
-                                || i > 5 && i <= 8 && (TrackFlag & 0x8) > 0)
+
+                            if ((i >= 0 && i <= 0 && (TrackFlag & 0x3) == 0x3) //isotrophic scale
+                                || (i >= 0 && i <= 2 && (TrackFlag & 0x3) == 0x1) //normal scale
+                                || (i > 2 && i <= 5 && (TrackFlag & 0x4) > 0)
+                                || (i > 5 && i <= 8 && (TrackFlag & 0x8) > 0))
                             {
                                 //reads
-                                BitCounts[i] = bits;
-                                ByteCounts[i] = (int)bytes;
+                                {
+                                    BitCounts[i] = bits;
+                                    ByteCounts[i] = (int)bytes;
+                                }
                             }
                         }
 
@@ -108,6 +113,9 @@ namespace SSBHLib.Tools
                         float YPOS = parser.ReadSingle();
                         float ZPOS = parser.ReadSingle();
 
+                        //Console.WriteLine($"{XSCA} {YSCA} {ZSCA}");
+                        //Console.WriteLine($"{XROT} {YROT} {ZROT}");
+
                         parser.ReadInt32(); // ????
 
                         parser.Seek((int)Track.DataOffset + DataStart);
@@ -121,19 +129,35 @@ namespace SSBHLib.Tools
                                 int scale = 0;
                                 for (int k = 0; k < ValueBitCount; k++)
                                     scale |= 0x1 << k;
-                                
+
                                 float FrameValue = Lerp(Start[j], End[j], 0, 1, Value / (float)scale);
                                 if (float.IsNaN(FrameValue))
                                     FrameValue = 0;
 
-                                //Scale Isotropic?
-                                if ((TrackFlag & 0x1) > 0)
+                                if(i < 5 && j < 3)
                                 {
-                                    if(j == 0)
+                                    Console.WriteLine(FrameValue);
+                                } 
+                                
+                                if ((TrackFlag & 0x3) == 0x3)
+                                {
+                                    //Scale Isotropic?
+                                    if (j == 0)
                                     {
                                         Transform.SX = FrameValue;
                                         Transform.SY = FrameValue;
                                         Transform.SZ = FrameValue;
+                                    }
+                                }
+                                else
+                                if ((TrackFlag & 0x3) == 0x1)
+                                {
+                                    //Scale normal
+                                    switch (j)
+                                    {
+                                        case 0: if (ValueBitCount > 0) Transform.SX = FrameValue; else Transform.SX = XSCA; break;
+                                        case 1: if (ValueBitCount > 0) Transform.SY = FrameValue; else Transform.SY = YSCA; break;
+                                        case 2: if (ValueBitCount > 0) Transform.SZ = FrameValue; else Transform.SZ = ZSCA; break;
                                     }
                                 }
                                 else
@@ -181,7 +205,8 @@ namespace SSBHLib.Tools
                             if ((TrackFlag & 0x4) > 0)
                             {
                                 // Rotation w
-                                bool Wflip = parser.ReadBits(1) == 1;
+                                bool Wflip = parser.ReadBits(1) == 1;// (TrackFlag & 0x1) == 0 ? parser.ReadBits(1) == 1 : true;
+
                                 Transform.RW = (float)Math.Sqrt(Math.Abs(1 - (Transform.RX * Transform.RX + Transform.RY * Transform.RY + Transform.RZ * Transform.RZ)));
 
                                 if (Wflip)
