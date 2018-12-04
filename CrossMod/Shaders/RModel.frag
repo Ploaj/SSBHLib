@@ -103,13 +103,13 @@ void main()
 
 	vec4 prmColor = texture(prmMap, UV0).xyzw;
 
-	float directLightIntensity = 1.25;
+	float directLightIntensity = 1.5;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
 	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rrr * 2.5;
+	vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
 	int maxLod = 10;
 	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
 
@@ -123,6 +123,7 @@ void main()
 
 	// Diffuse
 	vec3 kDiffuse = (1 - kSpecular);
+    //kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
 	vec3 diffuseLight = diffuseIbl;
 
 	// Direct lighting.
