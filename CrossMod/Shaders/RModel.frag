@@ -2,6 +2,7 @@
 
 in vec3 N;
 in vec3 tangent;
+in vec3 bitangent;
 in vec2 UV0;
 in vec3 vertexColor;
 noperspective in vec3 edgeDistance;
@@ -50,7 +51,6 @@ vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 	vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
 
 	// TBN Matrix.
-	vec3 bitangent = cross(N, tangent);
 	mat3 tbnMatrix = mat3(tangent, bitangent, N);
 
 	vec3 newNormal = tbnMatrix * normalMapNormal;
