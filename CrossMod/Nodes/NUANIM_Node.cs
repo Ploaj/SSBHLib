@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CrossMod.Rendering;
+﻿using CrossMod.Rendering;
 using SSBHLib;
 using SSBHLib.Formats;
 using SSBHLib.Tools;
+using OpenTK;
 
 namespace CrossMod.Nodes
 {
@@ -58,10 +54,10 @@ namespace CrossMod.Nodes
                                 
                                 for (int i = 0; i < Visibility.Length; i++)
                                 {
-                                    visAnim.Visibility.Keys.Add(new RKey()
+                                    visAnim.Visibility.Keys.Add(new RKey<bool>()
                                     {
                                         Frame = i,
-                                        Value = (((AnimTrackBool)Visibility[i]).Value ? 1 : 0)
+                                        Value = ((AnimTrackBool)Visibility[i]).Value
                                     });
                                 }
                             }
@@ -69,11 +65,47 @@ namespace CrossMod.Nodes
                         renderAnimation.VisibilityNodes.Add(visAnim);
                     }
                 }
+                // Bone Animations
+                if (animGroup.Type == (int)ANIM_TYPE.Transform)
+                {
+                    foreach (ANIM_Node animNode in animGroup.Nodes)
+                    {
+                        RTransformAnimation tfrmAnim = new RTransformAnimation()
+                        {
+                            Name = animNode.Name
+                        };
+                        foreach (ANIM_Track track in animNode.Tracks)
+                        {
+                            if (track.Name.Equals("Transform"))
+                            {
+                                object[] Transform = decoder.ReadTrack(track);
+                                for (int i = 0; i < Transform.Length; i++)
+                                {
+                                    AnimTrackTransform t = (AnimTrackTransform)Transform[i];
+                                    System.Console.WriteLine($"{t.SX} {t.SY} {t.SZ}");
+                                    tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
+                                    {
+                                        Frame = i,
+                                        Value = GetMatrix((AnimTrackTransform)Transform[i])
+                                    });
+                                }
+                            }
+                        }
+                        renderAnimation.TransformNodes.Add(tfrmAnim);
+                    }
+                }
             }
             
                 
 
             return renderAnimation;
+        }
+
+        private static Matrix4 GetMatrix(AnimTrackTransform Transform)
+        {
+            return Matrix4.CreateScale(Transform.SX, Transform.SY, Transform.SZ) *
+                Matrix4.CreateFromQuaternion(new Quaternion(Transform.RX, Transform.RY, Transform.RZ, Transform.RW)) *
+                Matrix4.CreateTranslation(Transform.X, Transform.Y, Transform.Z);
         }
     }
 }

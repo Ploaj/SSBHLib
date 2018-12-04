@@ -56,10 +56,11 @@ namespace CrossMod.Rendering
             boneBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
             if(Skeleton != null)
             {
-                for(int i = 0; i < Skeleton.Bones.Count; i++)
+                boneBinds = Skeleton.GetAnimationTransforms();
+                /*for(int i = 0; i < Skeleton.Bones.Count; i++)
                 {
                     boneBinds[i] = Skeleton.GetInvWorldTransforms()[i] * Skeleton.GetWorldTransforms()[i];
-                }
+                }*/
             }
             boneBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
 

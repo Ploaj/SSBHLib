@@ -56,6 +56,21 @@ namespace CrossMod.Rendering
             return Transforms;
         }
 
+        public Matrix4[] GetAnimationTransforms()
+        {
+            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            for (int i = 0; i < Bones.Count; i++)
+            {
+                Transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
+            }
+            return Transforms;
+        }
+
+        public Matrix4 GetAnimationSingleBindsTransform(int Index)
+        {
+            return Bones[Index].GetAnimationTransform(this);
+        }
+
         public int GetBoneIndex(string BoneName)
         {
             for(int i = 0; i < Bones.Count; i++)
@@ -78,10 +93,25 @@ namespace CrossMod.Rendering
         public int ID;
         public int ParentID;
 
-        public Matrix4 Transform;
+        public Matrix4 Transform
+        {
+            get
+            {
+                return _transform;
+            }
+            set
+            {
+                _transform = value;
+                AnimationTransform = value;
+            }
+        }
+        private Matrix4 _transform;
         public Matrix4 InvTransform;
         public Matrix4 WorldTransform;
         public Matrix4 InvWorldTransform;
+
+        // for rendering animation
+        public Matrix4 AnimationTransform;
 
         public Vector3 Position
         {
@@ -110,6 +140,15 @@ namespace CrossMod.Rendering
             {
                 return Transform.ExtractScale();
             }
+        }
+
+        public Matrix4 GetAnimationTransform(RSkeleton Skeleton)
+        {
+            if(ParentID != -1)
+            {
+                return AnimationTransform * Skeleton.Bones[ParentID].GetAnimationTransform(Skeleton);
+            }
+            return AnimationTransform;
         }
 
         private static float Clamp(float v, float min, float max)

@@ -31,10 +31,9 @@ namespace CrossMod.Rendering
             if (!Visible) return;
             if (skeleton != null)
             {
-                var transforms = skeleton.GetWorldTransforms();
                 var matrix = Matrix4.Identity;
-                if (SingleBindIndex >= 0 && SingleBindIndex < transforms.Length)
-                    matrix = transforms[SingleBindIndex];
+                if (SingleBindIndex >= 0)
+                    matrix = skeleton.GetAnimationSingleBindsTransform(SingleBindIndex);
                 shader.SetMatrix4x4("transform", ref matrix);
             }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFGraphics.Cameras;
+using OpenTK;
 
 namespace CrossMod.Rendering
 {
@@ -11,6 +12,7 @@ namespace CrossMod.Rendering
     {
         public int FrameCount { get; set; }
 
+        public List<RTransformAnimation> TransformNodes = new List<RTransformAnimation>();
         public List<RVisibilityAnimation> VisibilityNodes = new List<RVisibilityAnimation>();
 
         public int GetFrameCount()
@@ -21,13 +23,16 @@ namespace CrossMod.Rendering
         public void SetFrameModel(RModel Model, float Frame)
         {
             if (Model == null) return;
+
+            // Visibility
             foreach(RVisibilityAnimation a in VisibilityNodes)
             {
                 foreach(RMesh m in Model.subMeshes)
                 {
+                    // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))
                     {
-                        m.Visible = a.Visibility.GetValue(Frame) == 1;
+                        m.Visible = a.Visibility.GetValue(Frame);
                     }
                 }
             }
@@ -35,7 +40,20 @@ namespace CrossMod.Rendering
 
         public void SetFrameSkeleton(RSkeleton Skeleton, float Frame)
         {
+            if (Skeleton == null) return;
 
+            // BoneTransform
+            foreach(RBone b in Skeleton.Bones)
+            {
+                foreach(RTransformAnimation a in TransformNodes)
+                {
+                    if (b.Name.Equals(a.Name))
+                    {
+                        b.AnimationTransform = a.Transform.GetValue(Frame);
+                        break;
+                    }
+                }
+            }
         }
 
         public void Render(Camera Camera)
@@ -46,20 +64,22 @@ namespace CrossMod.Rendering
     public class RVisibilityAnimation
     {
         public string MeshName;
-        public RKeyGroup Visibility { get { return _visibility; } }
-        private RKeyGroup _visibility = new RKeyGroup();
+        public RKeyGroup<bool> Visibility { get { return _visibility; } }
+        private RKeyGroup<bool> _visibility = new RKeyGroup<bool>();
     }
 
     public class RTransformAnimation
     {
         public string Name;
+        public RKeyGroup<Matrix4> Transform { get { return _transform; } }
+        private RKeyGroup<Matrix4> _transform = new RKeyGroup<Matrix4>();
     }
 
-    public class RKeyGroup
+    public class RKeyGroup<T>
     {
-        public List<RKey> Keys = new List<RKey>();
+        public List<RKey<T>> Keys = new List<RKey<T>>();
 
-        public float GetValue(float Frame)
+        public T GetValue(float Frame)
         {
             //TODO: actually grab the right frame
             if (Frame >= Keys.Count)
@@ -68,9 +88,9 @@ namespace CrossMod.Rendering
         }
     }
 
-    public class RKey
+    public class RKey<T> 
     {
         public float Frame;
-        public float Value;
+        public T Value;
     }
 }
