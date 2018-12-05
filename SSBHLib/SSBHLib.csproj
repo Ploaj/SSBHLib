@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Formats\ANIM.cs" />
+    <Compile Include="Formats\HLPB.cs" />
     <Compile Include="Formats\MESH.cs" />
     <Compile Include="Formats\MTAL.cs" />
     <Compile Include="Formats\SKEL.cs" />
