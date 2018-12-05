@@ -149,16 +149,16 @@ void main()
 	// Direct lighting.
 	specularTerm += GgxShading(newNormal, V, roughness + 0.25) * directLightIntensity;
 
+    // Cavity Map used for specular occlusion.
+	specularTerm.rgb *= norColor.aaa;
+
 	fragColor.rgb += specularTerm * kSpecular * renderSpecular;
 
 	// Ambient Occlusion
 	fragColor.rgb *= prmColor.b;
 
-	// Cavity Map
-	//fragColor.rgb *= norColor.aaa;
-
 	// Emission
-	//fragColor.rgb += texture(emiMap, UV0).rgb;
+	fragColor.rgb += texture(emiMap, UV0).rgb * 3.5;
 
 	// Gamma correction.
 	fragColor.rgb = GetSrgb(fragColor.rgb);
