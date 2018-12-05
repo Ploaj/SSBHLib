@@ -14,6 +14,8 @@ uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D bakeLitMap;
 
+uniform sampler2D uvPattern;
+
 uniform vec4 vec4Param;
 
 uniform sampler2D iblLut;
@@ -111,6 +113,8 @@ void main()
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
+    vec4 uvPatternColor = texture(uvPattern, UV0).rgba;
+
 	// Image based lighting.
 	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rgb * 2.5;
 	int maxLod = 10;
@@ -153,7 +157,10 @@ void main()
 		case 9:
 			fragColor = vec4(bakeColor, 1);
 			break;
-		case 10:
+        case 10:
+            fragColor = uvPatternColor;
+            break;
+		case 11:
 			fragColor = vec4Param;
 			break;
 		default:

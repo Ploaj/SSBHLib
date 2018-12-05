@@ -121,7 +121,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\CustomVertexAttribute.cs" />
-    <Compile Include="Rendering\DefaultTextures.cs" />
+    <Compile Include="Rendering\Resources\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\IRenderableAnimation.cs" />
     <Compile Include="Rendering\IRenderableModel.cs" />
@@ -398,6 +398,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DefaultTextures\ibl_brdf_lut.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DefaultTextures\UVPattern.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\GenericValueEditor.dll" />

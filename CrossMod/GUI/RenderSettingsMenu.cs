@@ -8,21 +8,6 @@ namespace CrossMod.GUI
 {
     public partial class RenderSettingsMenu : Form
     {
-        private readonly List<string> renderModes = new List<string>()
-        {
-            "Shaded",
-            "Col",
-            "Prm",
-            "Nor",
-            "Emi",
-            "Bake Lit",
-            "Vertex Color",
-            "Normals",
-            "Tangents",
-            "Bake Color",
-            "Param ID (Vec4 or Booleans)"
-        };
-
         public RenderSettingsMenu()
         {
             InitializeComponent();

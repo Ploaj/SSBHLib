@@ -8,7 +8,7 @@ namespace CrossMod.Rendering
 {
     public class RMesh : IRenderable
     {
-        private static DefaultTextures defaultTextures = null;
+        private static Resources.DefaultTextures defaultTextures = null;
 
         public string Name { get; set; }
 
@@ -52,7 +52,7 @@ namespace CrossMod.Rendering
         private void SetTextureUniforms(Shader shader)
         {
             if (defaultTextures == null)
-                defaultTextures = new DefaultTextures();
+                defaultTextures = new Resources.DefaultTextures();
 
             var genericMaterial = CreateGenericMaterial(Material);
 
@@ -100,6 +100,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
             genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
+            genericMaterial.AddTexture("uvPattern", defaultTextures.uvPattern);
 
             // Set specific parameters and use a default value if not present.
             AddMtalVec4(genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));

@@ -3,13 +3,14 @@ using SFGraphics.GLObjects.Textures;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.Resources
 {
     public class DefaultTextures
     {
         public Texture2D defaultWhite = null;
         public Texture2D defaultNormal = null;
         public Texture2D defaultBlack = null;
+        public Texture2D uvPattern = null;
 
         public Texture2D iblLut = null;
 
@@ -18,32 +19,35 @@ namespace CrossMod.Rendering
 
         public DefaultTextures()
         {
-            defaultWhite = new Texture2D();
-            using (var whiteBmp = new Bitmap("DefaultTextures/default_White.png"))
+            uvPattern = new Texture2D()
             {
-                defaultWhite.LoadImageData(whiteBmp);
-            }
+                TextureWrapS = TextureWrapMode.Repeat,
+                TextureWrapT = TextureWrapMode.Repeat
+            };
+            LoadBitmap(uvPattern, "DefaultTextures/UVPattern.png");
+
+            defaultWhite = new Texture2D();
+            LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
 
             defaultNormal = new Texture2D();
-            using (var nrmBmp = new Bitmap("DefaultTextures/default_normal.png"))
-            {
-                defaultNormal.LoadImageData(nrmBmp);
-            }
+            LoadBitmap(defaultNormal, "DefaultTextures/default_normal.png");
 
             defaultBlack = new Texture2D();
-            using (var blackBmp = new Bitmap("DefaultTextures/default_black.png"))
-            {
-                defaultBlack.LoadImageData(blackBmp);
-            }
+            LoadBitmap(defaultBlack, "DefaultTextures/default_black.png");
 
             iblLut = new Texture2D();
-            using (var lutBmp = new Bitmap("DefaultTextures/ibl_brdf_lut.png"))
-            {
-                iblLut.LoadImageData(lutBmp);
-            }
+            LoadBitmap(iblLut, "DefaultTextures/ibl_brdf_lut.png");
 
             LoadDiffusePbr();
             LoadSpecularPbr();
+        }
+
+        private void LoadBitmap(Texture2D texture, string path)
+        {
+            using (var bmp = new Bitmap(path))
+            {
+                texture.LoadImageData(bmp);
+            }
         }
 
         private void LoadDiffusePbr()
