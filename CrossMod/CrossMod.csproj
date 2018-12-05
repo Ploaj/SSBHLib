@@ -80,6 +80,7 @@
     <Compile Include="IO\IO_OBJ.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
+    <Compile Include="Nodes\NUHLPB_Node.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">

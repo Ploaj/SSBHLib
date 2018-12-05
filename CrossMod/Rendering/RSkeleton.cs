@@ -15,6 +15,7 @@ namespace CrossMod.Rendering
     public class RSkeleton : IRenderable
     {
         public List<RBone> Bones = new List<RBone>();
+        public List<RHelperBone> HelperBone = new List<RHelperBone>();
 
         public Matrix4[] GetTransforms()
         {
@@ -63,9 +64,21 @@ namespace CrossMod.Rendering
             {
                 Transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
             }
+
+            // Process HelperBones
+
+            /*foreach(RHelperBone hBone in HelperBone)
+            {
+                // get watcher bone
+                RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
+                Quaternion watcherCurrentRotation = WatcherBone.GetAnimationTransform(this).ExtractRotation();
+                
+                RBone HelperBone = Bones[GetBoneIndex(hBone.HelperBoneName)];
+            }*/
+
             return Transforms;
         }
-
+        
         public Matrix4 GetAnimationSingleBindsTransform(int Index)
         {
             return Bones[Index].GetAnimationTransform(this);
@@ -177,5 +190,17 @@ namespace CrossMod.Rendering
             }
             return new Vector3(x, y, z);
         }
+    }
+
+    public class RHelperBone
+    {
+        public string WatcherBone;
+        public string HelperBoneName;
+
+        public Vector3 AOI;
+        public Quaternion WatchRotation;
+        public Quaternion HelperTargetRotation;
+        public Vector3 MinRange;
+        public Vector3 MaxRange;
     }
 }

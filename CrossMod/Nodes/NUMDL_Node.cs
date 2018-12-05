@@ -30,8 +30,13 @@ namespace CrossMod.Nodes
             };
 
             NUMSHB_Node ModelNode = null;
+            NUHLPB_Node HelperNode = null;
             foreach (FileNode fileNode in Parent.Nodes)
             {
+                if (fileNode is NUHLPB_Node)
+                {
+                    HelperNode = (NUHLPB_Node)fileNode;
+                }
                 if (fileNode is NUTEX_Node)
                 {
                     Model.sfTextureByName.Add(((NUTEX_Node)fileNode).TexName.ToLower(), ((RTexture)((NUTEX_Node)fileNode).GetRenderableNode()).renderTexture);
@@ -54,7 +59,11 @@ namespace CrossMod.Nodes
             if (Model.Material != null)
                 Model.UpdateMaterial();
             if (Model.Skeleton != null)
+            {
+                if (HelperNode != null)
+                    HelperNode.AddToRenderSkeleton(Model.Skeleton);
                 Model.UpdateBinds();
+            }
             return Model;
         }
 
