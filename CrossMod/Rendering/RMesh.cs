@@ -102,7 +102,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
 
             // Set specific parameters and use a default value if not present.
-            AddMtalVec4(genericMaterial, material, RenderSettings.paramId, new Vector4(0));
+            AddMtalVec4(genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
 
             return genericMaterial;
         }

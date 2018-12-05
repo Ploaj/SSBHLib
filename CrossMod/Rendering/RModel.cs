@@ -39,12 +39,12 @@ namespace CrossMod.Rendering
 
             currentShader.UseProgram();
 
-            currentShader.SetVector4("renderChannels", RenderSettings.renderChannels);
-            currentShader.SetInt("renderMode", RenderSettings.renderMode);
-            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.enableDiffuse);
-            currentShader.SetBoolToInt("renderSpecular", RenderSettings.enableSpecular);
-            currentShader.SetBoolToInt("renderWireframe", RenderSettings.enableWireframe);
-            currentShader.SetBoolToInt("useDittoForm", RenderSettings.useDittoForm);
+            currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
+            currentShader.SetInt("renderMode", (int)RenderSettings.Instance.renderMode);
+            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.enableDiffuse);
+            currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.enableSpecular);
+            currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.enableWireframe);
+            currentShader.SetBoolToInt("useDittoForm", RenderSettings.Instance.useDittoForm);
 
             currentShader.EnableVertexAttributes();
 
@@ -85,7 +85,7 @@ namespace CrossMod.Rendering
         private static Shader GetCurrentShader()
         {
             Shader currentShader = shader;
-            if (RenderSettings.useDebugShading)
+            if (RenderSettings.Instance.UseDebugShading)
                 currentShader = textureDebugShader;
             return currentShader;
         }

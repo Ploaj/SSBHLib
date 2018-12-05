@@ -1,20 +1,80 @@
-﻿namespace CrossMod.Rendering
+﻿using GenericValueEditor;
+
+namespace CrossMod.Rendering
 {
-    public static class RenderSettings
+    public class RenderSettings
     {
-        public static bool useDebugShading = false;
+        public enum RenderMode
+        {
+            Shaded,
+            Col,
+            Prm,
+            Nor,
+            Emi,
+            BakeLit,
+            VertexColor,
+            Normals,
+            Tangents,
+            BakeColor,
+            ParamID
+        }
 
-        public static bool useDittoForm = false;
+        public static RenderSettings Instance { get; } = new RenderSettings();
 
-        public static bool enableDiffuse = true;
-        public static bool enableSpecular = true;
+        public bool UseDebugShading { get => renderMode != 0; }
 
-        public static bool enableWireframe = false;
+        [EditInfo("Enable Diffuse", ValueEnums.ValueType.Bool, "Lighting")]
+        public bool enableDiffuse = true;
 
-        public static int renderMode = 0;
+        [EditInfo("Enable Specular", ValueEnums.ValueType.Bool, "Lighting")]
+        public bool enableSpecular = true;
 
-        public static OpenTK.Vector4 renderChannels = new OpenTK.Vector4(1);
+        [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
+        public bool enableWireframe = false;
 
-        public static long paramId = 0;
+        [EditInfo("Enable Ditto Form", ValueEnums.ValueType.Bool, "Misc")]
+        public bool useDittoForm = false;
+
+        [EditInfo("Render Mode", ValueEnums.ValueType.Enum, "Debug Shading")]
+        public RenderMode renderMode = RenderMode.Shaded;
+
+        [EditInfo("Red", ValueEnums.ValueType.Bool, "Debug Shading")]
+        public bool EnableRed
+        {
+            get => renderChannels.X == 1;
+            set => renderChannels.X = value ? 1 : 0;
+        }
+
+        [EditInfo("Green", ValueEnums.ValueType.Bool, "Debug Shading")]
+        public bool EnableGreen
+        {
+            get => renderChannels.Y == 1;
+            set => renderChannels.Y = value ? 1 : 0;
+        }
+
+        [EditInfo("Blue", ValueEnums.ValueType.Bool, "Debug Shading")]
+        public bool EnableBlue
+        {
+            get => renderChannels.Z == 1;
+            set => renderChannels.Z = value ? 1 : 0;
+        }
+
+        [EditInfo("Alpha", ValueEnums.ValueType.Bool, "Debug Shading")]
+        public bool EnableAlpha
+        {
+            get => renderChannels.W == 1;
+            set => renderChannels.W = value ? 1 : 0;
+        }
+
+        public OpenTK.Vector4 renderChannels = new OpenTK.Vector4(1);
+
+        // TODO: Replace with proper type.
+        [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
+        public long paramId = 0;
+
+        private RenderSettings()
+        {
+
+        }
     }
 }
