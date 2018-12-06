@@ -1,7 +1,6 @@
 ﻿using CrossMod.Rendering;
 using GenericValueEditor;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace CrossMod.GUI
