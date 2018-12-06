@@ -73,6 +73,9 @@ namespace CrossMod.GUI
             animationBar.Model = null;
             animationBar.Skeleton = null;
             RenderableNode = null;
+
+            GC.WaitForPendingFinalizers();
+            GLObjectManager.DeleteUnusedGLObjects();
         }
 
         public System.Drawing.Bitmap GetScreenshot()

@@ -186,6 +186,10 @@ namespace CrossMod
             // Just render the first alt costume, which should include items without slot specific variants.
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
+                // Just render main fighter models for now.
+                if (!file.Contains("body"))
+                    continue;
+
                 string sourceFolder = Directory.GetParent(file).FullName;
                 OpenFiles(sourceFolder);
 
