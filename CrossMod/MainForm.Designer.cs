@@ -36,6 +36,7 @@
             this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
+            this.clearWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +55,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openModelFolderToolStripMenuItem,
-            this.reloadShadersToolStripMenuItem});
+            this.reloadShadersToolStripMenuItem,
+            this.clearWorkspaceToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -113,6 +115,13 @@
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
             // 
+            // clearWorkspaceToolStripMenuItem
+            // 
+            this.clearWorkspaceToolStripMenuItem.Name = "clearWorkspaceToolStripMenuItem";
+            this.clearWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.clearWorkspaceToolStripMenuItem.Text = "Clear Workspace";
+            this.clearWorkspaceToolStripMenuItem.Click += new System.EventHandler(this.clearWorkspaceToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +150,7 @@
         private System.Windows.Forms.ToolStripMenuItem reloadShadersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renderSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearWorkspaceToolStripMenuItem;
     }
 }
 

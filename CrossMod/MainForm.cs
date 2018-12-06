@@ -27,10 +27,15 @@ namespace CrossMod
             fileTreeContextMenu = new ContextMenu();
         }
 
-        public void ShowModelControl()
+        public void HideControl()
         {
             contentBox.Controls.Clear();
             _modelControl.Clear();
+        }
+
+        public void ShowModelControl()
+        {
+            HideControl();
             contentBox.Controls.Add(_modelControl);
         }
 
@@ -149,6 +154,14 @@ namespace CrossMod
                 if (FileName.EndsWith(".obj"))
                     IO_OBJ.ExportIOModelAsOBJ(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
             }
+        }
+
+        private void clearWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fileTree.Nodes.Clear();
+            _modelControl.ClearFiles();
+            HideControl();
+            GC.Collect();
         }
     }
 }

@@ -11,6 +11,11 @@ namespace CrossMod.Rendering
 
         public SFGraphics.GLObjects.Textures.Texture renderTexture = null;
 
+        ~RTexture()
+        {
+            renderTexture = null;
+        }
+
         public void Render(Camera Camera)
         {
             // TODO: Render texture.

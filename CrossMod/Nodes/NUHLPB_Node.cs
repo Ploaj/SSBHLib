@@ -33,8 +33,8 @@ namespace CrossMod.Nodes
             {
                 Skeleton.HelperBone.Add(new RHelperBone()
                 {
-                    HelperBoneName = entry.BoneName,
-                    WatcherBone = entry.DriverBoneName,
+                    HelperBoneName = entry.DriverBoneName,
+                    WatcherBone = entry.ParentBoneName,
                     MinRange = new OpenTK.Vector3(entry.MinRangeX, entry.MinRangeY, entry.MinRangeZ),
                     MaxRange = new OpenTK.Vector3(entry.MaxRangeX, entry.MaxRangeY, entry.MaxRangeZ),
                     WatchRotation = new OpenTK.Quaternion(entry.Quat1X, entry.Quat1Y, entry.Quat1Z, entry.Quat1W),

@@ -68,6 +68,13 @@ namespace CrossMod.GUI
             AddAnimationBar();
         }
 
+        public void ClearFiles()
+        {
+            animationBar.Model = null;
+            animationBar.Skeleton = null;
+            RenderableNode = null;
+        }
+
         private void AddAnimationBar()
         {
             animationBar = new AnimationBar
@@ -87,6 +94,7 @@ namespace CrossMod.GUI
         private void DisplayMeshes(RModel Model)
         {
             animationBar.Model = Model;
+            if(Model != null)
             foreach(RMesh m in Model.subMeshes)
             {
                 ListViewItem item = new ListViewItem

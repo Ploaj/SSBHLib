@@ -71,14 +71,40 @@ namespace CrossMod.Rendering
             {
                 // get watcher bone
                 RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
-                Quaternion watcherCurrentRotation = WatcherBone.GetAnimationTransform(this).ExtractRotation();
-                
-                RBone HelperBone = Bones[GetBoneIndex(hBone.HelperBoneName)];
+                Quaternion watcherCurrentRotation = WatcherBone.AnimationTransform.ExtractRotation();
+                ;
+                if(hBone.HelperBoneName.Equals("H_SholderL"))
+                System.Diagnostics.Debug.WriteLine(hBone.HelperBoneName + " " + Angle(hBone.WatchRotation, watcherCurrentRotation));
+                float Angl = Angle(hBone.WatchRotation, watcherCurrentRotation);
+
+                int index = GetBoneIndex(hBone.HelperBoneName);
+                RBone HelperBone = Bones[index];
+                HelperBone.AnimationTransform =
+                Matrix4.CreateFromQuaternion(Quaternion.Slerp(HelperBone.Rotation, hBone.HelperTargetRotation, Angl)) * 
+                Matrix4.CreateTranslation(HelperBone.Position);
+                Transforms[index] = HelperBone.InvWorldTransform * HelperBone.GetAnimationTransform(this);
             }*/
 
             return Transforms;
         }
-        
+
+        public static float Angle(Quaternion a, Quaternion b)
+        {
+            float dot = Dot(a, b);
+            return IsEqualUsingDot(dot) ? 0.0f : (float)Math.Acos(Math.Min(Math.Abs(dot), 1.0f)) * 2.0f;
+        }
+
+        public static float Dot(Quaternion a, Quaternion b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
+        }
+        public const float kEpsilon = 0.000001F;
+        private static bool IsEqualUsingDot(float dot)
+        {
+            // Returns false in the presence of NaN values.
+            return dot > 1.0f - kEpsilon;
+        }
+
         public Matrix4 GetAnimationSingleBindsTransform(int Index)
         {
             return Bones[Index].GetAnimationTransform(this);

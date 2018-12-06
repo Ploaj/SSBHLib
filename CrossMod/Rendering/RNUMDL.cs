@@ -38,6 +38,7 @@ namespace CrossMod.Rendering
 
         public void UpdateBinds()
         {
+            if(Model!=null)
             foreach(RMesh m in Model.subMeshes)
             {
                 m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
@@ -64,6 +65,7 @@ namespace CrossMod.Rendering
 
                 int subindex = 0;
                 string prevMesh = "";
+                if(Model != null)
                 foreach (RMesh mesh in Model.subMeshes)
                 {
                     if (prevMesh.Equals(mesh.Name))
