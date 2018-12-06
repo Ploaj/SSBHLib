@@ -39,6 +39,9 @@ namespace CrossMod.Nodes
         public NUTEX_FORMAT Format;
         public string TexName;
 
+        // Don't generate redundant textures.
+        private RTexture renderableTexture = null;
+
         // TODO: Fix these formats.
         public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
@@ -200,24 +203,28 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            var texture = new RTexture();
-            if (glFormatByNuTexFormat.ContainsKey(Format))
+            // Don't initialize more than once.
+            // We'll assume the context isn't destroyed.
+            if (renderableTexture == null)
             {
-                // TODO: This may require a higher OpenGL version for BC7.
-                var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                renderableTexture = new RTexture();
+                if (glFormatByNuTexFormat.ContainsKey(Format))
                 {
-                    TextureWrapS = TextureWrapMode.Repeat,
-                    TextureWrapT = TextureWrapMode.Repeat
-                };
+                    // TODO: This may require a higher OpenGL version for BC7.
+                    var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                    {
+                        TextureWrapS = TextureWrapMode.Repeat,
+                        TextureWrapT = TextureWrapMode.Repeat
+                    };
 
-                if(glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
-                    sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
+                    if (glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
+                        sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
 
-                texture.renderTexture = sfTex;
+                    renderableTexture.renderTexture = sfTex;
+                }
             }
 
-            return texture;
+            return renderableTexture;
         }
-
     }
 }

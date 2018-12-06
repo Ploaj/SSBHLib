@@ -13,7 +13,7 @@ namespace CrossMod
     public partial class MainForm : Form
     {
         // Controls
-        private ModelViewport _modelControl;
+        private ModelViewport modelViewport;
 
         private ContextMenu fileTreeContextMenu;
 
@@ -21,78 +21,81 @@ namespace CrossMod
         {
             InitializeComponent();
 
-            _modelControl = new ModelViewport();
-            _modelControl.Dock = DockStyle.Fill;
+            modelViewport = new ModelViewport();
+            modelViewport.Dock = DockStyle.Fill;
 
             fileTreeContextMenu = new ContextMenu();
         }
 
-        public void ShowModelControl()
+        public void ShowModelViewport()
         {
             contentBox.Controls.Clear();
-            _modelControl.Clear();
-            contentBox.Controls.Add(_modelControl);
+            modelViewport.Clear();
+            contentBox.Controls.Add(modelViewport);
         }
 
         private void openModelFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string Folder = FileTools.TryOpenFolder();
-            if (Folder.Equals("")) return;
+            string folderPath = FileTools.TryOpenFolder();
+            if (string.IsNullOrEmpty(folderPath))
+                return;
 
-            string[] Files = Directory.GetFiles(Folder);
-            
+            OpenFiles(folderPath);
+
+            ShowModelViewport();
+        }
+
+        private void OpenFiles(string folderPath)
+        {
+            string[] files = Directory.GetFiles(folderPath);
+
             var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                          from assemblyType in domainAssembly.GetTypes()
                          where typeof(FileNode).IsAssignableFrom(assemblyType)
                          select assemblyType).ToArray();
 
-            TreeNode Parent = new TreeNode(Path.GetDirectoryName(Folder));
+            TreeNode Parent = new TreeNode(Path.GetDirectoryName(folderPath));
             fileTree.Nodes.Add(Parent);
 
-            foreach (string s in Files)
+            foreach (string file in files)
             {
                 FileNode Node = null;
 
-                string Extension = Path.GetExtension(s);
+                string Extension = Path.GetExtension(file);
 
-                foreach (Type c in Types)
+                foreach (Type type in Types)
                 {
-                    var attr = c.GetCustomAttributes(
-                    typeof(FileTypeAttribute), true
-                    ).FirstOrDefault() as FileTypeAttribute;
-                    if (attr != null)
+                    if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
                     {
                         if (attr.Extension.Equals(Extension))
                         {
-                            Node = (FileNode)Activator.CreateInstance(c);
+                            Node = (FileNode)Activator.CreateInstance(type);
                         }
                     }
                 }
 
-                if(Node == null)
+                if (Node == null)
                     Node = new FileNode();
 
-                Node.Open(s);
+                Node.Open(file);
 
-                Node.Text = Path.GetFileName(s);
+                Node.Text = Path.GetFileName(file);
                 Parent.Nodes.Add(Node);
             }
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            TreeNode Node = fileTree.SelectedNode;
-
-            if(Node != null)
+            if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                if(Node is IRenderableNode)
+                if (renderableNode != null)
                 {
-                    ShowModelControl();
-                    _modelControl.RenderableNode = (IRenderableNode)Node;
+                    ShowModelViewport();
+                    modelViewport.RenderableNode = renderableNode;
                 }
             }
 
-            _modelControl.RenderFrame();
+            modelViewport.RenderFrame();
         }
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
