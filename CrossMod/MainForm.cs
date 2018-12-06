@@ -21,8 +21,10 @@ namespace CrossMod
         {
             InitializeComponent();
 
-            modelViewport = new ModelViewport();
-            modelViewport.Dock = DockStyle.Fill;
+            modelViewport = new ModelViewport
+            {
+                Dock = DockStyle.Fill
+            };
 
             fileTreeContextMenu = new ContextMenu();
         }
@@ -127,7 +129,7 @@ namespace CrossMod
                     fileTreeContextMenu.MenuItems.Clear();
 
                     // gather all options for this node
-                    if(node is IExportableModelNode exportableNode)
+                    if (node is IExportableModelNode exportableNode)
                     {
                         MenuItem ExportSMD = new MenuItem("Export As");
                         ExportSMD.Click += exportExportableModelAsSMD;
@@ -136,7 +138,7 @@ namespace CrossMod
                     }
 
                     // show if it has at least 1 option
-                    if(fileTreeContextMenu.MenuItems.Count != 0)
+                    if (fileTreeContextMenu.MenuItems.Count != 0)
                         fileTreeContextMenu.Show(fileTree, p);
                 }
             }
@@ -144,13 +146,12 @@ namespace CrossMod
 
         private void exportExportableModelAsSMD(object sender, EventArgs args)
         {
-            string FileName;
-            if (FileTools.TrySaveFile(out FileName, "Supported Files(*.smd*.obj)|*.smd;*.obj"))
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj)|*.smd;*.obj"))
             {
-                if(FileName.EndsWith(".smd"))
-                IO_SMD.ExportIOModelAsSMD(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
-                if (FileName.EndsWith(".obj"))
-                    IO_OBJ.ExportIOModelAsOBJ(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (fileName.EndsWith(".smd"))
+                    IO_SMD.ExportIOModelAsSMD(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (fileName.EndsWith(".obj"))
+                    IO_OBJ.ExportIOModelAsOBJ(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
             }
         }
     }
