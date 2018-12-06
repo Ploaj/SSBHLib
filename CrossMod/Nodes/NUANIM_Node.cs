@@ -31,6 +31,7 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
+            if (animation == null) return null;
             RAnimation renderAnimation = new RAnimation() { FrameCount = (int)animation.FrameCount };
 
             SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
