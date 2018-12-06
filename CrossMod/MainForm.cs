@@ -13,7 +13,7 @@ namespace CrossMod
     public partial class MainForm : Form
     {
         // Controls
-        private ModelViewport _modelControl;
+        private ModelViewport modelViewport;
 
         private ContextMenu fileTreeContextMenu;
 
@@ -21,8 +21,10 @@ namespace CrossMod
         {
             InitializeComponent();
 
-            _modelControl = new ModelViewport();
-            _modelControl.Dock = DockStyle.Fill;
+            modelViewport = new ModelViewport
+            {
+                Dock = DockStyle.Fill
+            };
 
             fileTreeContextMenu = new ContextMenu();
         }
@@ -41,63 +43,66 @@ namespace CrossMod
 
         private void openModelFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string Folder = FileTools.TryOpenFolder();
-            if (Folder.Equals("")) return;
+            string folderPath = FileTools.TryOpenFolder();
+            if (string.IsNullOrEmpty(folderPath))
+                return;
 
-            string[] Files = Directory.GetFiles(Folder);
-            
+            OpenFiles(folderPath);
+
+            ShowModelViewport();
+        }
+
+        private void OpenFiles(string folderPath)
+        {
+            string[] files = Directory.GetFiles(folderPath);
+
             var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                          from assemblyType in domainAssembly.GetTypes()
                          where typeof(FileNode).IsAssignableFrom(assemblyType)
                          select assemblyType).ToArray();
 
-            TreeNode Parent = new TreeNode(Path.GetDirectoryName(Folder));
+            TreeNode Parent = new TreeNode(Path.GetDirectoryName(folderPath));
             fileTree.Nodes.Add(Parent);
 
-            foreach (string s in Files)
+            foreach (string file in files)
             {
                 FileNode Node = null;
 
-                string Extension = Path.GetExtension(s);
+                string Extension = Path.GetExtension(file);
 
-                foreach (Type c in Types)
+                foreach (Type type in Types)
                 {
-                    var attr = c.GetCustomAttributes(
-                    typeof(FileTypeAttribute), true
-                    ).FirstOrDefault() as FileTypeAttribute;
-                    if (attr != null)
+                    if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
                     {
                         if (attr.Extension.Equals(Extension))
                         {
-                            Node = (FileNode)Activator.CreateInstance(c);
+                            Node = (FileNode)Activator.CreateInstance(type);
                         }
                     }
                 }
 
-                if(Node == null)
+                if (Node == null)
                     Node = new FileNode();
 
-                Node.Open(s);
+                Node.Open(file);
 
-                Node.Text = Path.GetFileName(s);
+                Node.Text = Path.GetFileName(file);
                 Parent.Nodes.Add(Node);
             }
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            TreeNode Node = fileTree.SelectedNode;
-
-            if(Node != null)
+            if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                if(Node is IRenderableNode)
+                if (renderableNode != null)
                 {
-                    ShowModelControl();
-                    _modelControl.RenderableNode = (IRenderableNode)Node;
+                    ShowModelViewport();
+                    modelViewport.RenderableNode = renderableNode;
                 }
             }
 
-            _modelControl.RenderFrame();
+            modelViewport.RenderFrame();
         }
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -129,7 +134,7 @@ namespace CrossMod
                     fileTreeContextMenu.MenuItems.Clear();
 
                     // gather all options for this node
-                    if(node is IExportableModelNode exportableNode)
+                    if (node is IExportableModelNode exportableNode)
                     {
                         MenuItem ExportSMD = new MenuItem("Export As");
                         ExportSMD.Click += exportExportableModelAsSMD;
@@ -138,7 +143,7 @@ namespace CrossMod
                     }
 
                     // show if it has at least 1 option
-                    if(fileTreeContextMenu.MenuItems.Count != 0)
+                    if (fileTreeContextMenu.MenuItems.Count != 0)
                         fileTreeContextMenu.Show(fileTree, p);
                 }
             }
@@ -146,13 +151,12 @@ namespace CrossMod
 
         private void exportExportableModelAsSMD(object sender, EventArgs args)
         {
-            string FileName;
-            if (FileTools.TrySaveFile(out FileName, "Supported Files(*.smd*.obj)|*.smd;*.obj"))
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj)|*.smd;*.obj"))
             {
-                if(FileName.EndsWith(".smd"))
-                IO_SMD.ExportIOModelAsSMD(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
-                if (FileName.EndsWith(".obj"))
-                    IO_OBJ.ExportIOModelAsOBJ(FileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (fileName.EndsWith(".smd"))
+                    IO_SMD.ExportIOModelAsSMD(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (fileName.EndsWith(".obj"))
+                    IO_OBJ.ExportIOModelAsOBJ(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
             }
         }
 

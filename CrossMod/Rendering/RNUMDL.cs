@@ -104,9 +104,9 @@ namespace CrossMod.Rendering
                 else if (a.DataType == (long)ParamDataType.Boolean)
                 {
                     // Convert to vec4 to use with rendering.
-                    // Use red to differentiate with no value (black).
+                    // Use cyan to differentiate with no value (blue).
                     ulong value = (ulong)a.DataObject;
-                    meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = 0, Z = 0, W = 0 };
+                    meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = 0, Z = 1, W = 0 };
                 }
             }
 
