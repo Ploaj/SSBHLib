@@ -86,6 +86,7 @@
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
     <Compile Include="Rendering\PrimBonePrism.cs" />
+    <Compile Include="Rendering\Utils\FramebufferUtils.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">
