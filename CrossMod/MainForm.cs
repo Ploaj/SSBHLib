@@ -175,13 +175,19 @@ namespace CrossMod
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            BatchRenderModels();
+        }
+
+        private void BatchRenderModels()
+        {
             string folderPath = FileTools.TryOpenFolder();
+            string outputPath = FileTools.TryOpenFolder();
 
             // Just render the first alt costume, which should include items without slot specific variants.
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
-                string folder = Directory.GetParent(file).FullName;
-                OpenFiles(folder);
+                string sourceFolder = Directory.GetParent(file).FullName;
+                OpenFiles(sourceFolder);
 
                 ShowModelViewport();
 
@@ -191,11 +197,24 @@ namespace CrossMod
                 modelViewport.RenderFrame();
 
                 // TODO: Save screenshot.
+                using (var bmp = modelViewport.GetScreenshot())
+                {
+                    string condensedName = GetCondensedPathName(folderPath, file);
+                    bmp.Save(Path.Combine(outputPath, $"{condensedName}.png"));
+                }
 
                 // Cleanup.
                 ClearWorkspace();
-                System.Diagnostics.Debug.WriteLine(folder);
+                System.Diagnostics.Debug.WriteLine(sourceFolder);
             }
+        }
+
+        private static string GetCondensedPathName(string folderPath, string file)
+        {
+            string condensedName = file.Replace(folderPath, "");
+            condensedName = condensedName.Replace(Path.DirectorySeparatorChar, '_');
+            condensedName = condensedName.Substring(1); // remove leading underscore
+            return condensedName;
         }
 
         private void SelectFirstModelNode()

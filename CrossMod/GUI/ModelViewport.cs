@@ -75,6 +75,11 @@ namespace CrossMod.GUI
             RenderableNode = null;
         }
 
+        public System.Drawing.Bitmap GetScreenshot()
+        {
+            return Rendering.Utils.FramebufferUtils.ReadFrameBufferPixels(0, FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height);
+        }
+
         private void AddAnimationBar()
         {
             animationBar = new AnimationBar
