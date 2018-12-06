@@ -15,6 +15,7 @@ namespace CrossMod.Nodes
     public class NUMDL_Node : FileNode, IRenderableNode, IExportableModelNode
     {
         private MODL _model;
+        private RNUMDL renderableNode = null;
 
         public NUMDL_Node()
         {
@@ -24,38 +25,48 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            RNUMDL Model = new RNUMDL
+            // Don't initialize more than once.
+            // We'll assume the context isn't destroyed.
+            if (renderableNode == null)
+                renderableNode = CreateRenderableModel();
+
+            return renderableNode;
+        }
+
+        private RNUMDL CreateRenderableModel()
+        {
+            RNUMDL renderableNode = new RNUMDL
             {
                 MODL = _model
             };
 
-            NUMSHB_Node ModelNode = null;
+            NUMSHB_Node modelNode = null;
             foreach (FileNode fileNode in Parent.Nodes)
             {
                 if (fileNode is NUTEX_Node)
                 {
-                    Model.sfTextureByName.Add(((NUTEX_Node)fileNode).TexName.ToLower(), ((RTexture)((NUTEX_Node)fileNode).GetRenderableNode()).renderTexture);
+                    renderableNode.sfTextureByName.Add(((NUTEX_Node)fileNode).TexName.ToLower(), ((RTexture)((NUTEX_Node)fileNode).GetRenderableNode()).renderTexture);
                 }
                 if (fileNode.Text.Equals(_model.MeshString))
                 {
-                    ModelNode = (NUMSHB_Node)fileNode;
+                    modelNode = (NUMSHB_Node)fileNode;
                 }
                 if (fileNode.Text.Equals(_model.SkeletonFileName))
                 {
-                    Model.Skeleton = (RSkeleton)((SKEL_Node)fileNode).GetRenderableNode();
+                    renderableNode.Skeleton = (RSkeleton)((SKEL_Node)fileNode).GetRenderableNode();
                 }
                 if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-                    Model.Material = ((MTAL_Node)fileNode)._material;
+                    renderableNode.Material = ((MTAL_Node)fileNode)._material;
                 }
             }
-            if(ModelNode != null)
-                Model.Model = (RModel)ModelNode.GetRenderableNode(Model.Skeleton);
-            if (Model.Material != null)
-                Model.UpdateMaterial();
-            if (Model.Skeleton != null)
-                Model.UpdateBinds();
-            return Model;
+            if (modelNode != null)
+                renderableNode.Model = (RModel)modelNode.GetRenderableNode(renderableNode.Skeleton);
+            if (renderableNode.Material != null)
+                renderableNode.UpdateMaterial();
+            if (renderableNode.Skeleton != null)
+                renderableNode.UpdateBinds();
+            return renderableNode;
         }
 
         public override void Open(string Path)
