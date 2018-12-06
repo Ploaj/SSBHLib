@@ -32,13 +32,13 @@ namespace CrossMod
         public void HideControl()
         {
             contentBox.Controls.Clear();
-            _modelControl.Clear();
+            modelViewport.Clear();
         }
 
-        public void ShowModelControl()
+        public void ShowModelViewport()
         {
             HideControl();
-            contentBox.Controls.Add(_modelControl);
+            contentBox.Controls.Add(modelViewport);
         }
 
         private void openModelFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -163,7 +163,7 @@ namespace CrossMod
         private void clearWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             fileTree.Nodes.Clear();
-            _modelControl.ClearFiles();
+            modelViewport.ClearFiles();
             HideControl();
             GC.Collect();
         }

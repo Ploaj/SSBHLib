@@ -41,11 +41,12 @@ namespace CrossMod.Nodes
             };
 
             NUMSHB_Node modelNode = null;
+            NUHLPB_Node helperNode = null;
             foreach (FileNode fileNode in Parent.Nodes)
             {
                 if (fileNode is NUHLPB_Node)
                 {
-                    HelperNode = (NUHLPB_Node)fileNode;
+                    helperNode = (NUHLPB_Node)fileNode;
                 }
                 if (fileNode is NUTEX_Node)
                 {
@@ -64,17 +65,17 @@ namespace CrossMod.Nodes
                     renderableNode.Material = ((MTAL_Node)fileNode)._material;
                 }
             }
-            if(ModelNode != null)
-                Model.Model = (RModel)ModelNode.GetRenderableNode(Model.Skeleton);
-            if (Model.Material != null)
-                Model.UpdateMaterial();
-            if (Model.Skeleton != null)
+            if(modelNode != null)
+                renderableNode.Model = (RModel)modelNode.GetRenderableNode(renderableNode.Skeleton);
+            if (renderableNode.Material != null)
+                renderableNode.UpdateMaterial();
+            if (renderableNode.Skeleton != null)
             {
-                if (HelperNode != null)
-                    HelperNode.AddToRenderSkeleton(Model.Skeleton);
-                Model.UpdateBinds();
+                if (helperNode != null)
+                    helperNode.AddToRenderSkeleton(renderableNode.Skeleton);
+                renderableNode.UpdateBinds();
             }
-            return Model;
+            return renderableNode;
         }
 
         public override void Open(string Path)
