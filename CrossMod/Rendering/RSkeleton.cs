@@ -9,13 +9,21 @@ using SFGraphics.Cameras;
 using SFGenericModel;
 using SFGenericModel.VertexAttributes;
 using OpenTK.Graphics.OpenGL;
+using System.IO;
 
 namespace CrossMod.Rendering
 {
     public class RSkeleton : IRenderable
     {
+        // Processing
         public List<RBone> Bones = new List<RBone>();
         public List<RHelperBone> HelperBone = new List<RHelperBone>();
+
+        // Rendering
+        private PrimBonePrism bonePrism;
+        public static Shader boneShader = null;
+        private static Matrix4 prismRotation = Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), 1.5708f);
+        
 
         public Matrix4[] GetTransforms()
         {
@@ -122,7 +130,38 @@ namespace CrossMod.Rendering
 
         public void Render(Camera Camera)
         {
-            //TODO:
+            // TODO: Render texture.
+            if (bonePrism == null)
+                bonePrism = new PrimBonePrism();
+
+            if (boneShader == null)
+            {
+                boneShader = new Shader();
+                boneShader.LoadShader(File.ReadAllText("Shaders/bone.frag"), OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
+                boneShader.LoadShader(File.ReadAllText("Shaders/bone.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
+            }
+            
+            boneShader.UseProgram();
+
+            Matrix4 mvp = Camera.MvpMatrix;
+            boneShader.SetMatrix4x4("mvp", ref mvp);
+            boneShader.SetMatrix4x4("rotation", ref prismRotation);
+
+            foreach (RBone b in Bones)
+            {
+                boneShader.SetMatrix4x4("bone", ref b.WorldTransform);
+                boneShader.SetInt("hasParent", b.ParentID != -1 ? 1 : 0);
+                if(b.ParentID != -1)
+                {
+                    boneShader.SetMatrix4x4("parent", ref Bones[b.ParentID].WorldTransform);
+                }
+                bonePrism.Draw(boneShader, null);
+
+                // leaf node
+                boneShader.SetInt("hasParent", 0); 
+                bonePrism.Draw(boneShader, null);
+            }
+
         }
     }
 

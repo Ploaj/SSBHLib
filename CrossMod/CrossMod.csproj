@@ -85,6 +85,7 @@
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">
@@ -375,6 +376,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\RTexDebug.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\bone.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\bone.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\texture.frag">
