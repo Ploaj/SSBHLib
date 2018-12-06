@@ -162,10 +162,55 @@ namespace CrossMod
 
         private void clearWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ClearWorkspace();
+        }
+
+        private void ClearWorkspace()
+        {
             fileTree.Nodes.Clear();
             modelViewport.ClearFiles();
             HideControl();
             GC.Collect();
+        }
+
+        private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string folderPath = FileTools.TryOpenFolder();
+
+            // Just render the first alt costume, which should include items without slot specific variants.
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
+            {
+                string folder = Directory.GetParent(file).FullName;
+                OpenFiles(folder);
+
+                ShowModelViewport();
+
+                // Necessary workaround for how models are displayed.
+                SelectFirstModelNode();
+
+                modelViewport.RenderFrame();
+
+                // TODO: Save screenshot.
+
+                // Cleanup.
+                ClearWorkspace();
+                System.Diagnostics.Debug.WriteLine(folder);
+            }
+        }
+
+        private void SelectFirstModelNode()
+        {
+            foreach (TreeNode folderNode in fileTree.Nodes)
+            {
+                foreach (TreeNode fileNode in folderNode.Nodes)
+                {
+                    if (fileNode.Text.EndsWith("numdlb"))
+                    {
+                        fileTree.SelectedNode = fileNode;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

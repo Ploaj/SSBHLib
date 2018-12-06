@@ -32,11 +32,13 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openModelFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
-            this.clearWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,7 +46,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.viewportToolStripMenuItem});
+            this.viewportToolStripMenuItem,
+            this.experimentalToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(872, 24);
@@ -76,6 +79,13 @@
             this.reloadShadersToolStripMenuItem.Text = "Reload Shaders";
             this.reloadShadersToolStripMenuItem.Click += new System.EventHandler(this.reloadShadersToolStripMenuItem_Click);
             // 
+            // clearWorkspaceToolStripMenuItem
+            // 
+            this.clearWorkspaceToolStripMenuItem.Name = "clearWorkspaceToolStripMenuItem";
+            this.clearWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.clearWorkspaceToolStripMenuItem.Text = "Clear Workspace";
+            this.clearWorkspaceToolStripMenuItem.Click += new System.EventHandler(this.clearWorkspaceToolStripMenuItem_Click);
+            // 
             // viewportToolStripMenuItem
             // 
             this.viewportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -87,7 +97,7 @@
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
@@ -115,12 +125,20 @@
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
             // 
-            // clearWorkspaceToolStripMenuItem
+            // experimentalToolStripMenuItem
             // 
-            this.clearWorkspaceToolStripMenuItem.Name = "clearWorkspaceToolStripMenuItem";
-            this.clearWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.clearWorkspaceToolStripMenuItem.Text = "Clear Workspace";
-            this.clearWorkspaceToolStripMenuItem.Click += new System.EventHandler(this.clearWorkspaceToolStripMenuItem_Click);
+            this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.batchRenderModelsToolStripMenuItem});
+            this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
+            this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
+            this.experimentalToolStripMenuItem.Text = "Experimental";
+            // 
+            // batchRenderModelsToolStripMenuItem
+            // 
+            this.batchRenderModelsToolStripMenuItem.Name = "batchRenderModelsToolStripMenuItem";
+            this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.batchRenderModelsToolStripMenuItem.Text = "Batch Render Models";
+            this.batchRenderModelsToolStripMenuItem.Click += new System.EventHandler(this.batchRenderModelsToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -151,6 +169,8 @@
         private System.Windows.Forms.ToolStripMenuItem viewportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renderSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearWorkspaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem experimentalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem batchRenderModelsToolStripMenuItem;
     }
 }
 
