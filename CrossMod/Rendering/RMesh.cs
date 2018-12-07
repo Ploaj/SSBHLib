@@ -103,21 +103,22 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("uvPattern", defaultTextures.uvPattern);
 
             // Set specific parameters and use a default value if not present.
-            AddMtalVec4(genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
+            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
+            AddMtalVec4("a6Param", genericMaterial, material, 0xA6, new Vector4(1));
 
             return genericMaterial;
         }
 
-        private static void AddMtalVec4(SFGenericModel.Materials.GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
+        private static void AddMtalVec4(string name, SFGenericModel.Materials.GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
         {
             if (source.vec4ByParamId.ContainsKey(paramId))
             {
                 var value = source.vec4ByParamId[paramId];
-                genericMaterial.AddVector4($"vec4Param", new Vector4(value.X, value.Y, value.Z, value.W));
+                genericMaterial.AddVector4(name, new Vector4(value.X, value.Y, value.Z, value.W));
             }
             else
             {
-                genericMaterial.AddVector4($"vec4Param", defaultValue);
+                genericMaterial.AddVector4(name, defaultValue);
             }
         }
 
