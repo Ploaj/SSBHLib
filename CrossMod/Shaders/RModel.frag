@@ -23,6 +23,8 @@ uniform int renderSpecular;
 uniform int renderWireframe;
 uniform int useDittoForm;
 
+uniform vec4 a6Param;
+
 uniform mat4 mvp;
 
 out vec4 fragColor;
@@ -138,6 +140,9 @@ void main()
 
 
 	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
+
+    float rimLight = (1 - max(dot(newNormal, V), 0));
+    fragColor.rgb += a6Param.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 
 	// TODO: Doesn't work for skin.
 	fragColor.a = albedoColor.a;
