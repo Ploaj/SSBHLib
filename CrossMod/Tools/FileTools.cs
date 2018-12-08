@@ -5,49 +5,52 @@ namespace CrossMod
 {
     public class FileTools
     {
-        public static string TryOpenFolder()
+        public static string TryOpenFolder(string title = "")
         {
-            FolderSelectDialog Dialog = new FolderSelectDialog();
-
-            if (Dialog.ShowDialog() == DialogResult.OK)
+            using (var dialog = new FolderSelectDialog())
             {
-                return Dialog.SelectedPath;
-            }
+                if (!string.IsNullOrEmpty(title))
+                    dialog.Title = title;
 
-            Dialog.Dispose();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    return dialog.SelectedPath;
+                }
+
+            }
 
             return "";
         }
         
-        public static bool TryOpenFile(out string FileName, string Filter = "")
+        public static bool TryOpenFile(out string fileName, string filter = "")
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using (var dialog = new OpenFileDialog())
             {
-                dialog.Filter = Filter;
+                dialog.Filter = filter;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    FileName = dialog.FileName;
+                    fileName = dialog.FileName;
                     return true;
                 }
             }
-            FileName = "";
+            fileName = "";
             return false;
         }
         
-        public static bool TrySaveFile(out string FileName, string Filter = "")
+        public static bool TrySaveFile(out string fileName, string filter = "")
         {
-            using (SaveFileDialog dialog = new SaveFileDialog())
+            using (var dialog = new SaveFileDialog())
             {
-                dialog.Filter = Filter;
+                dialog.Filter = filter;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    FileName = dialog.FileName;
+                    fileName = dialog.FileName;
                     return true;
                 }
             }
-            FileName = "";
+            fileName = "";
             return false;
         }
     }
