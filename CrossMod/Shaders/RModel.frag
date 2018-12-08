@@ -23,7 +23,8 @@ uniform int renderSpecular;
 uniform int renderWireframe;
 uniform int useDittoForm;
 
-uniform vec4 a6Param;
+uniform vec4 paramA6;
+uniform vec4 param98;
 
 uniform mat4 mvp;
 
@@ -142,10 +143,13 @@ void main()
 	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
 
     float rimLight = (1 - max(dot(newNormal, V), 0));
-    fragColor.rgb += a6Param.rgb * pow(rimLight, 3) * specularIbl * 0.5;
+    fragColor.rgb += paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 
-	// TODO: Doesn't work for skin.
 	fragColor.a = albedoColor.a;
+
+    // TODO: 0 = alpha. 1 = alpha.
+    // Values can be between 0 and 1, however.
+    fragColor.a += param98.x;
 
 	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
 	vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;

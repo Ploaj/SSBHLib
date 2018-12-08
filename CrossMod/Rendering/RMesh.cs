@@ -104,7 +104,8 @@ namespace CrossMod.Rendering
 
             // Set specific parameters and use a default value if not present.
             AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
-            AddMtalVec4("a6Param", genericMaterial, material, 0xA6, new Vector4(1));
+            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(1));
+            AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
 
             return genericMaterial;
         }
