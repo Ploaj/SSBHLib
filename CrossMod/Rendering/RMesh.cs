@@ -64,10 +64,12 @@ namespace CrossMod.Rendering
             // Don't use the default texture unit.
             var genericMaterial = new SFGenericModel.Materials.GenericMaterial(1);
 
+            // Use black for the default value.
+            // Some materials seemt to use emission as the main diffuse.
             if (material.col != null)
                 genericMaterial.AddTexture("colMap", material.col);
             else
-                genericMaterial.AddTexture("colMap", defaultTextures.defaultWhite);
+                genericMaterial.AddTexture("colMap", defaultTextures.defaultBlack);
 
             // Use the first texture for both layers if the second layer isn't present.
             if (material.col2 != null)
@@ -75,7 +77,7 @@ namespace CrossMod.Rendering
             else if (material.col != null)
                 genericMaterial.AddTexture("col2Map", material.col);
             else
-                genericMaterial.AddTexture("col2Map", defaultTextures.defaultWhite);
+                genericMaterial.AddTexture("col2Map", defaultTextures.defaultBlack);
 
             if (material.prm != null)
                 genericMaterial.AddTexture("prmMap", material.prm);

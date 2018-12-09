@@ -93,6 +93,8 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 
 void main()
 {
+    fragColor = vec4(0, 0, 0, 1);
+    
 	vec4 norColor = texture(norMap, UV0).xyzw;
 	vec3 newNormal = GetBumpMapNormal(N, norColor);
 
