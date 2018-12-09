@@ -60,19 +60,19 @@ namespace CrossMod.IO
                         UsedNames.Add(mesh.Name, 0);
                     // add a triangle strip
                     // IOMesh are assumed to be triangles only
-                    for(int i = 0; i < mesh.Indicies.Count; i+=3)
+                    for(int i = 0; i < mesh.Indices.Count; i+=3)
                     {
                         o.AppendLine(Meshname);
                         {
-                            IOVertex v = mesh.Vertices[(int)mesh.Indicies[i]];
+                            IOVertex v = mesh.Vertices[(int)mesh.Indices[i]];
                             o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                         {
-                            IOVertex v = mesh.Vertices[(int)mesh.Indicies[i+1]];
+                            IOVertex v = mesh.Vertices[(int)mesh.Indices[i+1]];
                             o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                         {
-                            IOVertex v = mesh.Vertices[(int)mesh.Indicies[i+2]];
+                            IOVertex v = mesh.Vertices[(int)mesh.Indices[i+2]];
                             o.AppendLine($"0 {v.Position.X} {v.Position.Y} {v.Position.Z} {v.Normal.X} {v.Normal.Y} {v.Normal.Z} {v.UV0.X} {v.UV0.Y} " + CountWeights(v.BoneWeights) + " " + CreateWeightList(v, CountWeights(v.BoneWeights)));
                         }
                     }

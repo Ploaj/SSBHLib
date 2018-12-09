@@ -20,9 +20,9 @@ namespace CrossMod.IO
 
     public class IOMesh
     {
-        public string Name;
-        public List<IOVertex> Vertices = new List<IOVertex>();
-        public List<uint> Indicies = new List<uint>();
+        public string Name { get; set; }
+        public List<IOVertex> Vertices { get; } = new List<IOVertex>();
+        public List<uint> Indices { get; } = new List<uint>();
 
         public bool HasPositions { get; set; } = false;
         public bool HasNormals { get; set; } = false;

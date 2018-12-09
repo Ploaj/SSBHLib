@@ -250,5 +250,12 @@ namespace CrossMod
                 }
             }
         }
+
+        private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var node = fileTree.SelectedNode as IExportableModelNode;
+            if (node != null)
+                modelViewport.FrameSelection(node);
+        }
     }
 }

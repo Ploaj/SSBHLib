@@ -223,7 +223,7 @@ namespace CrossMod.Nodes
                         }
 
                         outMesh.Vertices.AddRange(Vertices);
-                        outMesh.Indicies.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
+                        outMesh.Indices.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
                     }
 
                 }

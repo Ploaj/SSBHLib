@@ -92,11 +92,11 @@ namespace CrossMod.IO
 
                     // triangles
                     triangles triangles = new triangles();
-                    triangles.count = (ulong)iomesh.Indicies.Count;
+                    triangles.count = (ulong)iomesh.Indices.Count;
                     triangles.input = new InputLocalOffset[] {
                     new InputLocalOffset(){offset = 0, semantic = "VERTEX", source = "#" + vertices.id }
                 };
-                    triangles.p = string.Join(" ", iomesh.Indicies);
+                    triangles.p = string.Join(" ", iomesh.Indices);
 
                     // creating mesh
                     mesh geomesh = new mesh();

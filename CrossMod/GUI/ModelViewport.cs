@@ -47,8 +47,36 @@ namespace CrossMod.GUI
                     DisplayMeshes(renderableModel.GetModel());
                     DisplaySkeleton(renderableModel.GetSkeleton());
                 }
+
+                if (value is IExportableModelNode exportableModel)
+                {
+                    FrameSelection(exportableModel);
+                }
             }
         }
+
+        public void FrameSelection(IExportableModelNode exportableModel)
+        {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var model = exportableModel.GetIOModel();
+
+            var positions = new List<Vector3>();
+            foreach (var mesh in model.Meshes)
+            {
+                foreach (var vert in mesh.Vertices)
+                {
+                    positions.Add(vert.Position);
+                }
+            }
+
+            // Generate a bounding sphere from the exportable model.
+            // This will account for the vastly different model sizes.
+            var sphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(positions);
+            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 0);
+
+            System.Diagnostics.Debug.WriteLine($"Frame Selection: {stopwatch.ElapsedMilliseconds}");
+        }
+
         private IRenderable renderableNode;
 
         public Camera camera;

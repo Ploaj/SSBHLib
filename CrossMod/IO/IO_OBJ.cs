@@ -38,11 +38,11 @@ namespace CrossMod.IO
                     o.AppendLine($"vn {v.Normal.X} {v.Normal.Y} {v.Normal.Z}");
                     o.AppendLine($"vt {v.UV0.X} {v.UV0.Y}");
                 }
-                for(int i = 0; i < mesh.Indicies.Count; i+=3)
+                for(int i = 0; i < mesh.Indices.Count; i+=3)
                 {
-                    o.AppendLine($"f {VertexCount+mesh.Indicies[i]}/{VertexCount + mesh.Indicies[i]}/{VertexCount + mesh.Indicies[i]}" +
-                        $" {VertexCount + mesh.Indicies[i+1]}/{VertexCount + mesh.Indicies[i+1]}/{VertexCount + mesh.Indicies[i+1]}" +
-                        $" {VertexCount + mesh.Indicies[i+2]}/{VertexCount + mesh.Indicies[i+2]}/{VertexCount + mesh.Indicies[i+2]}");
+                    o.AppendLine($"f {VertexCount+mesh.Indices[i]}/{VertexCount + mesh.Indices[i]}/{VertexCount + mesh.Indices[i]}" +
+                        $" {VertexCount + mesh.Indices[i+1]}/{VertexCount + mesh.Indices[i+1]}/{VertexCount + mesh.Indices[i+1]}" +
+                        $" {VertexCount + mesh.Indices[i+2]}/{VertexCount + mesh.Indices[i+2]}/{VertexCount + mesh.Indices[i+2]}");
                 }
                 VertexCount += mesh.Vertices.Count;
             }

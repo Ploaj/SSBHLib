@@ -35,10 +35,11 @@
             this.clearWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileTree = new System.Windows.Forms.TreeView();
-            this.contentBox = new System.Windows.Forms.GroupBox();
             this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileTree = new System.Windows.Forms.TreeView();
+            this.contentBox = new System.Windows.Forms.GroupBox();
+            this.frameSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,7 +90,8 @@
             // viewportToolStripMenuItem
             // 
             this.viewportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.renderSettingsToolStripMenuItem});
+            this.renderSettingsToolStripMenuItem,
+            this.frameSelectionToolStripMenuItem});
             this.viewportToolStripMenuItem.Name = "viewportToolStripMenuItem";
             this.viewportToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.viewportToolStripMenuItem.Text = "Viewport";
@@ -100,6 +102,21 @@
             this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
+            // 
+            // experimentalToolStripMenuItem
+            // 
+            this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.batchRenderModelsToolStripMenuItem});
+            this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
+            this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
+            this.experimentalToolStripMenuItem.Text = "Experimental";
+            // 
+            // batchRenderModelsToolStripMenuItem
+            // 
+            this.batchRenderModelsToolStripMenuItem.Name = "batchRenderModelsToolStripMenuItem";
+            this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.batchRenderModelsToolStripMenuItem.Text = "Batch Render Models";
+            this.batchRenderModelsToolStripMenuItem.Click += new System.EventHandler(this.batchRenderModelsToolStripMenuItem_Click);
             // 
             // fileTree
             // 
@@ -125,20 +142,12 @@
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
             // 
-            // experimentalToolStripMenuItem
+            // frameSelectionToolStripMenuItem
             // 
-            this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.batchRenderModelsToolStripMenuItem});
-            this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
-            this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
-            this.experimentalToolStripMenuItem.Text = "Experimental";
-            // 
-            // batchRenderModelsToolStripMenuItem
-            // 
-            this.batchRenderModelsToolStripMenuItem.Name = "batchRenderModelsToolStripMenuItem";
-            this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.batchRenderModelsToolStripMenuItem.Text = "Batch Render Models";
-            this.batchRenderModelsToolStripMenuItem.Click += new System.EventHandler(this.batchRenderModelsToolStripMenuItem_Click);
+            this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
+            this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -171,6 +180,7 @@
         private System.Windows.Forms.ToolStripMenuItem clearWorkspaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem experimentalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem batchRenderModelsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem frameSelectionToolStripMenuItem;
     }
 }
 
