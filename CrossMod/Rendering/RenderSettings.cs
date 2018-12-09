@@ -36,6 +36,9 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Ditto Form", ValueEnums.ValueType.Bool, "Misc")]
         public bool useDittoForm = false;
 
+        [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
+        public bool renderBones = false;
+
         [EditInfo("Render Mode", ValueEnums.ValueType.Enum, "Debug Shading")]
         public RenderMode renderMode = RenderMode.Shaded;
 

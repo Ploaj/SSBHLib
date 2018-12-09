@@ -115,19 +115,31 @@ namespace CrossMod.Rendering
 
         private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)
         {
+            // Don't make texture names case sensitive.
             var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
-            if (a.ParamID == (long)ParamId.ColMap)
-                sfTextureByName.TryGetValue(text, out meshMaterial.col);
-            else if (a.ParamID == (long)ParamId.ColMap2)
-                sfTextureByName.TryGetValue(text, out meshMaterial.col2);
-            else if (a.ParamID == (long)ParamId.NorMap)
-                sfTextureByName.TryGetValue(text, out meshMaterial.nor);
-            else if (a.ParamID == (long)ParamId.PrmMap)
-                sfTextureByName.TryGetValue(text, out meshMaterial.prm);
-            else if (a.ParamID == (long)ParamId.EmiMap)
-                sfTextureByName.TryGetValue(text, out meshMaterial.emi);
-            else if (a.ParamID == (long)ParamId.BakeLitMap)
-                sfTextureByName.TryGetValue(text, out meshMaterial.bakeLit);
+
+            switch (a.ParamID)
+            {
+                case (long)ParamId.ColMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.col);
+                        break;
+                case (long)ParamId.ColMap2:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.col2);
+                    break;
+                case (long)ParamId.NorMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.nor);
+                    break;
+                case (long)ParamId.PrmMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.prm);
+                    break;
+                case (long)ParamId.EmiMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.emi);
+                    break;
+                case (long)ParamId.BakeLitMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.bakeLit);
+                    break;
+            }
+
         }
 
         public void Render(Camera Camera)
@@ -137,7 +149,9 @@ namespace CrossMod.Rendering
                 Model.Render(Camera, Skeleton);
             }
 
-            //Render Skeleton with no depth buffer
+            // Render skeleton on top.
+            if (RenderSettings.Instance.renderBones)
+                Skeleton?.Render(Camera);
         }
 
         public RModel GetModel()

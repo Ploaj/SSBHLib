@@ -130,6 +130,9 @@ namespace CrossMod.Rendering
 
         public void Render(Camera Camera)
         {
+            // Render skeleton on top.
+            GL.Disable(EnableCap.DepthTest);
+
             // TODO: Render texture.
             if (bonePrism == null)
                 bonePrism = new PrimBonePrism();
@@ -137,8 +140,8 @@ namespace CrossMod.Rendering
             if (boneShader == null)
             {
                 boneShader = new Shader();
-                boneShader.LoadShader(File.ReadAllText("Shaders/bone.frag"), OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
-                boneShader.LoadShader(File.ReadAllText("Shaders/bone.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
+                boneShader.LoadShader(File.ReadAllText("Shaders/bone.frag"), ShaderType.FragmentShader);
+                boneShader.LoadShader(File.ReadAllText("Shaders/bone.vert"), ShaderType.VertexShader);
             }
             
             boneShader.UseProgram();
