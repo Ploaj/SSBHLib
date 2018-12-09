@@ -30,20 +30,8 @@ uniform mat4 mvp;
 
 out vec4 fragColor;
 
-float WireframeIntensity(vec3 distanceToEdges) {
-    float minDistance = min(min(distanceToEdges.x, distanceToEdges.y), distanceToEdges.z);
-
-    // Constant wireframe thickness relative to the screen size.
-	float thickness = 0.35;
-    float smoothAmount = 0.75;
-
-    float delta = fwidth(minDistance);
-    float edge0 = delta * thickness;
-    float edge1 = edge0 + (delta * smoothAmount);
-    float smoothedDistance = smoothstep(edge0, edge1, minDistance);
-
-    return 1 - smoothedDistance;
-}
+// Defined in Wireframe.frag.
+float WireframeIntensity(vec3 distanceToEdges);
 
 vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {
@@ -94,7 +82,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
-    
+
 	vec4 norColor = texture(norMap, UV0).xyzw;
 	vec3 newNormal = GetBumpMapNormal(N, norColor);
 
