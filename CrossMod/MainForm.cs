@@ -50,6 +50,9 @@ namespace CrossMod
             OpenFiles(folderPath);
 
             ShowModelViewport();
+
+            // Render models if present.
+            SelectFirstNode("numdlb");
         }
 
         private void OpenFiles(string folderPath)
