@@ -80,7 +80,7 @@ namespace CrossMod.GUI
 
         public System.Drawing.Bitmap GetScreenshot()
         {
-            return Rendering.Utils.FramebufferUtils.ReadFrameBufferPixels(0, FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height);
+            return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height);
         }
 
         private void AddAnimationBar()
