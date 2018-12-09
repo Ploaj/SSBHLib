@@ -66,29 +66,34 @@ namespace CrossMod
 
             foreach (string file in files)
             {
-                FileNode Node = null;
+                OpenFile(Types, Parent, file);
+            }
+        }
 
-                string Extension = Path.GetExtension(file);
+        private static void OpenFile(Type[] Types, TreeNode Parent, string file)
+        {
+            FileNode Node = null;
 
-                foreach (Type type in Types)
+            string Extension = Path.GetExtension(file);
+
+            foreach (Type type in Types)
+            {
+                if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
                 {
-                    if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
+                    if (attr.Extension.Equals(Extension))
                     {
-                        if (attr.Extension.Equals(Extension))
-                        {
-                            Node = (FileNode)Activator.CreateInstance(type);
-                        }
+                        Node = (FileNode)Activator.CreateInstance(type);
                     }
                 }
-
-                if (Node == null)
-                    Node = new FileNode();
-
-                Node.Open(file);
-
-                Node.Text = Path.GetFileName(file);
-                Parent.Nodes.Add(Node);
             }
+
+            if (Node == null)
+                Node = new FileNode();
+
+            Node.Open(file);
+
+            Node.Text = Path.GetFileName(file);
+            Parent.Nodes.Add(Node);
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -182,14 +187,19 @@ namespace CrossMod
 
         private void BatchRenderModels()
         {
-            string folderPath = FileTools.TryOpenFolder();
-            string outputPath = FileTools.TryOpenFolder();
+            string folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            string outputPath = FileTools.TryOpenFolder("Select PNG Output Directory");
+            if (string.IsNullOrEmpty(outputPath))
+                return;
 
             // Just render the first alt costume, which should include items without slot specific variants.
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
                 // Just render main fighter models for now.
-                if (!file.Contains("body"))
+                if (!file.Contains("body") || !file.Contains("c00"))
                     continue;
 
                 string sourceFolder = Directory.GetParent(file).FullName;
@@ -198,7 +208,7 @@ namespace CrossMod
                 ShowModelViewport();
 
                 // Necessary workaround for how models are displayed.
-                SelectFirstModelNode();
+                SelectFirstNode("numdlb");
 
                 modelViewport.RenderFrame();
 
@@ -223,13 +233,13 @@ namespace CrossMod
             return condensedName;
         }
 
-        private void SelectFirstModelNode()
+        private void SelectFirstNode(string endingText)
         {
             foreach (TreeNode folderNode in fileTree.Nodes)
             {
                 foreach (TreeNode fileNode in folderNode.Nodes)
                 {
-                    if (fileNode.Text.EndsWith("numdlb"))
+                    if (fileNode.Text.EndsWith(endingText))
                     {
                         fileTree.SelectedNode = fileNode;
                         return;
