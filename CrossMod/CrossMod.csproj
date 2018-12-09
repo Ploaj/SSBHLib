@@ -81,6 +81,8 @@
     <Compile Include="GUI\AnimationBar.Designer.cs">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\ColladaSchema.cs" />
+    <Compile Include="IO\IO_DAE.cs" />
     <Compile Include="IO\IO_OBJ.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
