@@ -73,6 +73,18 @@ namespace SSBHLib.Formats
             }
         }
 
+        private static string GetPropertyValues(System.Type type, object obj)
+        {
+            string result = "(";
+            foreach (var property in type.GetProperties())
+            {
+                result += property.GetValue(obj).ToString() + ", ";
+            }
+            result = result.TrimEnd(',', ' ');
+            result += ")";
+            return result;
+        }
+
         public class MTAL_Vector4 : ISSBH_File
         {
             public float X { get; set; }
@@ -113,6 +125,11 @@ namespace SSBHLib.Formats
             public float Unk13 { get; set; }
             public int Unk14 { get; set; }
             public int Unk15 { get; set; }
+
+            public override string ToString()
+            {
+                return GetPropertyValues(GetType(), this);
+            }
         }
 
 
@@ -141,6 +158,11 @@ namespace SSBHLib.Formats
             public int Unk11 { get; set; }
 
             public int Unk12 { get; set; }
+
+            public override string ToString()
+            {
+                return GetPropertyValues(GetType(), this);
+            }
         }
 
         public class MTAL_Unk_12 : ISSBH_File
@@ -161,6 +183,11 @@ namespace SSBHLib.Formats
             public int Unk7 { get; set; }
 
             public int Unk8 { get; set; }
+
+            public override string ToString()
+            {
+                return GetPropertyValues(GetType(), this);
+            }
         }
     }
 }
