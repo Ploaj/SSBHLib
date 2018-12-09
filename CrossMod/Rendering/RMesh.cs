@@ -82,7 +82,7 @@ namespace CrossMod.Rendering
             if (material.prm != null)
                 genericMaterial.AddTexture("prmMap", material.prm);
             else
-                genericMaterial.AddTexture("prmMap", defaultTextures.defaultWhite);
+                genericMaterial.AddTexture("prmMap", defaultTextures.defaultPrm);
 
             if (material.nor != null)
                 genericMaterial.AddTexture("norMap", material.nor);

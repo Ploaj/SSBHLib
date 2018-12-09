@@ -7,13 +7,17 @@ namespace CrossMod.Rendering.Resources
 {
     public class DefaultTextures
     {
+        // Default textures.
         public Texture2D defaultWhite = null;
         public Texture2D defaultNormal = null;
         public Texture2D defaultBlack = null;
+        public Texture2D defaultPrm = null;
+
+        // Render modes.
         public Texture2D uvPattern = null;
 
+        // PBR image based lighting.
         public Texture2D iblLut = null;
-
         public TextureCubeMap diffusePbr = null;
         public TextureCubeMap specularPbr = null;
 
@@ -28,6 +32,9 @@ namespace CrossMod.Rendering.Resources
 
             defaultWhite = new Texture2D();
             LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
+
+            defaultPrm = new Texture2D();
+            LoadBitmap(defaultPrm, "DefaultTextures/default_Params.png");
 
             defaultNormal = new Texture2D();
             LoadBitmap(defaultNormal, "DefaultTextures/default_normal.png");
