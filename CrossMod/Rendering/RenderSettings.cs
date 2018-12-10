@@ -12,6 +12,7 @@ namespace CrossMod.Rendering
             Nor,
             Emi,
             BakeLit,
+            Gao,
             ColorSet,
             Normals,
             Tangents,

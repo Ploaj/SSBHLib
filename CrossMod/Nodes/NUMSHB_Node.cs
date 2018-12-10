@@ -119,6 +119,7 @@ namespace CrossMod.Nodes
                     Mesh.VertexAttributes.Add(customAttribute);
 
                     System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size}");
+                    System.Diagnostics.Debug.WriteLine($"Unk4: {meshAttribute.Unk4_0} Unk5: {meshAttribute.Unk5_0}");
                 }
 
                 // Rigging if skeleton exists

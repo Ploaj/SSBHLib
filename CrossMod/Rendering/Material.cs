@@ -11,6 +11,7 @@ namespace CrossMod.Rendering
         public Texture prm = null;
         public Texture emi = null;
         public Texture bakeLit = null;
+        public Texture gao = null;
 
         public Dictionary<long, SSBHLib.Formats.MTAL_Attribute.MTAL_Vector4> vec4ByParamId = new Dictionary<long, SSBHLib.Formats.MTAL_Attribute.MTAL_Vector4>();
     }

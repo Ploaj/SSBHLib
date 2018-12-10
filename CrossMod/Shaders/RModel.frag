@@ -14,6 +14,7 @@ uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D bakeLitMap;
+uniform sampler2D gaoMap;
 
 uniform sampler2D iblLut;
 
@@ -132,8 +133,10 @@ void main()
 	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
 
 	vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
+
 	// Bake lighting maps.
 	diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
+    diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
 
 	fragColor.rgb += diffuseTerm * renderDiffuse;
 

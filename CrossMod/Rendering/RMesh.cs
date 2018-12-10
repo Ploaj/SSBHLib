@@ -99,6 +99,11 @@ namespace CrossMod.Rendering
             else
                 genericMaterial.AddTexture("bakeLitMap", defaultTextures.defaultWhite);
 
+            if (material.gao != null)
+                genericMaterial.AddTexture("gaoMap", material.gao);
+            else
+                genericMaterial.AddTexture("gaoMap", defaultTextures.defaultWhite);
+
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
             genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
@@ -106,7 +111,10 @@ namespace CrossMod.Rendering
 
             // Set specific parameters and use a default value if not present.
             AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
-            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(1));
+
+            // Assume no edge lighting if not present.
+            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
+            
             AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
 
             return genericMaterial;

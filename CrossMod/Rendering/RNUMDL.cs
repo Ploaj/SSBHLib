@@ -19,6 +19,7 @@ namespace CrossMod.Rendering
             PrmMap = 0x62,
             NorMap = 0x60,
             ColMap = 0x5C,
+            GaoMap = 0x5F,
             ColMap2 = 0x5D,
             EmiMap = 0x61,
             BakeLitMap = 0x65
@@ -122,7 +123,10 @@ namespace CrossMod.Rendering
             {
                 case (long)ParamId.ColMap:
                     sfTextureByName.TryGetValue(text, out meshMaterial.col);
-                        break;
+                    break;
+                case (long)ParamId.GaoMap:
+                    sfTextureByName.TryGetValue(text, out meshMaterial.gao);
+                    break;
                 case (long)ParamId.ColMap2:
                     sfTextureByName.TryGetValue(text, out meshMaterial.col2);
                     break;
