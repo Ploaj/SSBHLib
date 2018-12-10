@@ -4,7 +4,8 @@ in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
-in vec3 vertexColor;
+in vec4 colorSet;
+in vec3 bakeColor;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -12,6 +13,7 @@ uniform sampler2D col2Map;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
+uniform sampler2D bakeLitMap;
 
 uniform sampler2D iblLut;
 
@@ -129,8 +131,11 @@ void main()
 	// Direct lighting.
 	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
 
+	vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
+	// Bake lighting maps.
+	diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
 
-	fragColor.rgb += kDiffuse * albedoColor.rgb * diffuseLight * renderDiffuse;
+	fragColor.rgb += diffuseTerm * renderDiffuse;
 
     float rimLight = (1 - max(dot(newNormal, V), 0));
     fragColor.rgb += paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;

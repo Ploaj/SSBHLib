@@ -3,9 +3,16 @@
 in vec3 Position0;
 in vec3 Tangent0;
 in vec3 Normal0;
-in vec3 colorSet1;
+in vec4 colorSet1;
+in vec4 colorSet3;
+in vec4 colorSet4;
 in vec3 bake1;
+
 in vec2 map1;
+in vec2 uvSet;
+in vec2 uvSet1;
+in vec2 uvSet2;
+
 in ivec4 Bone;
 in vec4 Weight;
 
@@ -20,7 +27,7 @@ uniform bones
 out vec3 geomN;
 out vec3 geomTangent;
 out vec2 geomUV0;
-out vec3 geomVertexColor;
+out vec4 geomColorSet;
 out vec3 geomBakeColor;
 
 void main()
@@ -28,7 +35,7 @@ void main()
 	vec4 transformedNormal = transform * vec4(Normal0, 0);
 	geomN = transformedNormal.rgb;
 
-	geomVertexColor = colorSet1;
+	geomColorSet = colorSet1;
 	geomBakeColor = bake1;
 
 	geomUV0 = map1;

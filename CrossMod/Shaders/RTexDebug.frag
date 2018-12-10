@@ -4,7 +4,7 @@ in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
-in vec3 vertexColor;
+in vec4 colorSet;
 in vec3 bakeColor;
 noperspective in vec3 edgeDistance;
 
@@ -99,7 +99,8 @@ void main()
 
 	vec4 emiColor = texture(emiMap, UV0).rgba;
 
-	vec4 bakeLitColor = texture(bakeLitMap, UV0).rgba;
+	// TODO: Why does bake1 have UVs?
+	vec4 bakeLitColor = texture(bakeLitMap, bakeColor.xy).rgba;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
@@ -136,8 +137,7 @@ void main()
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
 		case 6:
-			fragColor = vec4(vertexColor, 1);
-			fragColor.rgb = GetSrgb(fragColor.rgb);
+			fragColor = colorSet;
 			break;
 		case 7:
 			fragColor = vec4(newNormal * 0.5 + 0.5, 1);

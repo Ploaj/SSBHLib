@@ -6,14 +6,14 @@ layout (triangle_strip, max_vertices = 3) out;
 in vec3 geomN[];
 in vec3 geomTangent[];
 in vec2 geomUV0[];
-in vec3 geomVertexColor[];
+in vec4 geomColorSet[];
 in vec3 geomBakeColor[];
 
 out vec3 N;
 out vec3 tangent;
 out vec3 bitangent;
 out vec2 UV0;
-out vec3 vertexColor;
+out vec4 colorSet;
 out vec3 bakeColor;
 
 noperspective out vec3 edgeDistance;
@@ -83,7 +83,7 @@ void main()
         bitangent = normalize(bitangent - N * dot(N, bitangent));
 
         UV0 = geomUV0[i];
-        vertexColor = geomVertexColor[i];
+        colorSet = geomColorSet[i];
         bakeColor = geomBakeColor[i];
 
         // The distance from a point to each of the edges.
