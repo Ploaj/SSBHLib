@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenTK;
 using SFGraphics.Cameras;
-using OpenTK;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
@@ -20,14 +16,14 @@ namespace CrossMod.Rendering
             return FrameCount;
         }
 
-        public void SetFrameModel(RModel Model, float Frame)
+        public void SetFrameModel(Models.RModel Model, float Frame)
         {
             if (Model == null) return;
 
             // Visibility
             foreach(RVisibilityAnimation a in VisibilityNodes)
             {
-                foreach(RMesh m in Model.subMeshes)
+                foreach (Models.RMesh m in Model.subMeshes)
                 {
                     // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))

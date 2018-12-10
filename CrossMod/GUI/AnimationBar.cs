@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CrossMod.Rendering;
+using CrossMod.Rendering.Models;
+using System;
 using System.Windows.Forms;
-using CrossMod.Rendering;
-
-// this tool is for playing RAnimation files with skeleton
 
 namespace CrossMod.GUI
 {
+    // this tool is for playing RAnimation files with skeleton
     public partial class AnimationBar : UserControl
     {
         public int FrameCount

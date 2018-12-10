@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CrossMod.IO;
+using CrossMod.Rendering;
+using CrossMod.Rendering.Models;
 using SSBHLib;
 using SSBHLib.Formats;
 using SSBHLib.Tools;
-using CrossMod.Rendering;
-using CrossMod.IO;
+using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {

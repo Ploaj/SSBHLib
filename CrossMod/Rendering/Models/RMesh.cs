@@ -6,7 +6,7 @@ using OpenTK;
 using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Textures;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.Models
 {
     public class RMesh : IRenderable
     {

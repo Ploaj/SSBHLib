@@ -8,6 +8,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK;
 using OpenTK.Input;
 using CrossMod.Nodes;
+using CrossMod.Rendering.Models;
 
 namespace CrossMod.GUI
 {

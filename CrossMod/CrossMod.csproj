@@ -124,15 +124,15 @@
     <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\CustomVertexAttribute.cs" />
+    <Compile Include="Rendering\Models\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\Resources\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\IRenderableAnimation.cs" />
     <Compile Include="Rendering\IRenderableModel.cs" />
     <Compile Include="Rendering\Material.cs" />
     <Compile Include="Rendering\RenderSettings.cs" />
-    <Compile Include="Rendering\RMesh.cs" />
-    <Compile Include="Rendering\RModel.cs" />
+    <Compile Include="Rendering\Models\RMesh.cs" />
+    <Compile Include="Rendering\Models\RModel.cs" />
     <Compile Include="Rendering\RNUMDL.cs" />
     <Compile Include="Rendering\RSkeleton.cs" />
     <Compile Include="Rendering\RTexture.cs" />
@@ -377,7 +377,7 @@
     <None Include="Shaders\RModel.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RTexDebug.frag">
+    <None Include="Shaders\RModelDebug.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\bone.frag">

@@ -1,13 +1,13 @@
-﻿using System;
-using CrossMod.Rendering;
-using SSBHLib.Formats;
-using SSBHLib;
+﻿using CrossMod.Rendering;
+using CrossMod.Rendering.Models;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using SSBHLib;
+using SSBHLib.Formats;
+using SSBHLib.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using SFGenericModel.VertexAttributes;
-using OpenTK.Graphics.OpenGL;
-using SSBHLib.Tools;
 
 namespace CrossMod.Nodes
 {

@@ -3,7 +3,7 @@ using SFGraphics.GLObjects.Shaders;
 using System;
 using System.Linq;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.Models
 {
     public class CustomVertexAttribute
     {
@@ -18,7 +18,7 @@ namespace CrossMod.Rendering
 
         // HACK: Some of the attributes are crashing.
         // This should be handled by SFGraphics for better error checking.
-        private string[] usedAttributes = new string[] { "Position0", "Normal0", "map1", "Tangent0", "Bone", "Weight", "bake1", "colorSet1" };
+        private string[] usedAttributes = new string[] { "Position0", "Normal0", "map1", "Tangent0", "Bone", "Weight", "bake1" };
 
         public void Bind(Shader shader)
         {

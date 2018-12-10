@@ -5,7 +5,7 @@ using SFGraphics.GLObjects.BufferObjects;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.Models
 {
     public class RModel : IRenderable
     {
@@ -106,7 +106,7 @@ namespace CrossMod.Rendering
             if (textureDebugShader == null)
             {
                 textureDebugShader = new Shader();
-                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RTexDebug.frag"), ShaderType.FragmentShader);
+                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelDebug.frag"), ShaderType.FragmentShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);

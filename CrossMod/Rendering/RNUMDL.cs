@@ -2,6 +2,7 @@
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
 using System.Collections.Generic;
+using CrossMod.Rendering.Models;
 
 namespace CrossMod.Rendering
 {
@@ -143,7 +144,6 @@ namespace CrossMod.Rendering
                     sfTextureByName.TryGetValue(text, out meshMaterial.bakeLit);
                     break;
             }
-
         }
 
         public void Render(Camera Camera)
