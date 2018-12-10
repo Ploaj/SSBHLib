@@ -3,6 +3,8 @@ using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 using OpenTK;
+using SFGenericModel.Materials;
+using SFGraphics.GLObjects.Textures;
 
 namespace CrossMod.Rendering
 {
@@ -59,17 +61,40 @@ namespace CrossMod.Rendering
             genericMaterial.SetShaderUniforms(shader);
         }
 
-        private SFGenericModel.Materials.GenericMaterial CreateGenericMaterial(Material material)
+        private GenericMaterial CreateGenericMaterial(Material material)
         {
             // Don't use the default texture unit.
-            var genericMaterial = new SFGenericModel.Materials.GenericMaterial(1);
+            var genericMaterial = new GenericMaterial(1);
 
+            AddTextures(material, genericMaterial);
+            AddMaterialParams(material, genericMaterial);
+
+            return genericMaterial;
+        }
+
+        private static void AddTextures(Material material, GenericMaterial genericMaterial)
+        {
+            AddMaterialTextures(material, genericMaterial);
+            AddImageBasedLightingTextures(genericMaterial);
+            AddRenderModeTextures(genericMaterial);
+        }
+
+        private static void AddMaterialParams(Material material, GenericMaterial genericMaterial)
+        {
+            // Set specific parameters and use a default value if not present.
+            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
+
+            // Assume no edge lighting if not present.
+            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
+
+            AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
+        }
+
+        private static void AddMaterialTextures(Material material, GenericMaterial genericMaterial)
+        {
             // Use black for the default value.
-            // Some materials seemt to use emission as the main diffuse.
-            if (material.col != null)
-                genericMaterial.AddTexture("colMap", material.col);
-            else
-                genericMaterial.AddTexture("colMap", defaultTextures.defaultBlack);
+            // Some materials seem to use emission as the main diffuse.
+            AddTextureOrDefault("colMap", material.col, defaultTextures.defaultBlack, genericMaterial);
 
             // Use the first texture for both layers if the second layer isn't present.
             if (material.col2 != null)
@@ -79,48 +104,34 @@ namespace CrossMod.Rendering
             else
                 genericMaterial.AddTexture("col2Map", defaultTextures.defaultBlack);
 
-            if (material.prm != null)
-                genericMaterial.AddTexture("prmMap", material.prm);
-            else
-                genericMaterial.AddTexture("prmMap", defaultTextures.defaultPrm);
+            AddTextureOrDefault("prmMap", material.prm, defaultTextures.defaultPrm, genericMaterial);
+            AddTextureOrDefault("norMap", material.nor, defaultTextures.defaultNormal, genericMaterial);
+            AddTextureOrDefault("emiMap", material.emi, defaultTextures.defaultBlack, genericMaterial);
+            AddTextureOrDefault("bakeLitMap", material.bakeLit, defaultTextures.defaultWhite, genericMaterial);
+            AddTextureOrDefault("gaoMap", material.gao, defaultTextures.defaultWhite, genericMaterial);
+        }
 
-            if (material.nor != null)
-                genericMaterial.AddTexture("norMap", material.nor);
-            else
-                genericMaterial.AddTexture("norMap", defaultTextures.defaultNormal);
+        private static void AddRenderModeTextures(GenericMaterial genericMaterial)
+        {
+            genericMaterial.AddTexture("uvPattern", defaultTextures.uvPattern);
+        }
 
-            if (material.emi != null)
-                genericMaterial.AddTexture("emiMap", material.emi);
-            else
-                genericMaterial.AddTexture("emiMap", defaultTextures.defaultBlack);
-
-            if (material.bakeLit != null)
-                genericMaterial.AddTexture("bakeLitMap", material.bakeLit);
-            else
-                genericMaterial.AddTexture("bakeLitMap", defaultTextures.defaultWhite);
-
-            if (material.gao != null)
-                genericMaterial.AddTexture("gaoMap", material.gao);
-            else
-                genericMaterial.AddTexture("gaoMap", defaultTextures.defaultWhite);
-
+        private static void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
+        {
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
             genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
-            genericMaterial.AddTexture("uvPattern", defaultTextures.uvPattern);
-
-            // Set specific parameters and use a default value if not present.
-            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
-
-            // Assume no edge lighting if not present.
-            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
-            
-            AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
-
-            return genericMaterial;
         }
 
-        private static void AddMtalVec4(string name, SFGenericModel.Materials.GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
+        private static void AddTextureOrDefault(string name, Texture texture, Texture defaultTex, GenericMaterial genericMaterial)
+        {
+            if (texture != null)
+                genericMaterial.AddTexture(name, texture);
+            else
+                genericMaterial.AddTexture(name, defaultTex);
+        }
+
+        private static void AddMtalVec4(string name, GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
         {
             if (source.vec4ByParamId.ContainsKey(paramId))
             {
