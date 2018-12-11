@@ -75,7 +75,7 @@ namespace CrossMod.Rendering
 
         // TODO: Replace with proper type.
         [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
-        public long paramId = 0;
+        public uint paramId = 0;
 
         private RenderSettings()
         {
