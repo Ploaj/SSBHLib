@@ -154,7 +154,7 @@ namespace CrossMod.Rendering
             }
 
             // Render skeleton on top.
-            if (RenderSettings.Instance.renderBones)
+            if (RenderSettings.Instance.RenderBones)
                 Skeleton?.Render(Camera);
         }
 

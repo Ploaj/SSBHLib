@@ -380,16 +380,16 @@
     <None Include="Shaders\RModelDebug.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\bone.frag">
+    <None Include="Shaders\Bone.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\bone.vert">
+    <None Include="Shaders\Bone.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\texture.frag">
+    <None Include="Shaders\Texture.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\texture.vert">
+    <None Include="Shaders\Texture.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Wireframe.frag">

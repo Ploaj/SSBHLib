@@ -38,7 +38,10 @@ namespace CrossMod.Rendering
         public bool UseDittoForm { get; set; } = false;
 
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
-        public bool renderBones = false;
+        public bool RenderBones { get; set; } = false;
+
+        // TODO: Add to GUI.
+        public OpenTK.Vector4 BoneColor { get; set; } = new OpenTK.Vector4(1);
 
         [EditInfo("Render Mode", ValueEnums.ValueType.Enum, "Debug Shading")]
         public RenderMode renderMode = RenderMode.Shaded;

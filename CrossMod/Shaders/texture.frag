@@ -8,7 +8,5 @@ out vec4 fragColor;
 
 void main()
 {
-    fragColor.rgb = texture(image, vec2(texCoord.x, 1 - texCoord.y)).rgb;
-	//fragColor.rgb = vec3(texCoord, 1);
-    fragColor.a = 1;
+    fragColor = vec4(texture(image, vec2(texCoord.x, 1 - texCoord.y)).rgb, 1);
 }

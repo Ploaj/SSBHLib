@@ -25,8 +25,8 @@ namespace CrossMod.Rendering
             if (textureShader == null)
             {
                 textureShader = new Shader();
-                textureShader.LoadShader(File.ReadAllText("Shaders/texture.frag"), OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
-                textureShader.LoadShader(File.ReadAllText("Shaders/texture.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
+                textureShader.LoadShader(File.ReadAllText("Shaders/Texture.frag"), OpenTK.Graphics.OpenGL.ShaderType.FragmentShader);
+                textureShader.LoadShader(File.ReadAllText("Shaders/Texture.vert"), OpenTK.Graphics.OpenGL.ShaderType.VertexShader);
             }
 
             // Texture unit 0 should be reserved for image preview.

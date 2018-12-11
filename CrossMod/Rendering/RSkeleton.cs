@@ -140,11 +140,13 @@ namespace CrossMod.Rendering
             if (boneShader == null)
             {
                 boneShader = new Shader();
-                boneShader.LoadShader(File.ReadAllText("Shaders/bone.frag"), ShaderType.FragmentShader);
-                boneShader.LoadShader(File.ReadAllText("Shaders/bone.vert"), ShaderType.VertexShader);
+                boneShader.LoadShader(File.ReadAllText("Shaders/Bone.frag"), ShaderType.FragmentShader);
+                boneShader.LoadShader(File.ReadAllText("Shaders/Bone.vert"), ShaderType.VertexShader);
             }
             
             boneShader.UseProgram();
+
+            boneShader.SetVector4("boneColor", RenderSettings.Instance.BoneColor);
 
             Matrix4 mvp = Camera.MvpMatrix;
             boneShader.SetMatrix4x4("mvp", ref mvp);
@@ -208,13 +210,8 @@ namespace CrossMod.Rendering
                 return Transform.ExtractRotation();
             }
         }
-        public Vector3 EulerRotation
-        {
-            get
-            {
-                return ToEulerAngles(InvTransform.ExtractRotation());
-            }
-        }
+        public Vector3 EulerRotation { get => ToEulerAngles(InvTransform.ExtractRotation()); }
+
         public Vector3 Scale
         {
             get
