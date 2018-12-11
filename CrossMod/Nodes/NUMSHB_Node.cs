@@ -164,7 +164,7 @@ namespace CrossMod.Nodes
                     // add attributes for the new data
                     Mesh.VertexAttributes.Add(new CustomVertexAttribute()
                     {
-                        Name = "Bone",
+                        Name = "boneIndices",
                         Size = 4,
                         IType = VertexAttribIntegerType.UnsignedShort,
                         Offset = vertexBuffer.Length,
@@ -173,7 +173,7 @@ namespace CrossMod.Nodes
                     });
                     Mesh.VertexAttributes.Add(new CustomVertexAttribute()
                     {
-                        Name = "Weight",
+                        Name = "boneWeights",
                         Size = 4,
                         Type = VertexAttribPointerType.Float,
                         Offset = vertexBuffer.Length + 8,

@@ -48,7 +48,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetMatrix4x4("mvp", ref View);
 
             // Bones
-            int blockIndex = GL.GetUniformBlockIndex(shader.Id, "bones");
+            int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
             boneBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
             if (Skeleton != null)
             {
