@@ -11,6 +11,7 @@ namespace CrossMod.Rendering.Models
     {
         public static Shader shader;
         public static Shader textureDebugShader;
+        public static Shader uvShader;
 
         Matrix4[] boneBinds = new Matrix4[200];
         public BufferObject boneBuffer;
@@ -94,10 +95,12 @@ namespace CrossMod.Rendering.Models
 
         private static Shader GetCurrentShader()
         {
-            Shader currentShader = shader;
-            if (RenderSettings.Instance.UseDebugShading)
-                currentShader = textureDebugShader;
-            return currentShader;
+            if (RenderSettings.Instance.RenderUVs)
+                return uvShader;
+            else if (RenderSettings.Instance.UseDebugShading)
+                return textureDebugShader;
+            else 
+                return shader;
         }
 
         private static void SetUpShaders()
@@ -111,6 +114,17 @@ namespace CrossMod.Rendering.Models
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
 
                 System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
+            }
+
+            if (uvShader == null)
+            {
+                uvShader = new Shader();
+                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.vert"), ShaderType.VertexShader);
+                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
+                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.frag"), ShaderType.FragmentShader);
+                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
+
+                System.Diagnostics.Debug.WriteLine(uvShader.GetErrorLog());
             }
 
             if (textureDebugShader == null)

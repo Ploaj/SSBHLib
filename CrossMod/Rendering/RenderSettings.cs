@@ -45,6 +45,9 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
         public bool EnableWireframe { get; set; } = false;
 
+        [EditInfo("Render UVs", ValueEnums.ValueType.Bool, "Misc")]
+        public bool RenderUVs { get; set; } = false;
+
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderBones { get; set; } = false;
 
