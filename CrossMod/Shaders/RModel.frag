@@ -40,29 +40,29 @@ float WireframeIntensity(vec3 distanceToEdges);
 
 vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
 {
-	// Calculate the resulting normal map.
-	// TODO: Proper calculation of B channel.
-	vec3 normalMapColor = vec3(norColor.rg, 1);
+    // Calculate the resulting normal map.
+    // TODO: Proper calculation of B channel.
+    vec3 normalMapColor = vec3(norColor.rg, 1);
 
-	// Remap the normal map to the correct range.
-	vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
+    // Remap the normal map to the correct range.
+    vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
 
-	// TBN Matrix.
-	mat3 tbnMatrix = mat3(tangent, bitangent, N);
+    // TBN Matrix.
+    mat3 tbnMatrix = mat3(tangent, bitangent, N);
 
-	vec3 newNormal = tbnMatrix * normalMapNormal;
-	return normalize(newNormal);
+    vec3 newNormal = tbnMatrix * normalMapNormal;
+    return normalize(newNormal);
 }
 
 float LambertShading(vec3 N, vec3 V)
 {
-	float lambert = max(dot(N, V), 0);
-	return lambert;
+    float lambert = max(dot(N, V), 0);
+    return lambert;
 }
 
 vec3 GetSrgb(vec3 linear)
 {
-	return pow(linear, vec3(0.4545));
+    return pow(linear, vec3(0.4545));
 }
 
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
@@ -72,7 +72,7 @@ vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 float GgxShading(vec3 N, vec3 H, float roughness)
 {
-	float a = roughness * roughness;
+    float a = roughness * roughness;
     float a2 = a * a;
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
@@ -88,106 +88,106 @@ void main()
 {
     fragColor = vec4(0, 0, 0, 1);
 
-	vec4 norColor = texture(norMap, UV0).xyzw;
-	vec3 newNormal = GetBumpMapNormal(N, norColor);
+    vec4 norColor = texture(norMap, UV0).xyzw;
+    vec3 newNormal = GetBumpMapNormal(N, norColor);
 
-	vec3 V = vec3(0,0,-1) * mat3(mvp);
-	vec3 R = reflect(V, newNormal);
+    vec3 V = vec3(0,0,-1) * mat3(mvp);
+    vec3 R = reflect(V, newNormal);
 
-	// BLend two diffuse layers based on alpha.
+    // BLend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
-	vec4 albedoColor = texture(colMap, UV0).rgba;
+    vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
     // Ditto color in linear gamma.
     if (useDittoForm == 1)
         albedoColor.rgb = vec3(0.302, 0.242, 0.374);
 
-	vec4 prmColor = texture(prmMap, UV0).xyzw;
+    vec4 prmColor = texture(prmMap, UV0).xyzw;
     if (useDittoForm == 1)
         prmColor = vec4(1, 0.255, 1, 1);
 
-	float directLightIntensity = 1.25;
+    float directLightIntensity = 1.25;
 
-	// Invert glossiness
-	float roughness = clamp(1 - prmColor.g, 0, 1);
+    // Invert glossiness
+    float roughness = clamp(1 - prmColor.g, 0, 1);
 
-	// Metalness
-	float metalness = prmColor.r;
+    // Metalness
+    float metalness = prmColor.r;
 
-	// Material masking.
-	float transitionBlend = 0;
-	if (norColor.b <= (1 - transitionFactor))
-		transitionBlend = 1;
+    // Material masking.
+    float transitionBlend = 0;
+    if (norColor.b <= (1 - transitionFactor))
+        transitionBlend = 1;
 
-	// Ink override.
-	albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
-	roughness = 0.1;
-	metalness = 0;
+    // Ink override.
+    albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
+    roughness = 0.1;
+    metalness = 0;
 
-	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
-	int maxLod = 10;
-	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
+    // Image based lighting.
+    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
+    int maxLod = 10;
+    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
 
 
-	fragColor = vec4(0, 0, 0, 1);
+    fragColor = vec4(0, 0, 0, 1);
 
-	float maxF0Dialectric = 0.08;
-	vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
-	vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
+    float maxF0Dialectric = 0.08;
+    vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
+    vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 
-	// Diffuse
+    // Diffuse
     // TODO: Causes discoloration.
-	vec3 kDiffuse = (1 - kSpecular.rrr);
+    vec3 kDiffuse = (1 - kSpecular.rrr);
     //kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
-	vec3 diffuseLight = diffuseIbl;
+    vec3 diffuseLight = diffuseIbl;
 
-	// Direct lighting.
-	diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
+    // Direct lighting.
+    diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
 
-	vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
+    vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
 
-	// Bake lighting maps.
-	diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
+    // Bake lighting maps.
+    diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
     diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
 
-	fragColor.rgb += diffuseTerm * renderDiffuse;
+    fragColor.rgb += diffuseTerm * renderDiffuse;
 
     float rimLight = (1 - max(dot(newNormal, V), 0));
     fragColor.rgb += paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 
-	fragColor.a = albedoColor.a;
+    fragColor.a = albedoColor.a;
 
     // TODO: 0 = alpha. 1 = alpha.
     // Values can be between 0 and 1, however.
     fragColor.a += param98.x;
 
-	// Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-	vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-	vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
+    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
+    vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
 
-	// Direct lighting.
-	specularTerm += GgxShading(newNormal, V, roughness + 0.25) * directLightIntensity;
+    // Direct lighting.
+    specularTerm += GgxShading(newNormal, V, roughness + 0.25) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
-	specularTerm.rgb *= norColor.aaa;
+    specularTerm.rgb *= norColor.aaa;
 
-	fragColor.rgb += specularTerm * kSpecular * renderSpecular;
+    fragColor.rgb += specularTerm * kSpecular * renderSpecular;
 
-	// Ambient Occlusion
-	fragColor.rgb *= prmColor.b;
+    // Ambient Occlusion
+    fragColor.rgb *= prmColor.b;
 
-	// Emission
-	fragColor.rgb += texture(emiMap, UV0).rgb * 3.5;
+    // Emission
+    fragColor.rgb += texture(emiMap, UV0).rgb * 3.5;
 
-	// Gamma correction.
-	fragColor.rgb = GetSrgb(fragColor.rgb);
+    // Gamma correction.
+    fragColor.rgb = GetSrgb(fragColor.rgb);
 
-	if (renderWireframe == 1)
-	{
-		vec3 edgeColor = vec3(1);
-		float intensity = WireframeIntensity(edgeDistance);
-		fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
-	}
+    if (renderWireframe == 1)
+    {
+        vec3 edgeColor = vec3(1);
+        float intensity = WireframeIntensity(edgeDistance);
+        fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
+    }
 }

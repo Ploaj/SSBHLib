@@ -36,10 +36,10 @@ void main()
 {
     // Single bind transform
     vec4 position = transform * vec4(Position0, 1);
-	vec4 transformedNormal = transform * vec4(Normal0, 0);
+    vec4 transformedNormal = transform * vec4(Normal0, 0);
 
-	// Vertex skinning
-	if(boneWeights.x != 0) {
+    // Vertex skinning
+    if(boneWeights.x != 0) {
         position = vec4(0);
         geomN = vec3(0);
 
@@ -48,7 +48,7 @@ void main()
             position += bones.transforms[boneIndices[i]] * vec4(Position0, 1) * boneWeights[i];
             transformedNormal.xyz += (inverse(transpose(bones.transforms[boneIndices[i]])) * vec4(Normal0, 1) * boneWeights[i]).xyz;
         }
-	}
+    }
 
     // Assign geometry inputs
     geomN = transformedNormal.xyz;
@@ -57,5 +57,5 @@ void main()
     geomUV0 = map1;
     geomTangent = Tangent0;
 
-	gl_Position = mvp * vec4(position.xyz, 1);
+    gl_Position = mvp * vec4(position.xyz, 1);
 }
