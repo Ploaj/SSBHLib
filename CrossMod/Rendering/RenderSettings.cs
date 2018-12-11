@@ -34,13 +34,16 @@ namespace CrossMod.Rendering
         public bool UseDebugShading { get => ShadingMode != 0; }
 
         [EditInfo("Enable Diffuse", ValueEnums.ValueType.Bool, "Lighting")]
-        public bool enableDiffuse = true;
+        public bool EnableDiffuse { get; set; } = true;
 
         [EditInfo("Enable Specular", ValueEnums.ValueType.Bool, "Lighting")]
-        public bool enableSpecular = true;
+        public bool EnableSpecular { get; set; } = true;
+
+        [EditInfo("Enable Emission", ValueEnums.ValueType.Bool, "Lighting")]
+        public bool EnableEmission { get; set; } = true;
 
         [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
-        public bool enableWireframe = false;
+        public bool EnableWireframe { get; set; } = false;
 
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderBones { get; set; } = false;

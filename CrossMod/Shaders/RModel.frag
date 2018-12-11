@@ -23,8 +23,9 @@ uniform samplerCube specularPbrCube;
 
 uniform int renderDiffuse;
 uniform int renderSpecular;
+uniform int renderEmission;
+
 uniform int renderWireframe;
-uniform int useDittoForm;
 
 uniform vec4 paramA6;
 uniform vec4 param98;
@@ -192,7 +193,7 @@ void main()
     fragColor.rgb *= prmColor.b;
 
     // Emission
-    fragColor.rgb += texture(emiMap, UV0).rgb * 3.5;
+    fragColor.rgb += texture(emiMap, UV0).rgb * renderEmission;
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);

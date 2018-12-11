@@ -34,7 +34,7 @@ namespace CrossMod.Rendering.Resources
             LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
 
             defaultPrm = new Texture2D();
-            LoadBitmap(defaultPrm, "DefaultTextures/default_Params.png");
+            LoadBitmap(defaultPrm, "DefaultTextures/default_Params.tif");
 
             defaultNormal = new Texture2D();
             LoadBitmap(defaultNormal, "DefaultTextures/default_normal.png");

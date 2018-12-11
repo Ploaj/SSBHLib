@@ -77,10 +77,11 @@ namespace CrossMod.Rendering.Models
             currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
             currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
 
-            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.enableDiffuse);
-            currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.enableSpecular);
+            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.EnableDiffuse);
+            currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
+            currentShader.SetBoolToInt("renderEmission", RenderSettings.Instance.EnableEmission);
 
-            currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.enableWireframe);
+            currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
         }
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
