@@ -39,12 +39,7 @@ namespace CrossMod.Rendering.Models
 
             currentShader.UseProgram();
 
-            currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
-            currentShader.SetInt("renderMode", (int)RenderSettings.Instance.renderMode);
-            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.enableDiffuse);
-            currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.enableSpecular);
-            currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.enableWireframe);
-            currentShader.SetBoolToInt("useDittoForm", RenderSettings.Instance.useDittoForm);
+            SetUniforms(currentShader);
 
             currentShader.EnableVertexAttributes();
 
@@ -55,7 +50,7 @@ namespace CrossMod.Rendering.Models
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "bones");
             boneBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
-            if(Skeleton != null)
+            if (Skeleton != null)
             {
                 boneBinds = Skeleton.GetAnimationTransforms();
                 /*for(int i = 0; i < Skeleton.Bones.Count; i++)
@@ -72,6 +67,17 @@ namespace CrossMod.Rendering.Models
             DrawMeshes(Camera, Skeleton, currentShader);
 
             currentShader.DisableVertexAttributes();
+        }
+
+        private static void SetUniforms(Shader currentShader)
+        {
+            currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
+            currentShader.SetInt("renderMode", (int)RenderSettings.Instance.renderMode);
+            currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.enableDiffuse);
+            currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.enableSpecular);
+            currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.enableWireframe);
+            currentShader.SetBoolToInt("useDittoForm", RenderSettings.Instance.UseDittoForm);
+            currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
         }
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)

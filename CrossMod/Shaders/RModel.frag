@@ -29,6 +29,8 @@ uniform int useDittoForm;
 uniform vec4 paramA6;
 uniform vec4 param98;
 
+uniform float transitionFactor;
+
 uniform mat4 mvp;
 
 out vec4 fragColor;
@@ -107,15 +109,27 @@ void main()
 
 	float directLightIntensity = 1.25;
 
-	// Invert glossiness?
+	// Invert glossiness
 	float roughness = clamp(1 - prmColor.g, 0, 1);
+
+	// Metalness
+	float metalness = prmColor.r;
+
+	// Material masking.
+	float transitionBlend = 0;
+	if (norColor.b <= (1 - transitionFactor))
+		transitionBlend = 1;
+
+	// Ink override.
+	albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
+	roughness = 0.1;
+	metalness = 0;
 
 	// Image based lighting.
 	vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
 	int maxLod = 10;
 	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
 
-	float metalness = prmColor.r;
 
 	fragColor = vec4(0, 0, 0, 1);
 

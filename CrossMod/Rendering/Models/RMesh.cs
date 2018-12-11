@@ -82,7 +82,7 @@ namespace CrossMod.Rendering.Models
         private static void AddMaterialParams(Material material, GenericMaterial genericMaterial)
         {
             // Set specific parameters and use a default value if not present.
-            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.paramId, new Vector4(0));
+            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.ParamId, new Vector4(0));
 
             // Assume no edge lighting if not present.
             AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));

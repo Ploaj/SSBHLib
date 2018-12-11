@@ -35,7 +35,7 @@ namespace CrossMod.Rendering
         public bool enableWireframe = false;
 
         [EditInfo("Enable Ditto Form", ValueEnums.ValueType.Bool, "Misc")]
-        public bool useDittoForm = false;
+        public bool UseDittoForm { get; set; } = false;
 
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool renderBones = false;
@@ -73,9 +73,12 @@ namespace CrossMod.Rendering
 
         public OpenTK.Vector4 renderChannels = new OpenTK.Vector4(1);
 
-        // TODO: Replace with proper type.
         [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
-        public uint paramId = 0;
+        public uint ParamId { get; set; } = 0;
+
+        [EditInfo("Transition Factor", ValueEnums.ValueType.Float, "Misc")]
+        [TrackBarInfo(0, 1)]
+        public float TransitionFactor { get; set; } = 0;
 
         private RenderSettings()
         {
