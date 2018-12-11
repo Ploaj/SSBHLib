@@ -45,8 +45,19 @@ namespace CrossMod.Rendering.Models
             currentShader.EnableVertexAttributes();
 
             // Camera
-            Matrix4 View = Camera.MvpMatrix;
-            currentShader.SetMatrix4x4("mvp", ref View);
+            if (RenderSettings.Instance.RenderUVs)
+            {
+                // TODO: Adjust scale.
+                // Flip UVs vertically.
+                float scale = 2;
+                Matrix4 mvp = Matrix4.CreateOrthographicOffCenter(-scale, scale, scale, -scale, -scale, scale);
+                currentShader.SetMatrix4x4("mvp", ref mvp);
+            }
+            else
+            {
+                Matrix4 mvp = Camera.MvpMatrix;
+                currentShader.SetMatrix4x4("mvp", ref mvp);
+            }
 
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");

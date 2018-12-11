@@ -224,17 +224,8 @@ namespace CrossMod.GUI
             GL.Enable(EnableCap.AlphaTest);
             GL.AlphaFunc(AlphaFunction.Gequal, 0.1f);
 
-            // Render both sides for the UV render mode.
-            if (RenderSettings.Instance.RenderUVs)
-            {
-                GL.Disable(EnableCap.CullFace);
-            }
-            else
-            {
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Back);
-            }
-
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
         }
 
         private void UpdateCamera()
