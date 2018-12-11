@@ -72,12 +72,15 @@ namespace CrossMod.Rendering.Models
         private static void SetUniforms(Shader currentShader)
         {
             currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
-            currentShader.SetInt("renderMode", (int)RenderSettings.Instance.renderMode);
+            currentShader.SetInt("renderMode", (int)RenderSettings.Instance.ShadingMode);
+
+            currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
+            currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
+
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.enableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.enableSpecular);
+
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.enableWireframe);
-            currentShader.SetBoolToInt("useDittoForm", RenderSettings.Instance.UseDittoForm);
-            currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
         }
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)

@@ -30,6 +30,7 @@ uniform vec4 paramA6;
 uniform vec4 param98;
 
 uniform float transitionFactor;
+uniform int transitionEffect;
 
 uniform mat4 mvp;
 
@@ -99,37 +100,48 @@ void main()
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
-    // Ditto color in linear gamma.
-    if (useDittoForm == 1)
-        albedoColor.rgb = vec3(0.302, 0.242, 0.374);
+
 
     vec4 prmColor = texture(prmMap, UV0).xyzw;
-    if (useDittoForm == 1)
-        prmColor = vec4(1, 0.255, 1, 1);
-
-    float directLightIntensity = 1.25;
-
-    // Invert glossiness
-    float roughness = clamp(1 - prmColor.g, 0, 1);
-
-    // Metalness
-    float metalness = prmColor.r;
 
     // Material masking.
     float transitionBlend = 0;
     if (norColor.b <= (1 - transitionFactor))
         transitionBlend = 1;
 
-    // Ink override.
-    albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
-    roughness = 0.1;
-    metalness = 0;
+    // Modify prm color directly.
+    switch (transitionEffect)
+    {
+        case 0:
+            // Ditto
+            albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
+            prmColor =  mix(vec4(1, 0.255, 1, 1), prmColor, transitionBlend);
+            break;
+        case 1:
+            // Ink
+            albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
+            prmColor =  mix(vec4(1, 0.85, 1, 1), prmColor, transitionBlend);
+            break;
+        case 2:
+            // Gold
+            albedoColor.rgb = mix(vec3(0.5, 0.4, 0.1), albedoColor.rgb, transitionBlend);
+            prmColor =  mix(vec4(1, 1, 1, 0.3), prmColor, transitionBlend);
+            break;
+        case 3:
+            // Metal
+            albedoColor.rgb = mix(vec3(0.25), albedoColor.rgb, transitionBlend);
+            prmColor =  mix(vec4(1, 1, 1, 0.3), prmColor, transitionBlend);
+            break;
+    }
+
+    // Invert glossiness
+    float roughness = clamp(1 - prmColor.g, 0, 1);
+    float metalness = prmColor.r;
 
     // Image based lighting.
     vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
     int maxLod = 10;
     vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
-
 
     fragColor = vec4(0, 0, 0, 1);
 
@@ -140,10 +152,11 @@ void main()
     // Diffuse
     // TODO: Causes discoloration.
     vec3 kDiffuse = (1 - kSpecular.rrr);
-    //kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
+    // kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
     vec3 diffuseLight = diffuseIbl;
 
     // Direct lighting.
+    float directLightIntensity = 1.25;
     diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
 
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;

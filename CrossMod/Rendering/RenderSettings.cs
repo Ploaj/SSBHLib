@@ -21,9 +21,17 @@ namespace CrossMod.Rendering
             ParamID
         }
 
+        public enum TransitionMode
+        {
+            Ditto,
+            Ink,
+            Gold,
+            Metal
+        }
+
         public static RenderSettings Instance { get; } = new RenderSettings();
 
-        public bool UseDebugShading { get => renderMode != 0; }
+        public bool UseDebugShading { get => ShadingMode != 0; }
 
         [EditInfo("Enable Diffuse", ValueEnums.ValueType.Bool, "Lighting")]
         public bool enableDiffuse = true;
@@ -34,9 +42,6 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
         public bool enableWireframe = false;
 
-        [EditInfo("Enable Ditto Form", ValueEnums.ValueType.Bool, "Misc")]
-        public bool UseDittoForm { get; set; } = false;
-
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderBones { get; set; } = false;
 
@@ -44,7 +49,7 @@ namespace CrossMod.Rendering
         public OpenTK.Vector4 BoneColor { get; set; } = new OpenTK.Vector4(1);
 
         [EditInfo("Render Mode", ValueEnums.ValueType.Enum, "Debug Shading")]
-        public RenderMode renderMode = RenderMode.Shaded;
+        public RenderMode ShadingMode { get; set; } = RenderMode.Shaded;
 
         [EditInfo("Red", ValueEnums.ValueType.Bool, "Debug Shading")]
         public bool EnableRed
@@ -79,9 +84,12 @@ namespace CrossMod.Rendering
         [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
         public uint ParamId { get; set; } = 0;
 
-        [EditInfo("Transition Factor", ValueEnums.ValueType.Float, "Misc")]
+        [EditInfo("Transition Factor", ValueEnums.ValueType.Float, "Material Transitions")]
         [TrackBarInfo(0, 1)]
         public float TransitionFactor { get; set; } = 0;
+
+        [EditInfo("Transition Mode", ValueEnums.ValueType.Enum, "Material Transitions")]
+        public TransitionMode TransitionEffect { get; set; } = TransitionMode.Ink;
 
         private RenderSettings()
         {
