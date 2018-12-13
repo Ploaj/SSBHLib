@@ -42,6 +42,9 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Emission", ValueEnums.ValueType.Bool, "Lighting")]
         public bool EnableEmission { get; set; } = true;
 
+        [EditInfo("Enable Rim Lighting", ValueEnums.ValueType.Bool, "Lighting")]
+        public bool EnableRimLighting { get; set; } = true;
+
         [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
         public bool EnableWireframe { get; set; } = false;
 

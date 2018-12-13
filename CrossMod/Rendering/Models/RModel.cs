@@ -92,6 +92,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.EnableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
             currentShader.SetBoolToInt("renderEmission", RenderSettings.Instance.EnableEmission);
+            currentShader.SetBoolToInt("renderRimLighting", RenderSettings.Instance.EnableRimLighting);
 
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
         }

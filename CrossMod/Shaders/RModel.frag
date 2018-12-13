@@ -24,10 +24,12 @@ uniform samplerCube specularPbrCube;
 uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderEmission;
+uniform int renderRimLighting;
 
 uniform int renderWireframe;
 
 uniform vec4 paramA6;
+uniform vec4 paramA3;
 uniform vec4 param98;
 
 uniform float transitionFactor;
@@ -36,6 +38,8 @@ uniform int transitionEffect;
 uniform mat4 mvp;
 
 out vec4 fragColor;
+
+const float directLightIntensity = 1.25;
 
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
@@ -84,6 +88,42 @@ float GgxShading(vec3 N, vec3 H, float roughness)
     denominator = 3.14159 * denominator * denominator;
 
     return numerator / denominator;
+}
+
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffuse)
+{
+    vec3 diffuseLight = diffuseIbl;
+
+    // Direct lighting.
+    diffuseLight += LambertShading(N, V) * directLightIntensity;
+
+    vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
+
+    // Bake lighting maps.
+    diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
+    diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
+    return diffuseTerm;
+}
+
+vec3 SpecularTerm(vec3 N, vec3 V, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
+{
+    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
+    vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specularTerm = specularIbl * ((kSpecular * brdf.x) + brdf.y);
+
+    // Direct lighting.
+    specularTerm += kSpecular * GgxShading(N, V, roughness) * directLightIntensity;
+
+    // Cavity Map used for specular occlusion.
+    specularTerm.rgb *= occlusion;
+
+    return specularTerm;
+}
+
+vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
+{
+    float rimLight = (1 - max(dot(N, V), 0));
+    return paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 }
 
 void main()
@@ -154,40 +194,16 @@ void main()
     // TODO: Causes discoloration.
     vec3 kDiffuse = (1 - kSpecular.rrr);
     // kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
-    vec3 diffuseLight = diffuseIbl;
 
-    // Direct lighting.
-    float directLightIntensity = 1.25;
-    diffuseLight += LambertShading(newNormal, V) * directLightIntensity;
-
-    vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
-
-    // Bake lighting maps.
-    diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
-    diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
-
+    // Render passes.
+    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse.x);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
-    float rimLight = (1 - max(dot(newNormal, V), 0));
-    fragColor.rgb += paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
+    vec3 rimTerm = RimLightingTerm(newNormal, V, specularIbl);
+    fragColor.rgb += rimTerm * renderRimLighting;
 
-    fragColor.a = albedoColor.a;
-
-    // TODO: 0 = alpha. 1 = alpha.
-    // Values can be between 0 and 1, however.
-    fragColor.a += param98.x;
-
-    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-    vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
-
-    // Direct lighting.
-    specularTerm += GgxShading(newNormal, V, roughness) * directLightIntensity;
-
-    // Cavity Map used for specular occlusion.
-    specularTerm.rgb *= norColor.aaa;
-
-    fragColor.rgb += specularTerm * kSpecular * renderSpecular;
+    vec3 specularTerm = SpecularTerm(newNormal, V, roughness, specularIbl, kSpecular, norColor.a);
+    fragColor.rgb += specularTerm * renderSpecular;
 
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
@@ -204,4 +220,11 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
+
+    // Alpha calculations
+    fragColor.a = albedoColor.a;
+
+    // TODO: 0 = alpha. 1 = alpha.
+    // Values can be between 0 and 1, however.
+    fragColor.a += param98.x;
 }

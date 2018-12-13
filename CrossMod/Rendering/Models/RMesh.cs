@@ -87,6 +87,10 @@ namespace CrossMod.Rendering.Models
             // Assume no edge lighting if not present.
             AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
 
+            // Some sort of skin sss color.
+            AddMtalVec4("paramA3", genericMaterial, material, 0xA3, new Vector4(1));
+
+            // Alpha offset.
             AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
         }
 
