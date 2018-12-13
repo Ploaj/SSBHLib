@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using SSBHLib.IO;
 
 namespace SSBHLib.Formats
@@ -41,7 +41,9 @@ namespace SSBHLib.Formats
             R.Seek((int)OffsetToData);
             if (DataType == 0x01)
             {
-                DataObject = R.ReadUInt64();
+                // HACK: There's probably a more elegant way to do this.
+                // It's a single float value with a bunch of 0's at the beginning.
+                DataObject = BitConverter.ToSingle(BitConverter.GetBytes(R.ReadInt64()), 0);
             }
             if (DataType == 0x02)
             {

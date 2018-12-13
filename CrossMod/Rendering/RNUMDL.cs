@@ -30,7 +30,8 @@ namespace CrossMod.Rendering
         {
             Texture = 0xB,
             Vector4 = 0x5,
-            Boolean = 0x2
+            Boolean = 0x2,
+            Float = 0x1
         }
 
         private HashSet<long> colParamIds = new HashSet<long>()
@@ -97,6 +98,7 @@ namespace CrossMod.Rendering
                     continue;
 
                 System.Diagnostics.Debug.WriteLine($"{a.DataType.ToString("X")} {a.ParamID.ToString("X")} {a.DataObject.ToString()}");
+
                 if (a.DataType == (long)ParamDataType.Texture)
                 {
                     SetTextureParameter(meshMaterial, a);
@@ -111,6 +113,11 @@ namespace CrossMod.Rendering
                     // Use cyan to differentiate with no value (blue).
                     ulong value = (ulong)a.DataObject;
                     meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = 0, Z = 1, W = 0 };
+                }
+                else if (a.DataType == (long)ParamDataType.Float)
+                {
+                    float value = (float)a.DataObject;
+                    meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = value, Z = value, W = 0 };
                 }
             }
 
