@@ -41,7 +41,7 @@ namespace SSBHLib.Formats
             R.Seek((int)OffsetToData);
             if (DataType == 0x01)
             {
-                //TODO:
+                DataObject = R.ReadUInt64();
             }
             if (DataType == 0x02)
             {
@@ -61,7 +61,7 @@ namespace SSBHLib.Formats
             }
             if (DataType == 0x10)
             {
-                // TODO:
+                DataObject = R.Parse<MTAL_Vector5>();
             }
             if (DataType == 0x11)
             {
@@ -95,6 +95,20 @@ namespace SSBHLib.Formats
             public override string ToString()
             {
                 return $"({X}, {Y}, {Z}, {W})";
+            }
+        }
+
+        public class MTAL_Vector5 : ISSBH_File
+        {
+            public float X { get; set; }
+            public float Y { get; set; }
+            public float Z { get; set; }
+            public float W { get; set; }
+            public float V { get; set; }
+
+            public override string ToString()
+            {
+                return $"({X}, {Y}, {Z}, {W}, {V})";
             }
         }
 
