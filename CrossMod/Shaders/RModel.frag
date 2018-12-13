@@ -44,21 +44,8 @@ const float directLightIntensity = 1.25;
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
 
-vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
-{
-    // Calculate the resulting normal map.
-    // TODO: Proper calculation of B channel.
-    vec3 normalMapColor = vec3(norColor.rg, 1);
-
-    // Remap the normal map to the correct range.
-    vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
-
-    // TBN Matrix.
-    mat3 tbnMatrix = mat3(tangent, bitangent, N);
-
-    vec3 newNormal = tbnMatrix * normalMapNormal;
-    return normalize(newNormal);
-}
+// Defined in NormalMap.frag.
+vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
 
 float LambertShading(vec3 N, vec3 V)
 {
@@ -131,7 +118,7 @@ void main()
     fragColor = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, UV0).xyzw;
-    vec3 newNormal = GetBumpMapNormal(N, norColor);
+    vec3 newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
     vec3 V = vec3(0,0,-1) * mat3(mvp);
     vec3 R = reflect(V, newNormal);
@@ -191,11 +178,15 @@ void main()
     vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 
     // Diffuse
-    // TODO: Causes discoloration.
+    // Only use one component to prevent discoloration of diffuse.
     vec3 kDiffuse = (1 - kSpecular.rrr);
-    // kDiffuse *= (1 - metalness); // TODO: Doesn't look correct.
+
+    // TODO: Doesn't look correct for skin materials.
+    kDiffuse *= (1 - metalness);
 
     // Render passes.
+    // Only use one component to prevent discoloration of diffuse.
+
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse.x);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 

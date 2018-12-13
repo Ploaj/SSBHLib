@@ -37,21 +37,8 @@ out vec4 fragColor;
 // Defined in Wireframe.frag
 float WireframeIntensity(vec3 distanceToEdges);
 
-vec3 GetBumpMapNormal(vec3 N, vec4 norColor)
-{
-	// Calculate the resulting normal map.
-	// TODO: Proper calculation of B channel.
-	vec3 normalMapColor = vec3(norColor.rg, 1);
-
-	// Remap the normal map to the correct range.
-	vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1);
-
-	// TBN Matrix.
-	mat3 tbnMatrix = mat3(tangent, bitangent, N);
-
-	vec3 newNormal = tbnMatrix * normalMapNormal;
-	return normalize(newNormal);
-}
+// Defined in NormalMap.frag.
+vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
 
 float LambertShading(vec3 N, vec3 V)
 {
@@ -86,7 +73,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 void main()
 {
 	vec4 norColor = texture(norMap, UV0).xyzw;
-	vec3 newNormal = GetBumpMapNormal(N, norColor);
+	vec3 newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
 	vec3 R = reflect(V, newNormal);

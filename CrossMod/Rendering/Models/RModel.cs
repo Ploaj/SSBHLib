@@ -123,6 +123,7 @@ namespace CrossMod.Rendering.Models
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
+                shader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
                 shader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
 
                 System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
@@ -134,6 +135,7 @@ namespace CrossMod.Rendering.Models
                 uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.vert"), ShaderType.VertexShader);
                 uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
                 uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.frag"), ShaderType.FragmentShader);
+                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
                 uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
 
                 System.Diagnostics.Debug.WriteLine(uvShader.GetErrorLog());
@@ -144,6 +146,7 @@ namespace CrossMod.Rendering.Models
                 textureDebugShader = new Shader();
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelDebug.frag"), ShaderType.FragmentShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
+                textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
                 textureDebugShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
 
