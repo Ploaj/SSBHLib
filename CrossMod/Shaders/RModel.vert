@@ -41,7 +41,7 @@ void main()
     // Vertex skinning
     if(boneWeights.x != 0) {
         position = vec4(0);
-        geomN = vec3(0);
+        transformedNormal = vec4(0);
 
         for (int i = 0; i < 4; i++)
         {
