@@ -31,6 +31,7 @@ uniform int renderWireframe;
 uniform vec4 paramA6;
 uniform vec4 paramA3;
 uniform vec4 param98;
+uniform vec4 paramE9;
 
 uniform float transitionFactor;
 uniform int transitionEffect;
@@ -102,7 +103,8 @@ vec3 SpecularTerm(vec3 N, vec3 V, float roughness, vec3 specularIbl, vec3 kSpecu
     specularTerm += kSpecular * GgxShading(N, V, roughness) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
-    specularTerm.rgb *= occlusion;
+    if (paramE9.x == 1)
+        specularTerm.rgb *= occlusion;
 
     return specularTerm;
 }
