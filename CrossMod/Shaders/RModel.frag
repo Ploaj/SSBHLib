@@ -136,7 +136,7 @@ void main()
     }
 
     // Invert glossiness
-    float roughness = clamp(1 - prmColor.g, 0, 1);
+    float roughness = prmColor.g;
     float metalness = prmColor.r;
 
     // Image based lighting.
@@ -182,7 +182,7 @@ void main()
     vec3 specularTerm = specularIbl * (kSpecular * brdf.x + brdf.y);
 
     // Direct lighting.
-    specularTerm += GgxShading(newNormal, V, roughness + 0.25) * directLightIntensity;
+    specularTerm += GgxShading(newNormal, V, roughness) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
     specularTerm.rgb *= norColor.aaa;
