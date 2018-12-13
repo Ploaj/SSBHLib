@@ -63,7 +63,9 @@ namespace CrossMod.Rendering
                 if (currentEntry == null)
                     continue;
 
+                System.Diagnostics.Debug.WriteLine(e.MeshName);
                 Material meshMaterial = GetMaterial(currentEntry);
+                System.Diagnostics.Debug.WriteLine("");
 
                 int subindex = 0;
                 string prevMesh = "";
