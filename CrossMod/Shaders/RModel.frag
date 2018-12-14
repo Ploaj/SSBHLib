@@ -93,6 +93,11 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
+    // Square roughness to look correct.
+    roughX *= roughX;
+    roughY *= roughY;
+
+
     float roughX2 = roughX * roughX;
     float roughY2 = roughY * roughY;
 
