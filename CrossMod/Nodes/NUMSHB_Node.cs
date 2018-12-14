@@ -79,13 +79,12 @@ namespace CrossMod.Nodes
                     intIndices.Add((int)index);
                 }
 
-
                 var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
                 var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
                 var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
                 var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
 
-                Vector3[] generatedBitangents = GenerateBitangents(intIndices, normals, tangents);
+                Vector3[] generatedBitangents = GenerateBitangents(intIndices, positions, map1Values);
 
                 var vertices = new List<CustomVertex>();
                 for (int i = 0; i < positions.Length; i++)
@@ -94,7 +93,8 @@ namespace CrossMod.Nodes
                     var normal = GetVector4(normals[i]).Xyz;
                     var tangent = GetVector4(tangents[i]).Xyz;
                     var map1 = GetVector4(map1Values[i]).Xy;
-                    var bitangent = generatedBitangents[i].Normalized();
+
+                    Vector3 bitangent = GetBitangent(generatedBitangents, i, normal);
 
                     vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1));
                 }
@@ -121,16 +121,25 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private static Vector3[] GenerateBitangents(List<int> intIndices, SSBHVertexAttribute[] normals, SSBHVertexAttribute[] tangents)
+        private static Vector3 GetBitangent(Vector3[] generatedBitangents, int i, Vector3 normal)
         {
-            var generatedBitangents = new Vector3[tangents.Length];
+            // Account for mirrored normal maps.
+            var bitangent = SFGraphics.Utils.VectorUtils.Orthogonalize(generatedBitangents[i], normal);
+            bitangent *= -1;
+            return bitangent;
+        }
+
+        private static Vector3[] GenerateBitangents(List<int> intIndices, SSBHVertexAttribute[] positions, SSBHVertexAttribute[] uvs)
+        {
+            var generatedBitangents = new Vector3[positions.Length];
             for (int i = 0; i < intIndices.Count; i += 3)
             {
-                var bitan = Vector3.Cross(GetVector4(normals[intIndices[i]]).Xyz, GetVector4(tangents[intIndices[i]]).Xyz);
+                SFGraphics.Utils.VectorUtils.GenerateTangentBitangent(GetVector4(positions[intIndices[i]]).Xyz, GetVector4(positions[intIndices[i + 1]]).Xyz, GetVector4(positions[intIndices[i + 2]]).Xyz,
+                    GetVector4(uvs[intIndices[i]]).Xy, GetVector4(uvs[intIndices[i + 1]]).Xy, GetVector4(uvs[intIndices[i + 2]]).Xy, out Vector3 tangent, out Vector3 bitangent);
 
-                generatedBitangents[intIndices[i]] += bitan;
-                generatedBitangents[intIndices[i + 1]] += bitan;
-                generatedBitangents[intIndices[i + 2]] += bitan;
+                generatedBitangents[intIndices[i]] += bitangent;
+                generatedBitangents[intIndices[i + 1]] += bitangent;
+                generatedBitangents[intIndices[i + 2]] += bitangent;
             }
 
             return generatedBitangents;
