@@ -138,13 +138,16 @@ void main()
 		case 9:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);
 			break;
-		case 10:
+        case 10:
+            fragColor = vec4(bitangent * 0.5 + 0.5, 1);
+            break;
+		case 11:
 			fragColor = vec4(bakeColor, 1);
 			break;
-        case 11:
+        case 12:
             fragColor = uvPatternColor;
             break;
-		case 12:
+		case 13:
 			fragColor = vec4Param;
 			break;
 		default:

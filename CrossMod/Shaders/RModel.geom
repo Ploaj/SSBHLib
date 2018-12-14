@@ -81,6 +81,7 @@ void main()
 
         bitangent = newBitangent;
         bitangent = normalize(bitangent - N * dot(N, bitangent));
+        bitangent *= -1;
 
         UV0 = geomUV0[i];
         colorSet = geomColorSet[i];

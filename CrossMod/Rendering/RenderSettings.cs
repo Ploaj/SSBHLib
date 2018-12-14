@@ -16,6 +16,7 @@ namespace CrossMod.Rendering
             ColorSet,
             Normals,
             Tangents,
+            Bitangents,
             BakeColor,
             UVPattern,
             ParamID
