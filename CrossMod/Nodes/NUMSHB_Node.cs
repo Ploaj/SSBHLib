@@ -42,20 +42,18 @@ namespace CrossMod.Nodes
         {
             RModel model = new RModel();
 
-            int[] bufferOffsets = new int[_mesh.VertexBuffers.Length];
-            byte[] vertexBuffer = new byte[0];
+            List<int> bufferOffsets = new List<int>(_mesh.VertexBuffers.Length);
             int bufferOffset = 0;
-            int bufferIndex = 0;
+
+            // TODO: There are enough elements that estimating capacity should improve performance.
+            List<byte> vertexBuffer = new List<byte>();
 
             // Merge buffers into one because OpenGL supports a single array buffer.
             foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
             {
-                List<byte> combinedBuffer = new List<byte>();
-                combinedBuffer.AddRange(vertexBuffer);
-                combinedBuffer.AddRange(meshBuffer.Buffer);
+                vertexBuffer.AddRange(meshBuffer.Buffer);
 
-                vertexBuffer = combinedBuffer.ToArray();
-                bufferOffsets[bufferIndex++] = bufferOffset;
+                bufferOffsets.Add(bufferOffset);
                 bufferOffset += meshBuffer.Buffer.Length;
             }
 
@@ -80,21 +78,26 @@ namespace CrossMod.Nodes
                 // Add rigging if the skeleton exists.
                 if (Skeleton != null)
                 {
-                    vertexBuffer = CombineVertexAndRiggingData(Skeleton, vertexBuffer, meshObject, mesh);
+                    AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, mesh);
                 }
             }
 
+            SetVertexAndIndexBuffers(model, vertexBuffer);
+
+            return model;
+        }
+
+        private void SetVertexAndIndexBuffers(RModel model, List<byte> vertexBuffer)
+        {
             // Create and prepare the buffers for rendering
             model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
             model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
 
             model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
-            model.vertexBuffer.SetData(vertexBuffer, BufferUsageHint.StaticDraw);
-            
-            return model;
+            model.vertexBuffer.SetData(vertexBuffer.ToArray(), BufferUsageHint.StaticDraw);
         }
 
-        private byte[] CombineVertexAndRiggingData(RSkeleton Skeleton, byte[] vertexBuffer, MESH_Object meshObject, RMesh mesh)
+        private void AddRiggingBufferData(List<byte> vertexBuffer, RSkeleton Skeleton, MESH_Object meshObject, RMesh mesh)
         {
             // This is such a messy way of prepping it...
             Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
@@ -126,7 +129,7 @@ namespace CrossMod.Nodes
                 Name = "boneIndices",
                 Size = 4,
                 IType = VertexAttribIntegerType.UnsignedShort,
-                Offset = vertexBuffer.Length,
+                Offset = vertexBuffer.Count,
                 Stride = 4 * 6,
                 Integer = true
             });
@@ -136,17 +139,12 @@ namespace CrossMod.Nodes
                 Name = "boneWeights",
                 Size = 4,
                 Type = VertexAttribPointerType.Float,
-                Offset = vertexBuffer.Length + 8,
+                Offset = vertexBuffer.Count + 8,
                 Stride = 4 * 6
             });
 
             // Add rigging buffer onto the end of vertex buffer
-            List<byte> combinedBuffer = new List<byte>();
-            combinedBuffer.AddRange(vertexBuffer);
-            combinedBuffer.AddRange(riggingData);
-
-            vertexBuffer = combinedBuffer.ToArray();
-            return vertexBuffer;
+            vertexBuffer.AddRange(riggingData);
         }
 
         private static byte[] GetRiggingData(MESH_Object meshObject, Vector4[] bones, Vector4[] boneWeights)
@@ -172,7 +170,7 @@ namespace CrossMod.Nodes
             return riggingData;
         }
 
-        private static void AddVertexAttributes(RMesh mesh, int[] bufferOffsets, MESH_Object meshObject)
+        private static void AddVertexAttributes(RMesh mesh, List<int> bufferOffsets, MESH_Object meshObject)
         {
             // Vertex Attributes
             foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
