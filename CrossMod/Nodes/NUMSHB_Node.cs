@@ -40,9 +40,9 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode(RSkeleton Skeleton = null)
         {
-            RModel Model = new RModel();
+            RModel model = new RModel();
 
-            // Merge buffers into one because Opengl can't do multiple array buffers.
+            // Merge buffers into one because OpenGL supports a single array buffer.
             int[] bufferOffsets = new int[_mesh.VertexBuffers.Length];
             byte[] vertexBuffer = new byte[0];
             int bufferOffset = 0;
@@ -50,119 +50,75 @@ namespace CrossMod.Nodes
 
             foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
             {
-                byte[] nfinalBuffer = new byte[meshBuffer.Buffer.Length + vertexBuffer.Length];
-                Array.Copy(vertexBuffer, 0, nfinalBuffer, 0, vertexBuffer.Length);
-                Array.Copy(meshBuffer.Buffer, 0, nfinalBuffer, vertexBuffer.Length, meshBuffer.Buffer.Length);
-                vertexBuffer = nfinalBuffer;
+                List<byte> combinedBuffer = new List<byte>();
+                combinedBuffer.AddRange(vertexBuffer);
+                combinedBuffer.AddRange(meshBuffer.Buffer);
+
+                vertexBuffer = combinedBuffer.ToArray();
                 bufferOffsets[bufferIndex++] = bufferOffset;
                 bufferOffset += meshBuffer.Buffer.Length;
             }
 
-            // gonna have to tack the rigging data onto this buffer
-            // so this hold the current position
-            int RiggingOffset = vertexBuffer.Length; 
-
-            // Read the mesh information into the Rendering Mesh (RMesh) class
+            // Read the mesh information into the Rendering Mesh.
             foreach (MESH_Object meshObject in _mesh.Objects)
             {
-                RMesh Mesh = new RMesh();
-                Model.subMeshes.Add(Mesh);
-                Mesh.Name = meshObject.Name;
-                Mesh.SingleBindName = meshObject.ParentBoneName;
-                Mesh.IndexCount = meshObject.IndexCount;
-                Mesh.IndexOffset = (int)meshObject.ElementOffset;
+                RMesh mesh = new RMesh
+                {
+                    Name = meshObject.Name,
+                    SingleBindName = meshObject.ParentBoneName,
+                    IndexCount = meshObject.IndexCount,
+                    IndexOffset = (int)meshObject.ElementOffset
+                };
+
+                model.subMeshes.Add(mesh);
 
                 if (meshObject.DrawElementType == 1)
-                    Mesh.DrawElementType = DrawElementsType.UnsignedInt;
+                    mesh.DrawElementType = DrawElementsType.UnsignedInt;
 
-                // Vertex Attributes
-                foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
-                {
-                    CustomVertexAttribute customAttribute = new CustomVertexAttribute
-                    {
-                        Name = meshAttribute.AttributeStrings[0].Name,
-                        Normalized = false,
-                        Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
-                        Offset = bufferOffsets[meshAttribute.BufferIndex] + (meshAttribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + meshAttribute.BufferOffset,
-                        Size = 3
-                    };
-                    
-                    // there may be another way to determine size, but this works for now
-                    if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
-                    {
-                        customAttribute.Size = 2;
-                    }
-                    if (customAttribute.Name.Contains("colorSet"))
-                    {
-                        customAttribute.Size = 4;
-                    }
-
-                    // convert the data type
-                    switch (meshAttribute.DataType)
-                    {
-                        case 0:
-                            customAttribute.Type = VertexAttribPointerType.Float;
-                            break;
-                        case 2:
-                            customAttribute.Type = VertexAttribPointerType.Byte;
-                            break; // color
-                        case 5:
-                            customAttribute.Type = VertexAttribPointerType.HalfFloat;
-                            break;
-                        case 8:
-                            customAttribute.Type = VertexAttribPointerType.HalfFloat;
-                            break;
-                        default:
-                            customAttribute.Type = VertexAttribPointerType.Float;
-                            break;
-                    }
-                    Mesh.VertexAttributes.Add(customAttribute);
-
-                    System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} Unk4: {meshAttribute.Unk4_0} Unk5: {meshAttribute.Unk5_0}");
-                }
+                AddVertexAttributes(mesh, bufferOffsets, meshObject);
 
                 // Rigging if skeleton exists
                 // this is such a messy way of prepping it...
                 if (Skeleton != null)
                 {
-                    Dictionary<string, int> boneNameToIndex = new Dictionary<string, int>();
+                    Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
                     if (Skeleton != null)
                     {
                         for (int i = 0; i < Skeleton.Bones.Count; i++)
                         {
-                            boneNameToIndex.Add(Skeleton.Bones[i].Name, i);
+                            indexByBoneName.Add(Skeleton.Bones[i].Name, i);
                         }
                     }
 
                     // get the influences
                     SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(_mesh);
-                    SSBHVertexInfluence[] Influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+                    SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
 
                     // create a bank to write
-                    Vector4[] Bones = new Vector4[meshObject.VertexCount];
-                    Vector4[] Weight = new Vector4[meshObject.VertexCount];
-                    foreach(SSBHVertexInfluence vertexInfluence in Influences)
+                    Vector4[] bones = new Vector4[meshObject.VertexCount];
+                    Vector4[] boneWeights = new Vector4[meshObject.VertexCount];
+                    foreach (SSBHVertexInfluence vertexInfluence in influences)
                     {
-                        AddWeight(ref Bones[vertexInfluence.VertexIndex], ref Weight[vertexInfluence.VertexIndex], (ushort)boneNameToIndex[vertexInfluence.BoneName], vertexInfluence.Weight);
+                        AddWeight(ref bones[vertexInfluence.VertexIndex], ref boneWeights[vertexInfluence.VertexIndex], (ushort)indexByBoneName[vertexInfluence.BoneName], vertexInfluence.Weight);
                     }
 
                     // build a byte buffer for the data
                     MemoryStream riggingBuffer = new MemoryStream();
                     using (BinaryWriter writer = new BinaryWriter(riggingBuffer))
                     {
-                        for(int i = 0; i < meshObject.VertexCount; i++)
+                        for (int i = 0; i < meshObject.VertexCount; i++)
                         {
-                            for(int j = 0; j < 4; j++)
-                                writer.Write((ushort)Bones[i][j]);
                             for (int j = 0; j < 4; j++)
-                                writer.Write(Weight[i][j]);
+                                writer.Write((ushort)bones[i][j]);
+                            for (int j = 0; j < 4; j++)
+                                writer.Write(boneWeights[i][j]);
                         }
                     }
                     byte[] riggingData = riggingBuffer.GetBuffer();
                     riggingBuffer.Dispose();
 
                     // add attributes for the new data
-                    Mesh.VertexAttributes.Add(new CustomVertexAttribute()
+                    mesh.VertexAttributes.Add(new CustomVertexAttribute()
                     {
                         Name = "boneIndices",
                         Size = 4,
@@ -171,7 +127,7 @@ namespace CrossMod.Nodes
                         Stride = 4 * 6,
                         Integer = true
                     });
-                    Mesh.VertexAttributes.Add(new CustomVertexAttribute()
+                    mesh.VertexAttributes.Add(new CustomVertexAttribute()
                     {
                         Name = "boneWeights",
                         Size = 4,
@@ -180,24 +136,72 @@ namespace CrossMod.Nodes
                         Stride = 4 * 6
                     });
 
-                    // add rigging buffer onto the end of vertex buffer
-                    byte[] nfinalBuffer = new byte[riggingData.Length + vertexBuffer.Length];
-                    Array.Copy(vertexBuffer, 0, nfinalBuffer, 0, vertexBuffer.Length);
-                    Array.Copy(riggingData, 0, nfinalBuffer, vertexBuffer.Length, riggingData.Length);
-                    vertexBuffer = nfinalBuffer;
+                    // Add rigging buffer onto the end of vertex buffer
+                    List<byte> combinedBuffer = new List<byte>();
+                    combinedBuffer.AddRange(vertexBuffer);
+                    combinedBuffer.AddRange(riggingData);
+
+                    vertexBuffer = combinedBuffer.ToArray();
                 }
             }
-            
+
             // Create and prepare the buffers for rendering
-            // they should not have their data changed after being created
+            model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
+            model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
 
-            Model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
-            Model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
-
-            Model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
-            Model.vertexBuffer.SetData(vertexBuffer, BufferUsageHint.StaticDraw);
+            model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
+            model.vertexBuffer.SetData(vertexBuffer, BufferUsageHint.StaticDraw);
             
-            return Model;
+            return model;
+        }
+
+        private static void AddVertexAttributes(RMesh mesh, int[] bufferOffsets, MESH_Object meshObject)
+        {
+            // Vertex Attributes
+            foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
+            {
+                CustomVertexAttribute customAttribute = new CustomVertexAttribute
+                {
+                    Name = meshAttribute.AttributeStrings[0].Name,
+                    Normalized = false,
+                    Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
+                    Offset = bufferOffsets[meshAttribute.BufferIndex] + (meshAttribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + meshAttribute.BufferOffset,
+                    Size = 3
+                };
+
+                // there may be another way to determine size, but this works for now
+                if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
+                {
+                    customAttribute.Size = 2;
+                }
+                if (customAttribute.Name.Contains("colorSet"))
+                {
+                    customAttribute.Size = 4;
+                }
+
+                customAttribute.Type = GetAttributeType(meshAttribute);
+                mesh.VertexAttributes.Add(customAttribute);
+
+                System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} Unk4: {meshAttribute.Unk4_0} Unk5: {meshAttribute.Unk5_0}");
+            }
+        }
+
+        private static VertexAttribPointerType GetAttributeType(MESH_Attribute meshAttribute)
+        {
+            // convert the data type
+            switch (meshAttribute.DataType)
+            {
+                case 0:
+                    return VertexAttribPointerType.Float;
+                case 2:
+                    return VertexAttribPointerType.Byte; // color
+                case 5:
+                    return VertexAttribPointerType.HalfFloat;
+                case 8:
+                    return VertexAttribPointerType.HalfFloat;
+                default:
+                    return VertexAttribPointerType.Float;
+            }
         }
 
         private void AddWeight(ref Vector4 b, ref Vector4 w, ushort bone, float Weight)
