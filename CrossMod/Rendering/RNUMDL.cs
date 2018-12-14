@@ -92,7 +92,7 @@ namespace CrossMod.Rendering
             System.Diagnostics.Debug.WriteLine("Material Attributes:");
             Material meshMaterial = new Material();
 
-            foreach (MTAL_Attribute a in currentEntry.MaterialData)
+            foreach (MTAL_Attribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
                     continue;

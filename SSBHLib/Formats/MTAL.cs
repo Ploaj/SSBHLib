@@ -19,10 +19,9 @@ namespace SSBHLib.Formats
     {
         public string MaterialLabel { get; set; }
 
-        public MTAL_Attribute[] MaterialData { get; set; }
+        public MTAL_Attribute[] Attributes { get; set; }
 
         public string MaterialName { get; set; }
-
     }
 
     public class MTAL_Attribute : ISSBH_File
