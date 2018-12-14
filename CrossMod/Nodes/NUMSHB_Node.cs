@@ -40,6 +40,7 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode(RSkeleton Skeleton = null)
         {
+            System.Diagnostics.Debug.WriteLine("Create render meshes");
             RModel model = new RModel();
 
             List<int> bufferOffsets = new List<int>(_mesh.VertexBuffers.Length);

@@ -87,6 +87,8 @@
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Rendering\Models\CustomVertex.cs" />
+    <Compile Include="Rendering\Models\RenderMesh.cs" />
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Tools\FileTools.cs" />

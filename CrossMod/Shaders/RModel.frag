@@ -172,7 +172,7 @@ void main()
     vec3 V = vec3(0,0,-1) * mat3(mvp);
     vec3 R = reflect(V, newNormal);
 
-    // BLend two diffuse layers based on alpha.
+    // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;

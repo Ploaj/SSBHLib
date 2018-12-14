@@ -12,7 +12,7 @@ namespace CrossMod.Nodes
     public class NUMDL_Node : FileNode, IRenderableNode, IExportableModelNode
     {
         private MODL _model;
-        private RNUMDL renderableNode = null;
+        private IRenderable renderableNode = null;
 
         public NUMDL_Node()
         {
@@ -30,8 +30,9 @@ namespace CrossMod.Nodes
             return renderableNode;
         }
 
-        private RNUMDL CreateRenderableModel()
+        private IRenderable CreateRenderableModel()
         {
+
             RNUMDL renderableNode = new RNUMDL
             {
                 MODL = _model
@@ -62,6 +63,7 @@ namespace CrossMod.Nodes
                     renderableNode.Material = ((MTAL_Node)fileNode)._material;
                 }
             }
+
             if(modelNode != null)
                 renderableNode.Model = (RModel)modelNode.GetRenderableNode(renderableNode.Skeleton);
             if (renderableNode.Material != null)
@@ -72,6 +74,7 @@ namespace CrossMod.Nodes
                     helperNode.AddToRenderSkeleton(renderableNode.Skeleton);
                 renderableNode.UpdateBinds();
             }
+
             return renderableNode;
         }
 
