@@ -42,12 +42,12 @@ namespace CrossMod.Nodes
         {
             RModel model = new RModel();
 
-            // Merge buffers into one because OpenGL supports a single array buffer.
             int[] bufferOffsets = new int[_mesh.VertexBuffers.Length];
             byte[] vertexBuffer = new byte[0];
             int bufferOffset = 0;
             int bufferIndex = 0;
 
+            // Merge buffers into one because OpenGL supports a single array buffer.
             foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
             {
                 List<byte> combinedBuffer = new List<byte>();
@@ -77,71 +77,10 @@ namespace CrossMod.Nodes
 
                 AddVertexAttributes(mesh, bufferOffsets, meshObject);
 
-                // Rigging if skeleton exists
-                // this is such a messy way of prepping it...
+                // Add rigging if the skeleton exists.
                 if (Skeleton != null)
                 {
-                    Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
-                    if (Skeleton != null)
-                    {
-                        for (int i = 0; i < Skeleton.Bones.Count; i++)
-                        {
-                            indexByBoneName.Add(Skeleton.Bones[i].Name, i);
-                        }
-                    }
-
-                    // get the influences
-                    SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(_mesh);
-                    SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
-
-                    // create a bank to write
-                    Vector4[] bones = new Vector4[meshObject.VertexCount];
-                    Vector4[] boneWeights = new Vector4[meshObject.VertexCount];
-                    foreach (SSBHVertexInfluence vertexInfluence in influences)
-                    {
-                        AddWeight(ref bones[vertexInfluence.VertexIndex], ref boneWeights[vertexInfluence.VertexIndex], (ushort)indexByBoneName[vertexInfluence.BoneName], vertexInfluence.Weight);
-                    }
-
-                    // build a byte buffer for the data
-                    MemoryStream riggingBuffer = new MemoryStream();
-                    using (BinaryWriter writer = new BinaryWriter(riggingBuffer))
-                    {
-                        for (int i = 0; i < meshObject.VertexCount; i++)
-                        {
-                            for (int j = 0; j < 4; j++)
-                                writer.Write((ushort)bones[i][j]);
-                            for (int j = 0; j < 4; j++)
-                                writer.Write(boneWeights[i][j]);
-                        }
-                    }
-                    byte[] riggingData = riggingBuffer.GetBuffer();
-                    riggingBuffer.Dispose();
-
-                    // add attributes for the new data
-                    mesh.VertexAttributes.Add(new CustomVertexAttribute()
-                    {
-                        Name = "boneIndices",
-                        Size = 4,
-                        IType = VertexAttribIntegerType.UnsignedShort,
-                        Offset = vertexBuffer.Length,
-                        Stride = 4 * 6,
-                        Integer = true
-                    });
-                    mesh.VertexAttributes.Add(new CustomVertexAttribute()
-                    {
-                        Name = "boneWeights",
-                        Size = 4,
-                        Type = VertexAttribPointerType.Float,
-                        Offset = vertexBuffer.Length + 8,
-                        Stride = 4 * 6
-                    });
-
-                    // Add rigging buffer onto the end of vertex buffer
-                    List<byte> combinedBuffer = new List<byte>();
-                    combinedBuffer.AddRange(vertexBuffer);
-                    combinedBuffer.AddRange(riggingData);
-
-                    vertexBuffer = combinedBuffer.ToArray();
+                    vertexBuffer = CombineVertexAndRiggingData(Skeleton, vertexBuffer, meshObject, mesh);
                 }
             }
 
@@ -153,6 +92,84 @@ namespace CrossMod.Nodes
             model.vertexBuffer.SetData(vertexBuffer, BufferUsageHint.StaticDraw);
             
             return model;
+        }
+
+        private byte[] CombineVertexAndRiggingData(RSkeleton Skeleton, byte[] vertexBuffer, MESH_Object meshObject, RMesh mesh)
+        {
+            // This is such a messy way of prepping it...
+            Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
+            if (Skeleton != null)
+            {
+                for (int i = 0; i < Skeleton.Bones.Count; i++)
+                {
+                    indexByBoneName.Add(Skeleton.Bones[i].Name, i);
+                }
+            }
+
+            // Get the influences.
+            SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(_mesh);
+            SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+
+            // Create a bank for writing.
+            Vector4[] bones = new Vector4[meshObject.VertexCount];
+            Vector4[] boneWeights = new Vector4[meshObject.VertexCount];
+            foreach (SSBHVertexInfluence vertexInfluence in influences)
+            {
+                AddWeight(ref bones[vertexInfluence.VertexIndex], ref boneWeights[vertexInfluence.VertexIndex], (ushort)indexByBoneName[vertexInfluence.BoneName], vertexInfluence.Weight);
+            }
+
+            byte[] riggingData = GetRiggingData(meshObject, bones, boneWeights);
+
+            // Add attributes for the new data
+            mesh.VertexAttributes.Add(new CustomVertexAttribute()
+            {
+                Name = "boneIndices",
+                Size = 4,
+                IType = VertexAttribIntegerType.UnsignedShort,
+                Offset = vertexBuffer.Length,
+                Stride = 4 * 6,
+                Integer = true
+            });
+
+            mesh.VertexAttributes.Add(new CustomVertexAttribute()
+            {
+                Name = "boneWeights",
+                Size = 4,
+                Type = VertexAttribPointerType.Float,
+                Offset = vertexBuffer.Length + 8,
+                Stride = 4 * 6
+            });
+
+            // Add rigging buffer onto the end of vertex buffer
+            List<byte> combinedBuffer = new List<byte>();
+            combinedBuffer.AddRange(vertexBuffer);
+            combinedBuffer.AddRange(riggingData);
+
+            vertexBuffer = combinedBuffer.ToArray();
+            return vertexBuffer;
+        }
+
+        private static byte[] GetRiggingData(MESH_Object meshObject, Vector4[] bones, Vector4[] boneWeights)
+        {
+            byte[] riggingData;
+
+            // Build a byte buffer for the data.
+            using (MemoryStream riggingBuffer = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(riggingBuffer))
+                {
+                    for (int i = 0; i < meshObject.VertexCount; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                            writer.Write((ushort)bones[i][j]);
+                        for (int j = 0; j < 4; j++)
+                            writer.Write(boneWeights[i][j]);
+                    }
+                }
+                riggingData = riggingBuffer.GetBuffer();
+            }
+
+            return riggingData;
         }
 
         private static void AddVertexAttributes(RMesh mesh, int[] bufferOffsets, MESH_Object meshObject)
@@ -204,24 +221,27 @@ namespace CrossMod.Nodes
             }
         }
 
-        private void AddWeight(ref Vector4 b, ref Vector4 w, ushort bone, float Weight)
+        private void AddWeight(ref Vector4 bones, ref Vector4 boneWeights, ushort bone, float weight)
         {
-            if(w.X == 0)
+            if (boneWeights.X == 0)
             {
-                b.X = bone;
-                w.X = Weight;
-            } else if (w.Y == 0)
+                bones.X = bone;
+                boneWeights.X = weight;
+            }
+            else if (boneWeights.Y == 0)
             {
-                b.Y = bone;
-                w.Y = Weight;
-            } else if (w.Z == 0)
+                bones.Y = bone;
+                boneWeights.Y = weight;
+            }
+            else if (boneWeights.Z == 0)
             {
-                b.Z = bone;
-                w.Z = Weight;
-            } else if (w.W == 0)
+                bones.Z = bone;
+                boneWeights.Z = weight;
+            }
+            else if (boneWeights.W == 0)
             {
-                b.W = bone;
-                w.W = Weight;
+                bones.W = bone;
+                boneWeights.W = weight;
             }
         }
     }
