@@ -45,7 +45,7 @@ namespace CrossMod.Nodes
             List<int> bufferOffsets = new List<int>(_mesh.VertexBuffers.Length);
             int bufferOffset = 0;
 
-            // TODO: There are enough elements that estimating capacity should improve performance.
+            // TODO: If there are enough elements, estimating capacity may improve performance.
             List<byte> vertexBuffer = new List<byte>();
 
             // Merge buffers into one because OpenGL supports a single array buffer.
@@ -78,6 +78,7 @@ namespace CrossMod.Nodes
                 // Add rigging if the skeleton exists.
                 if (Skeleton != null)
                 {
+                    // TODO: This step is slow.
                     AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, mesh);
                 }
             }
@@ -184,7 +185,7 @@ namespace CrossMod.Nodes
                     Size = 3
                 };
 
-                // there may be another way to determine size, but this works for now
+                // TODO: There may be another way to determine size.
                 if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
                 {
                     customAttribute.Size = 2;
@@ -203,7 +204,6 @@ namespace CrossMod.Nodes
 
         private static VertexAttribPointerType GetAttributeType(MESH_Attribute meshAttribute)
         {
-            // convert the data type
             switch (meshAttribute.DataType)
             {
                 case 0:
