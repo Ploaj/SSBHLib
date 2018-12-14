@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
+﻿using OpenTK;
 using SFGenericModel.VertexAttributes;
 
 namespace CrossMod.Rendering.Models
 {
-    struct CustomVertex
+    public struct CustomVertex
     {
-        [VertexFloat("Position0", ValueCount.Four, OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float)]
+        [VertexFloat("Position0", ValueCount.Three, OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float)]
         public Vector3 Position0 { get; }
 
         [VertexFloat("Normal0", ValueCount.Four, OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float)]

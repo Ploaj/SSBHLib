@@ -99,7 +99,7 @@ namespace CrossMod.Nodes
             {
                 if (n.Text.Equals(_model.MeshString))
                 {
-                    MeshFile = ((NUMSHB_Node)n)._mesh;
+                    MeshFile = ((NUMSHB_Node)n).mesh;
                 }
                 if (n.Text.Equals(_model.SkeletonFileName))
                 {

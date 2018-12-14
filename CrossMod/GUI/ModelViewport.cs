@@ -14,7 +14,6 @@ namespace CrossMod.GUI
 {
     public partial class ModelViewport : UserControl
     {
-        // Render-ables
         public IRenderableNode RenderableNode
         {
             set
@@ -124,24 +123,28 @@ namespace CrossMod.GUI
 
         private void CreateRenderFrameEvents()
         {
+            // HACK: Add proper frame timing.
             Application.Idle += AnimationRenderFrame;
             glViewport.OnRenderFrame += RenderNode;
         }
 
-        private void DisplayMeshes(RModel Model)
+        private void DisplayMeshes(RModel model)
         {
-            animationBar.Model = Model;
-            if(Model != null)
-            foreach(RMesh m in Model.subMeshes)
-            {
-                ListViewItem item = new ListViewItem
-                {
-                    Text = m.Name,
-                    Tag = m,
-                    Checked = true
-                };
+            animationBar.Model = model;
 
-                meshList.Items.Add(item);
+            if (model != null)
+            {
+                foreach (var mesh in model.subMeshes)
+                {
+                    ListViewItem item = new ListViewItem
+                    {
+                        Text = mesh.Name,
+                        Tag = mesh,
+                        Checked = true
+                    };
+
+                    meshList.Items.Add(item);
+                }
             }
         }
 

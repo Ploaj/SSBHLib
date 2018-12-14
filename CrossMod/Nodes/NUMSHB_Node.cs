@@ -14,7 +14,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numshb")]
     public class NUMSHB_Node : FileNode, IRenderableNode
     {
-        public MESH _mesh;
+        public MESH mesh;
 
         public NUMSHB_Node()
         {
@@ -28,7 +28,7 @@ namespace CrossMod.Nodes
             {
                 if (ssbhFile is MESH)
                 {
-                    _mesh = (MESH)ssbhFile;
+                    mesh = (MESH)ssbhFile;
                 }
             }
         }
@@ -43,14 +43,14 @@ namespace CrossMod.Nodes
             System.Diagnostics.Debug.WriteLine("Create render meshes");
             RModel model = new RModel();
 
-            List<int> bufferOffsets = new List<int>(_mesh.VertexBuffers.Length);
+            List<int> bufferOffsets = new List<int>(mesh.VertexBuffers.Length);
             int bufferOffset = 0;
 
             // TODO: If there are enough elements, estimating capacity may improve performance.
             List<byte> vertexBuffer = new List<byte>();
 
             // Merge buffers into one because OpenGL supports a single array buffer.
-            foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
+            foreach (MESH_Buffer meshBuffer in mesh.VertexBuffers)
             {
                 vertexBuffer.AddRange(meshBuffer.Buffer);
 
@@ -59,9 +59,9 @@ namespace CrossMod.Nodes
             }
 
             // Read the mesh information into the Rendering Mesh.
-            foreach (MESH_Object meshObject in _mesh.Objects)
+            foreach (MESH_Object meshObject in mesh.Objects)
             {
-                RMesh mesh = new RMesh
+                RMesh rMesh = new RMesh
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
@@ -69,18 +69,36 @@ namespace CrossMod.Nodes
                     IndexOffset = (int)meshObject.ElementOffset
                 };
 
-                model.subMeshes.Add(mesh);
+                var vertices = new List<CustomVertex>();
+                var accessor = new SSBHVertexAccessor(mesh);
+                var values = accessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
+                foreach (var value in values)
+                {
+                    vertices.Add(new CustomVertex(new Vector3(value.X, value.Y, value.Z), Vector3.Zero));
+                }
+
+                var indices = accessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+                // TODO: SFGraphics doesn't support the other index types yet.
+                var intIndices = new List<int>();
+                foreach (var index in indices)
+                {
+                    intIndices.Add((int)index);
+                }
+
+                rMesh.RenderMesh = new RenderMesh(vertices, intIndices);
+
+                model.subMeshes.Add(rMesh);
 
                 if (meshObject.DrawElementType == 1)
-                    mesh.DrawElementType = DrawElementsType.UnsignedInt;
+                    rMesh.DrawElementType = DrawElementsType.UnsignedInt;
 
-                AddVertexAttributes(mesh, bufferOffsets, meshObject);
+                AddVertexAttributes(rMesh, bufferOffsets, meshObject);
 
                 // Add rigging if the skeleton exists.
                 if (Skeleton != null)
                 {
                     // TODO: This step is slow.
-                    AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, mesh);
+                    AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, rMesh);
                 }
             }
 
@@ -93,7 +111,7 @@ namespace CrossMod.Nodes
         {
             // Create and prepare the buffers for rendering
             model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
-            model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
+            model.indexBuffer.SetData(mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
 
             model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
             model.vertexBuffer.SetData(vertexBuffer.ToArray(), BufferUsageHint.StaticDraw);
@@ -112,7 +130,7 @@ namespace CrossMod.Nodes
             }
 
             // Get the influences.
-            SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(_mesh);
+            SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(this.mesh);
             SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
 
             // Create a bank for writing.

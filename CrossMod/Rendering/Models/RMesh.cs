@@ -12,6 +12,8 @@ namespace CrossMod.Rendering.Models
     {
         private static Resources.DefaultTextures defaultTextures = null;
 
+        public RenderMesh RenderMesh { get; set; } = null;
+
         public string Name { get; set; }
 
         public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
@@ -43,12 +45,14 @@ namespace CrossMod.Rendering.Models
             {
                 SetTextureUniforms(shader);
             }
-            foreach (CustomVertexAttribute a in VertexAttributes)
-            {
-                a.Bind(shader);
-            }
+            //foreach (CustomVertexAttribute a in VertexAttributes)
+            //{
+            //    a.Bind(shader);
+            //}
 
-            GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementType, IndexOffset);
+            //GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementType, IndexOffset);
+
+            RenderMesh?.Draw(shader, camera);
         }
 
         private void SetTextureUniforms(Shader shader)
