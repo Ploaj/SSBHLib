@@ -71,10 +71,21 @@ namespace CrossMod.Nodes
 
                 var vertexAccessor = new SSBHVertexAccessor(mesh);
 
+                var indices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+                // TODO: SFGraphics doesn't support the other index types yet.
+                var intIndices = new List<int>();
+                foreach (var index in indices)
+                {
+                    intIndices.Add((int)index);
+                }
+
+
                 var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
                 var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
                 var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
                 var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
+
+                Vector3[] generatedBitangents = GenerateBitangents(intIndices, normals, tangents);
 
                 var vertices = new List<CustomVertex>();
                 for (int i = 0; i < positions.Length; i++)
@@ -83,16 +94,9 @@ namespace CrossMod.Nodes
                     var normal = GetVector4(normals[i]).Xyz;
                     var tangent = GetVector4(tangents[i]).Xyz;
                     var map1 = GetVector4(map1Values[i]).Xy;
+                    var bitangent = generatedBitangents[i].Normalized();
 
-                    vertices.Add(new CustomVertex(position, normal, tangent, map1));
-                }
-
-                var indices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
-                // TODO: SFGraphics doesn't support the other index types yet.
-                var intIndices = new List<int>();
-                foreach (var index in indices)
-                {
-                    intIndices.Add((int)index);
+                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1));
                 }
 
                 rMesh.RenderMesh = new RenderMesh(vertices, intIndices);
@@ -115,6 +119,21 @@ namespace CrossMod.Nodes
             SetVertexAndIndexBuffers(model, vertexBuffer);
 
             return model;
+        }
+
+        private static Vector3[] GenerateBitangents(List<int> intIndices, SSBHVertexAttribute[] normals, SSBHVertexAttribute[] tangents)
+        {
+            var generatedBitangents = new Vector3[tangents.Length];
+            for (int i = 0; i < intIndices.Count; i += 3)
+            {
+                var bitan = Vector3.Cross(GetVector4(normals[intIndices[i]]).Xyz, GetVector4(tangents[intIndices[i]]).Xyz);
+
+                generatedBitangents[intIndices[i]] += bitan;
+                generatedBitangents[intIndices[i + 1]] += bitan;
+                generatedBitangents[intIndices[i + 2]] += bitan;
+            }
+
+            return generatedBitangents;
         }
 
         private static Vector4 GetVector4(SSBHVertexAttribute values)

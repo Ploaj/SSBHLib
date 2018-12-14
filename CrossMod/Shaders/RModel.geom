@@ -5,6 +5,7 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in vec3 geomN[];
 in vec3 geomTangent[];
+in vec3 geomBitangent[];
 in vec2 geomUV0[];
 in vec4 geomColorSet[];
 in vec3 geomBakeColor[];
@@ -33,44 +34,9 @@ vec3 EdgeDistances() {
     return vec3(ha, hb, hc);
 }
 
-// Ported from SFGraphics.Utils.
-// This should be calculated on the CPU instead.
-vec3 CalculateBitangent(vec3 posA, vec3 posB, vec2 uvA, vec2 uvB, float r)
-{
-    float tX = uvA.x * posB.x - uvB.x * posA.x;
-    float tY = uvA.x * posB.y - uvB.x * posA.y;
-    float tZ = uvA.x * posB.z - uvB.x * posA.z;
-
-    vec3 bitangent = vec3(tX, tY, tZ) * r;
-    return bitangent;
-}
-
-// Ported from SFGraphics.Utils.
-// This should be calculated on the CPU instead.
-vec3 CalculateBitangent(vec3 v1, vec3 v2, vec3 v3, vec2 uv1, vec2 uv2, vec2 uv3)
-{
-    vec3 posA = v2 - v1;
-    vec3 posB = v3 - v1;
-
-    vec2 uvA = uv2 - uv1;
-    vec2 uvB = uv3 - uv1;
-
-    float div = (uvA.x * uvB.y - uvB.x * uvA.y);
-
-    // Fix +/- infinity from division by 0.
-    float r = 1.0f;
-    if (div != 0)
-        r = 1.0f / div;
-
-    return CalculateBitangent(posA, posB, uvA, uvB, r);
-}
-
 void main()
 {
     vec3 distances = EdgeDistances();
-
-    vec3 newBitangent = CalculateBitangent(gl_in[0].gl_Position.xyz,
-        gl_in[1].gl_Position.xyz, gl_in[2].gl_Position.xyz, geomUV0[0], geomUV0[1], geomUV0[2]);
 
     // Create a triangle and assign the vertex attributes.
     for (int i = 0; i < 3; i++)
@@ -78,10 +44,7 @@ void main()
         gl_Position = gl_in[i].gl_Position;
         N = geomN[i];
         tangent = geomTangent[i];
-
-        bitangent = newBitangent;
-        bitangent = normalize(bitangent - N * dot(N, bitangent));
-        bitangent *= -1;
+        bitangent = geomBitangent[i];
 
         UV0 = geomUV0[i];
         colorSet = geomColorSet[i];

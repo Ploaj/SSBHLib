@@ -86,17 +86,12 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 {
     float normalization = 1 / (3.14159 * roughX * roughY);
 
-    // HACK: The generated bitangents don't work properly.
-    // The geometry shader probably needs to be adjusted.
-    bitangent = normalize(cross(N, tangent));
-
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
-    // Square roughness to look correct.
+    // Square input roughness to look correct.
     roughX *= roughX;
     roughY *= roughY;
-
 
     float roughX2 = roughX * roughX;
     float roughY2 = roughY * roughY;
