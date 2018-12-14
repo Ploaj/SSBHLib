@@ -69,15 +69,25 @@ namespace CrossMod.Nodes
                     IndexOffset = (int)meshObject.ElementOffset
                 };
 
+                var vertexAccessor = new SSBHVertexAccessor(mesh);
+
+                var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
+                var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
+                var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
+                var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
+
                 var vertices = new List<CustomVertex>();
-                var accessor = new SSBHVertexAccessor(mesh);
-                var values = accessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
-                foreach (var value in values)
+                for (int i = 0; i < positions.Length; i++)
                 {
-                    vertices.Add(new CustomVertex(new Vector3(value.X, value.Y, value.Z), Vector3.Zero));
+                    var position = GetVector4(positions[i]).Xyz;
+                    var normal = GetVector4(normals[i]).Xyz;
+                    var tangent = GetVector4(tangents[i]).Xyz;
+                    var map1 = GetVector4(map1Values[i]).Xy;
+
+                    vertices.Add(new CustomVertex(position, normal, tangent, map1));
                 }
 
-                var indices = accessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+                var indices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
                 // TODO: SFGraphics doesn't support the other index types yet.
                 var intIndices = new List<int>();
                 foreach (var index in indices)
@@ -105,6 +115,11 @@ namespace CrossMod.Nodes
             SetVertexAndIndexBuffers(model, vertexBuffer);
 
             return model;
+        }
+
+        private static Vector4 GetVector4(SSBHVertexAttribute values)
+        {
+            return new Vector4(values.X, values.Y, values.Z, values.W);
         }
 
         private void SetVertexAndIndexBuffers(RModel model, List<byte> vertexBuffer)
@@ -217,7 +232,7 @@ namespace CrossMod.Nodes
                 customAttribute.Type = GetAttributeType(meshAttribute);
                 mesh.VertexAttributes.Add(customAttribute);
 
-                System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} Unk4: {meshAttribute.Unk4_0} Unk5: {meshAttribute.Unk5_0}");
+                System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} {customAttribute.Type}");
             }
         }
 

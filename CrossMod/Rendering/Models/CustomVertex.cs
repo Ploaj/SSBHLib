@@ -1,20 +1,29 @@
 ﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
 
 namespace CrossMod.Rendering.Models
 {
     public struct CustomVertex
     {
-        [VertexFloat("Position0", ValueCount.Three, OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float)]
+        [VertexFloat("Position0", ValueCount.Three, VertexAttribPointerType.Float)]
         public Vector3 Position0 { get; }
 
-        [VertexFloat("Normal0", ValueCount.Four, OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float)]
+        [VertexFloat("Normal0", ValueCount.Three, VertexAttribPointerType.Float)]
         public Vector3 Normal0 { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0)
+        [VertexFloat("Tangent0", ValueCount.Three, VertexAttribPointerType.Float)]
+        public Vector3 Tangent0 { get; }
+
+        [VertexFloat("map1", ValueCount.Two, VertexAttribPointerType.Float)]
+        public Vector2 Map1 { get; }
+
+        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector2 map1)
         {
             Position0 = position0;
             Normal0 = normal0;
+            Tangent0 = normal0;
+            Map1 = map1;
         }
     }
 }
