@@ -32,6 +32,7 @@ uniform vec4 paramA6;
 uniform vec4 paramA3;
 uniform vec4 param98;
 uniform vec4 paramE9;
+uniform vec4 paramCA;
 
 uniform float transitionFactor;
 uniform int transitionEffect;
@@ -64,7 +65,8 @@ vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
-float GgxShading(vec3 N, vec3 H, float roughness)
+// GGX calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
+float Ggx(vec3 N, vec3 H, float roughness)
 {
     float a = roughness * roughness;
     float a2 = a * a;
@@ -76,6 +78,35 @@ float GgxShading(vec3 N, vec3 H, float roughness)
     denominator = 3.14159 * denominator * denominator;
 
     return numerator / denominator;
+}
+
+// Code adapted from equations listed here:
+// http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX, float roughY)
+{
+    float normalization = 1 / (3.14159 * roughX * roughY);
+
+    // HACK: The generated bitangents don't work properly.
+    // The geometry shader probably needs to be adjusted.
+    bitangent = normalize(cross(N, tangent));
+
+    float nDotH = max(dot(N, H), 0.0);
+    float nDotH2 = nDotH * nDotH;
+
+    float roughX2 = roughX * roughX;
+    float roughY2 = roughY * roughY;
+
+    // TODO: Does this need to be clamped?
+    float xDotH = dot(tangent, H);
+    float xTerm = (xDotH * xDotH) / roughX2;
+
+    // TODO: Does this need to be clamped?
+    float yDotH = dot(bitangent, H);
+    float yTerm = (yDotH * yDotH) / roughY2;
+
+    float denominator = xTerm + yTerm + nDotH2;
+
+    return 1.0 / (normalization * denominator * denominator);
 }
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffuse)
@@ -93,14 +124,25 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     return diffuseTerm;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
 {
+    // TODO: Image based lighting doesn't consider anisotropy.
     // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
     vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specularTerm = specularIbl * ((kSpecular * brdf.x) + brdf.y);
+    vec3 specularTerm = vec3(0);
+    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y);
+
+    // This probably works differently in game.
+    // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
+    float roughnessY = roughness / (1.0 + paramCA.x);
+    float roughnessX = roughness * (1.0 + paramCA.x);
 
     // Direct lighting.
-    specularTerm += kSpecular * GgxShading(N, V, roughness) * directLightIntensity;
+    // The two BRDFs look very different so don't just use anisotropic for everything.
+    if (paramCA.x != 0)
+        specularTerm += kSpecular * GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
+    else
+        specularTerm += kSpecular * Ggx(N, V, roughness) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
     if (paramE9.x == 1)
@@ -130,7 +172,6 @@ void main()
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
-
 
     vec4 prmColor = texture(prmMap, UV0).xyzw;
 
@@ -169,9 +210,10 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * 2.5;
+    float iblIntensity = 2.0;
+    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * iblIntensity;
     int maxLod = 10;
-    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * 2.5;
+    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * iblIntensity;
 
     fragColor = vec4(0, 0, 0, 1);
 
@@ -195,7 +237,7 @@ void main()
     vec3 rimTerm = RimLightingTerm(newNormal, V, specularIbl);
     fragColor.rgb += rimTerm * renderRimLighting;
 
-    vec3 specularTerm = SpecularTerm(newNormal, V, roughness, specularIbl, kSpecular, norColor.a);
+    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a);
     fragColor.rgb += specularTerm * renderSpecular;
 
     // Ambient Occlusion

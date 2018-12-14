@@ -94,6 +94,10 @@ namespace CrossMod.Rendering.Models
             // Enables/disables specular occlusion.
             AddMtalVec4("paramE9", genericMaterial, material, 0xE9, new Vector4(1, 0, 0, 0));
 
+            // TODO: Make this a single float.
+            // Controls anisotropic specular.
+            AddMtalVec4("paramCA", genericMaterial, material, 0xCA, new Vector4(0, 0, 0, 0));
+
             // Alpha offset.
             AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
         }
