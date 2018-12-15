@@ -83,6 +83,11 @@ namespace CrossMod.Nodes
 
                 foreach (SSBHVertexInfluence influence in influences)
                 {
+                    // Some influences refer to bones that don't exist in the skeleton.
+                    // _eff bones?
+                    if (!indexByBoneName.ContainsKey(influence.BoneName))
+                        continue;
+
                     if (boneWeights[influence.VertexIndex].X == 0)
                     {
                         boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];

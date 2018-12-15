@@ -202,7 +202,7 @@ namespace CrossMod
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
                 // Just render main fighter models for now.
-                if (!file.Contains("body") || !file.Contains("c00"))
+                if (!file.Contains("c00"))
                     continue;
 
                 string sourceFolder = Directory.GetParent(file).FullName;

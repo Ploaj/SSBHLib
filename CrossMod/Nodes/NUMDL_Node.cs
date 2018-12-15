@@ -107,16 +107,16 @@ namespace CrossMod.Nodes
                 }
             }
 
-            Dictionary<string, int> boneNameToIndex = new Dictionary<string, int>();
+            Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
             if(OutModel.Skeleton != null)
             {
                 for(int i = 0; i < OutModel.Skeleton.Bones.Count; i++)
                 {
-                    boneNameToIndex.Add(OutModel.Skeleton.Bones[i].Name, i);
+                    indexByBoneName.Add(OutModel.Skeleton.Bones[i].Name, i);
                 }
             }
             
-            if(MeshFile != null)
+            if (MeshFile != null)
             {
                 using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(MeshFile))
                 {
@@ -190,7 +190,7 @@ namespace CrossMod.Nodes
                                 {
                                     Vertices[i].Position = OpenTK.Vector3.TransformPosition(Vertices[i].Position, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
                                     Vertices[i].Normal = OpenTK.Vector3.TransformNormal(Vertices[i].Normal, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
-                                    Vertices[i].BoneIndices.X = boneNameToIndex[obj.ParentBoneName];
+                                    Vertices[i].BoneIndices.X = indexByBoneName[obj.ParentBoneName];
                                     Vertices[i].BoneWeights.X = 1;
                                 }
                         }
@@ -200,24 +200,29 @@ namespace CrossMod.Nodes
     
                         foreach(SSBHVertexInfluence influence in Influences)
                         {
+                            // Some influences refer to bones that don't exist in the skeleton.
+                            // _eff bones?
+                            if (!indexByBoneName.ContainsKey(influence.BoneName))
+                                continue;
+
                             if (Vertices[influence.VertexIndex].BoneWeights.X == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.X = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneIndices.X = indexByBoneName[influence.BoneName];
                                 Vertices[influence.VertexIndex].BoneWeights.X = influence.Weight;
                             }
                             else if(Vertices[influence.VertexIndex].BoneWeights.Y == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.Y = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneIndices.Y = indexByBoneName[influence.BoneName];
                                 Vertices[influence.VertexIndex].BoneWeights.Y = influence.Weight;
                             }
                             else if(Vertices[influence.VertexIndex].BoneWeights.Z == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.Z = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneIndices.Z = indexByBoneName[influence.BoneName];
                                 Vertices[influence.VertexIndex].BoneWeights.Z = influence.Weight;
                             }
                             else if(Vertices[influence.VertexIndex].BoneWeights.W == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.W = boneNameToIndex[influence.BoneName];
+                                Vertices[influence.VertexIndex].BoneIndices.W = indexByBoneName[influence.BoneName];
                                 Vertices[influence.VertexIndex].BoneWeights.W = influence.Weight;
                             }
                         }
