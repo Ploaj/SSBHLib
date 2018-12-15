@@ -134,8 +134,6 @@ void main()
             break;
 		case 7:
 			fragColor = colorSet;
-            // The default range is  0 to 0.5 (0 to 128).
-            fragColor.rgb *= 2;
 			break;
 		case 8:
 			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
