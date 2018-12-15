@@ -53,6 +53,10 @@ namespace CrossMod.Nodes
                     SingleBindName = meshObject.ParentBoneName,
                 };
 
+                // Bounding sphere.
+                var sphere = meshObject.GetBoundingSphere();
+                rMesh.BoundingSphere = new Vector4(sphere.Item1, sphere.Item2, sphere.Item3, sphere.Item4);
+
                 var vertexAccessor = new SSBHVertexAccessor(mesh);
 
                 var indices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);

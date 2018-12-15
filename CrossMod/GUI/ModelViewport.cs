@@ -48,33 +48,26 @@ namespace CrossMod.GUI
                     DisplaySkeleton(renderableModel.GetSkeleton());
                 }
 
-                if (value is IExportableModelNode exportableModel)
+                if (value is NUMDL_Node node)
                 {
-                    FrameSelection(exportableModel);
+                    var rnumdl = node.GetRenderableNode() as RNUMDL;
+                    FrameSelection(rnumdl.Model);
                 }
             }
         }
 
-        public void FrameSelection(IExportableModelNode exportableModel)
+        public void FrameSelection(RModel model)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            var model = exportableModel.GetIOModel();
-
-            var positions = new List<Vector3>();
-            foreach (var mesh in model.Meshes)
+            var spheres = new List<Vector4>();
+            foreach (var mesh in model.subMeshes)
             {
-                foreach (var vert in mesh.Vertices)
-                {
-                    positions.Add(vert.Position);
-                }
+                spheres.Add(mesh.BoundingSphere);
             }
 
-            // Generate a bounding sphere from the exportable model.
-            // This will account for the vastly different model sizes.
-            var sphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(positions);
+            // Generate a bounding sphere from the existing bounding spheres.
+            // Bounding spheres will help account for the vastly different model sizes.
+            var sphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
             camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 0);
-
-            System.Diagnostics.Debug.WriteLine($"Frame Selection: {stopwatch.ElapsedMilliseconds}");
         }
 
         private IRenderable renderableNode;

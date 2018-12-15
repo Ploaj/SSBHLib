@@ -109,6 +109,12 @@ namespace SSBHLib.Formats
         public float[] Floats { get; set; } = new float[26];
 
         public MESH_Attribute[] Attributes { get; set; }
+
+        public System.Tuple<float, float, float, float> GetBoundingSphere()
+        {
+            // XYZ, Radius
+            return new System.Tuple<float, float, float, float>(Floats[1], Floats[2], Floats[3], Floats[4]);
+        }
     }
 
     public class MESH_Attribute : ISSBH_File

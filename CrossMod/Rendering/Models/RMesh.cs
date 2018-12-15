@@ -16,6 +16,8 @@ namespace CrossMod.Rendering.Models
 
         public string Name { get; set; }
 
+        public Vector4 BoundingSphere { get; set; }
+
         public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
 
         public string SingleBindName { get; set; } = "";
