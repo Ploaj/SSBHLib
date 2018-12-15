@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace CrossMod.Rendering.Models
 {
+    // TODO: Remove this class.
     public class CustomVertexAttribute
     {
         public string Name { get; set; }
@@ -18,16 +19,12 @@ namespace CrossMod.Rendering.Models
 
         // HACK: Some of the attributes are crashing.
         // This should be handled by SFGraphics for better error checking.
-        private string[] usedAttributes = new string[] { "Position0", "Normal0", "map1", "Tangent0", "boneIndices", "boneWeights", "bake1" };
 
         public void Bind(Shader shader)
         {
             // Not all attributes are rendered.
             int location = shader.GetAttribLocation(Name);
             if (location == -1)
-                return;
-
-            if (!usedAttributes.Contains(Name))
                 return;
 
             if (Integer)

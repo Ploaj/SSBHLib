@@ -36,7 +36,10 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("boneWeights", ValueCount.Four, VertexAttribPointerType.Float)]
         public Vector4 BoneWeights { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, Vector2 map1, IVec4 boneIndices, Vector4 boneWeights)
+        [VertexFloat("bake1", ValueCount.Two, VertexAttribPointerType.Float)]
+        public Vector2 Bake1 { get; }
+
+        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, Vector2 map1, IVec4 boneIndices, Vector4 boneWeights, Vector2 bake1)
         {
             Position0 = position0;
             Normal0 = normal0;
@@ -45,6 +48,7 @@ namespace CrossMod.Rendering.Models
             Map1 = map1;
             BoneIndices = boneIndices;
             BoneWeights = boneWeights;
+            Bake1 = bake1;
         }
     }
 }

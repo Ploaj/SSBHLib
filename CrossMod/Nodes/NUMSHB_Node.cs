@@ -57,10 +57,12 @@ namespace CrossMod.Nodes
                     intIndices.Add((int)index);
                 }
 
+                // Read attribute values.
                 var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
                 var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
                 var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
                 var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
+                var bake1Values = vertexAccessor.ReadAttribute("bake1", 0, meshObject.VertexCount, meshObject);
 
                 Vector3[] generatedBitangents = GenerateBitangents(intIndices, positions, map1Values);
 
@@ -112,9 +114,14 @@ namespace CrossMod.Nodes
                     var bones = boneIndices[i];
                     var weights = boneWeights[i];
 
+                    // Accessors return length 0 when the attribute isn't present.
+                    var bake1 = new Vector2(0);
+                    if (bake1Values.Length != 0)
+                        bake1 = GetVector4(bake1Values[i]).Xy;
+
                     Vector3 bitangent = GetBitangent(generatedBitangents, i, normal);
 
-                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights));
+                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights, bake1));
                 }
 
                 rMesh.RenderMesh = new RenderMesh(vertices, intIndices);
