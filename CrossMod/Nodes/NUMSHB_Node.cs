@@ -12,7 +12,7 @@ using System.IO;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numshb")]
-    public class NUMSHB_Node : FileNode, IRenderableNode
+    public class NUMSHB_Node : FileNode
     {
         public MESH mesh;
 
@@ -33,30 +33,10 @@ namespace CrossMod.Nodes
             }
         }
 
-        public IRenderable GetRenderableNode()
-        {
-            return GetRenderableNode(null);
-        }
-
-        public IRenderable GetRenderableNode(RSkeleton Skeleton = null)
+        public RModel GetRenderModel(RSkeleton Skeleton = null)
         {
             System.Diagnostics.Debug.WriteLine("Create render meshes");
             RModel model = new RModel();
-
-            List<int> bufferOffsets = new List<int>(mesh.VertexBuffers.Length);
-            int bufferOffset = 0;
-
-            // TODO: If there are enough elements, estimating capacity may improve performance.
-            List<byte> vertexBuffer = new List<byte>();
-
-            // Merge buffers into one because OpenGL supports a single array buffer.
-            foreach (MESH_Buffer meshBuffer in mesh.VertexBuffers)
-            {
-                vertexBuffer.AddRange(meshBuffer.Buffer);
-
-                bufferOffsets.Add(bufferOffset);
-                bufferOffset += meshBuffer.Buffer.Length;
-            }
 
             // Read the mesh information into the Rendering Mesh.
             foreach (MESH_Object meshObject in mesh.Objects)
@@ -65,8 +45,6 @@ namespace CrossMod.Nodes
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
-                    IndexCount = meshObject.IndexCount,
-                    IndexOffset = (int)meshObject.ElementOffset
                 };
 
                 var vertexAccessor = new SSBHVertexAccessor(mesh);
@@ -146,17 +124,8 @@ namespace CrossMod.Nodes
                 if (meshObject.DrawElementType == 1)
                     rMesh.DrawElementType = DrawElementsType.UnsignedInt;
 
-                AddVertexAttributes(rMesh, bufferOffsets, meshObject);
-
-                // Add rigging if the skeleton exists.
-                if (Skeleton != null)
-                {
-                    // TODO: This step is slow.
-                    AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, rMesh);
-                }
+                AddVertexAttributes(rMesh, meshObject);
             }
-
-            SetVertexAndIndexBuffers(model, vertexBuffer);
 
             return model;
         }
@@ -190,90 +159,7 @@ namespace CrossMod.Nodes
             return new Vector4(values.X, values.Y, values.Z, values.W);
         }
 
-        private void SetVertexAndIndexBuffers(RModel model, List<byte> vertexBuffer)
-        {
-            // Create and prepare the buffers for rendering
-            model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
-            model.indexBuffer.SetData(mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
-
-            model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
-            model.vertexBuffer.SetData(vertexBuffer.ToArray(), BufferUsageHint.StaticDraw);
-        }
-
-        private void AddRiggingBufferData(List<byte> vertexBuffer, RSkeleton Skeleton, MESH_Object meshObject, RMesh mesh)
-        {
-            // This is such a messy way of prepping it...
-            Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
-            if (Skeleton != null)
-            {
-                for (int i = 0; i < Skeleton.Bones.Count; i++)
-                {
-                    indexByBoneName.Add(Skeleton.Bones[i].Name, i);
-                }
-            }
-
-            // Get the influences.
-            SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(this.mesh);
-            SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
-
-            // Create a bank for writing.
-            Vector4[] bones = new Vector4[meshObject.VertexCount];
-            Vector4[] boneWeights = new Vector4[meshObject.VertexCount];
-            foreach (SSBHVertexInfluence vertexInfluence in influences)
-            {
-                AddWeight(ref bones[vertexInfluence.VertexIndex], ref boneWeights[vertexInfluence.VertexIndex], (ushort)indexByBoneName[vertexInfluence.BoneName], vertexInfluence.Weight);
-            }
-
-            byte[] riggingData = GetRiggingData(meshObject, bones, boneWeights);
-
-            // Add attributes for the new data
-            mesh.VertexAttributes.Add(new CustomVertexAttribute()
-            {
-                Name = "boneIndices",
-                Size = 4,
-                IType = VertexAttribIntegerType.UnsignedShort,
-                Offset = vertexBuffer.Count,
-                Stride = 4 * 6,
-                Integer = true
-            });
-
-            mesh.VertexAttributes.Add(new CustomVertexAttribute()
-            {
-                Name = "boneWeights",
-                Size = 4,
-                Type = VertexAttribPointerType.Float,
-                Offset = vertexBuffer.Count + 8,
-                Stride = 4 * 6
-            });
-
-            // Add rigging buffer onto the end of vertex buffer
-            vertexBuffer.AddRange(riggingData);
-        }
-
-        private static byte[] GetRiggingData(MESH_Object meshObject, Vector4[] bones, Vector4[] boneWeights)
-        {
-            byte[] riggingData;
-
-            // Build a byte buffer for the data.
-            using (MemoryStream riggingBuffer = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(riggingBuffer))
-                {
-                    for (int i = 0; i < meshObject.VertexCount; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                            writer.Write((ushort)bones[i][j]);
-                        for (int j = 0; j < 4; j++)
-                            writer.Write(boneWeights[i][j]);
-                    }
-                }
-                riggingData = riggingBuffer.GetBuffer();
-            }
-
-            return riggingData;
-        }
-
-        private static void AddVertexAttributes(RMesh mesh, List<int> bufferOffsets, MESH_Object meshObject)
+        private static void AddVertexAttributes(RMesh mesh, MESH_Object meshObject)
         {
             // Vertex Attributes
             foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
@@ -283,7 +169,6 @@ namespace CrossMod.Nodes
                     Name = meshAttribute.AttributeStrings[0].Name,
                     Normalized = false,
                     Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
-                    Offset = bufferOffsets[meshAttribute.BufferIndex] + (meshAttribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + meshAttribute.BufferOffset,
                     Size = 3
                 };
 

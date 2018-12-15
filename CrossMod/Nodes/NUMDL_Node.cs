@@ -65,7 +65,7 @@ namespace CrossMod.Nodes
             }
 
             if(modelNode != null)
-                renderableNode.Model = (RModel)modelNode.GetRenderableNode(renderableNode.Skeleton);
+                renderableNode.Model = (RModel)modelNode.GetRenderModel(renderableNode.Skeleton);
             if (renderableNode.Material != null)
                 renderableNode.UpdateMaterial();
             if (renderableNode.Skeleton != null)

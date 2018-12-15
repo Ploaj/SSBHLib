@@ -14,15 +14,13 @@ namespace CrossMod.Rendering.Models
         public static Shader uvShader;
 
         Matrix4[] boneBinds = new Matrix4[200];
-        public BufferObject boneBuffer;
-        public BufferObject vertexBuffer;
-        public BufferObject indexBuffer;
+        public BufferObject boneUniformBuffer;
 
         public List<RMesh> subMeshes = new List<RMesh>();
 
         public RModel()
         {
-            boneBuffer = new BufferObject(BufferTarget.UniformBuffer);
+            boneUniformBuffer = new BufferObject(BufferTarget.UniformBuffer);
         }
 
         public void Render(Camera Camera)
@@ -61,20 +59,12 @@ namespace CrossMod.Rendering.Models
 
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
-            boneBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
+            boneUniformBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
             if (Skeleton != null)
             {
                 boneBinds = Skeleton.GetAnimationTransforms();
-                /*for(int i = 0; i < Skeleton.Bones.Count; i++)
-                {
-                    boneBinds[i] = Skeleton.GetInvWorldTransforms()[i] * Skeleton.GetWorldTransforms()[i];
-                }*/
             }
-            boneBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
-
-            // Bind Buffers
-            indexBuffer.Bind();
-            vertexBuffer.Bind();
+            boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
 
             DrawMeshes(Camera, Skeleton, currentShader);
 
