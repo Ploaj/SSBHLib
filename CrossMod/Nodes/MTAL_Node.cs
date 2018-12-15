@@ -21,12 +21,11 @@ namespace CrossMod.Nodes
 
         public override void Open(string Path)
         {
-            ISSBH_File SSBHFile;
-            if (SSBH.TryParseSSBHFile(Path, out SSBHFile))
+            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
             {
-                if (SSBHFile is MTAL)
+                if (ssbhFile is MTAL)
                 {
-                    _material = (MTAL)SSBHFile;
+                    _material = (MTAL)ssbhFile;
                 }
             }
         }

@@ -77,7 +77,13 @@ namespace CrossMod.Nodes
             using (BinaryReader R  = new BinaryReader(new FileStream(Path, FileMode.Open)))
             {
                 Mipmaps = new List<byte[]>();
+                // TODO: Why are there empty streams?
+                if (R.BaseStream.Length == 0)
+                    return;
+
                 R.BaseStream.Position = R.BaseStream.Length - 0xB0;
+
+
                 int[] MipSizes = new int[16];
                 for (int i = 0; i < MipSizes.Length; i++)
                     MipSizes[i] = R.ReadInt32();

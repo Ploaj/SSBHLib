@@ -48,7 +48,11 @@ namespace CrossMod.Nodes
                 }
                 if (fileNode is NUTEX_Node)
                 {
-                    renderableNode.sfTextureByName.Add(((NUTEX_Node)fileNode).TexName.ToLower(), ((RTexture)((NUTEX_Node)fileNode).GetRenderableNode()).renderTexture);
+                    var nutexNode = fileNode as NUTEX_Node;
+                    var texture = nutexNode.GetRenderableNode() as RTexture;
+                    // TODO: Why are there empty streams?
+                    if (nutexNode.TexName != null)
+                        renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
                 }
                 if (fileNode.Text.Equals(_model.MeshString))
                 {
@@ -65,7 +69,7 @@ namespace CrossMod.Nodes
             }
 
             if(modelNode != null)
-                renderableNode.Model = (RModel)modelNode.GetRenderModel(renderableNode.Skeleton);
+                renderableNode.Model = modelNode.GetRenderModel(renderableNode.Skeleton);
             if (renderableNode.Material != null)
                 renderableNode.UpdateMaterial();
             if (renderableNode.Skeleton != null)

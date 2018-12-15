@@ -201,8 +201,8 @@ namespace CrossMod
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
                 // Just render the first alt costume, which will include models without slot specific variants.
-                if (!file.Contains("c00"))
-                    continue;
+                //if (!file.Contains("c00"))
+                //    continue;
 
                 string sourceFolder = Directory.GetParent(file).FullName;
 
@@ -253,8 +253,7 @@ namespace CrossMod
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var node = fileTree.SelectedNode as IExportableModelNode;
-            if (node != null)
+            if (fileTree.SelectedNode is IExportableModelNode node)
                 modelViewport.FrameSelection(node);
         }
     }
