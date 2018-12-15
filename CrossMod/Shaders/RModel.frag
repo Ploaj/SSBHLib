@@ -181,6 +181,8 @@ void main()
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
 
+    vec4 emissionColor = texture(emiMap, UV0).rgba;
+
     vec4 prmColor = texture(prmMap, UV0).xyzw;
 
     // Material masking.
@@ -252,7 +254,7 @@ void main()
     fragColor.rgb *= prmColor.b;
 
     // Emission
-    fragColor.rgb += texture(emiMap, UV0).rgb * renderEmission;
+    fragColor.rgb += emissionColor.rgb * renderEmission;
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);
@@ -266,6 +268,7 @@ void main()
 
     // Alpha calculations
     fragColor.a = albedoColor.a;
+    fragColor.a *= emissionColor.a;
 
     if (renderVertexColor == 1)
         fragColor.a *= colorSet.a;
