@@ -31,13 +31,9 @@ namespace CrossMod.Rendering
             Texture = 0xB,
             Vector4 = 0x5,
             Boolean = 0x2,
-            Float = 0x1
+            Float = 0x1,
+            SamplerInfo = 0xE
         }
-
-        private HashSet<long> colParamIds = new HashSet<long>()
-        {
-            0x5C, 0x5D, 0x64, 0x66, 0x67, 0x68, 0x69, 0x6A 
-        };
 
         public void UpdateBinds()
         {
@@ -99,29 +95,36 @@ namespace CrossMod.Rendering
 
                 System.Diagnostics.Debug.WriteLine($"{a.DataType.ToString("X")} {a.ParamID.ToString("X")} {a.DataObject.ToString()}");
 
-                if (a.DataType == (long)ParamDataType.Texture)
+                switch (a.DataType)
                 {
-                    SetTextureParameter(meshMaterial, a);
-                }
-                else if (a.DataType == (long)ParamDataType.Vector4)
-                {
-                    meshMaterial.vec4ByParamId[a.ParamID] = (MTAL_Attribute.MTAL_Vector4)a.DataObject;
-                }
-                else if (a.DataType == (long)ParamDataType.Boolean)
-                {
-                    // Convert to vec4 to use with rendering.
-                    // Use cyan to differentiate with no value (blue).
-                    ulong value = (ulong)a.DataObject;
-                    meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = 0, Z = 1, W = 0 };
-                }
-                else if (a.DataType == (long)ParamDataType.Float)
-                {
-                    float value = (float)a.DataObject;
-                    meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = value, Y = value, Z = value, W = 0 };
+                    case (long)ParamDataType.Texture:
+                        SetTextureParameter(meshMaterial, a);
+                        break;
+                    case (long)ParamDataType.Vector4:
+                        meshMaterial.vec4ByParamId[a.ParamID] = (MTAL_Attribute.MTAL_Vector4)a.DataObject;
+                        break;
+                    case (long)ParamDataType.Boolean:
+                        // Convert to vec4 to use with rendering.
+                        // Use cyan to differentiate with no value (blue).
+                        ulong boolValue = (ulong)a.DataObject;
+                        meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = boolValue, Y = 0, Z = 1, W = 0 };
+                        break;
+                    case (long)ParamDataType.Float:
+                        float floatValue = (float)a.DataObject;
+                        meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = floatValue, Y = floatValue, Z = floatValue, W = 0 };
+                        break;
+                    case (long)ParamDataType.SamplerInfo:
+                        SetSampler(meshMaterial, a);
+                        break;
                 }
             }
 
             return meshMaterial;
+        }
+
+        private void SetSampler(Material material, MTAL_Attribute a)
+        {
+            // TODO: Set the appropriate sampler information based on the attribute and param id.
         }
 
         private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)

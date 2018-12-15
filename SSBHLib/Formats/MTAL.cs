@@ -125,9 +125,9 @@ namespace SSBHLib.Formats
 
         public class MTAL_Unk_0E : ISSBH_File
         {
-            public int Unk1 { get; set; }
-            public int Unk2 { get; set; }
-            public int Unk3 { get; set; }
+            public int WrapS { get; set; }
+            public int WrapT { get; set; }
+            public int WrapR { get; set; }
             public int Unk4 { get; set; }
             public int Unk5 { get; set; }
             public int Unk6 { get; set; }
