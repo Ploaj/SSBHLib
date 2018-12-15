@@ -111,15 +111,16 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffuse)
 {
+    // Baked ambient lighting.
     vec3 diffuseLight = diffuseIbl;
+    diffuseLight += texture(bakeLitMap, bake1).rgb;
 
     // Direct lighting.
     diffuseLight += LambertShading(N, V) * directLightIntensity;
 
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
 
-    // Bake lighting maps.
-    diffuseTerm *= texture(bakeLitMap, bake1).rgb;
+    // Ambient occlusion.
     diffuseTerm *= texture(gaoMap, bake1).rgb;
     return diffuseTerm;
 }
