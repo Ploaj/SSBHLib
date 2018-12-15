@@ -84,6 +84,10 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderEmission", RenderSettings.Instance.EnableEmission);
             currentShader.SetBoolToInt("renderRimLighting", RenderSettings.Instance.EnableRimLighting);
 
+            currentShader.SetBoolToInt("renderNormalMaps", RenderSettings.Instance.RenderNormalMaps);
+            currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);
+
+
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
         }
 

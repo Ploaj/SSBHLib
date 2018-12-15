@@ -46,6 +46,12 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Rim Lighting", ValueEnums.ValueType.Bool, "Lighting")]
         public bool EnableRimLighting { get; set; } = true;
 
+        [EditInfo("Render Normal Maps", ValueEnums.ValueType.Bool, "Materials")]
+        public bool RenderNormalMaps { get; set; } = true;
+
+        [EditInfo("Render Vertex Color", ValueEnums.ValueType.Bool, "Materials")]
+        public bool RenderVertexColor { get; set; } = true;
+
         [EditInfo("Enable Wireframe", ValueEnums.ValueType.Bool, "Misc")]
         public bool EnableWireframe { get; set; } = false;
 
@@ -54,6 +60,7 @@ namespace CrossMod.Rendering
 
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderBones { get; set; } = false;
+
 
         // TODO: Add to GUI.
         public OpenTK.Vector4 BoneColor { get; set; } = new OpenTK.Vector4(1);

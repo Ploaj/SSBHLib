@@ -27,6 +27,8 @@ uniform int renderEmission;
 uniform int renderRimLighting;
 
 uniform int renderWireframe;
+uniform int renderVertexColor;
+uniform int renderNormalMaps;
 
 uniform vec4 paramA6;
 uniform vec4 paramA3;
@@ -123,8 +125,10 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     // Ambient occlusion.
     diffuseTerm *= texture(gaoMap, bake1).rgb;
 
-    // TODO: Vertex color.
-    // diffuseTerm *= colorSet.rgb;
+    // TODO: Vertex color alpha?
+    // Remap [0, 0.5] values to [0, 1] for RGB.
+    if (renderVertexColor == 1)
+        diffuseTerm *= colorSet.rgb * 2;
     return diffuseTerm;
 }
 
@@ -166,7 +170,9 @@ void main()
     fragColor = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, UV0).xyzw;
-    vec3 newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+    vec3 newNormal = N;
+    if (renderNormalMaps == 1)
+        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
     vec3 V = vec3(0,0,-1) * mat3(mvp);
     vec3 R = reflect(V, newNormal);

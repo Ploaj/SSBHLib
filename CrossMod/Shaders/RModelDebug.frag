@@ -29,6 +29,7 @@ uniform vec4 renderChannels;
 uniform int renderMode;
 
 uniform int renderWireframe;
+uniform int renderNormalMaps;
 
 uniform mat4 mvp;
 
@@ -73,7 +74,9 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 void main()
 {
 	vec4 norColor = texture(norMap, UV0).xyzw;
-	vec3 newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+    vec3 newNormal = N;
+    if (renderNormalMaps == 1)
+        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
 	vec3 V = vec3(0,0,-1) * mat3(mvp);
 	vec3 R = reflect(V, newNormal);

@@ -129,7 +129,7 @@ namespace CrossMod.Nodes
                         bake1 = GetVector4(bake1Values[i]).Xy;
 
                     // The values are read as float, so we can't use OpenGL to convert.
-                    var colorSet1 = new Vector4(0);
+                    var colorSet1 = new Vector4(0.5f, 0.5f, 0.5f, 1f);
                     if (colorSet1Values.Length != 0)
                         colorSet1 = GetVector4(colorSet1Values[i]) / 255.0f;
 
