@@ -25,6 +25,8 @@ out vec2 geomBake1;
 uniform mat4 mvp;
 uniform mat4 transform;
 
+uniform vec4 paramAA;
+
 uniform Bones
 {
     mat4 transforms[200];
@@ -52,7 +54,10 @@ void main()
     geomN = transformedNormal.xyz;
     geomColorSet = colorSet1;
     geomBake1 = bake1;
-    geomUV0 = map1;
+
+    // Sprite sheet uvs.
+    geomUV0 = map1 / paramAA.xy;
+
     geomTangent = Tangent0;
     geomBitangent = Bitangent0;
 

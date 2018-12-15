@@ -85,6 +85,9 @@ namespace CrossMod.Rendering.Models
             // Some sort of skin sss color.
             AddMtalVec4("paramA3", genericMaterial, material, 0xA3, new Vector4(1));
 
+            // Sprite sheet UV params.
+            AddMtalVec4("paramAA", genericMaterial, material, 0xAA, new Vector4(1));
+
             // TODO: Make this a single int.
             // Enables/disables specular occlusion.
             AddMtalVec4("paramE9", genericMaterial, material, 0xE9, new Vector4(1, 0, 0, 0));
