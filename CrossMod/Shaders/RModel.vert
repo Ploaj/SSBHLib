@@ -37,7 +37,7 @@ void main()
     vec4 transformedNormal = transform * vec4(Normal0, 0);
 
     // Vertex skinning
-    if(boneWeights.x != 0) {
+    if (boneWeights.x != 0) {
         position = vec4(0);
         transformedNormal = vec4(0);
 
