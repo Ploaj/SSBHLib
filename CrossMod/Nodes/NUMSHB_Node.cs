@@ -40,6 +40,13 @@ namespace CrossMod.Nodes
             // Read the mesh information into the Rendering Mesh.
             foreach (MESH_Object meshObject in mesh.Objects)
             {
+                System.Diagnostics.Debug.WriteLine(meshObject.Name);
+                foreach (var attribute in meshObject.Attributes)
+                {
+                    System.Diagnostics.Debug.WriteLine($"{attribute.Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4_0} Unk5: {attribute.Unk5_0}");
+                }
+                System.Diagnostics.Debug.WriteLine("");
+
                 RMesh rMesh = new RMesh
                 {
                     Name = meshObject.Name,

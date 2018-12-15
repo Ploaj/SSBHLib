@@ -125,7 +125,6 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     // Ambient occlusion.
     diffuseTerm *= texture(gaoMap, bake1).rgb;
 
-    // TODO: Vertex color alpha?
     // Remap [0, 0.5] values to [0, 1] for RGB.
     if (renderVertexColor == 1)
         diffuseTerm *= colorSet.rgb * 2;
@@ -268,6 +267,8 @@ void main()
 
     // Alpha calculations
     fragColor.a = albedoColor.a;
+    if (renderVertexColor == 1)
+        fragColor.a *= colorSet.a;
 
     // TODO: 0 = alpha. 1 = alpha.
     // Values can be between 0 and 1, however.
