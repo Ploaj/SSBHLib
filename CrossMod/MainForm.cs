@@ -198,14 +198,14 @@ namespace CrossMod
             if (string.IsNullOrEmpty(outputPath))
                 return;
 
-            // Just render the first alt costume, which should include items without slot specific variants.
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
-                // Just render main fighter models for now.
+                // Just render the first alt costume, which will include models without slot specific variants.
                 if (!file.Contains("c00"))
                     continue;
 
                 string sourceFolder = Directory.GetParent(file).FullName;
+
                 OpenFiles(sourceFolder);
 
                 ShowModelViewport();
@@ -215,7 +215,7 @@ namespace CrossMod
 
                 modelViewport.RenderFrame();
 
-                // TODO: Save screenshot.
+                // Save screenshot.
                 using (var bmp = modelViewport.GetScreenshot())
                 {
                     string condensedName = GetCondensedPathName(folderPath, file);
@@ -224,7 +224,7 @@ namespace CrossMod
 
                 // Cleanup.
                 ClearWorkspace();
-                System.Diagnostics.Debug.WriteLine(sourceFolder);
+                System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
         }
 

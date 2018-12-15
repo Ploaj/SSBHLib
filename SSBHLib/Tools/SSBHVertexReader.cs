@@ -78,7 +78,7 @@ namespace SSBHLib.Tools
             int Size = 3;
             if (AttributeName.Contains("colorSet"))
                 Size = 4;
-            if (AttributeName.Equals("map1") || AttributeName.Contains("uvSet"))
+            if (AttributeName.Equals("map1") || AttributeName.Equals("bake1") || AttributeName.Contains("uvSet"))
                 Size = 2;
 
             SSBHVertexAttribute[] a = new SSBHVertexAttribute[Count];
