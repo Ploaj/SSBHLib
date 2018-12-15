@@ -5,7 +5,7 @@ in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
 in vec4 colorSet;
-in vec3 bakeColor;
+in vec2 bake1;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -119,8 +119,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
 
     // Bake lighting maps.
-    diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
-    diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
+    diffuseTerm *= texture(bakeLitMap, bake1).rgb;
+    diffuseTerm *= texture(gaoMap, bake1).rgb;
     return diffuseTerm;
 }
 

@@ -63,6 +63,7 @@ namespace CrossMod.Nodes
                 var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
                 var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
                 var bake1Values = vertexAccessor.ReadAttribute("bake1", 0, meshObject.VertexCount, meshObject);
+                var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
 
                 Vector3[] generatedBitangents = GenerateBitangents(intIndices, positions, map1Values);
 
@@ -108,9 +109,13 @@ namespace CrossMod.Nodes
                 for (int i = 0; i < positions.Length; i++)
                 {
                     var position = GetVector4(positions[i]).Xyz;
+
                     var normal = GetVector4(normals[i]).Xyz;
                     var tangent = GetVector4(tangents[i]).Xyz;
+                    var bitangent = GetBitangent(generatedBitangents, i, normal);
+
                     var map1 = GetVector4(map1Values[i]).Xy;
+
                     var bones = boneIndices[i];
                     var weights = boneWeights[i];
 
@@ -119,9 +124,12 @@ namespace CrossMod.Nodes
                     if (bake1Values.Length != 0)
                         bake1 = GetVector4(bake1Values[i]).Xy;
 
-                    Vector3 bitangent = GetBitangent(generatedBitangents, i, normal);
+                    var colorSet1 = new Vector4(0);
+                    if (colorSet1Values.Length != 0)
+                        colorSet1 = GetVector4(colorSet1Values[i]);
 
-                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights, bake1));
+
+                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights, bake1, colorSet1));
                 }
 
                 rMesh.RenderMesh = new RenderMesh(vertices, intIndices);

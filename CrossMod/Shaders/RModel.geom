@@ -8,14 +8,14 @@ in vec3 geomTangent[];
 in vec3 geomBitangent[];
 in vec2 geomUV0[];
 in vec4 geomColorSet[];
-in vec3 geomBakeColor[];
+in vec2 geomBake1[];
 
 out vec3 N;
 out vec3 tangent;
 out vec3 bitangent;
 out vec2 UV0;
 out vec4 colorSet;
-out vec3 bakeColor;
+out vec2 bake1;
 
 noperspective out vec3 edgeDistance;
 
@@ -48,7 +48,7 @@ void main()
 
         UV0 = geomUV0[i];
         colorSet = geomColorSet[i];
-        bakeColor = geomBakeColor[i];
+        bake1 = geomBake1[i];
 
         // The distance from a point to each of the edges.
         if (i == 0)
