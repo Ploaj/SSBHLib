@@ -136,10 +136,9 @@ namespace CrossMod.Nodes
 
                 model.subMeshes.Add(rMesh);
 
+                // TODO: Change draw elements type for GenericMesh<T>.
                 if (meshObject.DrawElementType == 1)
                     rMesh.DrawElementType = DrawElementsType.UnsignedInt;
-
-                AddVertexAttributes(rMesh, meshObject);
             }
 
             return model;
@@ -172,36 +171,6 @@ namespace CrossMod.Nodes
         private static Vector4 GetVector4(SSBHVertexAttribute values)
         {
             return new Vector4(values.X, values.Y, values.Z, values.W);
-        }
-
-        private static void AddVertexAttributes(RMesh mesh, MESH_Object meshObject)
-        {
-            // Vertex Attributes
-            foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
-            {
-                CustomVertexAttribute customAttribute = new CustomVertexAttribute
-                {
-                    Name = meshAttribute.AttributeStrings[0].Name,
-                    Normalized = false,
-                    Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
-                    Size = 3
-                };
-
-                // TODO: There may be another way to determine size.
-                if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
-                {
-                    customAttribute.Size = 2;
-                }
-                if (customAttribute.Name.Contains("colorSet"))
-                {
-                    customAttribute.Size = 4;
-                }
-
-                customAttribute.Type = GetAttributeType(meshAttribute);
-                mesh.VertexAttributes.Add(customAttribute);
-
-                System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} {customAttribute.Type}");
-            }
         }
 
         private static VertexAttribPointerType GetAttributeType(MESH_Attribute meshAttribute)

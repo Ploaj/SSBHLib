@@ -18,8 +18,6 @@ namespace CrossMod.Rendering.Models
 
         public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
 
-        public List<CustomVertexAttribute> VertexAttributes = new List<CustomVertexAttribute>();
-
         public string SingleBindName { get; set; } = "";
         public int SingleBindIndex { get; set; } = -1;
 
