@@ -17,7 +17,7 @@ namespace CrossMod.Rendering
             Normals,
             Tangents,
             Bitangents,
-            BakeColor,
+            BakeUV,
             UVPattern,
             ParamID
         }

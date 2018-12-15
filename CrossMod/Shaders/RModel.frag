@@ -122,6 +122,9 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
 
     // Ambient occlusion.
     diffuseTerm *= texture(gaoMap, bake1).rgb;
+
+    // TODO: Vertex color.
+    // diffuseTerm *= colorSet.rgb;
     return diffuseTerm;
 }
 
