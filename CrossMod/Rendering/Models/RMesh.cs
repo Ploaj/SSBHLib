@@ -10,7 +10,7 @@ namespace CrossMod.Rendering.Models
 {
     public class RMesh : IRenderable
     {
-        private static Resources.DefaultTextures defaultTextures = null;
+        public static Resources.DefaultTextures defaultTextures = null;
 
         public RenderMesh RenderMesh { get; set; } = null;
 
@@ -72,7 +72,9 @@ namespace CrossMod.Rendering.Models
         private static void AddTextures(Material material, GenericMaterial genericMaterial)
         {
             AddMaterialTextures(material, genericMaterial);
+
             AddImageBasedLightingTextures(genericMaterial);
+
             AddRenderModeTextures(genericMaterial);
         }
 
@@ -106,21 +108,19 @@ namespace CrossMod.Rendering.Models
         {
             // Use black for the default value.
             // Some materials seem to use emission as the main diffuse.
-            AddTextureOrDefault("colMap", material.col, defaultTextures.defaultBlack, genericMaterial);
+            AddTexture("colMap", material.col, genericMaterial);
 
             // Use the first texture for both layers if the second layer isn't present.
-            if (material.col2 != null)
+            if (material.HasCol2)
                 genericMaterial.AddTexture("col2Map", material.col2);
-            else if (material.col != null)
-                genericMaterial.AddTexture("col2Map", material.col);
             else
-                genericMaterial.AddTexture("col2Map", defaultTextures.defaultBlack);
+                genericMaterial.AddTexture("col2Map", material.col);
 
-            AddTextureOrDefault("prmMap", material.prm, defaultTextures.defaultPrm, genericMaterial);
-            AddTextureOrDefault("norMap", material.nor, defaultTextures.defaultNormal, genericMaterial);
-            AddTextureOrDefault("emiMap", material.emi, defaultTextures.defaultBlack, genericMaterial);
-            AddTextureOrDefault("bakeLitMap", material.bakeLit, defaultTextures.defaultWhite, genericMaterial);
-            AddTextureOrDefault("gaoMap", material.gao, defaultTextures.defaultWhite, genericMaterial);
+            AddTexture("prmMap", material.prm, genericMaterial);
+            AddTexture("norMap", material.nor, genericMaterial);
+            AddTexture("emiMap", material.emi, genericMaterial);
+            AddTexture("bakeLitMap", material.bakeLit, genericMaterial);
+            AddTexture("gaoMap", material.gao, genericMaterial);
         }
 
         private static void AddRenderModeTextures(GenericMaterial genericMaterial)
@@ -135,12 +135,9 @@ namespace CrossMod.Rendering.Models
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 
-        private static void AddTextureOrDefault(string name, Texture texture, Texture defaultTex, GenericMaterial genericMaterial)
+        private static void AddTexture(string name, Texture texture, GenericMaterial genericMaterial)
         {
-            if (texture != null)
-                genericMaterial.AddTexture(name, texture);
-            else
-                genericMaterial.AddTexture(name, defaultTex);
+            genericMaterial.AddTexture(name, texture);
         }
 
         private static void AddMtalVec4(string name, GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)

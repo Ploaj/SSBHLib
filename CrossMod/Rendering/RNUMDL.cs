@@ -23,7 +23,10 @@ namespace CrossMod.Rendering
             GaoMap = 0x5F,
             ColMap2 = 0x5D,
             EmiMap = 0x61,
-            BakeLitMap = 0x65
+            BakeLitMap = 0x65,
+            ColSampler = 0x6C,
+            NorSampler = 0x70,
+            PrmSampler = 0x72
         }
 
         public enum ParamDataType
@@ -85,9 +88,14 @@ namespace CrossMod.Rendering
 
         private Material GetMaterial(MTAL_Entry currentEntry)
         {
-            System.Diagnostics.Debug.WriteLine("Material Attributes:");
-            Material meshMaterial = new Material();
+            // HACK: This is pretty gross.
+            // I need to rework the entire texture loading system.
+            if (RMesh.defaultTextures == null)
+                RMesh.defaultTextures = new Resources.DefaultTextures();
 
+            Material meshMaterial = new Material(RMesh.defaultTextures);
+
+            System.Diagnostics.Debug.WriteLine("Material Attributes:");
             foreach (MTAL_Attribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
@@ -113,18 +121,53 @@ namespace CrossMod.Rendering
                         float floatValue = (float)a.DataObject;
                         meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = floatValue, Y = floatValue, Z = floatValue, W = 0 };
                         break;
-                    case (long)ParamDataType.SamplerInfo:
-                        SetSampler(meshMaterial, a);
-                        break;
                 }
+            }
+
+            // HACK: Textures need to be initialized first before we can modify their state.
+            foreach (MTAL_Attribute a in currentEntry.Attributes)
+            {
+                if (a.DataObject == null || a.DataType != 0xE)
+                    continue;
+
+                SetSamplerInformation(meshMaterial, a);
             }
 
             return meshMaterial;
         }
 
-        private void SetSampler(Material material, MTAL_Attribute a)
+        private void SetSamplerInformation(Material material, MTAL_Attribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
+            var samplerStruct = a.DataObject as MTAL_Attribute.MTAL_Unk_0E;
+            var wrapS = GetWrapMode(samplerStruct.WrapS);
+            var wrapT = GetWrapMode(samplerStruct.WrapT);
+
+            switch (a.ParamID)
+            {
+                case (long)ParamId.ColSampler:
+                    material.col.TextureWrapS = wrapS;
+                    material.col.TextureWrapT = wrapT;
+                    break;
+                case (long)ParamId.NorSampler:
+                    material.nor.TextureWrapS = wrapS;
+                    material.nor.TextureWrapT = wrapT;
+                    break;
+                case (long)ParamId.PrmSampler:
+                    material.prm.TextureWrapS = wrapS;
+                    material.prm.TextureWrapT = wrapT;
+                    break;
+            }
+        }
+
+        private OpenTK.Graphics.OpenGL.TextureWrapMode GetWrapMode(int wrapMode)
+        {
+            if (wrapMode == 0)
+                return OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat;
+            else if (wrapMode == 2)
+                return OpenTK.Graphics.OpenGL.TextureWrapMode.MirroredRepeat;
+            else
+                return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
         }
 
         private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)
@@ -132,28 +175,40 @@ namespace CrossMod.Rendering
             // Don't make texture names case sensitive.
             var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
 
+            // Create a temp so we don't make the defaults null.
+            Texture texture = null;
             switch (a.ParamID)
             {
                 case (long)ParamId.ColMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.col);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.col = texture;
                     break;
                 case (long)ParamId.GaoMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.gao);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.gao = texture;
                     break;
                 case (long)ParamId.ColMap2:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.col2);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                    {
+                        meshMaterial.col2 = texture;
+                        meshMaterial.HasCol2 = true;
+                    }
                     break;
                 case (long)ParamId.NorMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.nor);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.nor = texture;
                     break;
                 case (long)ParamId.PrmMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.prm);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.prm = texture;
                     break;
                 case (long)ParamId.EmiMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.emi);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.emi = texture;
                     break;
                 case (long)ParamId.BakeLitMap:
-                    sfTextureByName.TryGetValue(text, out meshMaterial.bakeLit);
+                    if (sfTextureByName.TryGetValue(text, out texture))
+                        meshMaterial.bakeLit = texture;
                     break;
             }
         }
