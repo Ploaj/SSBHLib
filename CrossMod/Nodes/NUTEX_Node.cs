@@ -194,9 +194,9 @@ namespace CrossMod.Nodes
                 case NUTEX_FORMAT.BC2_SRGB:
                     return 8;
                 case NUTEX_FORMAT.BC3_UNORM:
-                    return 8;
+                    return 16;
                 case NUTEX_FORMAT.BC3_SRGB:
-                    return 8;
+                    return 16;
                 case NUTEX_FORMAT.BC5_UNORM:
                 case NUTEX_FORMAT.BC5_SNORM:
                 case NUTEX_FORMAT.BC6_UFLOAT:
