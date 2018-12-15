@@ -780,13 +780,12 @@
             Methods for configuring vertex attributes for a <see cref="T:SFGraphics.GLObjects.Shaders.Shader"/>.
             </summary>
         </member>
-        <member name="M:SFGenericModel.VertexAttributes.VertexAttributeUtils.SetVertexAttribute(SFGraphics.GLObjects.Shaders.Shader,System.String,SFGenericModel.VertexAttributes.VertexAttribute,System.Int32,System.Int32)">
+        <member name="M:SFGenericModel.VertexAttributes.VertexAttributeUtils.SetVertexAttribute(SFGraphics.GLObjects.Shaders.Shader,SFGenericModel.VertexAttributes.VertexAttribute,System.Int32,System.Int32)">
             <summary>
             Configures a vertex attribute for the currently bound element array buffer.
             Returns false on error.
             </summary>
             <param name="shader">The current shader used for rendering</param>
-            <param name="name">The name of the attribute variable</param>
             <param name="attribute">The vertex attribute information</param>
             <param name="offsetInBytes">The offset into the vertex data</param>
             <param name="strideInBytes">The size in bytes of each vertex</param>
@@ -1016,8 +1015,8 @@
         </member>
         <member name="M:SFGenericModel.GenericMesh`1.GetVertexAttributes">
             <summary>
-            The order of vertex attributes in the list should match 
-            the order of the fields in <typeparamref name="T"/>.
+            Gets the attribute rendering information for all the members of <typeparamref name="T"/> with a <see cref="T:SFGenericModel.VertexAttributes.VertexAttribute"/> using reflection.
+            When overriding this method, the order of attributes in the list should match the order of the member variables.
             </summary>
             <returns>Vertex attribute information</returns>
         </member>

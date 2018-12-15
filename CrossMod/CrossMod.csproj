@@ -87,6 +87,8 @@
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Rendering\Models\CustomVertex.cs" />
+    <Compile Include="Rendering\Models\RenderMesh.cs" />
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Tools\FileTools.cs" />
@@ -124,7 +126,6 @@
     <Compile Include="Nodes\SKEL_Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\Models\CustomVertexAttribute.cs" />
     <Compile Include="Rendering\Resources\DefaultTextures.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\IRenderableAnimation.cs" />

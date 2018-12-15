@@ -5,7 +5,7 @@ in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
 in vec4 colorSet;
-in vec3 bakeColor;
+in vec2 bake1;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -88,8 +88,8 @@ void main()
 	vec4 emiColor = texture(emiMap, UV0).rgba;
 
 	// TODO: Why does bake1 have UVs?
-	vec4 bakeLitColor = texture(bakeLitMap, bakeColor.xy).rgba;
-    vec4 gaoColor = texture(gaoMap, bakeColor.xy).rgba;
+	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
+    vec4 gaoColor = texture(gaoMap, bake1).rgba;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
@@ -142,7 +142,7 @@ void main()
             fragColor = vec4(bitangent * 0.5 + 0.5, 1);
             break;
 		case 11:
-			fragColor = vec4(bakeColor, 1);
+			fragColor = vec4(bake1, 1, 1);
 			break;
         case 12:
             fragColor = uvPatternColor;

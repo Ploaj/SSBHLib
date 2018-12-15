@@ -12,14 +12,11 @@ namespace CrossMod.Rendering.Models
     {
         private static Resources.DefaultTextures defaultTextures = null;
 
+        public RenderMesh RenderMesh { get; set; } = null;
+
         public string Name { get; set; }
 
         public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
-
-        public List<CustomVertexAttribute> VertexAttributes = new List<CustomVertexAttribute>();
-
-        public int IndexOffset { get; set; }
-        public int IndexCount { get; set; }
 
         public string SingleBindName { get; set; } = "";
         public int SingleBindIndex { get; set; } = -1;
@@ -30,7 +27,9 @@ namespace CrossMod.Rendering.Models
 
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
+
             if (skeleton != null)
             {
                 var matrix = Matrix4.Identity;
@@ -43,12 +42,8 @@ namespace CrossMod.Rendering.Models
             {
                 SetTextureUniforms(shader);
             }
-            foreach (CustomVertexAttribute a in VertexAttributes)
-            {
-                a.Bind(shader);
-            }
 
-            GL.DrawElements(PrimitiveType.Triangles, IndexCount, DrawElementType, IndexOffset);
+            RenderMesh?.Draw(shader, camera);
         }
 
         private void SetTextureUniforms(Shader shader)

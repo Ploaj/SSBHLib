@@ -12,9 +12,9 @@ using System.IO;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numshb")]
-    public class NUMSHB_Node : FileNode, IRenderableNode
+    public class NUMSHB_Node : FileNode
     {
-        public MESH _mesh;
+        public MESH mesh;
 
         public NUMSHB_Node()
         {
@@ -28,178 +28,149 @@ namespace CrossMod.Nodes
             {
                 if (ssbhFile is MESH)
                 {
-                    _mesh = (MESH)ssbhFile;
+                    mesh = (MESH)ssbhFile;
                 }
             }
         }
 
-        public IRenderable GetRenderableNode()
+        public RModel GetRenderModel(RSkeleton Skeleton = null)
         {
-            return GetRenderableNode(null);
-        }
-
-        public IRenderable GetRenderableNode(RSkeleton Skeleton = null)
-        {
+            System.Diagnostics.Debug.WriteLine("Create render meshes");
             RModel model = new RModel();
 
-            List<int> bufferOffsets = new List<int>(_mesh.VertexBuffers.Length);
-            int bufferOffset = 0;
-
-            // TODO: If there are enough elements, estimating capacity may improve performance.
-            List<byte> vertexBuffer = new List<byte>();
-
-            // Merge buffers into one because OpenGL supports a single array buffer.
-            foreach (MESH_Buffer meshBuffer in _mesh.VertexBuffers)
-            {
-                vertexBuffer.AddRange(meshBuffer.Buffer);
-
-                bufferOffsets.Add(bufferOffset);
-                bufferOffset += meshBuffer.Buffer.Length;
-            }
-
             // Read the mesh information into the Rendering Mesh.
-            foreach (MESH_Object meshObject in _mesh.Objects)
+            foreach (MESH_Object meshObject in mesh.Objects)
             {
-                RMesh mesh = new RMesh
+                RMesh rMesh = new RMesh
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
-                    IndexCount = meshObject.IndexCount,
-                    IndexOffset = (int)meshObject.ElementOffset
                 };
 
-                model.subMeshes.Add(mesh);
+                var vertexAccessor = new SSBHVertexAccessor(mesh);
 
-                if (meshObject.DrawElementType == 1)
-                    mesh.DrawElementType = DrawElementsType.UnsignedInt;
+                var indices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+                // TODO: SFGraphics doesn't support the other index types yet.
+                var intIndices = new List<int>();
+                foreach (var index in indices)
+                {
+                    intIndices.Add((int)index);
+                }
 
-                AddVertexAttributes(mesh, bufferOffsets, meshObject);
+                // Read attribute values.
+                var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
+                var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
+                var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
+                var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
+                var bake1Values = vertexAccessor.ReadAttribute("bake1", 0, meshObject.VertexCount, meshObject);
+                var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
 
-                // Add rigging if the skeleton exists.
+                Vector3[] generatedBitangents = GenerateBitangents(intIndices, positions, map1Values);
+
+                var boneIndices = new IVec4[positions.Length];
+                var boneWeights = new Vector4[positions.Length];
+
+                var riggingAccessor = new SSBHRiggingAccessor(mesh);
+                SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+                Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
                 if (Skeleton != null)
                 {
-                    // TODO: This step is slow.
-                    AddRiggingBufferData(vertexBuffer, Skeleton, meshObject, mesh);
+                    for (int i = 0; i < Skeleton.Bones.Count; i++)
+                    {
+                        indexByBoneName.Add(Skeleton.Bones[i].Name, i);
+                    }
                 }
-            }
 
-            SetVertexAndIndexBuffers(model, vertexBuffer);
+                foreach (SSBHVertexInfluence influence in influences)
+                {
+                    if (boneWeights[influence.VertexIndex].X == 0)
+                    {
+                        boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].X = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].Y == 0)
+                    {
+                        boneIndices[influence.VertexIndex].Y = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].Y = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].Z == 0)
+                    {
+                        boneIndices[influence.VertexIndex].Z = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].Z = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].W == 0)
+                    {
+                        boneIndices[influence.VertexIndex].W = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].W = influence.Weight;
+                    }
+                }
+
+                var vertices = new List<CustomVertex>();
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    var position = GetVector4(positions[i]).Xyz;
+
+                    var normal = GetVector4(normals[i]).Xyz;
+                    var tangent = GetVector4(tangents[i]).Xyz;
+                    var bitangent = GetBitangent(generatedBitangents, i, normal);
+
+                    var map1 = GetVector4(map1Values[i]).Xy;
+
+                    var bones = boneIndices[i];
+                    var weights = boneWeights[i];
+
+                    // Accessors return length 0 when the attribute isn't present.
+                    var bake1 = new Vector2(0);
+                    if (bake1Values.Length != 0)
+                        bake1 = GetVector4(bake1Values[i]).Xy;
+
+                    var colorSet1 = new Vector4(0);
+                    if (colorSet1Values.Length != 0)
+                        colorSet1 = GetVector4(colorSet1Values[i]);
+
+
+                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights, bake1, colorSet1));
+                }
+
+                rMesh.RenderMesh = new RenderMesh(vertices, intIndices);
+
+                model.subMeshes.Add(rMesh);
+
+                // TODO: Change draw elements type for GenericMesh<T>.
+                if (meshObject.DrawElementType == 1)
+                    rMesh.DrawElementType = DrawElementsType.UnsignedInt;
+            }
 
             return model;
         }
 
-        private void SetVertexAndIndexBuffers(RModel model, List<byte> vertexBuffer)
+        private static Vector3 GetBitangent(Vector3[] generatedBitangents, int i, Vector3 normal)
         {
-            // Create and prepare the buffers for rendering
-            model.indexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ElementArrayBuffer);
-            model.indexBuffer.SetData(_mesh.PolygonBuffer, BufferUsageHint.StaticDraw);
-
-            model.vertexBuffer = new SFGraphics.GLObjects.BufferObjects.BufferObject(BufferTarget.ArrayBuffer);
-            model.vertexBuffer.SetData(vertexBuffer.ToArray(), BufferUsageHint.StaticDraw);
+            // Account for mirrored normal maps.
+            var bitangent = SFGraphics.Utils.VectorUtils.Orthogonalize(generatedBitangents[i], normal);
+            bitangent *= -1;
+            return bitangent;
         }
 
-        private void AddRiggingBufferData(List<byte> vertexBuffer, RSkeleton Skeleton, MESH_Object meshObject, RMesh mesh)
+        private static Vector3[] GenerateBitangents(List<int> intIndices, SSBHVertexAttribute[] positions, SSBHVertexAttribute[] uvs)
         {
-            // This is such a messy way of prepping it...
-            Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
-            if (Skeleton != null)
+            var generatedBitangents = new Vector3[positions.Length];
+            for (int i = 0; i < intIndices.Count; i += 3)
             {
-                for (int i = 0; i < Skeleton.Bones.Count; i++)
-                {
-                    indexByBoneName.Add(Skeleton.Bones[i].Name, i);
-                }
+                SFGraphics.Utils.VectorUtils.GenerateTangentBitangent(GetVector4(positions[intIndices[i]]).Xyz, GetVector4(positions[intIndices[i + 1]]).Xyz, GetVector4(positions[intIndices[i + 2]]).Xyz,
+                    GetVector4(uvs[intIndices[i]]).Xy, GetVector4(uvs[intIndices[i + 1]]).Xy, GetVector4(uvs[intIndices[i + 2]]).Xy, out Vector3 tangent, out Vector3 bitangent);
+
+                generatedBitangents[intIndices[i]] += bitangent;
+                generatedBitangents[intIndices[i + 1]] += bitangent;
+                generatedBitangents[intIndices[i + 2]] += bitangent;
             }
 
-            // Get the influences.
-            SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(_mesh);
-            SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
-
-            // Create a bank for writing.
-            Vector4[] bones = new Vector4[meshObject.VertexCount];
-            Vector4[] boneWeights = new Vector4[meshObject.VertexCount];
-            foreach (SSBHVertexInfluence vertexInfluence in influences)
-            {
-                AddWeight(ref bones[vertexInfluence.VertexIndex], ref boneWeights[vertexInfluence.VertexIndex], (ushort)indexByBoneName[vertexInfluence.BoneName], vertexInfluence.Weight);
-            }
-
-            byte[] riggingData = GetRiggingData(meshObject, bones, boneWeights);
-
-            // Add attributes for the new data
-            mesh.VertexAttributes.Add(new CustomVertexAttribute()
-            {
-                Name = "boneIndices",
-                Size = 4,
-                IType = VertexAttribIntegerType.UnsignedShort,
-                Offset = vertexBuffer.Count,
-                Stride = 4 * 6,
-                Integer = true
-            });
-
-            mesh.VertexAttributes.Add(new CustomVertexAttribute()
-            {
-                Name = "boneWeights",
-                Size = 4,
-                Type = VertexAttribPointerType.Float,
-                Offset = vertexBuffer.Count + 8,
-                Stride = 4 * 6
-            });
-
-            // Add rigging buffer onto the end of vertex buffer
-            vertexBuffer.AddRange(riggingData);
+            return generatedBitangents;
         }
 
-        private static byte[] GetRiggingData(MESH_Object meshObject, Vector4[] bones, Vector4[] boneWeights)
+        private static Vector4 GetVector4(SSBHVertexAttribute values)
         {
-            byte[] riggingData;
-
-            // Build a byte buffer for the data.
-            using (MemoryStream riggingBuffer = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(riggingBuffer))
-                {
-                    for (int i = 0; i < meshObject.VertexCount; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                            writer.Write((ushort)bones[i][j]);
-                        for (int j = 0; j < 4; j++)
-                            writer.Write(boneWeights[i][j]);
-                    }
-                }
-                riggingData = riggingBuffer.GetBuffer();
-            }
-
-            return riggingData;
-        }
-
-        private static void AddVertexAttributes(RMesh mesh, List<int> bufferOffsets, MESH_Object meshObject)
-        {
-            // Vertex Attributes
-            foreach (MESH_Attribute meshAttribute in meshObject.Attributes)
-            {
-                CustomVertexAttribute customAttribute = new CustomVertexAttribute
-                {
-                    Name = meshAttribute.AttributeStrings[0].Name,
-                    Normalized = false,
-                    Stride = meshAttribute.BufferIndex == 1 ? meshObject.Stride2 : meshObject.Stride,
-                    Offset = bufferOffsets[meshAttribute.BufferIndex] + (meshAttribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + meshAttribute.BufferOffset,
-                    Size = 3
-                };
-
-                // TODO: There may be another way to determine size.
-                if (customAttribute.Name.Equals("map1") || customAttribute.Name.Contains("uvSet"))
-                {
-                    customAttribute.Size = 2;
-                }
-                if (customAttribute.Name.Contains("colorSet"))
-                {
-                    customAttribute.Size = 4;
-                }
-
-                customAttribute.Type = GetAttributeType(meshAttribute);
-                mesh.VertexAttributes.Add(customAttribute);
-
-                System.Diagnostics.Debug.WriteLine($"{customAttribute.Name} {customAttribute.Size} Unk4: {meshAttribute.Unk4_0} Unk5: {meshAttribute.Unk5_0}");
-            }
+            return new Vector4(values.X, values.Y, values.Z, values.W);
         }
 
         private static VertexAttribPointerType GetAttributeType(MESH_Attribute meshAttribute)

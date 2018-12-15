@@ -5,7 +5,7 @@ in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
 in vec4 colorSet;
-in vec3 bakeColor;
+in vec2 bake1;
 noperspective in vec3 edgeDistance;
 
 uniform mat4 mvp;

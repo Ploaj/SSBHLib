@@ -5,7 +5,7 @@ in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
 in vec4 colorSet;
-in vec3 bakeColor;
+in vec2 bake1;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -86,17 +86,12 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 {
     float normalization = 1 / (3.14159 * roughX * roughY);
 
-    // HACK: The generated bitangents don't work properly.
-    // The geometry shader probably needs to be adjusted.
-    bitangent = normalize(cross(N, tangent));
-
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
-    // Square roughness to look correct.
+    // Square input roughness to look correct.
     roughX *= roughX;
     roughY *= roughY;
-
 
     float roughX2 = roughX * roughX;
     float roughY2 = roughY * roughY;
@@ -124,8 +119,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
 
     // Bake lighting maps.
-    diffuseTerm *= texture(bakeLitMap, bakeColor.xy).rgb;
-    diffuseTerm *= texture(gaoMap, bakeColor.xy).rgb;
+    diffuseTerm *= texture(bakeLitMap, bake1).rgb;
+    diffuseTerm *= texture(gaoMap, bake1).rgb;
     return diffuseTerm;
 }
 
@@ -172,7 +167,7 @@ void main()
     vec3 V = vec3(0,0,-1) * mat3(mvp);
     vec3 R = reflect(V, newNormal);
 
-    // BLend two diffuse layers based on alpha.
+    // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
