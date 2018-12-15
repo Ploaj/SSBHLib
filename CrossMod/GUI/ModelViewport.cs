@@ -186,7 +186,8 @@ namespace CrossMod.GUI
 
         public void RenderFrame()
         {
-            glViewport.RenderFrame();
+            if (!glViewport.IsDisposed)
+                glViewport.RenderFrame();
         }
 
         private void RenderNode(object sender, EventArgs e)

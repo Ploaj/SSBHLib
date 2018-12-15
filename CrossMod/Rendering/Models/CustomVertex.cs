@@ -4,6 +4,14 @@ using SFGenericModel.VertexAttributes;
 
 namespace CrossMod.Rendering.Models
 {
+    public struct IVec4
+    {
+        public int X { get; set; } 
+        public int Y { get; set; }
+        public int Z { get; set; }
+        public int W { get; set; }
+    }
+
     public struct CustomVertex
     {
         [VertexFloat("Position0", ValueCount.Three, VertexAttribPointerType.Float)]
@@ -22,13 +30,21 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("map1", ValueCount.Two, VertexAttribPointerType.Float)]
         public Vector2 Map1 { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, Vector2 map1)
+        [VertexInt("boneIndices", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
+        public IVec4 BoneIndices { get; }
+
+        [VertexFloat("boneWeights", ValueCount.Four, VertexAttribPointerType.Float)]
+        public Vector4 BoneWeights { get; }
+
+        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, Vector2 map1, IVec4 boneIndices, Vector4 boneWeights)
         {
             Position0 = position0;
             Normal0 = normal0;
             Tangent0 = tangent0;
             Bitangent0 = bitangent0;
             Map1 = map1;
+            BoneIndices = boneIndices;
+            BoneWeights = boneWeights;
         }
     }
 }

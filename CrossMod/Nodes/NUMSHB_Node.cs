@@ -86,6 +86,44 @@ namespace CrossMod.Nodes
 
                 Vector3[] generatedBitangents = GenerateBitangents(intIndices, positions, map1Values);
 
+                var boneIndices = new IVec4[positions.Length];
+                var boneWeights = new Vector4[positions.Length];
+
+                var riggingAccessor = new SSBHRiggingAccessor(mesh);
+                SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+                Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
+                if (Skeleton != null)
+                {
+                    for (int i = 0; i < Skeleton.Bones.Count; i++)
+                    {
+                        indexByBoneName.Add(Skeleton.Bones[i].Name, i);
+                    }
+                }
+
+                foreach (SSBHVertexInfluence influence in influences)
+                {
+                    if (boneWeights[influence.VertexIndex].X == 0)
+                    {
+                        boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].X = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].Y == 0)
+                    {
+                        boneIndices[influence.VertexIndex].Y = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].Y = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].Z == 0)
+                    {
+                        boneIndices[influence.VertexIndex].Z = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].Z = influence.Weight;
+                    }
+                    else if (boneWeights[influence.VertexIndex].W == 0)
+                    {
+                        boneIndices[influence.VertexIndex].W = indexByBoneName[influence.BoneName];
+                        boneWeights[influence.VertexIndex].W = influence.Weight;
+                    }
+                }
+
                 var vertices = new List<CustomVertex>();
                 for (int i = 0; i < positions.Length; i++)
                 {
@@ -93,10 +131,12 @@ namespace CrossMod.Nodes
                     var normal = GetVector4(normals[i]).Xyz;
                     var tangent = GetVector4(tangents[i]).Xyz;
                     var map1 = GetVector4(map1Values[i]).Xy;
+                    var bones = boneIndices[i];
+                    var weights = boneWeights[i];
 
                     Vector3 bitangent = GetBitangent(generatedBitangents, i, normal);
 
-                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1));
+                    vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights));
                 }
 
                 rMesh.RenderMesh = new RenderMesh(vertices, intIndices);
