@@ -5,7 +5,7 @@ using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Rendering.Models
 {
-    public class RMesh : IRenderable
+    public class RMesh
     {
         public static Resources.DefaultTextures defaultTextures = null;
 
@@ -53,11 +53,6 @@ namespace CrossMod.Rendering.Models
 
             var genericMaterial = Material.CreateGenericMaterial(Material);
             genericMaterial.SetShaderUniforms(shader);
-        }
-
-        public void Render(Camera Camera)
-        {
-
         }
     }
 }
