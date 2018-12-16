@@ -34,6 +34,7 @@ uniform vec4 paramA6;
 uniform vec4 paramA3;
 uniform vec4 param98;
 uniform int paramE9;
+uniform float paramC8;
 uniform float paramCA;
 
 uniform float transitionFactor;
@@ -154,6 +155,9 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
 
+    // TODO: Some sort of specular intensity?
+    // specularTerm *= paramC8;
+
     return specularTerm;
 }
 
@@ -196,22 +200,22 @@ void main()
         case 0:
             // Ditto
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
-            prmColor =  mix(vec4(1, 0.255, 1, 1), prmColor, transitionBlend);
+            prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
-            prmColor =  mix(vec4(1, 0.85, 1, 1), prmColor, transitionBlend);
+            prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
             break;
         case 2:
             // Gold
-            albedoColor.rgb = mix(vec3(0.5, 0.4, 0.1), albedoColor.rgb, transitionBlend);
-            prmColor =  mix(vec4(1, 1, 1, 0.3), prmColor, transitionBlend);
+            albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
+            prmColor = mix(vec4(1, 0.25, 1, 0.3), prmColor, transitionBlend);
             break;
         case 3:
             // Metal
-            albedoColor.rgb = mix(vec3(0.25), albedoColor.rgb, transitionBlend);
-            prmColor =  mix(vec4(1, 1, 1, 0.3), prmColor, transitionBlend);
+            albedoColor.rgb = mix(vec3(0.35), albedoColor.rgb, transitionBlend);
+            prmColor = mix(vec4(1, 0.25, 1, 0.3), prmColor, transitionBlend);
             break;
     }
 
