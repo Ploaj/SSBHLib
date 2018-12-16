@@ -33,8 +33,8 @@ uniform int renderNormalMaps;
 uniform vec4 paramA6;
 uniform vec4 paramA3;
 uniform vec4 param98;
-uniform vec4 paramE9;
-uniform vec4 paramCA;
+uniform int paramE9;
+uniform float paramCA;
 
 uniform float transitionFactor;
 uniform int transitionEffect;
@@ -140,18 +140,18 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessY = roughness / (1.0 + paramCA.x);
-    float roughnessX = roughness * (1.0 + paramCA.x);
+    float roughnessY = roughness / (1.0 + paramCA);
+    float roughnessX = roughness * (1.0 + paramCA);
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
-    if (paramCA.x != 0)
+    if (paramCA != 0)
         specularTerm += kSpecular * GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
         specularTerm += kSpecular * Ggx(N, V, roughness) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
-    if (paramE9.x == 1)
+    if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
 
     return specularTerm;

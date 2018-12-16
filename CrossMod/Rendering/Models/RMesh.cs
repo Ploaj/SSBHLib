@@ -81,27 +81,25 @@ namespace CrossMod.Rendering.Models
         private static void AddMaterialParams(Material material, GenericMaterial genericMaterial)
         {
             // Set specific parameters and use a default value if not present.
-            AddMtalVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.ParamId, new Vector4(0));
+            AddVec4("vec4Param", genericMaterial, material, RenderSettings.Instance.ParamId, new Vector4(0));
 
             // Assume no edge lighting if not present.
-            AddMtalVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
+            AddVec4("paramA6", genericMaterial, material, 0xA6, new Vector4(0));
 
-            // Some sort of skin sss color.
-            AddMtalVec4("paramA3", genericMaterial, material, 0xA3, new Vector4(1));
+            // Some sort of skin subsurface color?
+            AddVec4("paramA3", genericMaterial, material, 0xA3, new Vector4(1));
 
-            // Sprite sheet UV params.
-            AddMtalVec4("paramAA", genericMaterial, material, 0xAA, new Vector4(1));
+            // Sprite sheet UV parameters.
+            AddVec4("paramAA", genericMaterial, material, 0xAA, new Vector4(1));
 
-            // TODO: Make this a single int.
             // Enables/disables specular occlusion.
-            AddMtalVec4("paramE9", genericMaterial, material, 0xE9, new Vector4(1, 0, 0, 0));
+            AddBool("paramE9", genericMaterial, material, 0xE9, true);
 
-            // TODO: Make this a single float.
             // Controls anisotropic specular.
-            AddMtalVec4("paramCA", genericMaterial, material, 0xCA, new Vector4(0, 0, 0, 0));
+            AddFloat("paramCA", genericMaterial, material, 0xCA, 0.0f);
 
             // Alpha offset.
-            AddMtalVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
+            AddVec4("param98", genericMaterial, material, 0x98, new Vector4(1, 0, 0, 0));
         }
 
         private static void AddMaterialTextures(Material material, GenericMaterial genericMaterial)
@@ -140,12 +138,51 @@ namespace CrossMod.Rendering.Models
             genericMaterial.AddTexture(name, texture);
         }
 
-        private static void AddMtalVec4(string name, GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
+        private static void AddBool(string name, GenericMaterial genericMaterial, Material source, long paramId, bool defaultValue)
+        {
+            if (source.boolByParamId.ContainsKey(paramId))
+            {
+                var value = source.boolByParamId[paramId];
+                genericMaterial.AddBoolToInt(name, value);
+            }
+            else
+            {
+                genericMaterial.AddBoolToInt(name, defaultValue);
+            }
+        }
+
+        private static void AddFloat(string name, GenericMaterial genericMaterial, Material source, long paramId, float defaultValue)
+        {
+            if (source.floatByParamId.ContainsKey(paramId))
+            {
+                var value = source.floatByParamId[paramId];
+                genericMaterial.AddFloat(name, value);
+            }
+            else
+            {
+                genericMaterial.AddFloat(name, defaultValue);
+            }
+        }
+
+        private static void AddVec4(string name, GenericMaterial genericMaterial, Material source, long paramId, Vector4 defaultValue)
         {
             if (source.vec4ByParamId.ContainsKey(paramId))
             {
                 var value = source.vec4ByParamId[paramId];
-                genericMaterial.AddVector4(name, new Vector4(value.X, value.Y, value.Z, value.W));
+                genericMaterial.AddVector4(name, value);
+            }
+            else if (source.boolByParamId.ContainsKey(paramId))
+            {
+                var value = source.boolByParamId[paramId];
+                if (value)
+                    genericMaterial.AddVector4(name, new Vector4(1, 0, 1, 0));
+                else
+                    genericMaterial.AddVector4(name, new Vector4(0, 0, 1, 0));
+            }
+            else if (source.floatByParamId.ContainsKey(paramId))
+            {
+                var value = source.floatByParamId[paramId];
+                genericMaterial.AddVector4(name, new Vector4(value, value, value, 0));
             }
             else
             {

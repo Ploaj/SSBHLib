@@ -46,10 +46,9 @@ namespace CrossMod.Nodes
                 {
                     helperNode = (NUHLPB_Node)fileNode;
                 }
-                if (fileNode is NUTEX_Node)
+                if (fileNode is NUTEX_Node nutexNode)
                 {
-                    var nutexNode = fileNode as NUTEX_Node;
-                    var texture = nutexNode.GetRenderableNode() as RTexture;
+                    var texture = (RTexture)nutexNode.GetRenderableNode();
                     // TODO: Why are there empty streams?
                     if (nutexNode.TexName != null)
                         renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);

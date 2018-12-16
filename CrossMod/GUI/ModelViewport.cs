@@ -50,7 +50,7 @@ namespace CrossMod.GUI
 
                 if (value is NUMDL_Node node)
                 {
-                    var rnumdl = node.GetRenderableNode() as RNUMDL;
+                    var rnumdl = (RNUMDL)node.GetRenderableNode();
                     FrameSelection(rnumdl.Model);
                 }
             }

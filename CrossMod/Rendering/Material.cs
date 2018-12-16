@@ -20,7 +20,9 @@ namespace CrossMod.Rendering
 
         public Texture gao = null;
 
-        public Dictionary<long, SSBHLib.Formats.MTAL_Attribute.MTAL_Vector4> vec4ByParamId = new Dictionary<long, SSBHLib.Formats.MTAL_Attribute.MTAL_Vector4>();
+        public Dictionary<long, OpenTK.Vector4> vec4ByParamId = new Dictionary<long, OpenTK.Vector4>();
+        public Dictionary<long, bool> boolByParamId = new Dictionary<long, bool>();
+        public Dictionary<long, float> floatByParamId = new Dictionary<long, float>();
 
         public Material(Resources.DefaultTextures defaultTextures)
         {

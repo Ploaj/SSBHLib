@@ -109,17 +109,18 @@ namespace CrossMod.Rendering
                         SetTextureParameter(meshMaterial, a);
                         break;
                     case (long)ParamDataType.Vector4:
-                        meshMaterial.vec4ByParamId[a.ParamID] = (MTAL_Attribute.MTAL_Vector4)a.DataObject;
+                        var vec4 = (MTAL_Attribute.MTAL_Vector4)a.DataObject; 
+                        meshMaterial.vec4ByParamId[a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case (long)ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         ulong boolValue = (ulong)a.DataObject;
-                        meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = boolValue, Y = 0, Z = 1, W = 0 };
+                        meshMaterial.boolByParamId[a.ParamID] = boolValue == 1;
                         break;
                     case (long)ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
-                        meshMaterial.vec4ByParamId[a.ParamID] = new MTAL_Attribute.MTAL_Vector4() { X = floatValue, Y = floatValue, Z = floatValue, W = 0 };
+                        meshMaterial.floatByParamId[a.ParamID] = floatValue;
                         break;
                 }
             }
@@ -139,7 +140,7 @@ namespace CrossMod.Rendering
         private void SetSamplerInformation(Material material, MTAL_Attribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = a.DataObject as MTAL_Attribute.MTAL_Unk_0E;
+            var samplerStruct = (MTAL_Attribute.MTAL_Unk_0E)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
