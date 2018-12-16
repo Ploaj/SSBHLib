@@ -63,7 +63,7 @@ namespace CrossMod.Nodes
                 }
                 if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-                    renderableNode.Material = ((MTAL_Node)fileNode)._material;
+                    renderableNode.Material = ((MTAL_Node)fileNode).Material;
                 }
             }
 

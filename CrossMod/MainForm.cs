@@ -259,5 +259,31 @@ namespace CrossMod
                 modelViewport.FrameSelection(rnumdl.Model);
             }
         }
+
+        private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            long paramId = Rendering.RenderSettings.Instance.ParamId;
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
+            {
+                var matl = new MTAL_Node();
+                matl.Open(file);
+
+                foreach (var entry in matl.Material.Entries)
+                {
+                    foreach (var attribute in entry.Attributes)
+                    {
+                        if (attribute.ParamID == paramId)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
+                        }
+                    }
+                }
+            }
+        }
     }
 }

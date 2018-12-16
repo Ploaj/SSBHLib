@@ -53,7 +53,7 @@ namespace CrossMod.Rendering
             foreach (MODL_Entry e in MODL.ModelEntries)
             {
                 MTAL_Entry currentEntry = null;
-                foreach (MTAL_Entry entry in Material.MaterialEntries)
+                foreach (MTAL_Entry entry in Material.Entries)
                 {
                     if (entry.MaterialLabel.Equals(e.MaterialName))
                     {
