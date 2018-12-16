@@ -7,6 +7,7 @@ namespace CrossMod.Rendering
         public enum RenderMode
         {
             Shaded,
+            Basic,
             Col,
             Prm,
             Nor,

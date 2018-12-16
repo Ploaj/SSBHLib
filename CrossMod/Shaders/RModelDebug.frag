@@ -110,47 +110,51 @@ void main()
 	fragColor = vec4(1);
 	switch (renderMode)
 	{
-		case 1:
+        case 1:
+            fragColor.rgb = vec3(0.218) * max(dot(newNormal, V), 0);
+            fragColor.rgb = GetSrgb(fragColor.rgb);
+            break;
+		case 2:
 			fragColor = albedoColor;
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
-		case 2:
+		case 3:
 			fragColor = prmColor;
 			break;
-		case 3:
+		case 4:
 			fragColor = norColor;
 			break;
-		case 4:
+		case 5:
 			fragColor = emiColor;
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
-		case 5:
+		case 6:
 			fragColor = bakeLitColor;
 			fragColor.rgb = GetSrgb(fragColor.rgb);
 			break;
-        case 6:
+        case 7:
             fragColor = gaoColor;
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
-		case 7:
+		case 8:
 			fragColor = colorSet;
 			break;
-		case 8:
+		case 9:
 			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
 			break;
-		case 9:
+		case 10:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);
 			break;
-        case 10:
+        case 11:
             fragColor = vec4(bitangent * 0.5 + 0.5, 1);
             break;
-		case 11:
+		case 12:
 			fragColor = vec4(bake1, 1, 1);
 			break;
-        case 12:
+        case 13:
             fragColor = uvPatternColor;
             break;
-		case 13:
+		case 14:
 			fragColor = vec4Param;
 			break;
 		default:
