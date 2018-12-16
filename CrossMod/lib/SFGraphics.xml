@@ -20,6 +20,11 @@
             The position of the camera in scene units. 
             </summary>
         </member>
+        <member name="P:SFGraphics.Cameras.Camera.ViewVector">
+            <summary>
+            The view direction vector used for shading calculations. Commonly abbreviated to "V" or "I".
+            </summary>
+        </member>
         <member name="P:SFGraphics.Cameras.Camera.Scale">
             <summary>
             The scale for all objects. Defaults to 1.

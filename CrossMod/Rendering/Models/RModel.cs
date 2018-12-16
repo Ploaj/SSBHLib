@@ -41,10 +41,26 @@ namespace CrossMod.Rendering.Models
             currentShader.UseProgram();
 
             SetUniforms(currentShader);
+            SetCameraUniforms(Camera, currentShader);
 
             currentShader.EnableVertexAttributes();
 
-            // Camera
+            // Bones
+            int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
+            boneUniformBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
+            if (Skeleton != null)
+            {
+                boneBinds = Skeleton.GetAnimationTransforms();
+            }
+            boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
+
+            DrawMeshes(Camera, Skeleton, currentShader);
+
+            currentShader.DisableVertexAttributes();
+        }
+
+        private static void SetCameraUniforms(Camera Camera, Shader currentShader)
+        {
             if (RenderSettings.Instance.RenderUVs)
             {
                 // TODO: Adjust scale.
@@ -59,18 +75,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            // Bones
-            int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
-            boneUniformBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
-            if (Skeleton != null)
-            {
-                boneBinds = Skeleton.GetAnimationTransforms();
-            }
-            boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
-
-            DrawMeshes(Camera, Skeleton, currentShader);
-
-            currentShader.DisableVertexAttributes();
+            currentShader.SetVector3("V", Camera.ViewVector);
         }
 
         private static void SetUniforms(Shader currentShader)

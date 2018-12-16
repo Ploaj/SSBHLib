@@ -41,6 +41,7 @@ uniform float transitionFactor;
 uniform int transitionEffect;
 
 uniform mat4 mvp;
+uniform vec3 V;
 
 out vec4 fragColor;
 
@@ -176,7 +177,6 @@ void main()
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
-    vec3 V = vec3(0,0,-1) * mat3(mvp);
     vec3 R = reflect(V, newNormal);
 
     // Blend two diffuse layers based on alpha.
