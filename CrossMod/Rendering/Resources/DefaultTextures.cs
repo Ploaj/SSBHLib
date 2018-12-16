@@ -8,42 +8,37 @@ namespace CrossMod.Rendering.Resources
     public class DefaultTextures
     {
         // Default textures.
-        public Texture2D defaultWhite = null;
-        public Texture2D defaultNormal = null;
-        public Texture2D defaultBlack = null;
-        public Texture2D defaultPrm = null;
+        public Texture2D defaultWhite = new Texture2D();
+        public Texture2D defaultNormal = new Texture2D();
+        public Texture2D defaultBlack = new Texture2D();
+        public Texture2D defaultPrm = new Texture2D();
 
         // Render modes.
-        public Texture2D uvPattern = null;
+        public Texture2D uvPattern = new Texture2D()
+        {
+            TextureWrapS = TextureWrapMode.Repeat,
+            TextureWrapT = TextureWrapMode.Repeat
+        };
 
         // PBR image based lighting.
-        public Texture2D iblLut = null;
-        public TextureCubeMap diffusePbr = null;
-        public TextureCubeMap specularPbr = null;
+        public Texture2D iblLut = new Texture2D();
+        public TextureCubeMap diffusePbr = new TextureCubeMap();
+        public TextureCubeMap specularPbr = new TextureCubeMap();
+        public TextureCubeMap blackCube = new TextureCubeMap();
 
         public DefaultTextures()
         {
-            uvPattern = new Texture2D()
-            {
-                TextureWrapS = TextureWrapMode.Repeat,
-                TextureWrapT = TextureWrapMode.Repeat
-            };
             LoadBitmap(uvPattern, "DefaultTextures/UVPattern.png");
 
-            defaultWhite = new Texture2D();
             LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
-
-            defaultPrm = new Texture2D();
             LoadBitmap(defaultPrm, "DefaultTextures/default_Params.tif");
-
-            defaultNormal = new Texture2D();
             LoadBitmap(defaultNormal, "DefaultTextures/default_normal.png");
-
-            defaultBlack = new Texture2D();
             LoadBitmap(defaultBlack, "DefaultTextures/default_black.png");
 
-            iblLut = new Texture2D();
             LoadBitmap(iblLut, "DefaultTextures/ibl_brdf_lut.png");
+
+            using (var bmp = new Bitmap("DefaultTextures/default_cube_black.png"))
+                blackCube.LoadImageData(bmp, 8);
 
             LoadDiffusePbr();
             LoadSpecularPbr();

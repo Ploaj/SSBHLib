@@ -23,6 +23,7 @@ namespace CrossMod.Rendering
             GaoMap = 0x5F,
             ColMap2 = 0x5D,
             EmiMap = 0x61,
+            SpecularCubeMap = 0x63,
             BakeLitMap = 0x65,
             ColSampler = 0x6C,
             NorSampler = 0x70,
@@ -215,6 +216,10 @@ namespace CrossMod.Rendering
                 case (long)ParamId.BakeLitMap:
                     if (sfTextureByName.TryGetValue(text, out texture))
                         meshMaterial.bakeLit = texture;
+                    break;
+                case (long)ParamId.SpecularCubeMap:
+                    // TODO: Cube map reading doesn't work yet.
+                    meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
                     break;
             }
         }

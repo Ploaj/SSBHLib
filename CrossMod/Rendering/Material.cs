@@ -7,7 +7,7 @@ namespace CrossMod.Rendering
 {
     public class Material
     {
-        private Resources.DefaultTextures defaultTextures;
+        public Resources.DefaultTextures defaultTextures;
         public Texture col = null;
 
         public Texture col2 = null;
@@ -22,6 +22,8 @@ namespace CrossMod.Rendering
         public Texture bakeLit = null;
 
         public Texture gao = null;
+
+        public TextureCubeMap specularIbl = null;
 
         public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
         public Dictionary<long, bool> boolByParamId = new Dictionary<long, bool>();
@@ -40,6 +42,7 @@ namespace CrossMod.Rendering
             emi = defaultTextures.defaultBlack;
             bakeLit = defaultTextures.defaultBlack;
             gao = defaultTextures.defaultWhite;
+            specularIbl = defaultTextures.blackCube;
         }
 
         public GenericMaterial CreateGenericMaterial(Material material)
@@ -113,7 +116,7 @@ namespace CrossMod.Rendering
         private void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
-            genericMaterial.AddTexture("specularPbrCube", defaultTextures.specularPbr);
+            genericMaterial.AddTexture("specularPbrCube", specularIbl);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 
