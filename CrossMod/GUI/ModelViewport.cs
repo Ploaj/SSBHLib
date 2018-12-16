@@ -68,7 +68,7 @@ namespace CrossMod.GUI
 
         private IRenderable renderableNode;
 
-        public Camera camera;
+        public Camera camera = new Camera() { FarClipPlane = 500000 };
         Vector2 mousePosition = new Vector2();
         float mouseScrollWheel = 0;
 
@@ -77,8 +77,6 @@ namespace CrossMod.GUI
         public ModelViewport()
         {
             InitializeComponent();
-
-            camera = new Camera();
 
             CreateRenderFrameEvents();
 
