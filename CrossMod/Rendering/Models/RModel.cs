@@ -13,6 +13,8 @@ namespace CrossMod.Rendering.Models
         public static Shader textureDebugShader;
         public static Shader uvShader;
 
+        public Vector4 BoundingSphere { get; set; }
+
         Matrix4[] boneBinds = new Matrix4[200];
         public BufferObject boneUniformBuffer;
 

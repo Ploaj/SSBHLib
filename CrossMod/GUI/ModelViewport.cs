@@ -58,16 +58,12 @@ namespace CrossMod.GUI
 
         public void FrameSelection(RModel model)
         {
-            var spheres = new List<Vector4>();
-            foreach (var mesh in model.subMeshes)
-            {
-                spheres.Add(mesh.BoundingSphere);
-            }
+            if (model == null)
+                return;
 
-            // Generate a bounding sphere from the existing bounding spheres.
             // Bounding spheres will help account for the vastly different model sizes.
-            var sphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
-            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 0);
+            var sphere = model.BoundingSphere;
+            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 5);
         }
 
         private IRenderable renderableNode;
