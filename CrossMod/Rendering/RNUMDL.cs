@@ -26,7 +26,8 @@ namespace CrossMod.Rendering
             BakeLitMap = 0x65,
             ColSampler = 0x6C,
             NorSampler = 0x70,
-            PrmSampler = 0x72
+            PrmSampler = 0x72,
+            EmiSampler = 0x71
         }
 
         public enum ParamDataType
@@ -157,6 +158,10 @@ namespace CrossMod.Rendering
                 case (long)ParamId.PrmSampler:
                     material.prm.TextureWrapS = wrapS;
                     material.prm.TextureWrapT = wrapT;
+                    break;
+                case (long)ParamId.EmiSampler:
+                    material.emi.TextureWrapS = wrapS;
+                    material.emi.TextureWrapT = wrapT;
                     break;
             }
         }
