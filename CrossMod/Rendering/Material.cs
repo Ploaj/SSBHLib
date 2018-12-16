@@ -83,7 +83,7 @@ namespace CrossMod.Rendering
             AddFloat("paramCA", genericMaterial, 0xCA, 0.0f);
 
             // Alpha offset.
-            AddVec4("param98", genericMaterial, 0x98, new Vector4(1, 0, 0, 0));
+            AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
