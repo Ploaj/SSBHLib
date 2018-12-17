@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SSBHLib.Formats;
 using SSBHLib.IO;
 using System.IO;
@@ -133,15 +130,10 @@ namespace SSBHLib.Tools
                                 float FrameValue = Lerp(Start[j], End[j], 0, 1, Value / (float)scale);
                                 if (float.IsNaN(FrameValue))
                                     FrameValue = 0;
-
-                                if(i < 5 && j < 3)
-                                {
-                                    Console.WriteLine(FrameValue);
-                                } 
                                 
                                 if ((TrackFlag & 0x3) == 0x3)
                                 {
-                                    //Scale Isotropic?
+                                    //Scale Isotropic
                                     if (j == 0)
                                     {
                                         Transform.SX = FrameValue;

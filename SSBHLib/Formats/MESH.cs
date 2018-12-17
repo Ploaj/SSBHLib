@@ -22,8 +22,13 @@ namespace SSBHLib.Formats
         
         public string ModelName { get; set; }
 
+        public float BoundingSphereX { get; set; }
+        public float BoundingSphereY { get; set; }
+        public float BoundingSphereZ { get; set; }
+        public float BoundingSphereRadius { get; set; }
+
         [ParseTag(InLine = true)]
-        public float[] HeaderFloats { get; set; } = new float[26];
+        public float[] HeaderFloats { get; set; } = new float[22];
 
         [ParseTag("VersionMinor>8")]
         public MESH_Object[] Objects { get; set; }
@@ -52,7 +57,7 @@ namespace SSBHLib.Formats
         public System.Tuple<float, float, float, float> GetBoundingSphere()
         {
             // XYZ, Radius
-            return new System.Tuple<float, float, float, float>(HeaderFloats[0], HeaderFloats[1], HeaderFloats[2], HeaderFloats[3]);
+            return new System.Tuple<float, float, float, float>(BoundingSphereX, BoundingSphereY, BoundingSphereZ, BoundingSphereRadius);
         }
     }
 
