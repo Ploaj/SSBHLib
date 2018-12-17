@@ -133,7 +133,6 @@ namespace CrossMod.Rendering
             // Render skeleton on top.
             GL.Disable(EnableCap.DepthTest);
 
-            // TODO: Render texture.
             if (bonePrism == null)
                 bonePrism = new PrimBonePrism();
 

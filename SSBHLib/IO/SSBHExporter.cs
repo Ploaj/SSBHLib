@@ -142,8 +142,7 @@ namespace SSBHLib.IO
                     ObjectOffset.Add((uint)Position, prop.GetValue(File));
                     Write((long)0);
                 }
-                else
-                if (prop.PropertyType.IsArray)
+                else if (prop.PropertyType.IsArray)
                 {
                     var Array = (prop.GetValue(File) as Array);
                     bool Inline = false;
@@ -187,35 +186,25 @@ namespace SSBHLib.IO
                 WriteSSBHFile(v);
                 Pad(0x8);
             }
-            else
-            if (t == typeof(byte))
+            else if (t == typeof(byte))
                 Write((byte)value);
-            else
-            if (t == typeof(char))
+            else if (t == typeof(char))
                 Write((char)value);
-            else
-            if (t == typeof(short))
+            else if (t == typeof(short))
                 Write((short)value);
-            else
-            if (t == typeof(ushort))
+            else if (t == typeof(ushort))
                 Write((ushort)value);
-            else
-            if (t == typeof(int))
+            else if (t == typeof(int))
                 Write((int)value);
-            else
-            if (t == typeof(uint))
+            else if (t == typeof(uint))
                 Write((uint)value);
-            else
-            if (t == typeof(long))
+            else if (t == typeof(long))
                 Write((long)value);
-            else
-            if (t == typeof(ulong))
+            else if (t == typeof(ulong))
                 Write((ulong)value);
-            else
-            if (t == typeof(float))
+            else if (t == typeof(float))
                 Write((float)value);
-            else
-            if(t == typeof(string))
+            else if(t == typeof(string))
             {
                 Pad(0x4); //this is just logical
                 Write(((string)value).ToCharArray());

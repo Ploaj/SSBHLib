@@ -1,22 +1,21 @@
 ﻿using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
+using SFGraphics.GLObjects.Textures;
 using System.IO;
 
 namespace CrossMod.Rendering
 {
     public class RTexture : IRenderable
     {
-
         public static Shader textureShader = null;
         private static ScreenTriangle triangle = null;
 
-        public SFGraphics.GLObjects.Textures.Texture renderTexture = null;
+        public Texture renderTexture = null;
 
         public bool IsSrgb { get; set; } = false;
 
         public void Render(Camera Camera)
         {
-            // TODO: Render texture.
             if (triangle == null)
                 triangle = new ScreenTriangle();
 
@@ -31,10 +30,10 @@ namespace CrossMod.Rendering
             // Texture unit 0 should be reserved for image preview.
             textureShader.UseProgram();
             if (renderTexture != null)
-            {
                 textureShader.SetTexture("image", renderTexture, 0);
-                textureShader.SetBoolToInt("isSrgb", IsSrgb);
-            }
+
+            // The colors need to be converted back to sRGB gamma.
+            textureShader.SetBoolToInt("isSrgb", IsSrgb);
 
             triangle.Draw(textureShader, null);
         }
