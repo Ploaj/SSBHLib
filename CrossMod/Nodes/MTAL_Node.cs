@@ -11,7 +11,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numatb")]
     public class MTAL_Node : FileNode
     {
-        public MTAL _material;
+        public MTAL Material { get; set; }
         
         public MTAL_Node()
         {
@@ -25,7 +25,7 @@ namespace CrossMod.Nodes
             {
                 if (ssbhFile is MTAL)
                 {
-                    _material = (MTAL)ssbhFile;
+                    Material = (MTAL)ssbhFile;
                 }
             }
         }

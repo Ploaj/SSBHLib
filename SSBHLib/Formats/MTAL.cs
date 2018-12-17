@@ -12,7 +12,7 @@ namespace SSBHLib.Formats
 
         public short MinorVersion { get; set; }
 
-        public MTAL_Entry[] MaterialEntries { get; set; }
+        public MTAL_Entry[] Entries { get; set; }
     }
 
     public class MTAL_Entry : ISSBH_File

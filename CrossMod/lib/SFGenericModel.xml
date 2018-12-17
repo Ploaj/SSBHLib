@@ -952,6 +952,11 @@
             Determines how primitives will be constructed from the vertex data.
             </summary>
         </member>
+        <member name="P:SFGenericModel.GenericMesh`1.DrawElementsType">
+            <summary>
+            Specifies the type of the index values.
+            </summary>
+        </member>
         <member name="F:SFGenericModel.GenericMesh`1.renderSettings">
             <summary>
             The collection of OpenGL state set prior to drawing.
@@ -980,16 +985,17 @@
             Creates a new mesh and initializes the vertex buffer data.
             An index is generated for each vertex in <paramref name="vertices"/>.
             </summary>
-            <param name="vertices"></param>
-            <param name="primitiveType"></param>
+            <param name="vertices">The vertex data</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
         </member>
-        <member name="M:SFGenericModel.GenericMesh`1.#ctor(System.Collections.Generic.List{`0},System.Collections.Generic.List{System.Int32},OpenTK.Graphics.OpenGL.PrimitiveType)">
+        <member name="M:SFGenericModel.GenericMesh`1.#ctor(System.Collections.Generic.List{`0},System.Collections.Generic.List{System.Int32},OpenTK.Graphics.OpenGL.PrimitiveType,OpenTK.Graphics.OpenGL.DrawElementsType)">
             <summary>
             Creates a new mesh and initializes the vertex buffer data.
             </summary>
-            <param name="vertices"></param>
-            <param name="vertexIndices"></param>
+            <param name="vertices">The vertex data</param>
+            <param name="vertexIndices">The vertex index data</param>
             <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
+            <param name="drawElementsType">Specifies the type of the index values</param>
         </member>
         <member name="M:SFGenericModel.GenericMesh`1.#ctor(SFGenericModel.IndexedVertexData{`0})">
             <summary>

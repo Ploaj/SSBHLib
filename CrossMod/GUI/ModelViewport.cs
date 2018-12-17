@@ -50,7 +50,7 @@ namespace CrossMod.GUI
 
                 if (value is NUMDL_Node node)
                 {
-                    var rnumdl = node.GetRenderableNode() as RNUMDL;
+                    var rnumdl = (RNUMDL)node.GetRenderableNode();
                     FrameSelection(rnumdl.Model);
                 }
             }
@@ -58,21 +58,17 @@ namespace CrossMod.GUI
 
         public void FrameSelection(RModel model)
         {
-            var spheres = new List<Vector4>();
-            foreach (var mesh in model.subMeshes)
-            {
-                spheres.Add(mesh.BoundingSphere);
-            }
+            if (model == null)
+                return;
 
-            // Generate a bounding sphere from the existing bounding spheres.
             // Bounding spheres will help account for the vastly different model sizes.
-            var sphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
-            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 0);
+            var sphere = model.BoundingSphere;
+            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 5);
         }
 
         private IRenderable renderableNode;
 
-        public Camera camera;
+        public Camera camera = new Camera() { FarClipPlane = 500000 };
         Vector2 mousePosition = new Vector2();
         float mouseScrollWheel = 0;
 
@@ -81,8 +77,6 @@ namespace CrossMod.GUI
         public ModelViewport()
         {
             InitializeComponent();
-
-            camera = new Camera();
 
             CreateRenderFrameEvents();
 

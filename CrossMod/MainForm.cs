@@ -117,7 +117,7 @@ namespace CrossMod
         {
             // Force the shader to be generated again.
             Rendering.Models.RModel.shader = null;
-            Rendering.Models.RModel.textureDebugShader = null;
+            Rendering.Models.RModel.debugShader = null;
             Rendering.RTexture.textureShader = null;
         }
 
@@ -257,6 +257,32 @@ namespace CrossMod
             {
                 var rnumdl = node.GetRenderableNode() as Rendering.RNUMDL;
                 modelViewport.FrameSelection(rnumdl.Model);
+            }
+        }
+
+        private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            long paramId = Rendering.RenderSettings.Instance.ParamId;
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
+            {
+                var matl = new MTAL_Node();
+                matl.Open(file);
+
+                foreach (var entry in matl.Material.Entries)
+                {
+                    foreach (var attribute in entry.Attributes)
+                    {
+                        if (attribute.ParamID == paramId)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
+                        }
+                    }
+                }
             }
         }
     }

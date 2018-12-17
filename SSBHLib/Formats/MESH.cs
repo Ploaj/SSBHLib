@@ -48,6 +48,12 @@ namespace SSBHLib.Formats
 
         [ParseTag("VersionMinor>8")]
         public long UnknownSize { get; set; }
+
+        public System.Tuple<float, float, float, float> GetBoundingSphere()
+        {
+            // XYZ, Radius
+            return new System.Tuple<float, float, float, float>(HeaderFloats[0], HeaderFloats[1], HeaderFloats[2], HeaderFloats[3]);
+        }
     }
 
     public class MESH_RiggingGroup : ISSBH_File

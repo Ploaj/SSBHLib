@@ -213,7 +213,11 @@ namespace CrossMod.Nodes
             // We'll assume the context isn't destroyed.
             if (renderableTexture == null)
             {
-                renderableTexture = new RTexture();
+                renderableTexture = new RTexture
+                {
+                    IsSrgb = Format.ToString().ToLower().Contains("srgb")
+                };
+
                 if (glFormatByNuTexFormat.ContainsKey(Format))
                 {
                     // TODO: This may require a higher OpenGL version for BC7.

@@ -36,6 +36,8 @@ namespace CrossMod.Nodes
         public RModel GetRenderModel(RSkeleton Skeleton = null)
         {
             RModel model = new RModel();
+            var modelSphere = mesh.GetBoundingSphere();
+            model.BoundingSphere = new Vector4(modelSphere.Item1, modelSphere.Item2, modelSphere.Item3, modelSphere.Item4);
 
             // Read the mesh information into the Rendering Mesh.
             foreach (MESH_Object meshObject in mesh.Objects)
