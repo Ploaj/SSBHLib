@@ -6,6 +6,11 @@ namespace SSBHLib
 {
     public abstract class SSBH
     {
+        public static void TrySaveSSBHFile(string FilePath, ISSBH_File File)
+        {
+            SSBHExporter.WriteSSBHFile(FilePath, File, true);
+        }
+
         public static bool TryParseSSBHFile(string FilePath, out ISSBH_File HBSSFile)
         {
             return TryParseSSBHFile(File.ReadAllBytes(FilePath), out HBSSFile);

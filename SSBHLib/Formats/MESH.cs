@@ -20,8 +20,9 @@ namespace SSBHLib.Formats
         
         public ushort VersionMinor { get; set; } // 0x000A and 0x0008
         
-        public long HeaderSize { get; set; }
-        
+        public string ModelName { get; set; }
+
+        [ParseTag(InLine = true)]
         public float[] HeaderFloats { get; set; } = new float[26];
 
         [ParseTag("VersionMinor>8")]
@@ -31,7 +32,7 @@ namespace SSBHLib.Formats
         public int[] BufferSizes { get; set; }
 
         [ParseTag("VersionMinor>8")]
-        public long UnknownSize { get; set; } // seems to match index count?
+        public long PolygonIndexCount { get; set; } // seems to match index count?
 
         [ParseTag("VersionMinor>8")]
         public MESH_Buffer[] VertexBuffers { get; set; }
@@ -41,6 +42,12 @@ namespace SSBHLib.Formats
 
         [ParseTag("VersionMinor>8")]
         public MESH_RiggingGroup[] RiggingBuffers { get; set; }
+
+        [ParseTag("VersionMinor>8")]
+        public long UnknownOffset { get; set; }
+
+        [ParseTag("VersionMinor>8")]
+        public long UnknownSize { get; set; }
     }
 
     public class MESH_RiggingGroup : ISSBH_File
@@ -105,7 +112,8 @@ namespace SSBHLib.Formats
         public int Unk10 { get; set; }
         
         public int Unk11 { get; set; }
-        
+
+        [ParseTag(InLine = true)]
         public float[] Floats { get; set; } = new float[26];
 
         public MESH_Attribute[] Attributes { get; set; }

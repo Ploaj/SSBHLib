@@ -47,6 +47,7 @@
     <Compile Include="Formats\SKEL.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
     <Compile Include="IO\ParseTag.cs" />
+    <Compile Include="IO\SSBHExporter.cs" />
     <Compile Include="IO\SSBHParser.cs" />
     <Compile Include="ISSBH_File.cs" />
     <Compile Include="SSBH.cs" />
