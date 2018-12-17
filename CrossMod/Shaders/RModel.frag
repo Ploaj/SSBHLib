@@ -32,8 +32,12 @@ uniform int renderNormalMaps;
 
 uniform vec4 paramA6;
 uniform vec4 paramA3;
+uniform vec4 paramA5;
+uniform vec4 paramA0;
 uniform vec4 param98;
+
 uniform int paramE9;
+
 uniform float paramC8;
 uniform float paramCA;
 
@@ -126,6 +130,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
 
     // Ambient occlusion.
     diffuseTerm *= texture(gaoMap, bake1).rgb;
+
+    diffuseTerm *= paramA5.rgb;
 
     if (renderVertexColor == 1)
         diffuseTerm *= colorSet.rgb;

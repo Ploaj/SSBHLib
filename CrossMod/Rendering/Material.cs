@@ -76,6 +76,12 @@ namespace CrossMod.Rendering
             // Some sort of skin subsurface color?
             AddVec4("paramA3", genericMaterial, 0xA3, new Vector4(1));
 
+            // Mario Galaxy rim light?
+            AddVec4("paramA0", genericMaterial, 0xA0, new Vector4(1));
+
+            // Diffuse color multiplier?
+            AddVec4("paramA5", genericMaterial, 0xA5, new Vector4(1));
+
             // Sprite sheet UV parameters.
             AddVec4("paramAA", genericMaterial, 0xAA, new Vector4(1));
 
