@@ -215,12 +215,12 @@ namespace CrossMod.Rendering
                     case (long)ParamId.BakeLitMap:
                         meshMaterial.bakeLit = texture;
                         break;
-                    case (long)ParamId.SpecularCubeMap:
-                        // TODO: Cube map reading doesn't work yet.
-                        meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
-                        break;
                 }
-            }       
+            }
+
+            // TODO: Cube map reading doesn't work yet, so we need to assign it separately.
+            if (a.ParamID == (long)ParamId.SpecularCubeMap)
+                meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
         }
 
         public void Render(Camera Camera)
