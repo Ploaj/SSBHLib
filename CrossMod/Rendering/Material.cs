@@ -91,6 +91,9 @@ namespace CrossMod.Rendering
             // Controls anisotropic specular.
             AddFloat("paramCA", genericMaterial, 0xCA, 0.0f);
 
+            // Some sort of sprite sheet scale toggle.
+            AddBool("paramF1", genericMaterial, 0xF1, true);
+
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
         }

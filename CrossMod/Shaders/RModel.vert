@@ -25,7 +25,9 @@ out vec2 geomBake1;
 uniform mat4 mvp;
 uniform mat4 transform;
 
+// Sprite sheet animations.
 uniform vec4 paramAA;
+uniform int paramF1;
 
 uniform Bones
 {
@@ -56,7 +58,9 @@ void main()
     geomBake1 = bake1;
 
     // Sprite sheet uvs.
-    geomUV0 = map1 / paramAA.xy;
+    geomUV0 = map1;
+    if (paramF1 == 1)
+        geomUV0 /= paramAA.xy;
 
     geomTangent = Tangent0;
     geomBitangent = Bitangent0;
