@@ -42,15 +42,13 @@ float WireframeIntensity(vec3 distanceToEdges);
 // Defined in NormalMap.frag.
 vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
 
+// Defined in Gamma.frag.
+vec3 GetSrgb(vec3 linear);
+
 float LambertShading(vec3 N, vec3 V)
 {
 	float lambert = max(dot(N, V), 0);
 	return lambert;
-}
-
-vec3 GetSrgb(vec3 linear)
-{
-	return pow(linear, vec3(0.4545));
 }
 
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)

@@ -117,7 +117,7 @@ namespace CrossMod
         {
             // Force the shader to be generated again.
             Rendering.Models.RModel.shader = null;
-            Rendering.Models.RModel.textureDebugShader = null;
+            Rendering.Models.RModel.debugShader = null;
             Rendering.RTexture.textureShader = null;
         }
 

@@ -63,10 +63,8 @@ float LambertShading(vec3 N, vec3 V)
     return lambert;
 }
 
-vec3 GetSrgb(vec3 linear)
-{
-    return pow(linear, vec3(0.4545));
-}
+// Defined in Gamma.frag.
+vec3 GetSrgb(vec3 linear);
 
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
