@@ -14,6 +14,7 @@ namespace CrossMod.Rendering
             Emi,
             BakeLit,
             Gao,
+            Proj,
             ColorSet,
             Normals,
             Tangents,

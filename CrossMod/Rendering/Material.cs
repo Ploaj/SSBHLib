@@ -21,6 +21,8 @@ namespace CrossMod.Rendering
 
         public Texture bakeLit = null;
 
+        public Texture proj = null;
+
         public Texture gao = null;
 
         public TextureCubeMap specularIbl = null;
@@ -37,6 +39,7 @@ namespace CrossMod.Rendering
             // Ensure the textures are never null, so we can modify their state later.
             col = defaultTextures.defaultBlack;
             col2 = defaultTextures.defaultBlack;
+            proj = defaultTextures.defaultBlack;
             nor = defaultTextures.defaultNormal;
             prm = defaultTextures.defaultPrm;
             emi = defaultTextures.defaultBlack;
@@ -115,6 +118,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("emiMap", emi);
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
+            genericMaterial.AddTexture("projMap", proj);
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)

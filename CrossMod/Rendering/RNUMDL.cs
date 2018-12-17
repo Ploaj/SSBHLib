@@ -23,6 +23,7 @@ namespace CrossMod.Rendering
             GaoMap = 0x5F,
             ColMap2 = 0x5D,
             EmiMap = 0x61,
+            ProjMap = 0x69,
             SpecularCubeMap = 0x63,
             BakeLitMap = 0x65,
             ColSampler = 0x6C,
@@ -109,6 +110,8 @@ namespace CrossMod.Rendering
                 {
                     case (long)ParamDataType.Texture:
                         SetTextureParameter(meshMaterial, a);
+                        // HACK: Just render as white if texture is present.
+                        meshMaterial.floatByParamId[a.ParamID] = 1;
                         break;
                     case (long)ParamDataType.Vector4:
                         var vec4 = (MTAL_Attribute.MTAL_Vector4)a.DataObject; 
@@ -183,45 +186,41 @@ namespace CrossMod.Rendering
             var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
 
             // Create a temp so we don't make the defaults null.
-            Texture texture = null;
-            switch (a.ParamID)
+            if (sfTextureByName.TryGetValue(text, out Texture texture))
             {
-                case (long)ParamId.ColMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                switch (a.ParamID)
+                {
+                    case (long)ParamId.ColMap:
                         meshMaterial.col = texture;
-                    break;
-                case (long)ParamId.GaoMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                        break;
+                    case (long)ParamId.GaoMap:
                         meshMaterial.gao = texture;
-                    break;
-                case (long)ParamId.ColMap2:
-                    if (sfTextureByName.TryGetValue(text, out texture))
-                    {
+                        break;
+                    case (long)ParamId.ColMap2:
                         meshMaterial.col2 = texture;
                         meshMaterial.HasCol2 = true;
-                    }
-                    break;
-                case (long)ParamId.NorMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                        break;
+                    case (long)ParamId.NorMap:
                         meshMaterial.nor = texture;
-                    break;
-                case (long)ParamId.PrmMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                        break;
+                    case (long)ParamId.ProjMap:
+                        meshMaterial.proj = texture;
+                        break;
+                    case (long)ParamId.PrmMap:
                         meshMaterial.prm = texture;
-                    break;
-                case (long)ParamId.EmiMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                        break;
+                    case (long)ParamId.EmiMap:
                         meshMaterial.emi = texture;
-                    break;
-                case (long)ParamId.BakeLitMap:
-                    if (sfTextureByName.TryGetValue(text, out texture))
+                        break;
+                    case (long)ParamId.BakeLitMap:
                         meshMaterial.bakeLit = texture;
-                    break;
-                case (long)ParamId.SpecularCubeMap:
-                    // TODO: Cube map reading doesn't work yet.
-                    meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
-                    break;
-            }
+                        break;
+                    case (long)ParamId.SpecularCubeMap:
+                        // TODO: Cube map reading doesn't work yet.
+                        meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
+                        break;
+                }
+            }       
         }
 
         public void Render(Camera Camera)

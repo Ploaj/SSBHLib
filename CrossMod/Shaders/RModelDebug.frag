@@ -15,6 +15,7 @@ uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D gaoMap;
 uniform sampler2D bakeLitMap;
+uniform sampler2D projMap;
 
 uniform sampler2D uvPattern;
 
@@ -88,9 +89,10 @@ void main()
 
 	vec4 emiColor = texture(emiMap, UV0).rgba;
 
-	// TODO: Why does bake1 have UVs?
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
+
+    vec4 projColor = texture(projMap, UV0).rgba;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
@@ -134,25 +136,29 @@ void main()
             fragColor = gaoColor;
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
-		case 8:
+        case 8:
+            fragColor = projColor;
+            fragColor.rgb = GetSrgb(fragColor.rgb);
+            break;
+		case 9:
 			fragColor = colorSet;
 			break;
-		case 9:
+		case 10:
 			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
 			break;
-		case 10:
+		case 11:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);
 			break;
-        case 11:
+        case 12:
             fragColor = vec4(bitangent * 0.5 + 0.5, 1);
             break;
-		case 12:
+		case 13:
 			fragColor = vec4(bake1, 1, 1);
 			break;
-        case 13:
+        case 14:
             fragColor = uvPatternColor;
             break;
-		case 14:
+		case 15:
 			fragColor = vec4Param;
 			break;
 		default:
