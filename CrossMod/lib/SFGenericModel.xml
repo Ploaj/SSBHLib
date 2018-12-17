@@ -997,6 +997,15 @@
             <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
             <param name="drawElementsType">Specifies the type of the index values</param>
         </member>
+        <member name="M:SFGenericModel.GenericMesh`1.#ctor(System.Collections.Generic.List{`0},System.Collections.Generic.List{System.UInt32},OpenTK.Graphics.OpenGL.PrimitiveType,OpenTK.Graphics.OpenGL.DrawElementsType)">
+            <summary>
+            Creates a new mesh and initializes the vertex buffer data.
+            </summary>
+            <param name="vertices">The vertex data</param>
+            <param name="vertexIndices">The vertex index data</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
+            <param name="drawElementsType">Specifies the type of the index values</param>
+        </member>
         <member name="M:SFGenericModel.GenericMesh`1.#ctor(SFGenericModel.IndexedVertexData{`0})">
             <summary>
             Creates a new mesh and initializes the vertex buffer data.
