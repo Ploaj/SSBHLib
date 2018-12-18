@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 
@@ -14,8 +13,6 @@ namespace CrossMod.Rendering.Models
         public string Name { get; set; }
 
         public Vector4 BoundingSphere { get; set; }
-
-        public DrawElementsType DrawElementType = DrawElementsType.UnsignedShort;
 
         public string SingleBindName { get; set; } = "";
         public int SingleBindIndex { get; set; } = -1;
@@ -47,7 +44,7 @@ namespace CrossMod.Rendering.Models
 
         private void SetTextureUniforms(Shader shader)
         {
-            // TODO: Rework this.
+            // TODO: Rework default texture creation.
             if (defaultTextures == null)
                 defaultTextures = new Resources.DefaultTextures();
 

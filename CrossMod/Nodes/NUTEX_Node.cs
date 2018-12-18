@@ -220,7 +220,10 @@ namespace CrossMod.Nodes
 
                 if (glFormatByNuTexFormat.ContainsKey(Format))
                 {
-                    // TODO: This may require a higher OpenGL version for BC7.
+                    // This may require a higher OpenGL version for BC7.
+                    if (!SFGraphics.GlUtils.OpenGLExtensions.IsAvailable("GL_ARB_texture_compression_bptc"))
+                        throw new Rendering.Exceptions.MissingExtensionException("GL_ARB_texture_compression_bptc");
+
                     var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
 
                     if (glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
