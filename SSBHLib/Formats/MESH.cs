@@ -18,9 +18,9 @@ namespace SSBHLib.Formats
         
         public ushort VersionMajor { get; set; } // 0x0001
         
-        public ushort VersionMinor { get; set; } // 0x000A and 0x0008
+        public ushort VersionMinor { get; set; } // 0x000A and 0x0008 - Most use 0x000A
         
-        public string ModelName { get; set; }
+        public string ModelName { get; set; } // unused
 
         public float BoundingSphereX { get; set; }
         public float BoundingSphereY { get; set; }
@@ -96,33 +96,33 @@ namespace SSBHLib.Formats
         
         public int IndexCount { get; set; }
         
-        public uint Unk2 { get; set; }
+        public uint Unk2 { get; set; } //usually 3? maybe means triangles?
         
         public int VertexOffset { get; set; }
         
         public int VertexOffset2 { get; set; }
         
-        public int Unk4 { get; set; }
+        public int Unk4 { get; set; } // some offset inside of some unforseen buffer
         
-        public int BID { get; set; }
+        public int BufferIndex { get; set; }
         
         public int Stride { get; set; }
         
         public int Stride2 { get; set; }
         
-        public int Unk6 { get; set; }
+        public int Unk6 { get; set; } // usually 0
         
-        public int Unk7 { get; set; }
-        
+        public int Unk7 { get; set; } // usually 0 long with above?
+
         public uint ElementOffset { get; set; }
         
-        public int Unk8 { get; set; }
+        public int Unk8 { get; set; } // usually 4?
     
         public int DrawElementType { get; set; }
         
-        public int Unk10 { get; set; }
+        public int HasRigging { get; set; } // 0 for single bind 1 otherwise?
         
-        public int Unk11 { get; set; }
+        public int Unk11 { get; set; } // usually 0 long with above?
 
         [ParseTag(InLine = true)]
         public float[] Floats { get; set; } = new float[26];
@@ -146,9 +146,9 @@ namespace SSBHLib.Formats
         
         public int BufferOffset { get; set; }
         
-        public int Unk4_0 { get; set; }
+        public int Unk4_0 { get; set; } // usually 0 padding?
         
-        public int Unk5_0 { get; set; }
+        public int Unk5_0 { get; set; } // usually 0 padding?
 
         public string Name { get; set; }
         
