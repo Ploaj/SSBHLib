@@ -37,12 +37,10 @@ namespace SSBHLib.Formats
 
         public override void PostProcess(SSBHParser R)
         {
-            R.Seek((int)OffsetToData);
+            R.Seek(OffsetToData);
             if (DataType == 0x01)
             {
-                // HACK: There's probably a more elegant way to do this.
-                // It's a single float value with a bunch of 0's at the beginning.
-                DataObject = BitConverter.ToSingle(BitConverter.GetBytes(R.ReadInt64()), 0);
+                DataObject = R.ReadSingle();
             }
             if (DataType == 0x02)
             {
