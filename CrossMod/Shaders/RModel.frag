@@ -7,6 +7,7 @@ in vec2 UV0;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
+in vec3 position;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -16,6 +17,7 @@ uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
+uniform sampler2D inkNorMap;
 
 uniform sampler2D iblLut;
 

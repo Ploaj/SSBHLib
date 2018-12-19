@@ -26,6 +26,7 @@ namespace CrossMod.Rendering
             ProjMap = 0x69,
             SpecularCubeMap = 0x63,
             BakeLitMap = 0x65,
+            InkNorMap = 0x133,
             ColSampler = 0x6C,
             NorSampler = 0x70,
             PrmSampler = 0x72,
@@ -214,6 +215,9 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.BakeLitMap:
                         meshMaterial.bakeLit = texture;
+                        break;
+                    case (long)ParamId.InkNorMap:
+                        meshMaterial.inkNor = texture;
                         break;
                 }
             }

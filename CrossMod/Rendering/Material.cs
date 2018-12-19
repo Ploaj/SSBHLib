@@ -25,6 +25,8 @@ namespace CrossMod.Rendering
 
         public Texture gao = null;
 
+        public Texture inkNor = null;
+
         public TextureCubeMap specularIbl = null;
 
         public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
@@ -41,6 +43,7 @@ namespace CrossMod.Rendering
             col2 = defaultTextures.defaultBlack;
             proj = defaultTextures.defaultBlack;
             nor = defaultTextures.defaultNormal;
+            inkNor = defaultTextures.defaultWhite;
             prm = defaultTextures.defaultPrm;
             emi = defaultTextures.defaultBlack;
             bakeLit = defaultTextures.defaultBlack;
@@ -115,6 +118,7 @@ namespace CrossMod.Rendering
 
             genericMaterial.AddTexture("prmMap", prm);
             genericMaterial.AddTexture("norMap", nor);
+            genericMaterial.AddTexture("inkNorMap", inkNor);
             genericMaterial.AddTexture("emiMap", emi);
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);

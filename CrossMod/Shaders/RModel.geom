@@ -4,6 +4,7 @@ layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 in vec3 geomN[];
+in vec3 geomPosition[];
 in vec3 geomTangent[];
 in vec3 geomBitangent[];
 in vec2 geomUV0[];
@@ -18,6 +19,7 @@ out vec2 UV0;
 out vec4 colorSet1;
 out vec4 colorSet5;
 out vec2 bake1;
+out vec3 position;
 
 noperspective out vec3 edgeDistance;
 
@@ -51,7 +53,7 @@ void main()
         UV0 = geomUV0[i];
         colorSet1 = geomColorSet1[i];
         colorSet5 = geomColorSet5[i];
-
+        position = geomPosition[i];
         bake1 = geomBake1[i];
 
         // The distance from a point to each of the edges.
