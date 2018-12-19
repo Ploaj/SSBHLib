@@ -4,7 +4,8 @@ in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 UV0;
-in vec4 colorSet;
+in vec4 colorSet1;
+in vec4 colorSet5;
 in vec2 bake1;
 noperspective in vec3 edgeDistance;
 
@@ -132,7 +133,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffu
     diffuseTerm *= paramA5.rgb;
 
     if (renderVertexColor == 1)
-        diffuseTerm *= colorSet.rgb;
+        diffuseTerm *= colorSet1.rgb;
     return diffuseTerm;
 }
 
@@ -172,6 +173,21 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
     return paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 }
 
+vec4 GetAlbedoColor()
+{
+    // Blend two diffuse layers based on alpha.
+    // The second layer is set using the first layer if not present.
+    vec4 albedoColor = texture(colMap, UV0).rgba;
+    vec4 albedoColor2 = texture(col2Map, UV0).rgba;
+
+    // Vertex color alpha is used for some stages.
+    float blend = albedoColor2.a * colorSet5.a;
+
+    albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
+
+    return albedoColor;
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
@@ -183,14 +199,9 @@ void main()
 
     vec3 R = reflect(V, newNormal);
 
-    // Blend two diffuse layers based on alpha.
-    // The second layer is set using the first layer if not present.
-    vec4 albedoColor = texture(colMap, UV0).rgba;
-    vec4 albedoColor2 = texture(col2Map, UV0).rgba;
-    albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, albedoColor2.a);
-
+    // Get texture color.
+    vec4 albedoColor = GetAlbedoColor();
     vec4 emissionColor = texture(emiMap, UV0).rgba;
-
     vec4 prmColor = texture(prmMap, UV0).xyzw;
 
     // Material masking.
@@ -279,7 +290,7 @@ void main()
     fragColor.a *= emissionColor.a;
 
     if (renderVertexColor == 1)
-        fragColor.a *= colorSet.a;
+        fragColor.a *= colorSet1.a;
 
     // TODO: 0 = alpha. 1 = alpha.
     // Values can be between 0 and 1, however.
