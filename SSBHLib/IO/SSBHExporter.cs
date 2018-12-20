@@ -82,9 +82,11 @@ namespace SSBHLib.IO
 
                 // I guess?
                 if (obj is Array)
-                {
                     Pad(0x8);
-                }
+
+                // not sure if 4 or 8
+                if (obj is string)
+                    Pad(0x4); 
 
                 if (objectOffset.ContainsValue(obj))
                 {
@@ -206,7 +208,6 @@ namespace SSBHLib.IO
                 Write((float)value);
             else if (t == typeof(string))
             {
-                Pad(0x4); //this is just logical
                 Write(((string)value).ToCharArray());
                 Write((byte)0);
                 Pad(0x4); //8 or 4?
