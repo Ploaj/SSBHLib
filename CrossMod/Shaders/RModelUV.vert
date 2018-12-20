@@ -6,8 +6,8 @@ in vec3 Tangent0;
 in vec3 Bitangent0;
 in vec3 Normal0;
 
-// TODO: Does this work properly?
 in vec4 colorSet1;
+in vec4 colorSet5;
 
 in vec2 bake1;
 in vec2 map1;
@@ -19,11 +19,17 @@ out vec3 geomN;
 out vec3 geomTangent;
 out vec3 geomBitangent;
 out vec2 geomUV0;
-out vec4 geomColorSet;
+out vec4 geomColorSet1;
+out vec4 geomColorSet5;
 out vec2 geomBake1;
+out vec3 geomPosition;
 
 uniform mat4 mvp;
 uniform mat4 transform;
+
+// Sprite sheet animations.
+uniform vec4 paramAA;
+uniform int paramF1;
 
 uniform Bones
 {
@@ -37,9 +43,16 @@ void main()
 
     // Assign geometry inputs
     geomN = transformedNormal.xyz;
-    geomColorSet = colorSet1;
+    geomColorSet1 = colorSet1;
+    geomColorSet5 = colorSet5;
     geomBake1 = bake1;
+    geomPosition = position.xyz;
+
+    // Sprite sheet uvs.
     geomUV0 = map1;
+    if (paramF1 == 1)
+        geomUV0 /= paramAA.xy;
+
     geomTangent = Tangent0;
     geomBitangent = Bitangent0;
 
