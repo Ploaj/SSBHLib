@@ -28,9 +28,10 @@ namespace SSBHLib.IO
 
     public class SSBHParser : BinaryReader
     {
-        public long Position { get { return BaseStream.Position; } }
-        public long FileSize { get { return BaseStream.Length; } }
-        private int BitPosition = 0;
+        public long Position => BaseStream.Position;
+        public long FileSize => BaseStream.Length;
+
+        private int bitPosition = 0;
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
@@ -90,41 +91,42 @@ namespace SSBHLib.IO
             return false;
         }
 
-        public string ReadString(long Offset)
+        public string ReadString(long offset)
         {
             long temp = Position;
 
-            string String = "";
+            string stringValue = "";
 
-            Seek(Offset);
+            Seek(offset);
             if (Position >= FileSize)
             {
                 Seek(temp);
-                return String;
+                return stringValue;
             }
+
             byte b = ReadByte();
             while (b != 0)
             {
-                String += (char)b;
+                stringValue += (char)b;
                 if (Position >= FileSize)
                 {
                     Seek(temp);
-                    return String;
+                    return stringValue;
                 }
                 b = ReadByte();
             }
             
             Seek(temp);
 
-            return String;
+            return stringValue;
         }
 
         public T Parse<T>() where T : ISSBH_File
         {
-            T Object = Activator.CreateInstance<T>();
+            T tObject = Activator.CreateInstance<T>();
 
             //Reading Object
-            foreach (var prop in Object.GetType().GetProperties())
+            foreach (var prop in tObject.GetType().GetProperties())
             {
                 object[] attrs = prop.GetCustomAttributes(true);
                 bool skip = false;
@@ -136,7 +138,7 @@ namespace SSBHLib.IO
                         {
                             string[] args = tag.IF.Split('>');
                             PropertyInfo checkprop = null;
-                            foreach (PropertyInfo pi in Object.GetType().GetProperties())
+                            foreach (PropertyInfo pi in tObject.GetType().GetProperties())
                             {
                                 if (pi.Name.Equals(args[0]))
                                 {
@@ -147,7 +149,7 @@ namespace SSBHLib.IO
                             skip = true;
                             if (checkprop != null)
                             {
-                                if ((ushort)checkprop.GetValue(Object) > int.Parse(args[1]))
+                                if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
                                 {
                                     skip = false;
                                     break;
@@ -162,11 +164,11 @@ namespace SSBHLib.IO
                 if (prop.PropertyType == typeof(string))
                 {
                     long StringOffset = Position + ReadInt64();
-                    prop.SetValue(Object, ReadString(StringOffset));
+                    prop.SetValue(tObject, ReadString(StringOffset));
                 }
                 else if (prop.PropertyType.IsArray)
                 {
-                    bool Inline = prop.GetValue(Object) != null;
+                    bool Inline = prop.GetValue(tObject) != null;
                     long Offset = Position;
                     long Size = 0;
                     if (!Inline)
@@ -176,7 +178,7 @@ namespace SSBHLib.IO
                     }
                     else
                     {
-                        Size = (prop.GetValue(Object) as Array).Length;
+                        Size = (prop.GetValue(tObject) as Array).Length;
                     }
                     
                     long temp = Position;
@@ -198,31 +200,29 @@ namespace SSBHLib.IO
                         y1.SetValue(Obj, i);
                     }
 
-                    prop.SetValue(Object, y1);
+                    prop.SetValue(tObject, y1);
                     
                     if(!Inline)
                         Seek(temp);
                 }
                 else
                 {
-                    prop.SetValue(Object, ReadProperty(prop.PropertyType));
+                    prop.SetValue(tObject, ReadProperty(prop.PropertyType));
                 }
             }
 
             long tempp = Position;
-            Object.PostProcess(this);
+            tObject.PostProcess(this);
             Seek(tempp);
 
-            return Object;
+            return tObject;
         }
 
         public object ReadProperty(Type t)
         {
-            if(t == typeof(SSBHOffset))
-            {
+            if (t == typeof(SSBHOffset))
                 return new SSBHOffset(Position + ReadInt64());
-            }
-            if (t == typeof(ANIM_TRACKFLAGS))
+            else if (t == typeof(ANIM_TRACKFLAGS))
                 return (ANIM_TRACKFLAGS)ReadUInt32();
             else if (t.IsEnum)
                 return Enum.ToObject(t, ReadUInt64());
@@ -248,37 +248,37 @@ namespace SSBHLib.IO
                 return null;
         }
 
-        public int ReadBits(int BitCount)
+        public int ReadBits(int bitCount)
         {
             byte b = Peek();
-            int Value = 0;
+            int value = 0;
             int LE = 0;
-            int bitindex = 0;
-            for (int i = 0; i < BitCount; i++)
+            int bitIndex = 0;
+            for (int i = 0; i < bitCount; i++)
             {
-                byte bit = (byte)((b & (0x1 << (BitPosition))) >> (BitPosition));
-                Value |= (bit << (LE + bitindex));
-                BitPosition++;
-                bitindex++;
-                if (BitPosition >= 8)
+                byte bit = (byte)((b & (0x1 << (bitPosition))) >> (bitPosition));
+                value |= (bit << (LE + bitIndex));
+                bitPosition++;
+                bitIndex++;
+                if (bitPosition >= 8)
                 {
-                    BitPosition = 0;
+                    bitPosition = 0;
                     b = ReadByte();
                     b = Peek();
                 }
-                if (bitindex >= 8)
+                if (bitIndex >= 8)
                 {
-                    bitindex = 0;
-                    if (LE + 8 > BitCount)
+                    bitIndex = 0;
+                    if (LE + 8 > bitCount)
                     {
-                        LE = BitCount - 1;
+                        LE = bitCount - 1;
                     }
                     else
                         LE += 8;
                 }
             }
             
-            return Value;
+            return value;
         }
     }
 }

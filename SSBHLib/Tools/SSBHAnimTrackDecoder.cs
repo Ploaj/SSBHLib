@@ -17,14 +17,26 @@ namespace SSBHLib.Tools
 
     public class AnimTrackTransform
     {
-        public float X, Y, Z;
-        public float RX, RY, RZ, RW;
-        public float SX, SY, SZ;
+        public float X;
+        public float Y;
+        public float Z;
+
+        public float RX;
+        public float RY;
+        public float RZ;
+        public float RW;
+
+        public float SX;
+        public float SY;
+        public float SZ;
     }
 
     public class AnimTrackCustomVector4
     {
-        public float X, Y, Z, W;
+        public float X;
+        public float Y;
+        public float Z;
+        public float W;
     }
 
     public class SSBHAnimTrackDecoder
@@ -39,7 +51,7 @@ namespace SSBHLib.Tools
         public object[] ReadTrack(ANIM_Track Track)
         {
             Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
-            List<object> Output = new List<object>();
+            List<object> output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
             {
                 parser.Seek(Track.DataOffset);
@@ -58,13 +70,13 @@ namespace SSBHLib.Tools
                         parser.Seek((int)Track.DataOffset + DataStart);
                         for (int i = 0; i < FrameCount; i++)
                         {
-                            Output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
+                            output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
                         }
                     }
                     else
                     if ((int)Track.Flags == 0x0508)
                     {
-                        Output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
+                        output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
                     }
                 }
                 if (Track.Flags.HasFlag(ANIM_TRACKFLAGS.Transform))
@@ -77,8 +89,6 @@ namespace SSBHLib.Tools
                         int Unk2 = parser.ReadInt16();
                         int DataStart = parser.ReadInt32();
                         int FrameCount = parser.ReadInt32();
-
-                        //Console.WriteLine(TrackFlag.ToString("X"));
 
                         int[] ByteCounts = new int[9];
                         int[] BitCounts = new int[9];
@@ -116,9 +126,6 @@ namespace SSBHLib.Tools
                         float YPOS = parser.ReadSingle();
                         float ZPOS = parser.ReadSingle();
 
-                        //Console.WriteLine($"{XSCA} {YSCA} {ZSCA}");
-                        //Console.WriteLine($"{XROT} {YROT} {ZROT}");
-
                         parser.ReadInt32(); // ????
 
                         parser.Seek((int)Track.DataOffset + DataStart);
@@ -147,15 +154,29 @@ namespace SSBHLib.Tools
                                         Transform.SZ = FrameValue;
                                     }
                                 }
-                                else
-                                if ((TrackFlag & 0x3) == 0x1)
+                                else if ((TrackFlag & 0x3) == 0x1)
                                 {
                                     //Scale normal
                                     switch (j)
                                     {
-                                        case 0: if (ValueBitCount > 0) Transform.SX = FrameValue; else Transform.SX = XSCA; break;
-                                        case 1: if (ValueBitCount > 0) Transform.SY = FrameValue; else Transform.SY = YSCA; break;
-                                        case 2: if (ValueBitCount > 0) Transform.SZ = FrameValue; else Transform.SZ = ZSCA; break;
+                                        case 0: 
+                                            if (ValueBitCount > 0)
+                                                Transform.SX = FrameValue;
+                                            else
+                                                Transform.SX = XSCA;
+                                            break;
+                                        case 1: 
+                                            if (ValueBitCount > 0)
+                                                Transform.SY = FrameValue;
+                                            else
+                                                Transform.SY = YSCA;
+                                            break;
+                                        case 2:
+                                            if (ValueBitCount > 0)
+                                                Transform.SZ = FrameValue;
+                                            else
+                                                Transform.SZ = ZSCA;
+                                            break;
                                     }
                                 }
                                 else
@@ -170,9 +191,24 @@ namespace SSBHLib.Tools
                                 {
                                     switch (j)
                                     {
-                                        case 3: if (ValueBitCount > 0) Transform.RX = FrameValue; else Transform.RX = XROT; break;
-                                        case 4: if (ValueBitCount > 0) Transform.RY = FrameValue; else Transform.RY = YROT; break;
-                                        case 5: if (ValueBitCount > 0) Transform.RZ = FrameValue; else Transform.RZ = ZROT; break;
+                                        case 3:
+                                            if (ValueBitCount > 0)
+                                                Transform.RX = FrameValue;
+                                            else
+                                                Transform.RX = XROT;
+                                            break;
+                                        case 4:
+                                            if (ValueBitCount > 0)
+                                                Transform.RY = FrameValue;
+                                            else
+                                                Transform.RY = YROT;
+                                            break;
+                                        case 5:
+                                            if (ValueBitCount > 0)
+                                                Transform.RZ = FrameValue;
+                                            else
+                                                Transform.RZ = ZROT;
+                                            break;
                                     }
                                 }
                                 else
@@ -188,9 +224,24 @@ namespace SSBHLib.Tools
                                 {
                                     switch (j)
                                     {
-                                        case 6: if (ValueBitCount > 0) Transform.X = FrameValue; else Transform.X = XPOS; break;
-                                        case 7: if (ValueBitCount > 0) Transform.Y = FrameValue; else Transform.Y = YPOS; break;
-                                        case 8: if (ValueBitCount > 0) Transform.Z = FrameValue; else Transform.Z = ZPOS; break;
+                                        case 6:
+                                            if (ValueBitCount > 0)
+                                                Transform.X = FrameValue;
+                                            else
+                                                Transform.X = XPOS;
+                                            break;
+                                        case 7:
+                                            if (ValueBitCount > 0)
+                                                Transform.Y = FrameValue;
+                                            else
+                                                Transform.Y = YPOS;
+                                            break;
+                                        case 8:
+                                            if (ValueBitCount > 0)
+                                                Transform.Z = FrameValue;
+                                            else
+                                                Transform.Z = ZPOS;
+                                            break;
                                     }
                                 }
                                 else
@@ -211,14 +262,13 @@ namespace SSBHLib.Tools
                                     Transform.RW = -Transform.RW;
                             }
                             
-                            Output.Add(Transform);
+                            output.Add(Transform);
                         }
 
                     }
-                    else
-                    if ((int)Track.Flags == 0x0201)
+                    else if ((int)Track.Flags == 0x0201)
                     {
-                        Output.Add(new AnimTrackTransform()
+                        output.Add(new AnimTrackTransform()
                         {
                             SX = parser.ReadSingle(),
                             SY = parser.ReadSingle(),
@@ -236,7 +286,8 @@ namespace SSBHLib.Tools
                     }
                 }
             }
-            return Output.ToArray();
+
+            return output.ToArray();
         }
 
         public static float Lerp(float av, float bv, float v0, float v1, float t)
