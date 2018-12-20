@@ -15,6 +15,7 @@ uniform sampler2D col2Map;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
+uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 uniform sampler2D inkNorMap;
@@ -217,6 +218,7 @@ void main()
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor();
     vec4 emissionColor = texture(emiMap, UV0).rgba;
+    vec4 emission2Color = texture(emi2Map, UV0).rgba;
     vec4 prmColor = texture(prmMap, UV0).xyzw;
 
     // Material masking.
@@ -287,8 +289,12 @@ void main()
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
 
+    // TODO: Make this a function.
     // Emission
-    fragColor.rgb += emissionColor.rgb * renderEmission;
+    vec3 emissionTerm = vec3(0);
+    emissionTerm.rgb += emissionColor.rgb * renderEmission;
+    emissionTerm.rgb = mix(emissionTerm.rgb, emission2Color.rgb, emission2Color.a);
+    fragColor.rgb += emissionTerm * renderEmission;
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);
