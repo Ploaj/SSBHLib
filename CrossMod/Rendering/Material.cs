@@ -22,6 +22,8 @@ namespace CrossMod.Rendering
 
         public Texture emi = null;
 
+        public Texture emi2 = null;
+
         public Texture bakeLit = null;
 
         public Texture proj = null;
@@ -51,6 +53,7 @@ namespace CrossMod.Rendering
             inkNor = defaultTextures.defaultWhite;
             prm = defaultTextures.defaultPrm;
             emi = defaultTextures.defaultBlack;
+            emi2 = defaultTextures.defaultBlack;
             bakeLit = defaultTextures.defaultBlack;
             gao = defaultTextures.defaultWhite;
             specularIbl = defaultTextures.blackCube;
@@ -126,7 +129,10 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("prmMap", prm);
             genericMaterial.AddTexture("norMap", nor);
             genericMaterial.AddTexture("inkNorMap", inkNor);
+
             genericMaterial.AddTexture("emiMap", emi);
+            genericMaterial.AddTexture("emi2Map", emi2);
+
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
             genericMaterial.AddTexture("projMap", proj);

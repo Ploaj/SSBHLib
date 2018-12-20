@@ -23,6 +23,7 @@ namespace CrossMod.Rendering
             GaoMap = 0x5F,
             NorMap = 0x60,
             EmiMap = 0x61,
+            EmiMap2 = 0x6A,
             PrmMap = 0x62,
             SpecularCubeMap = 0x63,
             DifCubemap = 0x64,
@@ -109,21 +110,21 @@ namespace CrossMod.Rendering
                     case (long)MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
-                        meshMaterial.floatByParamId[(int)a.ParamID] = 1;
+                        meshMaterial.floatByParamId[(long)a.ParamID] = 1;
                         break;
                     case (long)MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MtalAttribute.MtalVector4)a.DataObject; 
-                        meshMaterial.vec4ByParamId[(int)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[(long)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case (long)MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)a.DataObject;
-                        meshMaterial.boolByParamId[(int)a.ParamID] = boolValue;
+                        meshMaterial.boolByParamId[(long)a.ParamID] = boolValue;
                         break;
                     case (long)MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
-                        meshMaterial.floatByParamId[(int)a.ParamID] = floatValue;
+                        meshMaterial.floatByParamId[(long)a.ParamID] = floatValue;
                         break;
                 }
             }
@@ -212,6 +213,9 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.EmiMap:
                         meshMaterial.emi = texture;
+                        break;
+                    case (long)ParamId.EmiMap2:
+                        meshMaterial.emi2 = texture;
                         break;
                     case (long)ParamId.BakeLitMap:
                         meshMaterial.bakeLit = texture;

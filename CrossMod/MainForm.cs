@@ -266,7 +266,7 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            long paramId = Rendering.RenderSettings.Instance.ParamId;
+            uint paramId = Rendering.RenderSettings.Instance.ParamId;
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
@@ -277,7 +277,7 @@ namespace CrossMod
                 {
                     foreach (var attribute in entry.Attributes)
                     {
-                        if ((int)attribute.ParamID == paramId)
+                        if ((uint)attribute.ParamID == paramId)
                         {
                             System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
                         }
