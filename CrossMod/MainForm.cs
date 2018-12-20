@@ -277,7 +277,7 @@ namespace CrossMod
                 {
                     foreach (var attribute in entry.Attributes)
                     {
-                        if (attribute.ParamID == paramId)
+                        if ((int)attribute.ParamID == paramId)
                         {
                             System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
                         }

@@ -38,6 +38,17 @@ namespace CrossMod.Nodes
 
             foreach (ANIM_Group animGroup in animation.Animations)
             {
+                // Material Animations
+                if (animGroup.Type == (int)ANIM_TYPE.Material)
+                {
+                    foreach (ANIM_Node animNode in animGroup.Nodes)
+                    {
+                        foreach (ANIM_Track track in animNode.Tracks)
+                        {
+                            object[] MaterialAnim = decoder.ReadTrack(track);
+                        }
+                    }
+                }
                 // Visibility Animations
                 if (animGroup.Type == (int)ANIM_TYPE.Visibilty)
                 {

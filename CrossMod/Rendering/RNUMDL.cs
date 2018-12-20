@@ -111,21 +111,21 @@ namespace CrossMod.Rendering
                     case (long)ParamDataType.Texture:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
-                        meshMaterial.floatByParamId[a.ParamID] = 1;
+                        meshMaterial.floatByParamId[(int)a.ParamID] = 1;
                         break;
                     case (long)ParamDataType.Vector4:
                         var vec4 = (MTAL_Attribute.MTAL_Vector4)a.DataObject; 
-                        meshMaterial.vec4ByParamId[a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[(int)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case (long)ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
-                        ulong boolValue = (ulong)a.DataObject;
-                        meshMaterial.boolByParamId[a.ParamID] = boolValue == 1;
+                        bool boolValue = (bool)a.DataObject;
+                        meshMaterial.boolByParamId[(int)a.ParamID] = boolValue;
                         break;
                     case (long)ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
-                        meshMaterial.floatByParamId[a.ParamID] = floatValue;
+                        meshMaterial.floatByParamId[(int)a.ParamID] = floatValue;
                         break;
                 }
             }
@@ -145,11 +145,11 @@ namespace CrossMod.Rendering
         private void SetSamplerInformation(Material material, MTAL_Attribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = (MTAL_Attribute.MTAL_Unk_0E)a.DataObject;
+            var samplerStruct = (MTAL_Attribute.MTAL_Sampler)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
-            switch (a.ParamID)
+            switch ((long)a.ParamID)
             {
                 case (long)ParamId.ColSampler:
                     material.col.TextureWrapS = wrapS;
@@ -188,7 +188,7 @@ namespace CrossMod.Rendering
             // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))
             {
-                switch (a.ParamID)
+                switch ((long)a.ParamID)
                 {
                     case (long)ParamId.ColMap:
                         meshMaterial.col = texture;
@@ -219,7 +219,7 @@ namespace CrossMod.Rendering
             }
 
             // TODO: Cube map reading doesn't work yet, so we need to assign it separately.
-            if (a.ParamID == (long)ParamId.SpecularCubeMap)
+            if ((long)a.ParamID == (long)ParamId.SpecularCubeMap)
                 meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
         }
 

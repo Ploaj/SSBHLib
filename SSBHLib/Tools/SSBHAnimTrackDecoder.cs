@@ -22,6 +22,11 @@ namespace SSBHLib.Tools
         public float SX, SY, SZ;
     }
 
+    public class AnimTrackCustomVector4
+    {
+        public float X, Y, Z, W;
+    }
+
     public class SSBHAnimTrackDecoder
     {
         private ANIM AnimFile;
@@ -33,6 +38,7 @@ namespace SSBHLib.Tools
 
         public object[] ReadTrack(ANIM_Track Track)
         {
+            Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> Output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
             {

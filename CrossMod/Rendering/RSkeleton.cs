@@ -75,23 +75,33 @@ namespace CrossMod.Rendering
 
             // Process HelperBones
 
-            /*foreach(RHelperBone hBone in HelperBone)
+            foreach(RHelperBone hBone in HelperBone)
             {
                 // get watcher bone
-                RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
+                /*RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
                 Quaternion watcherCurrentRotation = WatcherBone.AnimationTransform.ExtractRotation();
+                RBone helpBone = Bones[GetBoneIndex(hBone.HelperBoneName)];
+                Quaternion helpCurrentRotation = helpBone.AnimationTransform.ExtractRotation();
+                RBone parBone = Bones[GetBoneIndex(hBone.ParentBone)];
+                Quaternion parCurrentRotation = parBone.AnimationTransform.ExtractRotation();
                 ;
-                if(hBone.HelperBoneName.Equals("H_SholderL"))
-                System.Diagnostics.Debug.WriteLine(hBone.HelperBoneName + " " + Angle(hBone.WatchRotation, watcherCurrentRotation));
-                float Angl = Angle(hBone.WatchRotation, watcherCurrentRotation);
+                //if(hBone.HelperBoneName.Equals("H_SholderL"))
+                System.Diagnostics.Debug.WriteLine(hBone.HelperBoneName + " " + hBone.WatcherBone);
 
-                int index = GetBoneIndex(hBone.HelperBoneName);
+                System.Diagnostics.Debug.WriteLine("\t" + hBone.AOI.ToString());
+                System.Diagnostics.Debug.WriteLine("\t" + hBone.HelperTargetRotation.ToString() + " " + hBone.WatchRotation.ToString());
+                System.Diagnostics.Debug.WriteLine("\t" + watcherCurrentRotation.ToString());
+                System.Diagnostics.Debug.WriteLine("\t" + helpCurrentRotation.ToString());
+                System.Diagnostics.Debug.WriteLine("\t" + parCurrentRotation.ToString());
+                //float Angl = Angle(hBone.WatchRotation, watcherCurrentRotation);
+
+                /*int index = GetBoneIndex(hBone.HelperBoneName);
                 RBone HelperBone = Bones[index];
                 HelperBone.AnimationTransform =
                 Matrix4.CreateFromQuaternion(Quaternion.Slerp(HelperBone.Rotation, hBone.HelperTargetRotation, Angl)) * 
                 Matrix4.CreateTranslation(HelperBone.Position);
-                Transforms[index] = HelperBone.InvWorldTransform * HelperBone.GetAnimationTransform(this);
-            }*/
+                Transforms[index] = HelperBone.InvWorldTransform * HelperBone.GetAnimationTransform(this);*/
+            }
 
             return Transforms;
         }
@@ -259,6 +269,7 @@ namespace CrossMod.Rendering
     public class RHelperBone
     {
         public string WatcherBone;
+        public string ParentBone;
         public string HelperBoneName;
 
         public Vector3 AOI;

@@ -228,6 +228,9 @@ namespace SSBHLib.IO
             if (t == typeof(ANIM_TRACKFLAGS))
                 return (ANIM_TRACKFLAGS)ReadUInt32();
             else
+            if (t.IsEnum)
+                return Enum.ToObject(t, ReadUInt64());
+            else
             if (t == typeof(byte))
                 return ReadByte();
             else

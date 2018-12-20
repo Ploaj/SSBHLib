@@ -32,7 +32,6 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
-
             RNUMDL renderableNode = new RNUMDL
             {
                 MODL = _model

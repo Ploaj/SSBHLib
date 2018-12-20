@@ -179,13 +179,16 @@ namespace SSBHLib.IO
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
-            /*if (t == typeof(ANIM_TRACKFLAGS)) typof(SSBHOffset)
-                return (ANIM_TRACKFLAGS)ReadUInt32();*/
+            /* typof(SSBHOffset) */
             if (value is ISSBH_File v)
             {
                 WriteSSBHFile(v);
                 Pad(0x8);
             }
+            else if (t == typeof(Formats.ANIM_TRACKFLAGS))
+                Write((int)value);
+            else if (t.IsEnum)
+                Write((long)value);
             else if (t == typeof(byte))
                 Write((byte)value);
             else if (t == typeof(char))
@@ -204,7 +207,7 @@ namespace SSBHLib.IO
                 Write((ulong)value);
             else if (t == typeof(float))
                 Write((float)value);
-            else if(t == typeof(string))
+            else if (t == typeof(string))
             {
                 Pad(0x4); //this is just logical
                 Write(((string)value).ToCharArray());
