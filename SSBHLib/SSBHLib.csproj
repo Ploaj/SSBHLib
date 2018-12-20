@@ -42,8 +42,17 @@
   <ItemGroup>
     <Compile Include="Formats\ANIM.cs" />
     <Compile Include="Formats\HLPB.cs" />
+    <Compile Include="Formats\Materials\MatlEnums.cs" />
+    <Compile Include="Formats\Materials\MtalAttribute.cs" />
+    <Compile Include="Formats\Materials\MtalEntry.cs" />
+    <Compile Include="Formats\Materials\MtalBlendState.cs" />
+    <Compile Include="Formats\Materials\MtalRasterizerState.cs" />
+    <Compile Include="Formats\Materials\MtalSampler.cs" />
+    <Compile Include="Formats\Materials\MtalString.cs" />
+    <Compile Include="Formats\Materials\MtalUvTransform.cs" />
+    <Compile Include="Formats\Materials\MtalVector4.cs" />
     <Compile Include="Formats\MESH.cs" />
-    <Compile Include="Formats\MTAL.cs" />
+    <Compile Include="Formats\Materials\MTAL.cs" />
     <Compile Include="Formats\SKEL.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
     <Compile Include="IO\ParseTag.cs" />

@@ -1,6 +1,7 @@
 ﻿using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
+using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 using CrossMod.Rendering.Models;
 
@@ -35,30 +36,24 @@ namespace CrossMod.Rendering
             EmiSampler = 0x71
         }
 
-        public enum ParamDataType
-        {
-            Texture = 0xB,
-            Vector4 = 0x5,
-            Boolean = 0x2,
-            Float = 0x1,
-            SamplerInfo = 0xE
-        }
-
         public void UpdateBinds()
         {
-            if(Model!=null)
-            foreach(RMesh m in Model.subMeshes)
+            if (Model != null)
             {
-                m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
+                foreach (RMesh m in Model.subMeshes)
+                {
+                    m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
+                }
             }
+
         }
 
         public void UpdateMaterial()
         {
             foreach (MODL_Entry e in MODL.ModelEntries)
             {
-                MTAL_Entry currentEntry = null;
-                foreach (MTAL_Entry entry in Material.Entries)
+                MtalEntry currentEntry = null;
+                foreach (MtalEntry entry in Material.Entries)
                 {
                     if (entry.MaterialLabel.Equals(e.MaterialName))
                     {
@@ -92,7 +87,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        private Material GetMaterial(MTAL_Entry currentEntry)
+        private Material GetMaterial(MtalEntry currentEntry)
         {
             // HACK: This is pretty gross.
             // I need to rework the entire texture loading system.
@@ -102,31 +97,31 @@ namespace CrossMod.Rendering
             Material meshMaterial = new Material(RMesh.defaultTextures);
 
             System.Diagnostics.Debug.WriteLine("Material Attributes:");
-            foreach (MTAL_Attribute a in currentEntry.Attributes)
+            foreach (MtalAttribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"{a.DataType.ToString("X")} {a.ParamID.ToString("X")} {a.DataObject.ToString()}");
+                System.Diagnostics.Debug.WriteLine($"{(MatlEnums.ParamDataType) a.DataType} {a.ParamID} {a.DataObject}");
 
                 switch (a.DataType)
                 {
-                    case (long)ParamDataType.Texture:
+                    case (long)MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
                         meshMaterial.floatByParamId[(int)a.ParamID] = 1;
                         break;
-                    case (long)ParamDataType.Vector4:
-                        var vec4 = (MTAL_Attribute.MTAL_Vector4)a.DataObject; 
+                    case (long)MatlEnums.ParamDataType.Vector4:
+                        var vec4 = (MtalAttribute.MtalVector4)a.DataObject; 
                         meshMaterial.vec4ByParamId[(int)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
-                    case (long)ParamDataType.Boolean:
+                    case (long)MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)a.DataObject;
                         meshMaterial.boolByParamId[(int)a.ParamID] = boolValue;
                         break;
-                    case (long)ParamDataType.Float:
+                    case (long)MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
                         meshMaterial.floatByParamId[(int)a.ParamID] = floatValue;
                         break;
@@ -134,7 +129,7 @@ namespace CrossMod.Rendering
             }
 
             // HACK: Textures need to be initialized first before we can modify their state.
-            foreach (MTAL_Attribute a in currentEntry.Attributes)
+            foreach (MtalAttribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null || a.DataType != 0xE)
                     continue;
@@ -145,10 +140,10 @@ namespace CrossMod.Rendering
             return meshMaterial;
         }
 
-        private void SetSamplerInformation(Material material, MTAL_Attribute a)
+        private void SetSamplerInformation(Material material, MtalAttribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = (MTAL_Attribute.MTAL_Sampler)a.DataObject;
+            var samplerStruct = (MtalAttribute.MtalSampler)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
@@ -183,10 +178,10 @@ namespace CrossMod.Rendering
                 return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
         }
 
-        private void SetTextureParameter(Material meshMaterial, MTAL_Attribute a)
+        private void SetTextureParameter(Material meshMaterial, MtalAttribute a)
         {
             // Don't make texture names case sensitive.
-            var text = ((MTAL_Attribute.MTAL_String)a.DataObject).Text.ToLower();
+            var text = ((MtalAttribute.MtalString)a.DataObject).Text.ToLower();
 
             // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))
