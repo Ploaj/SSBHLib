@@ -18,6 +18,8 @@ uniform sampler2D emiMap;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 uniform sampler2D inkNorMap;
+// TODO: Cubemap loading doesn't work yet.
+uniform sampler2D difCubemap;
 
 uniform sampler2D iblLut;
 
@@ -186,6 +188,10 @@ vec4 GetAlbedoColor()
     float blend = albedoColor2.a * colorSet5.a;
 
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
+
+    // We can do this because the default value is black.
+    // Materials won't have col and diffuse cubemaps.
+    albedoColor.rgb += texture(difCubemap, UV0).rgb;
 
     return albedoColor;
 }

@@ -17,15 +17,16 @@ namespace CrossMod.Rendering
 
         public enum ParamId
         {
-            PrmMap = 0x62,
-            NorMap = 0x60,
             ColMap = 0x5C,
-            GaoMap = 0x5F,
             ColMap2 = 0x5D,
+            GaoMap = 0x5F,
+            NorMap = 0x60,
             EmiMap = 0x61,
-            ProjMap = 0x69,
+            PrmMap = 0x62,
             SpecularCubeMap = 0x63,
+            DifCubemap = 0x64,
             BakeLitMap = 0x65,
+            ProjMap = 0x69,
             InkNorMap = 0x133,
             ColSampler = 0x6C,
             NorSampler = 0x70,
@@ -206,6 +207,9 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.ProjMap:
                         meshMaterial.proj = texture;
+                        break;
+                    case (long)ParamId.DifCubemap:
+                        meshMaterial.difCube = texture;
                         break;
                     case (long)ParamId.PrmMap:
                         meshMaterial.prm = texture;

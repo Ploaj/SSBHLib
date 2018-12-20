@@ -25,6 +25,8 @@ namespace CrossMod.Rendering
 
         public Texture gao = null;
 
+        public Texture difCube = null;
+
         public Texture inkNor = null;
 
         public TextureCubeMap specularIbl = null;
@@ -49,6 +51,7 @@ namespace CrossMod.Rendering
             bakeLit = defaultTextures.defaultBlack;
             gao = defaultTextures.defaultWhite;
             specularIbl = defaultTextures.blackCube;
+            difCube = defaultTextures.defaultBlack;
         }
 
         public GenericMaterial CreateGenericMaterial(Material material)
@@ -123,6 +126,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
             genericMaterial.AddTexture("projMap", proj);
+            genericMaterial.AddTexture("difCubemap", difCube);
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
