@@ -110,12 +110,11 @@ namespace SSBHLib.IO
                     }
                     else
                     {
-                        LinkedList<object> ObjectQueueTemp = objectQueue;// new LinkedList<object>();
+                        LinkedList<object> ObjectQueueTemp = objectQueue;
                         objectQueue = new LinkedList<object>();
                         foreach (object o in Array)
                         {
                             WriteProperty(o);
-                            //ObjectQueue.AddFirst(o);
                         }
                         foreach(object o in ObjectQueueTemp)
                             objectQueue.AddLast(o);
@@ -178,7 +177,6 @@ namespace SSBHLib.IO
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
-            /* typof(SSBHOffset) */
             if (value is ISSBH_File v)
             {
                 WriteSSBHFile(v);
@@ -214,14 +212,14 @@ namespace SSBHLib.IO
                 Pad(0x4); //8 or 4?
             }
             else
-                throw new Exception($"Invalid type {t.GetType()}");
+                throw new NotSupportedException($"{t.GetType()} is not a supported type.");
         }
 
-        public void Pad(int toSize, byte PaddingValue = 0)
+        public void Pad(int toSize, byte paddingValue = 0)
         {
-            while(BaseStream.Position % toSize != 0)
+            while (BaseStream.Position % toSize != 0)
             {
-                Write(PaddingValue);
+                Write(paddingValue);
             }
         }
     }
