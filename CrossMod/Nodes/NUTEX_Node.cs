@@ -168,7 +168,7 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC4_SNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.BC5_UNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.BC5_SNORM, new Vector2(1, 1) },
-            { NUTEX_FORMAT.BC6_UFLOAT, new Vector2(1, 1) },
+            { NUTEX_FORMAT.BC6_UFLOAT, new Vector2(4, 4) },
             { NUTEX_FORMAT.BC7_SRGB, new Vector2(4, 4) },
             { NUTEX_FORMAT.BC7_UNORM, new Vector2(4, 4) },
         };
