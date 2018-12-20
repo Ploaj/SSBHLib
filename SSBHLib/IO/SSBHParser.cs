@@ -1,22 +1,19 @@
-﻿using System.IO;
-using SSBHLib.Formats;
+﻿using SSBHLib.Formats;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace SSBHLib.IO
 {
     public struct SSBHOffset
     {
-        private readonly long value;
+        public long Value { get ; }
 
         public SSBHOffset(long value)
         {
-            this.value = value;
+            Value = value;
         }
-
-        public long Value { get { return value; } }
 
         public static implicit operator SSBHOffset(long s)
         {
@@ -73,7 +70,7 @@ namespace SSBHLib.IO
 
             foreach (var c in Types)
             {
-                var attr = c.GetCustomAttributes(
+                SSBHFileAttribute attr = c.GetCustomAttributes(
                 typeof(SSBHFileAttribute), true
                 ).FirstOrDefault() as SSBHFileAttribute;
                 if (attr != null)
@@ -133,8 +130,7 @@ namespace SSBHLib.IO
                 bool skip = false;
                 foreach (object attr in attrs)
                 {
-                    ParseTag tag = attr as ParseTag;
-                    if (tag != null)
+                    if (attr is ParseTag tag)
                     {
                         if (!tag.IF.Equals(""))
                         {
@@ -151,7 +147,7 @@ namespace SSBHLib.IO
                             skip = true;
                             if (checkprop != null)
                             {
-                                if((ushort)checkprop.GetValue(Object) > int.Parse(args[1]))
+                                if ((ushort)checkprop.GetValue(Object) > int.Parse(args[1]))
                                 {
                                     skip = false;
                                     break;
@@ -167,8 +163,8 @@ namespace SSBHLib.IO
                 {
                     long StringOffset = Position + ReadInt64();
                     prop.SetValue(Object, ReadString(StringOffset));
-                } else
-                if (prop.PropertyType.IsArray)
+                }
+                else if (prop.PropertyType.IsArray)
                 {
                     bool Inline = prop.GetValue(Object) != null;
                     long Offset = Position;
@@ -177,7 +173,8 @@ namespace SSBHLib.IO
                     {
                         Offset = Position + ReadInt64();
                         Size = ReadInt64();
-                    } else
+                    }
+                    else
                     {
                         Size = (prop.GetValue(Object) as Array).Length;
                     }
@@ -227,40 +224,28 @@ namespace SSBHLib.IO
             }
             if (t == typeof(ANIM_TRACKFLAGS))
                 return (ANIM_TRACKFLAGS)ReadUInt32();
-            else
-            if (t.IsEnum)
+            else if (t.IsEnum)
                 return Enum.ToObject(t, ReadUInt64());
-            else
-            if (t == typeof(byte))
+            else if (t == typeof(byte))
                 return ReadByte();
-            else
-            if (t == typeof(char))
+            else if (t == typeof(char))
                 return ReadChar();
-            else
-            if (t == typeof(short))
+            else if (t == typeof(short))
                 return ReadInt16();
-            else
-            if (t == typeof(ushort))
+            else if (t == typeof(ushort))
                 return ReadUInt16();
-            else
-            if (t == typeof(int))
+            else if (t == typeof(int))
                 return ReadInt32();
-            else
-            if (t == typeof(uint))
+            else if (t == typeof(uint))
                 return ReadUInt32();
-            else
-            if (t == typeof(long))
+            else if (t == typeof(long))
                 return ReadInt64();
-            else
-            if (t == typeof(ulong))
+            else if (t == typeof(ulong))
                 return ReadUInt64();
-            else
-            if (t == typeof(float))
+            else if (t == typeof(float))
                 return ReadSingle();
             else
-            {
-            }
-            return null;
+                return null;
         }
 
         public int ReadBits(int BitCount)

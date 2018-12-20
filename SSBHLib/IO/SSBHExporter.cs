@@ -8,8 +8,8 @@ namespace SSBHLib.IO
 {
     public class SSBHExporter : BinaryWriter
     {
-        public long Position { get { return BaseStream.Position; } }
-        public long FileSize { get { return BaseStream.Length; } }
+        public long Position => BaseStream.Position; 
+        public long FileSize => BaseStream.Length; 
 
         public SSBHExporter(Stream stream) : base(stream)
         {
@@ -40,8 +40,7 @@ namespace SSBHLib.IO
             bool skip = false;
             foreach (object attr in attrs)
             {
-                ParseTag tag = attr as ParseTag;
-                if (tag != null)
+                if (attr is ParseTag tag)
                 {
                     if (!tag.IF.Equals(""))
                     {
