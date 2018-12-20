@@ -1,8 +1,8 @@
 ﻿using CrossMod.Rendering;
 using SSBHLib;
-using SSBHLib.Formats;
 using SSBHLib.Tools;
 using OpenTK;
+using SSBHLib.Formats.Animation;
 
 namespace CrossMod.Nodes
 {
@@ -39,7 +39,7 @@ namespace CrossMod.Nodes
             foreach (ANIM_Group animGroup in animation.Animations)
             {
                 // Material Animations
-                if (animGroup.Type == (int)ANIM_TYPE.Material)
+                if (animGroup.Type == ANIM_TYPE.Material)
                 {
                     foreach (ANIM_Node animNode in animGroup.Nodes)
                     {
@@ -50,7 +50,7 @@ namespace CrossMod.Nodes
                     }
                 }
                 // Visibility Animations
-                if (animGroup.Type == (int)ANIM_TYPE.Visibilty)
+                if (animGroup.Type == ANIM_TYPE.Visibilty)
                 {
                     foreach (ANIM_Node animNode in animGroup.Nodes)
                     {
@@ -78,7 +78,7 @@ namespace CrossMod.Nodes
                     }
                 }
                 // Bone Animations
-                if (animGroup.Type == (int)ANIM_TYPE.Transform)
+                if (animGroup.Type == ANIM_TYPE.Transform)
                 {
                     foreach (ANIM_Node animNode in animGroup.Nodes)
                     {

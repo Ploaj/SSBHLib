@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Formats\ANIM.cs" />
+    <Compile Include="Formats\Animation\ANIM.cs" />
+    <Compile Include="Formats\Animation\AnimGroup.cs" />
+    <Compile Include="Formats\Animation\AnimTrack.cs" />
     <Compile Include="Formats\HLPB.cs" />
     <Compile Include="Formats\Materials\MatlEnums.cs" />
     <Compile Include="Formats\Materials\MtalAttribute.cs" />

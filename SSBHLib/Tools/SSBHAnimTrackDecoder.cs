@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SSBHLib.Formats;
+using SSBHLib.Formats.Animation;
 using SSBHLib.IO;
 using System.IO;
 

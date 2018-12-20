@@ -179,12 +179,13 @@ namespace SSBHLib.IO
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
+            /*SSBHOffset*/
             if (value is ISSBH_File v)
             {
                 WriteSSBHFile(v);
                 Pad(0x8);
             }
-            else if (t == typeof(Formats.ANIM_TRACKFLAGS))
+            else if (t == typeof(Formats.Animation.ANIM_TRACKFLAGS))
                 Write((int)value);
             else if (t.IsEnum)
                 Write((long)value);
