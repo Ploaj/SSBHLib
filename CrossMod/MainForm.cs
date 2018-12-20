@@ -270,7 +270,7 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
-                var matl = new MTAL_Node();
+                var matl = new MATL_Node();
                 matl.Open(file);
 
                 foreach (var entry in matl.Material.Entries)

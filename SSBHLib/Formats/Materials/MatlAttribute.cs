@@ -2,13 +2,13 @@
 
 namespace SSBHLib.Formats.Materials
 {
-    public partial class MtalAttribute : ISSBH_File
+    public partial class MatlAttribute : ISSBH_File
     {
         public MatlEnums.ParamId ParamID { get; set; }
 
         public SSBHOffset OffsetToData { get; set; }
 
-        public long DataType { get; set; }
+        public MatlEnums.ParamDataType DataType { get; set; }
 
         // not part of the entry
         public object DataObject;
@@ -17,22 +17,22 @@ namespace SSBHLib.Formats.Materials
         {
             R.Seek(OffsetToData);
 
-            if (DataType == (long)MatlEnums.ParamDataType.Float)
+            if (DataType == MatlEnums.ParamDataType.Float)
                 DataObject = R.ReadSingle();
-            else if (DataType == (long)MatlEnums.ParamDataType.Boolean)
+            else if (DataType == MatlEnums.ParamDataType.Boolean)
                 DataObject = R.ReadUInt32() == 1;
-            else if (DataType == (long)MatlEnums.ParamDataType.Vector4)
-                DataObject = R.Parse<MtalVector4>();
-            else if (DataType == (long)MatlEnums.ParamDataType.String)
+            else if (DataType == MatlEnums.ParamDataType.Vector4)
+                DataObject = R.Parse<MatlVector4>();
+            else if (DataType == MatlEnums.ParamDataType.String)
                 DataObject = R.Parse<MtalString>();
-            else if (DataType == (long)MatlEnums.ParamDataType.Sampler)
+            else if (DataType == MatlEnums.ParamDataType.Sampler)
                 DataObject = R.Parse<MtalSampler>();
-            else if (DataType == (long)MatlEnums.ParamDataType.UvTransform)
+            else if (DataType == MatlEnums.ParamDataType.UvTransform)
                 DataObject = R.Parse<MTAL_UVTransform>();
-            else if (DataType == (long)MatlEnums.ParamDataType.BlendState)
-                DataObject = R.Parse<MtalBlendState>();
-            else if (DataType == (long)MatlEnums.ParamDataType.RasterizerState)
-                DataObject = R.Parse<MtalRasterizerState>();
+            else if (DataType == MatlEnums.ParamDataType.BlendState)
+                DataObject = R.Parse<MatlBlendState>();
+            else if (DataType == MatlEnums.ParamDataType.RasterizerState)
+                DataObject = R.Parse<MatlRasterizerState>();
         }
 
         private static string GetPropertyValues(System.Type type, object obj)

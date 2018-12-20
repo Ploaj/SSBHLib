@@ -3,7 +3,7 @@
 namespace SSBHLib.Formats.Materials
 {
     [SSBHFileAttribute("LTAM")]
-    public class MTAL : ISSBH_File
+    public class MATL : ISSBH_File
     {
         public uint Magic { get; set; }
 
@@ -11,6 +11,6 @@ namespace SSBHLib.Formats.Materials
 
         public short MinorVersion { get; set; }
 
-        public MtalEntry[] Entries { get; set; }
+        public MatlEntry[] Entries { get; set; }
     }
 }

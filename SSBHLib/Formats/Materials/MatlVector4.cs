@@ -1,8 +1,8 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
-    public partial class MtalAttribute
+    public partial class MatlAttribute
     {
-        public class MtalVector4 : ISSBH_File
+        public class MatlVector4 : ISSBH_File
         {
             public float X { get; set; }
             public float Y { get; set; }

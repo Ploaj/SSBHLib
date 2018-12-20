@@ -1,8 +1,8 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
-    public partial class MtalAttribute
+    public partial class MatlAttribute
     {
-        public class MtalRasterizerState : ISSBH_File
+        public class MatlRasterizerState : ISSBH_File
         {
             public int Unk1 { get; set; }
 

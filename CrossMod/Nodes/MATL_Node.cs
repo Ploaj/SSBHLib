@@ -4,11 +4,11 @@ using SSBHLib.Formats.Materials;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numatb")]
-    public class MTAL_Node : FileNode
+    public class MATL_Node : FileNode
     {
-        public MTAL Material { get; set; }
+        public MATL Material { get; set; }
         
-        public MTAL_Node()
+        public MATL_Node()
         {
             ImageKey = "material";
             SelectedImageKey = "material";
@@ -18,9 +18,9 @@ namespace CrossMod.Nodes
         {
             if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
             {
-                if (ssbhFile is MTAL)
+                if (ssbhFile is MATL)
                 {
-                    Material = (MTAL)ssbhFile;
+                    Material = (MATL)ssbhFile;
                 }
             }
         }

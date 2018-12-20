@@ -14,7 +14,7 @@ namespace CrossMod.Rendering
         public Dictionary<string, Texture> sfTextureByName = new Dictionary<string, Texture>();
         public RSkeleton Skeleton;
         public RModel Model;
-        public MTAL Material;
+        public MATL Material;
 
         public enum ParamId
         {
@@ -53,8 +53,8 @@ namespace CrossMod.Rendering
         {
             foreach (MODL_Entry e in MODL.ModelEntries)
             {
-                MtalEntry currentEntry = null;
-                foreach (MtalEntry entry in Material.Entries)
+                MatlEntry currentEntry = null;
+                foreach (MatlEntry entry in Material.Entries)
                 {
                     if (entry.MaterialLabel.Equals(e.MaterialName))
                     {
@@ -88,7 +88,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        private Material GetMaterial(MtalEntry currentEntry)
+        private Material GetMaterial(MatlEntry currentEntry)
         {
             // HACK: This is pretty gross.
             // I need to rework the entire texture loading system.
@@ -98,7 +98,7 @@ namespace CrossMod.Rendering
             Material meshMaterial = new Material(RMesh.defaultTextures);
 
             System.Diagnostics.Debug.WriteLine("Material Attributes:");
-            foreach (MtalAttribute a in currentEntry.Attributes)
+            foreach (MatlAttribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
                     continue;
@@ -107,22 +107,22 @@ namespace CrossMod.Rendering
 
                 switch (a.DataType)
                 {
-                    case (long)MatlEnums.ParamDataType.String:
+                    case MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
                         meshMaterial.floatByParamId[(long)a.ParamID] = 1;
                         break;
-                    case (long)MatlEnums.ParamDataType.Vector4:
-                        var vec4 = (MtalAttribute.MtalVector4)a.DataObject; 
+                    case MatlEnums.ParamDataType.Vector4:
+                        var vec4 = (MatlAttribute.MatlVector4)a.DataObject; 
                         meshMaterial.vec4ByParamId[(long)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
-                    case (long)MatlEnums.ParamDataType.Boolean:
+                    case MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)a.DataObject;
                         meshMaterial.boolByParamId[(long)a.ParamID] = boolValue;
                         break;
-                    case (long)MatlEnums.ParamDataType.Float:
+                    case MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
                         meshMaterial.floatByParamId[(long)a.ParamID] = floatValue;
                         break;
@@ -130,9 +130,9 @@ namespace CrossMod.Rendering
             }
 
             // HACK: Textures need to be initialized first before we can modify their state.
-            foreach (MtalAttribute a in currentEntry.Attributes)
+            foreach (MatlAttribute a in currentEntry.Attributes)
             {
-                if (a.DataObject == null || a.DataType != 0xE)
+                if (a.DataObject == null || a.DataType != MatlEnums.ParamDataType.Sampler)
                     continue;
 
                 SetSamplerInformation(meshMaterial, a);
@@ -141,10 +141,10 @@ namespace CrossMod.Rendering
             return meshMaterial;
         }
 
-        private void SetSamplerInformation(Material material, MtalAttribute a)
+        private void SetSamplerInformation(Material material, MatlAttribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = (MtalAttribute.MtalSampler)a.DataObject;
+            var samplerStruct = (MatlAttribute.MtalSampler)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
@@ -179,10 +179,10 @@ namespace CrossMod.Rendering
                 return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
         }
 
-        private void SetTextureParameter(Material meshMaterial, MtalAttribute a)
+        private void SetTextureParameter(Material meshMaterial, MatlAttribute a)
         {
             // Don't make texture names case sensitive.
-            var text = ((MtalAttribute.MtalString)a.DataObject).Text.ToLower();
+            var text = ((MatlAttribute.MtalString)a.DataObject).Text.ToLower();
 
             // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))

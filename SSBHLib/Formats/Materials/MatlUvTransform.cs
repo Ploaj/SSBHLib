@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
-    public partial class MtalAttribute
+    public partial class MatlAttribute
     {
         public class MTAL_UVTransform : ISSBH_File
         {
