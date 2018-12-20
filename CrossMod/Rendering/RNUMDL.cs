@@ -1,9 +1,9 @@
-﻿using SFGraphics.Cameras;
+﻿using CrossMod.Rendering.Models;
+using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
-using CrossMod.Rendering.Models;
 
 namespace CrossMod.Rendering
 {

@@ -51,8 +51,14 @@
     <Compile Include="Formats\Materials\MtalString.cs" />
     <Compile Include="Formats\Materials\MtalUvTransform.cs" />
     <Compile Include="Formats\Materials\MtalVector4.cs" />
-    <Compile Include="Formats\MESH.cs" />
+    <Compile Include="Formats\Meshes\MESH.cs" />
     <Compile Include="Formats\Materials\MTAL.cs" />
+    <Compile Include="Formats\Meshes\MeshAttribute.cs" />
+    <Compile Include="Formats\Meshes\MeshAttributeString.cs" />
+    <Compile Include="Formats\Meshes\MeshBoneBuffer.cs" />
+    <Compile Include="Formats\Meshes\MeshBuffer.cs" />
+    <Compile Include="Formats\Meshes\MeshObject.cs" />
+    <Compile Include="Formats\Meshes\MeshRiggingGroup.cs" />
     <Compile Include="Formats\SKEL.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
     <Compile Include="IO\ParseTag.cs" />

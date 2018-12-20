@@ -1,5 +1,4 @@
-﻿
-namespace SSBHLib.Formats
+﻿namespace SSBHLib.Formats
 {
     [SSBHFileAttribute("LEKS")]
     public class SKEL : ISSBH_File

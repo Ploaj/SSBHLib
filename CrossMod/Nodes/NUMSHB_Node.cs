@@ -3,7 +3,7 @@ using CrossMod.Rendering.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SSBHLib;
-using SSBHLib.Formats;
+using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 
@@ -39,7 +39,7 @@ namespace CrossMod.Nodes
             var modelSphere = mesh.GetBoundingSphere();
             model.BoundingSphere = new Vector4(modelSphere.Item1, modelSphere.Item2, modelSphere.Item3, modelSphere.Item4);
 
-            foreach (MESH_Object meshObject in mesh.Objects)
+            foreach (MeshObject meshObject in mesh.Objects)
             {
                 PrintAttributeInformation(meshObject);
 
@@ -66,7 +66,7 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private List<CustomVertex> CreateVertices(RSkeleton Skeleton, MESH_Object meshObject, SSBHVertexAccessor vertexAccessor, uint[] vertexIndices)
+        private List<CustomVertex> CreateVertices(RSkeleton Skeleton, MeshObject meshObject, SSBHVertexAccessor vertexAccessor, uint[] vertexIndices)
         {
 
             // Read attribute values.
@@ -159,7 +159,7 @@ namespace CrossMod.Nodes
             return vertices;
         }
 
-        private static void PrintAttributeInformation(MESH_Object meshObject)
+        private static void PrintAttributeInformation(MeshObject meshObject)
         {
             System.Diagnostics.Debug.WriteLine(meshObject.Name);
             foreach (var attribute in meshObject.Attributes)
@@ -198,7 +198,7 @@ namespace CrossMod.Nodes
             return new Vector4(values.X, values.Y, values.Z, values.W);
         }
 
-        private static VertexAttribPointerType GetAttributeType(MESH_Attribute meshAttribute)
+        private static VertexAttribPointerType GetAttributeType(MeshAttribute meshAttribute)
         {
             switch (meshAttribute.DataType)
             {

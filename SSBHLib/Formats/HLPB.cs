@@ -1,6 +1,4 @@
-﻿using SSBHLib.IO;
-
-namespace SSBHLib.Formats
+﻿namespace SSBHLib.Formats
 {
     [SSBHFileAttribute("BPLH")]
     public class HLPB : ISSBH_File

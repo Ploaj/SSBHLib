@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SSBHLib.Formats;
+using SSBHLib.Formats.Meshes;
 
 namespace SSBHLib.Tools
 {
@@ -35,11 +35,11 @@ namespace SSBHLib.Tools
             indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer));
         }
 
-        private MESH_Attribute GetAttribute(string AttributeName, MESH_Object MeshObject)
+        private MeshAttribute GetAttribute(string AttributeName, MeshObject MeshObject)
         {
-            foreach (MESH_Attribute a in MeshObject.Attributes)
+            foreach (MeshAttribute a in MeshObject.Attributes)
             {
-                foreach (MESH_AttributeString s in a.AttributeStrings)
+                foreach (MeshAttributeString s in a.AttributeStrings)
                 {
                     if (s.Name.Equals(AttributeName))
                     {
@@ -50,7 +50,7 @@ namespace SSBHLib.Tools
             return null;
         }
 
-        public uint[] ReadIndices(int Position, int Count, MESH_Object MeshObject)
+        public uint[] ReadIndices(int Position, int Count, MeshObject MeshObject)
         {
             uint[] indicies = new uint[Count];
 
@@ -62,9 +62,9 @@ namespace SSBHLib.Tools
             return indicies;
         }
 
-        public SSBHVertexAttribute[] ReadAttribute(string AttributeName, int Position, int Count, MESH_Object MeshObject)
+        public SSBHVertexAttribute[] ReadAttribute(string AttributeName, int Position, int Count, MeshObject MeshObject)
         {
-            MESH_Attribute attr = GetAttribute(AttributeName, MeshObject);
+            MeshAttribute attr = GetAttribute(AttributeName, MeshObject);
 
             if(attr == null)
             {

@@ -1,9 +1,5 @@
-﻿using System;
+﻿using SSBHLib.Formats.Meshes;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SSBHLib.Formats;
 using System.IO;
 
 namespace SSBHLib.Tools
@@ -26,22 +22,23 @@ namespace SSBHLib.Tools
 
         public SSBHVertexInfluence[] ReadRiggingBuffer(string MeshName, int SubIndex)
         {
-            MESH_RiggingGroup riggingGroup = null;
+            MeshRiggingGroup riggingGroup = null;
 
-            foreach(MESH_RiggingGroup g in MeshFile.RiggingBuffers)
+            foreach(MeshRiggingGroup g in MeshFile.RiggingBuffers)
             {
-                if(g.Name.Equals(MeshName) && g.SubMeshIndex == SubIndex)
+                if (g.Name.Equals(MeshName) && g.SubMeshIndex == SubIndex)
                 {
                     riggingGroup = g;
                     break;
                 }
             }
 
-            if (riggingGroup == null) return new SSBHVertexInfluence[0];
+            if (riggingGroup == null)
+                return new SSBHVertexInfluence[0];
 
             List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
 
-            foreach (MESH_BoneBuffer boneBuffer in riggingGroup.Buffers)
+            foreach (MeshBoneBuffer boneBuffer in riggingGroup.Buffers)
             {
                 using (BinaryReader R = new BinaryReader(new MemoryStream(boneBuffer.Data)))
                 {

@@ -6,9 +6,9 @@ namespace SSBHLib.Formats
     {
         public string Magic { get; set; }
 
-        public SSBHFileAttribute(string Magic)
+        public SSBHFileAttribute(string magic)
         {
-            this.Magic = Magic;
+            Magic = magic;
         }
     }
 }

@@ -2,6 +2,7 @@
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
 using SSBHLib;
+using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats;
 using SSBHLib.Tools;
 using System.Collections.Generic;
@@ -93,49 +94,49 @@ namespace CrossMod.Nodes
         
         public IOModel GetIOModel()
         {
-            IOModel OutModel = new IOModel();
+            IOModel outModel = new IOModel();
 
-            MESH MeshFile = null;
+            MESH meshFile = null;
 
             foreach (FileNode n in Parent.Nodes)
             {
                 if (n.Text.Equals(_model.MeshString))
                 {
-                    MeshFile = ((NUMSHB_Node)n).mesh;
+                    meshFile = ((NUMSHB_Node)n).mesh;
                 }
                 if (n.Text.Equals(_model.SkeletonFileName))
                 {
-                    OutModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
+                    outModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
                 }
             }
 
             Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
-            if(OutModel.Skeleton != null)
+            if(outModel.Skeleton != null)
             {
-                for(int i = 0; i < OutModel.Skeleton.Bones.Count; i++)
+                for(int i = 0; i < outModel.Skeleton.Bones.Count; i++)
                 {
-                    indexByBoneName.Add(OutModel.Skeleton.Bones[i].Name, i);
+                    indexByBoneName.Add(outModel.Skeleton.Bones[i].Name, i);
                 }
             }
             
-            if (MeshFile != null)
+            if (meshFile != null)
             {
-                using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(MeshFile))
+                using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(meshFile))
                 {
-                    SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(MeshFile);
-                    foreach (MESH_Object obj in MeshFile.Objects)
+                    SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(meshFile);
+                    foreach (MeshObject obj in meshFile.Objects)
                     {
                         IOMesh outMesh = new IOMesh()
                         {
                             Name = obj.Name,
                         };
-                        OutModel.Meshes.Add(outMesh);
+                        outModel.Meshes.Add(outMesh);
 
-                        IOVertex[] Vertices = new IOVertex[obj.VertexCount];
-                        for (int i = 0; i < Vertices.Length; i++)
-                            Vertices[i] = new IOVertex();
+                        IOVertex[] vertices = new IOVertex[obj.VertexCount];
+                        for (int i = 0; i < vertices.Length; i++)
+                            vertices[i] = new IOVertex();
 
-                        foreach (MESH_Attribute attr in obj.Attributes)
+                        foreach (MeshAttribute attr in obj.Attributes)
                         {
                             SSBHVertexAttribute[] values = vertexAccessor.ReadAttribute(attr.AttributeStrings[0].Name, 0, obj.VertexCount, obj);
 
@@ -143,93 +144,93 @@ namespace CrossMod.Nodes
                             {
                                 outMesh.HasPositions = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].Position = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
+                                    vertices[i].Position = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("Normal0"))
                             {
                                 outMesh.HasNormals = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].Normal = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
+                                    vertices[i].Normal = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("map1"))
                             {
                                 outMesh.HasUV0 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].UV0 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV0 = new OpenTK.Vector2(values[i].X, values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet"))
                             {
                                 outMesh.HasUV1 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].UV1 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV1 = new OpenTK.Vector2(values[i].X, values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet1"))
                             {
                                 outMesh.HasUV2 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].UV2 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV2 = new OpenTK.Vector2(values[i].X, values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet2"))
                             {
                                 outMesh.HasUV3 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].UV3 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV3 = new OpenTK.Vector2(values[i].X, values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("colorSet1"))
                             {
                                 outMesh.HasColor = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    Vertices[i].Color = new OpenTK.Vector4(values[i].X, values[i].Y, values[i].Z, values[i].W);
+                                    vertices[i].Color = new OpenTK.Vector4(values[i].X, values[i].Y, values[i].Z, values[i].W);
                             }
                         }
 
                         // Fix SingleBinds
-                        if(OutModel.Skeleton != null && !obj.ParentBoneName.Equals(""))
+                        if(outModel.Skeleton != null && !obj.ParentBoneName.Equals(""))
                         {
-                            int parentIndex = OutModel.Skeleton.GetBoneIndex(obj.ParentBoneName);
+                            int parentIndex = outModel.Skeleton.GetBoneIndex(obj.ParentBoneName);
                             if(parentIndex != -1)
-                                for(int i = 0; i < Vertices.Length; i++)
+                                for(int i = 0; i < vertices.Length; i++)
                                 {
-                                    Vertices[i].Position = OpenTK.Vector3.TransformPosition(Vertices[i].Position, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
-                                    Vertices[i].Normal = OpenTK.Vector3.TransformNormal(Vertices[i].Normal, OutModel.Skeleton.Bones[parentIndex].WorldTransform);
-                                    Vertices[i].BoneIndices.X = indexByBoneName[obj.ParentBoneName];
-                                    Vertices[i].BoneWeights.X = 1;
+                                    vertices[i].Position = OpenTK.Vector3.TransformPosition(vertices[i].Position, outModel.Skeleton.Bones[parentIndex].WorldTransform);
+                                    vertices[i].Normal = OpenTK.Vector3.TransformNormal(vertices[i].Normal, outModel.Skeleton.Bones[parentIndex].WorldTransform);
+                                    vertices[i].BoneIndices.X = indexByBoneName[obj.ParentBoneName];
+                                    vertices[i].BoneWeights.X = 1;
                                 }
                         }
 
                         // Apply Rigging
-                        SSBHVertexInfluence[] Influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
+                        SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
     
-                        foreach(SSBHVertexInfluence influence in Influences)
+                        foreach(SSBHVertexInfluence influence in influences)
                         {
                             // Some influences refer to bones that don't exist in the skeleton.
                             // _eff bones?
                             if (!indexByBoneName.ContainsKey(influence.BoneName))
                                 continue;
 
-                            if (Vertices[influence.VertexIndex].BoneWeights.X == 0)
+                            if (vertices[influence.VertexIndex].BoneWeights.X == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.X = indexByBoneName[influence.BoneName];
-                                Vertices[influence.VertexIndex].BoneWeights.X = influence.Weight;
+                                vertices[influence.VertexIndex].BoneIndices.X = indexByBoneName[influence.BoneName];
+                                vertices[influence.VertexIndex].BoneWeights.X = influence.Weight;
                             }
-                            else if(Vertices[influence.VertexIndex].BoneWeights.Y == 0)
+                            else if(vertices[influence.VertexIndex].BoneWeights.Y == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.Y = indexByBoneName[influence.BoneName];
-                                Vertices[influence.VertexIndex].BoneWeights.Y = influence.Weight;
+                                vertices[influence.VertexIndex].BoneIndices.Y = indexByBoneName[influence.BoneName];
+                                vertices[influence.VertexIndex].BoneWeights.Y = influence.Weight;
                             }
-                            else if(Vertices[influence.VertexIndex].BoneWeights.Z == 0)
+                            else if(vertices[influence.VertexIndex].BoneWeights.Z == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.Z = indexByBoneName[influence.BoneName];
-                                Vertices[influence.VertexIndex].BoneWeights.Z = influence.Weight;
+                                vertices[influence.VertexIndex].BoneIndices.Z = indexByBoneName[influence.BoneName];
+                                vertices[influence.VertexIndex].BoneWeights.Z = influence.Weight;
                             }
-                            else if(Vertices[influence.VertexIndex].BoneWeights.W == 0)
+                            else if(vertices[influence.VertexIndex].BoneWeights.W == 0)
                             {
-                                Vertices[influence.VertexIndex].BoneIndices.W = indexByBoneName[influence.BoneName];
-                                Vertices[influence.VertexIndex].BoneWeights.W = influence.Weight;
+                                vertices[influence.VertexIndex].BoneIndices.W = indexByBoneName[influence.BoneName];
+                                vertices[influence.VertexIndex].BoneWeights.W = influence.Weight;
                             }
                         }
 
-                        outMesh.Vertices.AddRange(Vertices);
+                        outMesh.Vertices.AddRange(vertices);
                         outMesh.Indices.AddRange(vertexAccessor.ReadIndices(0, obj.IndexCount, obj));
                     }
 
@@ -237,7 +238,7 @@ namespace CrossMod.Nodes
             }
 
 
-            return OutModel;
+            return outModel;
         }
     }
 }
