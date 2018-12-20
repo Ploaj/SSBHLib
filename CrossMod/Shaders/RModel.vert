@@ -22,6 +22,7 @@ out vec2 geomUV0;
 out vec4 geomColorSet1;
 out vec4 geomColorSet5;
 out vec2 geomBake1;
+out vec3 geomPosition;
 
 uniform mat4 mvp;
 uniform mat4 transform;
@@ -58,6 +59,7 @@ void main()
     geomColorSet1 = colorSet1;
     geomColorSet5 = colorSet5;
     geomBake1 = bake1;
+    geomPosition = position.xyz;
 
     // Sprite sheet uvs.
     geomUV0 = map1;

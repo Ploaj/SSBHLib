@@ -7,6 +7,7 @@ in vec2 UV0;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
+in vec3 position;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -16,6 +17,12 @@ uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
+uniform sampler2D inkNorMap;
+// TODO: Cubemap loading doesn't work yet.
+uniform sampler2D difCubemap;
+
+uniform int hasDiffuse;
+uniform sampler2D difMap;
 
 uniform sampler2D iblLut;
 
@@ -179,11 +186,19 @@ vec4 GetAlbedoColor()
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
+    vec4 diffuseColor = texture(difMap, UV0).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
 
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
+
+    // We can do this because the default value is black.
+    // Materials won't have col and diffuse cubemaps.
+    albedoColor.rgb += texture(difCubemap, UV0).rgb;
+
+    if (hasDiffuse == 1)
+        albedoColor.rgb = mix(albedoColor.rgb, diffuseColor.rgb, diffuseColor.a).rgb;
 
     return albedoColor;
 }
