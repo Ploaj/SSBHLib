@@ -21,6 +21,9 @@ uniform sampler2D inkNorMap;
 // TODO: Cubemap loading doesn't work yet.
 uniform sampler2D difCubemap;
 
+uniform int hasDiffuse;
+uniform sampler2D difMap;
+
 uniform sampler2D iblLut;
 
 uniform samplerCube diffusePbrCube;
@@ -183,6 +186,7 @@ vec4 GetAlbedoColor()
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, UV0).rgba;
     vec4 albedoColor2 = texture(col2Map, UV0).rgba;
+    vec4 diffuseColor = texture(difMap, UV0).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
@@ -192,6 +196,9 @@ vec4 GetAlbedoColor()
     // We can do this because the default value is black.
     // Materials won't have col and diffuse cubemaps.
     albedoColor.rgb += texture(difCubemap, UV0).rgb;
+
+    if (hasDiffuse == 1)
+        albedoColor.rgb = mix(albedoColor.rgb, diffuseColor.rgb, diffuseColor.a).rgb;
 
     return albedoColor;
 }

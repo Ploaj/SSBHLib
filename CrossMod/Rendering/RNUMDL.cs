@@ -26,6 +26,7 @@ namespace CrossMod.Rendering
             SpecularCubeMap = 0x63,
             DifCubemap = 0x64,
             BakeLitMap = 0x65,
+            DiffuseMap = 0x66,
             ProjMap = 0x69,
             InkNorMap = 0x133,
             ColSampler = 0x6C,
@@ -222,6 +223,10 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.InkNorMap:
                         meshMaterial.inkNor = texture;
+                        break;
+                    case (long)ParamId.DiffuseMap:
+                        meshMaterial.dif = texture;
+                        meshMaterial.HasDiffuse = true;
                         break;
                 }
             }
