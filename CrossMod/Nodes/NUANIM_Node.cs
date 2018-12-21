@@ -42,7 +42,7 @@ namespace CrossMod.Nodes
             foreach (AnimGroup animGroup in animation.Animations)
             {
                 if (animGroup.Type != ANIM_TYPE.Transform) //SEAnim only supports transform-type animations.
-                    return false;
+                    continue;
 
                 foreach (AnimNode animNode in animGroup.Nodes)
                 {
@@ -68,11 +68,11 @@ namespace CrossMod.Nodes
                         }
                     }
                 }
+
+                seOut.Write(fileName);
             }
 
-            seOut.Write(fileName);
-
-            return false;
+            return true;
         }
 
         public IRenderable GetRenderableNode()

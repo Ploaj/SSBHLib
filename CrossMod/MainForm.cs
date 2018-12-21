@@ -149,7 +149,7 @@ namespace CrossMod
                         ExportSMD.Tag = exportableNode;
                         fileTreeContextMenu.MenuItems.Add(ExportSMD);
                     }
-                    else if( node.Text.Contains( ".nuanmb" ) ) //i didn't implement a new node type for Anims. this should be done at some point? maybe? just hackily threw this together
+                    else if( node.Text.Contains( ".nuanmb" ) ) //i didn't implement a new node type for Anims. i'll take care of this at some point.
                     {
                         MenuItem ExportSEAnim = new MenuItem("Export SEAnim");
                         ExportSEAnim.Click += exportAnimationSE;
@@ -184,6 +184,10 @@ namespace CrossMod
             {
                 bool exportSuccess = ((NUANIM_Node)((MenuItem)sender).Tag).ExportToSE( fileName ); //nabs the renderable nodes as an IRenderable
 
+                if (exportSuccess)
+                    MessageBox.Show(fileName + " exported successfully.");
+                else
+                    MessageBox.Show("There was an issue converting this file to SEAnim.");
             }
         }
 
