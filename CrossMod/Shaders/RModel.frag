@@ -182,9 +182,7 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    vec3 emissionTerm = vec3(0);
-    emissionTerm.rgb += emissionColor.rgb;
-    return emissionTerm;
+    return emissionColor.rgb;
 }
 
 vec3 Blend(vec4 a, vec4 b)
