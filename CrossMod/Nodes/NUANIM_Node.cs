@@ -30,7 +30,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public bool ExportToSE( string fileName )
+        public bool ExportToSE( string fileName, bool scaleKeys = true )
         {
             if (animation == null)
                 return false; //don't know how you got here, but stay out.
@@ -62,7 +62,12 @@ namespace CrossMod.Nodes
                                 AnimTrackTransform currFrame = (AnimTrackTransform)Trans[i];
                                 seOut.AddTranslationKey(name, i, currFrame.X, currFrame.Y, currFrame.Z);
                                 seOut.AddRotationKey(name, i, currFrame.RX, currFrame.RY, currFrame.RZ, currFrame.RW);
-                                seOut.AddScaleKey(name, i, currFrame.SX, currFrame.SY, currFrame.SZ);
+                                /*
+                                 * Some animations have scaling issues, so if you encounter that in the Renderer
+                                 * then you can disable scaling and the exporter will skip it.
+                                 */
+                                if(scaleKeys)
+                                    seOut.AddScaleKey(name, i, currFrame.SX, currFrame.SY, currFrame.SZ);
 ;                           }
 
                         }
