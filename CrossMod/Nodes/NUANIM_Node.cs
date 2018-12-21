@@ -3,6 +3,7 @@ using SSBHLib;
 using SSBHLib.Tools;
 using OpenTK;
 using SSBHLib.Formats.Animation;
+using SELib;
 
 namespace CrossMod.Nodes
 {
@@ -27,6 +28,51 @@ namespace CrossMod.Nodes
                     animation = anim;
                 }
             }
+        }
+
+        public bool ExportToSE( string fileName )
+        {
+            if (animation == null)
+                return false; //don't know how you got here, but stay out.
+
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+
+            SEAnim seOut = new SEAnim();
+
+            foreach (AnimGroup animGroup in animation.Animations)
+            {
+                if (animGroup.Type != ANIM_TYPE.Transform) //SEAnim only supports transform-type animations.
+                    return false;
+
+                foreach (AnimNode animNode in animGroup.Nodes)
+                {
+                    string name = animNode.Name;
+
+                    foreach (AnimTrack track in animNode.Tracks)
+                    {
+                        if (track.Name.Equals("Transform"))
+                        {
+                            /*
+                             *  Array of AnimTrackTransform after being read by Decoder.
+                             */
+                            object[] Trans = decoder.ReadTrack(track);
+                            
+                            for(int i = 0; i < Trans.Length; i++)
+                            {
+                                AnimTrackTransform currFrame = (AnimTrackTransform)Trans[i];
+                                seOut.AddTranslationKey(name, i, currFrame.X, currFrame.Y, currFrame.Z);
+                                seOut.AddRotationKey(name, i, currFrame.RX, currFrame.RY, currFrame.RZ, currFrame.RW);
+                                seOut.AddScaleKey(name, i, currFrame.SX, currFrame.SY, currFrame.SZ);
+;                           }
+
+                        }
+                    }
+                }
+            }
+
+            seOut.Write(fileName);
+
+            return false;
         }
 
         public IRenderable GetRenderableNode()

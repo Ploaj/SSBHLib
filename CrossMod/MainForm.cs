@@ -149,6 +149,14 @@ namespace CrossMod
                         ExportSMD.Tag = exportableNode;
                         fileTreeContextMenu.MenuItems.Add(ExportSMD);
                     }
+                    else if( node.Text.Contains( ".nuanmb" ) ) //i didn't implement a new node type for Anims. this should be done at some point? maybe? just hackily threw this together
+                    {
+                        MenuItem ExportSEAnim = new MenuItem("Export SEAnim");
+                        ExportSEAnim.Click += exportAnimationSE;
+                        ExportSEAnim.Tag = node;
+                        fileTreeContextMenu.MenuItems.Add(ExportSEAnim);
+                    }
+                    
 
                     // show if it has at least 1 option
                     if (fileTreeContextMenu.MenuItems.Count != 0)
@@ -167,6 +175,15 @@ namespace CrossMod
                     IO_OBJ.ExportIOModelAsOBJ(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
                 if (fileName.EndsWith(".dae"))
                     IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+            }
+        }
+
+        private void exportAnimationSE( object sender, EventArgs args ) //Exports this animation to the SE format.
+        {
+            if( FileTools.TrySaveFile( out string fileName, "SEAnim|*.seanim" ))
+            {
+                bool exportSuccess = ((NUANIM_Node)((MenuItem)sender).Tag).ExportToSE( fileName ); //nabs the renderable nodes as an IRenderable
+
             }
         }
 
