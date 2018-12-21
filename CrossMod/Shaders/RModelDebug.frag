@@ -3,7 +3,7 @@
 in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
-in vec2 UV0;
+in vec2 map1;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
@@ -76,8 +76,8 @@ vec4 GetAlbedoColor()
 {
     // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
-    vec4 albedoColor = texture(colMap, UV0).rgba;
-    vec4 albedoColor2 = texture(col2Map, UV0).rgba;
+    vec4 albedoColor = texture(colMap, map1).rgba;
+    vec4 albedoColor2 = texture(col2Map, map1).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
@@ -89,7 +89,7 @@ vec4 GetAlbedoColor()
 
 void main()
 {
-	vec4 norColor = texture(norMap, UV0).xyzw;
+	vec4 norColor = texture(norMap, map1).xyzw;
     vec3 newNormal = N;
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
@@ -98,16 +98,16 @@ void main()
 
     // Get texture colors.
 	vec4 albedoColor = GetAlbedoColor();
-	vec4 prmColor = texture(prmMap, UV0).xyzw;
-	vec4 emiColor = texture(emiMap, UV0).rgba;
+	vec4 prmColor = texture(prmMap, map1).xyzw;
+	vec4 emiColor = texture(emiMap, map1).rgba;
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
-    vec4 projColor = texture(projMap, UV0).rgba;
+    vec4 projColor = texture(projMap, map1).rgba;
 
 	// Invert glossiness?
 	float roughness = clamp(1 - prmColor.g, 0, 1);
 
-    vec4 uvPatternColor = texture(uvPattern, UV0).rgba;
+    vec4 uvPatternColor = texture(uvPattern, map1).rgba;
 
 	// Image based lighting.
 	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rgb * 2.5;

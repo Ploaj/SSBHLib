@@ -3,7 +3,7 @@
 in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
-in vec2 UV0;
+in vec2 map1;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
@@ -124,7 +124,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
     return 1.0 / (normalization * denominator * denominator);
 }
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float kDiffuse)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse)
 {
     // Baked ambient lighting.
     vec3 diffuseLight = diffuseIbl;
@@ -188,11 +188,16 @@ vec3 EmissionTerm(vec4 emissionColor)
     return emissionTerm;
 }
 
+vec3 Blend(vec4 a, vec4 b)
+{
+    return mix(a.rgb, b.rgb, b.a);
+}
+
 vec4 GetEmissionColor()
 {
-    vec4 emissionColor = texture(emiMap, UV0).rgba;
-    vec4 emission2Color = texture(emi2Map, UV0).rgba;
-    emissionColor.rgb = mix(emissionColor.rgb, emission2Color.rgb, emission2Color.a);
+    vec4 emissionColor = texture(emiMap, map1).rgba;
+    vec4 emission2Color = texture(emi2Map, map1).rgba;
+    emissionColor.rgb = Blend(emissionColor, emission2Color);
     return emissionColor;
 }
 
@@ -200,9 +205,9 @@ vec4 GetAlbedoColor()
 {
     // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
-    vec4 albedoColor = texture(colMap, UV0).rgba;
-    vec4 albedoColor2 = texture(col2Map, UV0).rgba;
-    vec4 diffuseColor = texture(difMap, UV0).rgba;
+    vec4 albedoColor = texture(colMap, map1).rgba;
+    vec4 albedoColor2 = texture(col2Map, map1).rgba;
+    vec4 diffuseColor = texture(difMap, map1).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
@@ -211,10 +216,10 @@ vec4 GetAlbedoColor()
 
     // We can do this because the default value is black.
     // Materials won't have col and diffuse cubemaps.
-    albedoColor.rgb += texture(difCubemap, UV0).rgb;
+    albedoColor.rgb += texture(difCubemap, map1).rgb;
 
     if (hasDiffuse == 1)
-        albedoColor.rgb = mix(albedoColor.rgb, diffuseColor.rgb, diffuseColor.a).rgb;
+        albedoColor.rgb = Blend(albedoColor, diffuseColor);
 
     return albedoColor;
 }
@@ -223,7 +228,7 @@ void main()
 {
     fragColor = vec4(0, 0, 0, 1);
 
-    vec4 norColor = texture(norMap, UV0).xyzw;
+    vec4 norColor = texture(norMap, map1).xyzw;
     vec3 newNormal = N;
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
@@ -233,14 +238,13 @@ void main()
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor();
     vec4 emissionColor = GetEmissionColor();
-    vec4 prmColor = texture(prmMap, UV0).xyzw;
+    vec4 prmColor = texture(prmMap, map1).xyzw;
 
     // Material masking.
     float transitionBlend = 0;
     if (norColor.b <= (1 - transitionFactor))
         transitionBlend = 1;
 
-    // Modify prm color directly.
     switch (transitionEffect)
     {
         case 0:
@@ -265,7 +269,6 @@ void main()
             break;
     }
 
-    // Invert glossiness
     float roughness = prmColor.g;
     float metalness = prmColor.r;
 
@@ -277,20 +280,20 @@ void main()
 
     fragColor = vec4(0, 0, 0, 1);
 
+    // TODO: What is the in game value?
     float maxF0Dialectric = 0.08;
     vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
     vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
 
-    // Diffuse
     // Only use one component to prevent discoloration of diffuse.
     vec3 kDiffuse = (1 - kSpecular.rrr);
 
-    // TODO: Doesn't look correct for skin materials.
+    // Metals have no diffuse component.
+    // This includes most skin materials.
     kDiffuse *= (1 - metalness);
 
     // Render passes.
-    // Only use one component to prevent discoloration of diffuse.
-    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse.x);
+    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
     vec3 rimTerm = RimLightingTerm(newNormal, V, specularIbl);
@@ -302,13 +305,9 @@ void main()
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
 
-    // TODO: Make this a function.
     // Emission
     vec3 emissionTerm = EmissionTerm(emissionColor);
     fragColor.rgb += emissionTerm * renderEmission;
-
-    // Gamma correction.
-    fragColor.rgb = GetSrgb(fragColor.rgb);
 
     if (renderWireframe == 1)
     {
@@ -317,6 +316,9 @@ void main()
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
 
+    // Gamma correction.
+    fragColor.rgb = GetSrgb(fragColor.rgb);
+
     // Alpha calculations
     fragColor.a = albedoColor.a;
     fragColor.a *= emissionColor.a;
@@ -324,7 +326,7 @@ void main()
     if (renderVertexColor == 1)
         fragColor.a *= colorSet1.a;
 
-    // TODO: 0 = alpha. 1 = alpha.
+    // 0 = alpha. 1 = alpha.
     // Values can be between 0 and 1, however.
     fragColor.a += param98.x;
 }

@@ -18,7 +18,7 @@ in vec4 boneWeights;
 out vec3 geomN;
 out vec3 geomTangent;
 out vec3 geomBitangent;
-out vec2 geomUV0;
+out vec2 geomMap1;
 out vec4 geomColorSet1;
 out vec4 geomColorSet5;
 out vec2 geomBake1;
@@ -49,9 +49,9 @@ void main()
     geomPosition = position.xyz;
 
     // Sprite sheet uvs.
-    geomUV0 = map1;
+    geomMap1 = map1;
     if (paramF1 == 1)
-        geomUV0 /= paramAA.xy;
+        geomMap1 /= paramAA.xy;
 
     geomTangent = Tangent0;
     geomBitangent = Bitangent0;

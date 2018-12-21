@@ -7,7 +7,7 @@ in vec3 geomN[];
 in vec3 geomPosition[];
 in vec3 geomTangent[];
 in vec3 geomBitangent[];
-in vec2 geomUV0[];
+in vec2 geomMap1[];
 in vec4 geomColorSet1[];
 in vec4 geomColorSet5[];
 in vec2 geomBake1[];
@@ -15,7 +15,7 @@ in vec2 geomBake1[];
 out vec3 N;
 out vec3 tangent;
 out vec3 bitangent;
-out vec2 UV0;
+out vec2 map1;
 out vec4 colorSet1;
 out vec4 colorSet5;
 out vec2 bake1;
@@ -50,7 +50,7 @@ void main()
         tangent = geomTangent[i];
         bitangent = geomBitangent[i];
 
-        UV0 = geomUV0[i];
+        map1 = geomMap1[i];
         colorSet1 = geomColorSet1[i];
         colorSet5 = geomColorSet5[i];
         position = geomPosition[i];
