@@ -72,31 +72,6 @@ namespace CrossMod.IO
                 Out = Out
             });
         }
-
-        public IOSEKey GetSEKey(IOAnimNode node, float Frame)
-        {
-            IOSEKey animationKey = new IOSEKey();
-
-            Vector3 defaultPos = new Vector3(0, 0, 0);
-            Quaternion defaultRot = new Quaternion(0, 0, 0, 0);
-
-            animationKey.Name = node.Name;
-
-            animationKey.pos = node.GetPosition(Frame, defaultPos); //SEAnim doesn't need default pos. if we don't get a key, we don't write.
-            animationKey.rot = node.GetQuaternionRotation(Frame, defaultRot); //SEAnim also doesn't need default rot.
-            animationKey.scl = node.GetScaling(Frame, defaultPos);
-
-            return animationKey;
-        }
-    }
-
-    public class IOSEKey
-    {
-        public float Frame;
-        public string Name;
-        public Vector3 pos;
-        public Quaternion rot;
-        public Vector3 scl;
     }
 
     public class IOAnimNode

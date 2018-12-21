@@ -88,6 +88,7 @@
     <Compile Include="IO\IOAnimation.cs" />
     <Compile Include="IO\IO_DAE.cs" />
     <Compile Include="IO\IO_OBJ.cs" />
+    <Compile Include="IO\IO_SEANIM.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\IExportableAnimationNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
@@ -445,6 +446,9 @@
     </Content>
     <Content Include="lib\GenericValueEditor.dll" />
     <Content Include="lib\GenericValueEditor.xml" />
+    <Content Include="lib\SELib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\SFGenericModel.dll" />
     <Content Include="lib\SFGenericModel.xml" />
     <Content Include="lib\SFGraphics.Controls.dll" />

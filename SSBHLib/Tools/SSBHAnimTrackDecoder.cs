@@ -55,7 +55,7 @@ namespace SSBHLib.Tools
 
         public object[] ReadTrack(AnimTrack Track)
         {
-            Console.WriteLine(Track.Name + " " + Track.Flags.ToString() + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
+            Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
             {
@@ -212,7 +212,7 @@ namespace SSBHLib.Tools
                         float YPOS = parser.ReadSingle();
                         float ZPOS = parser.ReadSingle();
 
-                        parser.ReadInt32(); // ????
+                        float unk = parser.ReadInt32(); // ????
 
                         parser.Seek((int)Track.DataOffset + DataStart);
                         for (int i = 0; i < FrameCount; i++)

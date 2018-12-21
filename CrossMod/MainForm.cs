@@ -7,8 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CrossMod.IO;
-using SELib;
-using SELib.Utilities;
 
 namespace CrossMod
 {
@@ -196,22 +194,7 @@ namespace CrossMod
                 // other types like SEAnim go here
                 if (fileName.EndsWith(".seanim"))
                 {
-                    SEAnim seOut = new SEAnim(); //init new SEAnim
-
-                    IOAnimation animData = ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation();
-
-                    foreach (IOAnimNode node in animData.Nodes) //iterate through each node
-                    {
-                        for (int i = 0; i < animData.FrameCount; i++)
-                        {
-                            var keyframe = animData.GetSEKey(node, i); //grab the key for the node, translate it into an SE key.
-                            seOut.AddTranslationKey(keyframe.Name, i, keyframe.pos.X, keyframe.pos.Y, keyframe.pos.Z); //plop that sucker into the object
-                            seOut.AddRotationKey(keyframe.Name, i, keyframe.rot.X, keyframe.rot.Y, keyframe.rot.Z, keyframe.rot.W);
-                            seOut.AddScaleKey(keyframe.Name, i, keyframe.scl.X, keyframe.scl.Y, keyframe.scl.Z);
-                        }
-                    }
-
-                    seOut.Write(fileName); //write it!
+                    IO_SEANIM.ExportIOAnimation(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation());
                 }
             }
         }
