@@ -35,13 +35,13 @@ namespace CrossMod.Nodes
             if (animation == null)
                 return false; //don't know how you got here, but stay out.
 
-            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation); //create the decoder
 
-            SEAnim seOut = new SEAnim();
+            SEAnim seOut = new SEAnim(); //create an seanim object
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
-                if (animGroup.Type != ANIM_TYPE.Transform) //SEAnim only supports transform-type animations.
+                if (animGroup.Type != ANIM_TYPE.Transform) //SEAnim only supports transform-type animations. skip the group.
                     continue;
 
                 foreach (AnimNode animNode in animGroup.Nodes)
@@ -53,7 +53,7 @@ namespace CrossMod.Nodes
                         if (track.Name.Equals("Transform"))
                         {
                             /*
-                             *  Array of AnimTrackTransform after being read by Decoder.
+                             *  Array of AnimTrackTransform
                              */
                             object[] Trans = decoder.ReadTrack(track);
                             
@@ -68,7 +68,6 @@ namespace CrossMod.Nodes
                         }
                     }
                 }
-
                 seOut.Write(fileName);
             }
 
