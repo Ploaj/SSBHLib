@@ -310,6 +310,10 @@ namespace CrossMod
 
             uint paramId = Rendering.RenderSettings.Instance.ParamId;
 
+            var values = new System.Collections.Generic.HashSet<string>();
+
+            var outputText = new System.Text.StringBuilder();
+
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
                 var matl = new MATL_Node();
@@ -321,11 +325,18 @@ namespace CrossMod
                     {
                         if ((uint)attribute.ParamID == paramId)
                         {
-                            System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
+                            string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
+                            if (!values.Contains(attribute.DataObject.ToString()))
+                            {
+                                outputText.AppendLine(text);
+                                values.Add(attribute.DataObject.ToString());
+                            }
                         }
                     }
                 }
             }
+
+            File.WriteAllText("output.txt", outputText.ToString());
         }
     }
 }
