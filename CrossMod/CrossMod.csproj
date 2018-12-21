@@ -42,6 +42,9 @@
     <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
+    <Reference Include="SELib">
+      <HintPath>..\..\..\Libraries\SELib\SELib.dll</HintPath>
+    </Reference>
     <Reference Include="SFGenericModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGenericModel.dll</HintPath>
