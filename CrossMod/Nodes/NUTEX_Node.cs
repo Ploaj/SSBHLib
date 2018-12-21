@@ -117,8 +117,6 @@ namespace CrossMod.Nodes
                 uint BlockHeightLog2 = (uint)Convert.ToString(blockHeight, 2).Length - 1;
                 uint tileMode = 0;
 
-                //int linesPerBlockHeight = (1 << (int)BlockHeightLog2) * 8;
-
                 uint bpp = GetBpps(Format);
 
                 R.BaseStream.Position = 0;
@@ -131,12 +129,8 @@ namespace CrossMod.Nodes
                         if (size % Alignment != 0)
                             size = size + (Alignment - (size % Alignment));
 
-                    //if (SwitchSwizzler.pow2_round_up(SwitchSwizzler.DIV_ROUND_UP((uint)Height, blkWidth)) < linesPerBlockHeight)
-                    //    blockHeightShift += 1;
-                    //Console.WriteLine($"{Path} {Width} {Height} {bpp} {Format} {size} {MipSizes[0]} {blkWidth} {blkHeight}");
                     try
                     {
-                        //Mipmaps.Add(SwitchSwizzler.deswizzle((uint)(Width >> i), (uint)(Height >> i), blkWidth, blkHeight, 1, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), R.ReadBytes(MipSizes[i])));
                         byte[] deswiz = SwitchSwizzler.deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), R.ReadBytes(ImageSize));
                         byte[] trimmed = new byte[MipSizes[0]];
                         Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
