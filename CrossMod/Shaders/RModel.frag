@@ -111,11 +111,9 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
     float roughX2 = roughX * roughX;
     float roughY2 = roughY * roughY;
 
-    // TODO: Does this need to be clamped?
     float xDotH = dot(tangent, H);
     float xTerm = (xDotH * xDotH) / roughX2;
 
-    // TODO: Does this need to be clamped?
     float yDotH = dot(bitangent, H);
     float yTerm = (yDotH * yDotH) / roughY2;
 

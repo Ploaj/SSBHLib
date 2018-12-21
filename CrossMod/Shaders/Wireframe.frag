@@ -1,6 +1,7 @@
-﻿#version 330
+#version 330
 
-float WireframeIntensity(vec3 distanceToEdges) {
+float WireframeIntensity(vec3 distanceToEdges)
+{
     float minDistance = min(min(distanceToEdges.x, distanceToEdges.y), distanceToEdges.z);
 
     // Constant wireframe thickness relative to the screen size.

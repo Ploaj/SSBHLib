@@ -25,7 +25,8 @@ noperspective out vec3 edgeDistance;
 
 // Adapted from code in David Wolff's "OpenGL 4.0 Shading Language Cookbook"
 // https://gamedev.stackexchange.com/questions/136915/geometry-shader-wireframe-not-rendering-correctly-glsl-opengl-c
-vec3 EdgeDistances() {
+vec3 EdgeDistances()
+{
     float a = length(gl_in[1].gl_Position.xyz - gl_in[2].gl_Position.xyz);
     float b = length(gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz);
     float c = length(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz);
