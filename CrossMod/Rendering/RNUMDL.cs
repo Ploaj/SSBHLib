@@ -218,6 +218,7 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.EmiMap2:
                         meshMaterial.emi2 = texture;
+                        meshMaterial.HasEmi2 = true;
                         break;
                     case (long)ParamId.BakeLitMap:
                         meshMaterial.bakeLit = texture;

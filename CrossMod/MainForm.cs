@@ -149,10 +149,52 @@ namespace CrossMod
                         ExportSMD.Tag = exportableNode;
                         fileTreeContextMenu.MenuItems.Add(ExportSMD);
                     }
+                    if (node is IExportableAnimationNode exportableAnimNode)
+                    {
+                        MenuItem ExportAnim = new MenuItem("Export Anim");
+                        ExportAnim.Click += exportExportableAnimation;
+                        ExportAnim.Tag = exportableAnimNode;
+                        fileTreeContextMenu.MenuItems.Add(ExportAnim);
+                    }
 
                     // show if it has at least 1 option
                     if (fileTreeContextMenu.MenuItems.Count != 0)
                         fileTreeContextMenu.Show(fileTree, p);
+                }
+            }
+        }
+
+        private void exportExportableAnimation(object sender, EventArgs args)
+        {
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd)|*.smd;"))
+            {
+                // need to get RSkeleton First for some types
+                if (fileName.EndsWith(".smd"))
+                {
+                    Rendering.RSkeleton SkeletonNode = null;
+                    if (FileTools.TryOpenFile(out string SkeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
+                    {
+                        if (SkeletonFileName != null)
+                        {
+                            SKEL_Node node = new SKEL_Node();
+                            node.Open(SkeletonFileName);
+                            SkeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
+                        }
+                    }
+                    if (SkeletonNode == null)
+                    {
+                        MessageBox.Show("No Skeleton File Selected");
+                        return;
+                    }
+
+                    if (fileName.EndsWith(".smd"))
+                        IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
+                }
+
+                // other types like SEAnim go here
+                if (fileName.EndsWith(".seanim"))
+                {
+
                 }
             }
         }
@@ -268,6 +310,10 @@ namespace CrossMod
 
             uint paramId = Rendering.RenderSettings.Instance.ParamId;
 
+            var values = new System.Collections.Generic.HashSet<string>();
+
+            var outputText = new System.Text.StringBuilder();
+
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
                 var matl = new MATL_Node();
@@ -279,11 +325,18 @@ namespace CrossMod
                     {
                         if ((uint)attribute.ParamID == paramId)
                         {
-                            System.Diagnostics.Debug.WriteLine($"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}");
+                            string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
+                            if (!values.Contains(attribute.DataObject.ToString()))
+                            {
+                                outputText.AppendLine(text);
+                                values.Add(attribute.DataObject.ToString());
+                            }
                         }
                     }
                 }
             }
+
+            File.WriteAllText("output.txt", outputText.ToString());
         }
     }
 }
