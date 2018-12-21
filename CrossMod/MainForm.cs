@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CrossMod.IO;
+using SELib;
+using SELib.Utilities;
 
 namespace CrossMod
 {
@@ -166,7 +168,7 @@ namespace CrossMod
 
         private void exportExportableAnimation(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd)|*.smd;"))
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd, *.seanim)|*.smd;*.seanim;"))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".smd"))
@@ -194,7 +196,22 @@ namespace CrossMod
                 // other types like SEAnim go here
                 if (fileName.EndsWith(".seanim"))
                 {
+                    SEAnim seOut = new SEAnim(); //init new SEAnim
 
+                    IOAnimation animData = ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation();
+
+                    foreach (IOAnimNode node in animData.Nodes) //iterate through each node
+                    {
+                        for (int i = 0; i < animData.FrameCount; i++)
+                        {
+                            var keyframe = animData.GetSEKey(node, i); //grab the key for the node, translate it into an SE key.
+                            seOut.AddTranslationKey(keyframe.Name, i, keyframe.pos.X, keyframe.pos.Y, keyframe.pos.Z); //plop that sucker into the object
+                            seOut.AddRotationKey(keyframe.Name, i, keyframe.rot.X, keyframe.rot.Y, keyframe.rot.Z, keyframe.rot.W);
+                            seOut.AddScaleKey(keyframe.Name, i, keyframe.scl.X, keyframe.scl.Y, keyframe.scl.Z);
+                        }
+                    }
+
+                    seOut.Write(fileName); //write it!
                 }
             }
         }

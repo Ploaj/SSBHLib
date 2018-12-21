@@ -72,6 +72,31 @@ namespace CrossMod.IO
                 Out = Out
             });
         }
+
+        public IOSEKey GetSEKey(IOAnimNode node, float Frame)
+        {
+            IOSEKey animationKey = new IOSEKey();
+
+            Vector3 defaultPos = new Vector3(0, 0, 0);
+            Quaternion defaultRot = new Quaternion(0, 0, 0, 0);
+
+            animationKey.Name = node.Name;
+
+            animationKey.pos = node.GetPosition(Frame, defaultPos); //SEAnim doesn't need default pos. if we don't get a key, we don't write.
+            animationKey.rot = node.GetQuaternionRotation(Frame, defaultRot); //SEAnim also doesn't need default rot.
+            animationKey.scl = node.GetScaling(Frame, defaultPos);
+
+            return animationKey;
+        }
+    }
+
+    public class IOSEKey
+    {
+        public float Frame;
+        public string Name;
+        public Vector3 pos;
+        public Quaternion rot;
+        public Vector3 scl;
     }
 
     public class IOAnimNode
@@ -151,6 +176,13 @@ namespace CrossMod.IO
                 TryGetValue(IOTrackType.ROTY, Frame, out float ValueY) ? ValueY : DefaultPositions.Y,
                 TryGetValue(IOTrackType.ROTZ, Frame, out float ValueZ) ? ValueZ : DefaultPositions.Z,
                 TryGetValue(IOTrackType.ROTW, Frame, out float ValueW) ? ValueW : DefaultPositions.W);
+        }
+
+        public Vector3 GetScaling( float Frame, Vector3 DefaultScale )
+        {
+            return new Vector3( TryGetValue(IOTrackType.SCAX, Frame, out float ValueX) ? ValueX: DefaultScale.X,
+                TryGetValue( IOTrackType.SCAY, Frame, out float ValueY) ? ValueY : DefaultScale.Y ,
+                TryGetValue( IOTrackType.SCAZ, Frame, out float ValueZ) ? ValueZ : DefaultScale.Z );
         }
     }
 
