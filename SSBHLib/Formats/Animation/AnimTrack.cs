@@ -5,6 +5,8 @@ namespace SSBHLib.Formats.Animation
     public enum ANIM_TRACKFLAGS
     {
         Transform = 0x0001,
+        Texture = 0x0002,
+        PatternIndex = 0x0005,
         Boolean = 0x0008,
         Vector4 = 0x0009,
         ConstTransform = 0x0200,

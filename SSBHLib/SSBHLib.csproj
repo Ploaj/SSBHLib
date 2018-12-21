@@ -61,6 +61,7 @@
     <Compile Include="Formats\Meshes\MeshBuffer.cs" />
     <Compile Include="Formats\Meshes\MeshObject.cs" />
     <Compile Include="Formats\Meshes\MeshRiggingGroup.cs" />
+    <Compile Include="Formats\SHDR.cs" />
     <Compile Include="Formats\SKEL.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
     <Compile Include="IO\ParseTag.cs" />
