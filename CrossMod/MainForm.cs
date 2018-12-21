@@ -149,10 +149,52 @@ namespace CrossMod
                         ExportSMD.Tag = exportableNode;
                         fileTreeContextMenu.MenuItems.Add(ExportSMD);
                     }
+                    if (node is IExportableAnimationNode exportableAnimNode)
+                    {
+                        MenuItem ExportAnim = new MenuItem("Export Anim");
+                        ExportAnim.Click += exportExportableAnimation;
+                        ExportAnim.Tag = exportableAnimNode;
+                        fileTreeContextMenu.MenuItems.Add(ExportAnim);
+                    }
 
                     // show if it has at least 1 option
                     if (fileTreeContextMenu.MenuItems.Count != 0)
                         fileTreeContextMenu.Show(fileTree, p);
+                }
+            }
+        }
+
+        private void exportExportableAnimation(object sender, EventArgs args)
+        {
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd)|*.smd;"))
+            {
+                // need to get RSkeleton First for some types
+                if (fileName.EndsWith(".smd"))
+                {
+                    Rendering.RSkeleton SkeletonNode = null;
+                    if (FileTools.TryOpenFile(out string SkeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
+                    {
+                        if (SkeletonFileName != null)
+                        {
+                            SKEL_Node node = new SKEL_Node();
+                            node.Open(SkeletonFileName);
+                            SkeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
+                        }
+                    }
+                    if (SkeletonNode == null)
+                    {
+                        MessageBox.Show("No Skeleton File Selected");
+                        return;
+                    }
+
+                    if (fileName.EndsWith(".smd"))
+                        IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
+                }
+
+                // other types like SEAnim go here
+                if (fileName.EndsWith(".seanim"))
+                {
+
                 }
             }
         }

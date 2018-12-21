@@ -11,6 +11,50 @@ namespace CrossMod.IO
 {
     public class IO_SMD
     {
+        public static void ExportIOAnimationAsSMD(string FileName, IOAnimation Animation, RSkeleton Skeleton)
+        {
+            if (Skeleton == null)
+                return;
+
+            StringBuilder o = new StringBuilder();
+
+            o.AppendLine("version 1");
+
+            //skeleton
+            {
+                o.AppendLine("nodes");
+                foreach (RBone bone in Skeleton.Bones)
+                {
+                    o.AppendLine($"{bone.ID} \"{bone.Name}\" {bone.ParentID}");
+                }
+                o.AppendLine("end");
+            }
+
+            //animation
+            o.AppendLine("skeleton");
+            {
+                for(int i = 0; i < Animation.FrameCount; i++)
+                {
+                    o.AppendLine($"time {i}");
+                    foreach (RBone bone in Skeleton.Bones)
+                    {
+                        Vector3 Position = bone.Position;
+                        Vector3 Rotation = bone.EulerRotation;
+                        if (Animation.TryGetNodeByName(bone.Name, out IOAnimNode Node))
+                        {
+                            Position = Node.GetPosition(i, Position);
+                            Rotation = Tools.CrossMath.ToEulerAngles(Node.GetQuaternionRotation(i, bone.Rotation).Inverted());
+                        }
+                        o.AppendLine($"{bone.ID} {Position.X} {Position.Y} {Position.Z} {Rotation.X} {Rotation.Y} {Rotation.Z}");
+                    }
+
+                }
+            }
+            o.AppendLine("end");
+
+            File.WriteAllText(FileName, o.ToString());
+        }
+
         public static void ExportIOModelAsSMD(string FileName, IOModel Model)
         {
             StringBuilder o = new StringBuilder();
