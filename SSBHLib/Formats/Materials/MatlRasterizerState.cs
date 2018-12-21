@@ -8,7 +8,7 @@
 
             public int Unk2 { get; set; }
 
-            public int Unk3 { get; set; }
+            public float Unk3 { get; set; }
 
             public int Unk4 { get; set; }
 
