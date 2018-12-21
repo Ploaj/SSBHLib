@@ -57,6 +57,15 @@ namespace CrossMod.Rendering
         }
     }
 
+    public class RMaterialAnimation<T>
+    {
+        public string MaterialName;
+
+        public string AttributeName;
+
+        public RKeyGroup<T> Keys = new RKeyGroup<T>();
+    }
+
     public class RVisibilityAnimation
     {
         public string MeshName;

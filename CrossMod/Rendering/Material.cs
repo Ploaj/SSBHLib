@@ -7,6 +7,8 @@ namespace CrossMod.Rendering
 {
     public class Material
     {
+        public string Name;
+
         public Resources.DefaultTextures defaultTextures;
         public Texture col = null;
 

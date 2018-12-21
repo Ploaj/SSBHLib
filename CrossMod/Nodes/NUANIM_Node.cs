@@ -36,14 +36,14 @@ namespace CrossMod.Nodes
 
             SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
 
-            foreach (ANIM_Group animGroup in animation.Animations)
+            foreach (AnimGroup animGroup in animation.Animations)
             {
                 // Material Animations
                 if (animGroup.Type == ANIM_TYPE.Material)
                 {
-                    foreach (ANIM_Node animNode in animGroup.Nodes)
+                    foreach (AnimNode animNode in animGroup.Nodes)
                     {
-                        foreach (ANIM_Track track in animNode.Tracks)
+                        foreach (AnimTrack track in animNode.Tracks)
                         {
                             object[] MaterialAnim = decoder.ReadTrack(track);
                         }
@@ -52,13 +52,13 @@ namespace CrossMod.Nodes
                 // Visibility Animations
                 if (animGroup.Type == ANIM_TYPE.Visibilty)
                 {
-                    foreach (ANIM_Node animNode in animGroup.Nodes)
+                    foreach (AnimNode animNode in animGroup.Nodes)
                     {
                         RVisibilityAnimation visAnim = new RVisibilityAnimation()
                         {
                             MeshName = animNode.Name
                         };
-                        foreach (ANIM_Track track in animNode.Tracks)
+                        foreach (AnimTrack track in animNode.Tracks)
                         {
                             if (track.Name.Equals("Visibility"))
                             {
@@ -80,13 +80,13 @@ namespace CrossMod.Nodes
                 // Bone Animations
                 if (animGroup.Type == ANIM_TYPE.Transform)
                 {
-                    foreach (ANIM_Node animNode in animGroup.Nodes)
+                    foreach (AnimNode animNode in animGroup.Nodes)
                     {
                         RTransformAnimation tfrmAnim = new RTransformAnimation()
                         {
                             Name = animNode.Name
                         };
-                        foreach (ANIM_Track track in animNode.Tracks)
+                        foreach (AnimTrack track in animNode.Tracks)
                         {
                             if (track.Name.Equals("Transform"))
                             {

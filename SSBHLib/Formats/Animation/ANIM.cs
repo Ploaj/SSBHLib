@@ -17,7 +17,7 @@
         
         public string Name { get; set; }
 
-        public ANIM_Group[] Animations { get; set; }
+        public AnimGroup[] Animations { get; set; }
 
         public byte[] Buffer { get; set; }
     }

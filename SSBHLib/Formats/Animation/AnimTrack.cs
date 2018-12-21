@@ -2,21 +2,21 @@
 
 namespace SSBHLib.Formats.Animation
 {
-    [Flags]
     public enum ANIM_TRACKFLAGS
     {
-        Transform = 0x1,
-        Visibilty = 0x8,
-        SingleTransform = 0x0200,
-        HasTracks = 0x0400,
-        SingleTrack = 0x0500,
+        Transform = 0x0001,
+        Boolean = 0x0008,
+        Vector4 = 0x0009,
+        ConstTransform = 0x0200,
+        Animated = 0x0400,
+        Constant = 0x0500,
     }
 
-    public class ANIM_Track : ISSBH_File
+    public class AnimTrack : ISSBH_File
     {
         public string Name { get; set; }
 
-        public ANIM_TRACKFLAGS Flags { get; set; }
+        public uint Flags { get; set; }
 
         public uint FrameCount { get; set; }
 

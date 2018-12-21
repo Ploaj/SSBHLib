@@ -6,16 +6,16 @@ using System.IO;
 
 namespace SSBHLib.Tools
 {
-    public class AnimTrackBool
+    public struct AnimTrackBool
     {
-        public bool Value { get; set; } = false;
+        public bool Value { get; set; }
         public AnimTrackBool(bool Value)
         {
             this.Value = Value;
         }
     }
 
-    public class AnimTrackTransform
+    public struct AnimTrackTransform
     {
         public float X;
         public float Y;
@@ -31,7 +31,7 @@ namespace SSBHLib.Tools
         public float SZ;
     }
 
-    public class AnimTrackCustomVector4
+    public struct AnimTrackCustomVector4
     {
         public float X;
         public float Y;
@@ -48,17 +48,22 @@ namespace SSBHLib.Tools
             this.AnimFile = AnimFile;
         }
 
-        public object[] ReadTrack(ANIM_Track Track)
+        private bool CheckFlag(uint Flags, uint Mask, ANIM_TRACKFLAGS ToCheck)
         {
-            Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
+            return (Flags & Mask) == (uint)ToCheck;
+        }
+
+        public object[] ReadTrack(AnimTrack Track)
+        {
+            Console.WriteLine(Track.Name + " " + Track.Flags.ToString() + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
             {
                 parser.Seek(Track.DataOffset);
 
-                if (Track.Flags.HasFlag(ANIM_TRACKFLAGS.Visibilty))
+                if (CheckFlag(Track.Flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
                 {
-                    if ((int)Track.Flags == 0x0408)
+                    if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Animated))
                     {
                         int Unk_4 = parser.ReadInt16();
                         int TrackFlag = parser.ReadInt16();
@@ -74,14 +79,14 @@ namespace SSBHLib.Tools
                         }
                     }
                     else
-                    if ((int)Track.Flags == 0x0508)
+                    if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Constant))
                     {
                         output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
                     }
                 }
-                if (Track.Flags.HasFlag(ANIM_TRACKFLAGS.Transform))
+                if (CheckFlag(Track.Flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
                 {
-                    if ((int)Track.Flags == 0x0401)
+                    if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Animated))
                     {
                         int Unk_4 = parser.ReadInt16();
                         int TrackFlag = parser.ReadInt16();
@@ -266,7 +271,7 @@ namespace SSBHLib.Tools
                         }
 
                     }
-                    else if ((int)Track.Flags == 0x0201)
+                    else if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.ConstTransform))
                     {
                         output.Add(new AnimTrackTransform()
                         {

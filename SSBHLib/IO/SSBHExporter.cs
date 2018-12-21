@@ -185,8 +185,6 @@ namespace SSBHLib.IO
                 WriteSSBHFile(v);
                 Pad(0x8);
             }
-            else if (t == typeof(Formats.Animation.ANIM_TRACKFLAGS))
-                Write((int)value);
             else if (t.IsEnum)
                 Write((long)value);
             else if (t == typeof(byte))
