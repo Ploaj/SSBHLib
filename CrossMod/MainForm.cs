@@ -270,6 +270,8 @@ namespace CrossMod
 
             var values = new System.Collections.Generic.HashSet<string>();
 
+            var outputText = new System.Text.StringBuilder();
+
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
                 var matl = new MATL_Node();
@@ -284,13 +286,15 @@ namespace CrossMod
                             string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
                             if (!values.Contains(attribute.DataObject.ToString()))
                             {
-                                System.Diagnostics.Debug.WriteLine(text);
+                                outputText.AppendLine(text);
                                 values.Add(attribute.DataObject.ToString());
                             }
                         }
                     }
                 }
             }
+
+            File.WriteAllText("output.txt", outputText.ToString());
         }
     }
 }

@@ -10,9 +10,9 @@
 
             public float Unk3 { get; set; }
 
-            public int Unk4 { get; set; }
+            public float Unk4 { get; set; }
 
-            public int Unk5 { get; set; }
+            public float Unk5 { get; set; }
 
             public int Unk6 { get; set; }
 
