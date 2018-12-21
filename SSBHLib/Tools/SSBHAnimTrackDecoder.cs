@@ -84,6 +84,87 @@ namespace SSBHLib.Tools
                         output.Add(new AnimTrackBool(parser.ReadBits(1) == 1));
                     }
                 }
+                if (CheckFlag(Track.Flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
+                {
+                    if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Animated))
+                    {
+                        int Unk_4 = parser.ReadInt16();
+                        int TrackFlag = parser.ReadInt16();
+                        int Unk1 = parser.ReadInt16();
+                        int Unk2 = parser.ReadInt16();
+                        int DataStart = parser.ReadInt32();
+                        int FrameCount = parser.ReadInt32();
+
+                        int[] ByteCounts = new int[9];
+                        int[] BitCounts = new int[9];
+                        float[] Start = new float[9];
+                        float[] End = new float[9];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Start[i] = parser.ReadSingle();
+                            End[i] = parser.ReadSingle();
+                            long Count = parser.ReadInt64();
+                            long bytes = (Count >> 3);
+                            int bits = ((int)Count & 0x7);
+
+                            if ((i >= 0 && i <= 0 && (TrackFlag & 0x3) == 0x3) //isotrophic scale
+                                || (i >= 0 && i <= 2 && (TrackFlag & 0x3) == 0x1) //normal scale
+                                || (i > 2 && i <= 5 && (TrackFlag & 0x4) > 0)
+                                || (i > 5 && i <= 8 && (TrackFlag & 0x8) > 0))
+                            {
+                                //reads
+                                {
+                                    BitCounts[i] = bits;
+                                    ByteCounts[i] = (int)bytes;
+                                }
+                            }
+                        }
+
+                        float X = parser.ReadSingle();
+                        float Y = parser.ReadSingle();
+                        float Z = parser.ReadSingle();
+                        float W = parser.ReadSingle();
+
+                        parser.Seek((int)Track.DataOffset + DataStart);
+                        for (int i = 0; i < FrameCount; i++)
+                        {
+                            AnimTrackCustomVector4 Vector = new AnimTrackCustomVector4();
+                            for (int j = 0; j < 4; j++)
+                            {
+                                int ValueBitCount = ByteCounts[j] * 8 + BitCounts[j];
+                                int Value = parser.ReadBits(ValueBitCount);
+                                int scale = 0;
+                                for (int k = 0; k < ValueBitCount; k++)
+                                    scale |= 0x1 << k;
+
+                                float FrameValue = Lerp(Start[j], End[j], 0, 1, Value / (float)scale);
+                                if (float.IsNaN(FrameValue))
+                                    FrameValue = 0;
+
+                                switch (j)
+                                {
+                                    case 0: if (ValueBitCount > 0) Vector.X = FrameValue; else Vector.X = X; break;
+                                    case 1: if (ValueBitCount > 0) Vector.Y = FrameValue; else Vector.Y = Y; break;
+                                    case 2: if (ValueBitCount > 0) Vector.Z = FrameValue; else Vector.Z = Z; break;
+                                    case 3: if (ValueBitCount > 0) Vector.W = FrameValue; else Vector.W = W; break;
+                                }
+                            }
+
+                            output.Add(Vector);
+                        }
+                    }
+                    else
+                    if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Constant))
+                    {
+                        output.Add(new AnimTrackCustomVector4()
+                        {
+                            X = parser.ReadSingle(),
+                            Y = parser.ReadSingle(),
+                            Z = parser.ReadSingle(),
+                            W = parser.ReadSingle()
+                        });
+                    }
+                }
                 if (CheckFlag(Track.Flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
                 {
                     if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Animated))
