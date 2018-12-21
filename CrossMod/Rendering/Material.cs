@@ -25,6 +25,7 @@ namespace CrossMod.Rendering
         public Texture emi = null;
 
         public Texture emi2 = null;
+        public bool HasEmi2 { get; set; } = false;
 
         public Texture bakeLit = null;
 
@@ -133,7 +134,10 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("inkNorMap", inkNor);
 
             genericMaterial.AddTexture("emiMap", emi);
-            genericMaterial.AddTexture("emi2Map", emi2);
+            if (HasEmi2)
+                genericMaterial.AddTexture("emi2Map", emi2);
+            else
+                genericMaterial.AddTexture("emi2Map", emi);
 
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
