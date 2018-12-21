@@ -181,6 +181,21 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
     return paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 }
 
+vec3 EmissionTerm(vec4 emissionColor)
+{
+    vec3 emissionTerm = vec3(0);
+    emissionTerm.rgb += emissionColor.rgb;
+    return emissionTerm;
+}
+
+vec4 GetEmissionColor()
+{
+    vec4 emissionColor = texture(emiMap, UV0).rgba;
+    vec4 emission2Color = texture(emi2Map, UV0).rgba;
+    emissionColor.rgb = mix(emissionColor.rgb, emission2Color.rgb, emission2Color.a);
+    return emissionColor;
+}
+
 vec4 GetAlbedoColor()
 {
     // Blend two diffuse layers based on alpha.
@@ -217,8 +232,7 @@ void main()
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor();
-    vec4 emissionColor = texture(emiMap, UV0).rgba;
-    vec4 emission2Color = texture(emi2Map, UV0).rgba;
+    vec4 emissionColor = GetEmissionColor();
     vec4 prmColor = texture(prmMap, UV0).xyzw;
 
     // Material masking.
@@ -276,7 +290,6 @@ void main()
 
     // Render passes.
     // Only use one component to prevent discoloration of diffuse.
-
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse.x);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
@@ -291,9 +304,7 @@ void main()
 
     // TODO: Make this a function.
     // Emission
-    vec3 emissionTerm = vec3(0);
-    emissionTerm.rgb += emissionColor.rgb * renderEmission;
-    emissionTerm.rgb = mix(emissionTerm.rgb, emission2Color.rgb, emission2Color.a);
+    vec3 emissionTerm = EmissionTerm(emissionColor);
     fragColor.rgb += emissionTerm * renderEmission;
 
     // Gamma correction.
