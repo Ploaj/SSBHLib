@@ -34,15 +34,17 @@ namespace CrossMod.Nodes
     public class NUTEX_Node : FileNode, IRenderableNode
     {
         public List<byte[]> Mipmaps;
-        public int Width;
-        public int Height;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int Depth { get; private set; }
+
         public NUTEX_FORMAT Format;
-        public string TexName;
+        public string TexName { get; private set; }
 
         // Don't generate redundant textures.
         private RTexture renderableTexture = null;
 
-        // TODO: Fix these formats.
+        // TODO: Fix formats using InternalFormat.Rgba.
         public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
@@ -71,44 +73,50 @@ namespace CrossMod.Nodes
             SelectedImageKey = "texture";
         }
 
-        public override void Open(string Path)
+        public override void Open(string path)
         {
-            //hingadingadurgan
-            using (BinaryReader R  = new BinaryReader(new FileStream(Path, FileMode.Open)))
+            using (BinaryReader reader  = new BinaryReader(new FileStream(path, FileMode.Open)))
             {
                 Mipmaps = new List<byte[]>();
                 // TODO: Why are there empty streams?
-                if (R.BaseStream.Length == 0)
+                if (reader.BaseStream.Length == 0)
                     return;
 
-                R.BaseStream.Position = R.BaseStream.Length - 0xB0;
+                reader.BaseStream.Position = reader.BaseStream.Length - 0xB0;
 
 
-                int[] MipSizes = new int[16];
-                for (int i = 0; i < MipSizes.Length; i++)
-                    MipSizes[i] = R.ReadInt32();
-                R.ReadChars(4); // TNX magic
+                int[] mipmapSizes = new int[16];
+                for (int i = 0; i < mipmapSizes.Length; i++)
+                    mipmapSizes[i] = reader.ReadInt32();
+
+                reader.ReadChars(4); // TNX magic
+
                 TexName = "";
-                for(int i = 0; i < 0x40; i++)
+                for (int i = 0; i < 0x40; i++)
                 {
-                    byte b = R.ReadByte();
+                    byte b = reader.ReadByte();
                     if (b != 0)
                         TexName += (char)b;
                 }
-                Width = R.ReadInt32();
-                Height = R.ReadInt32();
-                int Unk = R.ReadInt32();
-                Format = (NUTEX_FORMAT)R.ReadByte();
-                R.ReadByte();
-                ushort Padding = R.ReadUInt16();
-                R.ReadUInt32();
-                int MipCount = R.ReadInt32();
-                int Alignment = R.ReadInt32();
-                int ArrayCount = R.ReadInt32();
-                int ImageSize = R.ReadInt32();
-                char[] Magic = R.ReadChars(4);
-                int MajorVersion = R.ReadInt16();
-                int MinorVersion = R.ReadInt16();
+
+                Width = reader.ReadInt32();
+                Height = reader.ReadInt32();
+                Depth = reader.ReadInt32();
+
+                Format = (NUTEX_FORMAT)reader.ReadByte();
+
+                reader.ReadByte();
+
+                ushort Padding = reader.ReadUInt16();
+                reader.ReadUInt32();
+
+                int MipCount = reader.ReadInt32();
+                int Alignment = reader.ReadInt32();
+                int ArrayCount = reader.ReadInt32();
+                int ImageSize = reader.ReadInt32();
+                char[] Magic = reader.ReadChars(4);
+                int MajorVersion = reader.ReadInt16();
+                int MinorVersion = reader.ReadInt16();
                 
                 uint blkWidth = (uint)blkDims[Format].X;
                 uint blkHeight = (uint)blkDims[Format].Y;
@@ -119,27 +127,26 @@ namespace CrossMod.Nodes
 
                 uint bpp = GetBpps(Format);
 
-                R.BaseStream.Position = 0;
+                reader.BaseStream.Position = 0;
                 int blockHeightShift = 0;
                 for (int i = 0; i < 1; i++)
                 {
-                    int size = MipSizes[i];
+                    int size = mipmapSizes[i];
 
-                    if (i == 0)
-                        if (size % Alignment != 0)
-                            size = size + (Alignment - (size % Alignment));
+                    if (i == 0 && size % Alignment != 0)
+                        size += Alignment - (size % Alignment);
 
                     try
                     {
-                        byte[] deswiz = SwitchSwizzler.deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), R.ReadBytes(ImageSize));
-                        byte[] trimmed = new byte[MipSizes[0]];
+                        byte[] deswiz = SwitchSwizzler.deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), reader.ReadBytes(ImageSize));
+                        byte[] trimmed = new byte[mipmapSizes[0]];
                         Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
 
                         Mipmaps.Add(trimmed);
                     }
-                    catch
+                    catch (Exception e)
                     {
-
+                        System.Diagnostics.Debug.WriteLine(e.Message);
                     }
                 }
             }
