@@ -105,7 +105,7 @@ namespace CrossMod.Rendering
                 if (a.DataObject == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"{(MatlEnums.ParamDataType) a.DataType} {a.ParamID} {a.DataObject}");
+                System.Diagnostics.Debug.WriteLine($"{a.DataType} {a.ParamID} {a.DataObject}");
 
                 switch (a.DataType)
                 {
@@ -127,6 +127,9 @@ namespace CrossMod.Rendering
                     case MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
                         meshMaterial.floatByParamId[(long)a.ParamID] = floatValue;
+                        break;
+                    case MatlEnums.ParamDataType.BlendState:
+                        SetBlendState(meshMaterial, a);
                         break;
                 }
             }
@@ -179,6 +182,22 @@ namespace CrossMod.Rendering
                 return OpenTK.Graphics.OpenGL.TextureWrapMode.MirroredRepeat;
             else
                 return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
+        }
+        
+        private void SetBlendState(Material meshMaterial, MatlAttribute a)
+        {
+            // TODO: There's a cleaner way to do this.
+            var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
+
+            if (blendState.Unk3 == 1)
+                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+            else if (blendState.Unk3 == 6)
+                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.SrcAlpha;
+
+            if (blendState.Unk6 == 1)
+                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+            else if (blendState.Unk6 == 6)
+                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.OneMinusSrcAlpha;
         }
 
         private void SetTextureParameter(Material meshMaterial, MatlAttribute a)

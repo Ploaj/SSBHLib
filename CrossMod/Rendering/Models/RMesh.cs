@@ -37,6 +37,7 @@ namespace CrossMod.Rendering.Models
             if (Material != null)
             {
                 SetTextureUniforms(shader);
+                SetRenderState();
             }
 
             RenderMesh?.Draw(shader, camera);
@@ -50,6 +51,11 @@ namespace CrossMod.Rendering.Models
 
             var genericMaterial = Material.CreateGenericMaterial(Material);
             genericMaterial.SetShaderUniforms(shader);
+        }
+
+        private void SetRenderState()
+        {
+            RenderMesh.SetRenderState(Material);
         }
     }
 }

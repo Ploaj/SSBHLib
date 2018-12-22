@@ -2,6 +2,7 @@
 using SFGraphics.GLObjects.Textures;
 using SFGenericModel.Materials;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace CrossMod.Rendering
 {
@@ -10,6 +11,10 @@ namespace CrossMod.Rendering
         public string Name;
 
         public Resources.DefaultTextures defaultTextures;
+
+        public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
+        public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
+
         public Texture col = null;
 
         public Texture col2 = null;
@@ -19,24 +24,17 @@ namespace CrossMod.Rendering
         public bool HasDiffuse { get; set; } = false;
 
         public Texture nor = null;
-
         public Texture prm = null;
-
         public Texture emi = null;
 
         public Texture emi2 = null;
         public bool HasEmi2 { get; set; } = false;
 
         public Texture bakeLit = null;
-
         public Texture proj = null;
-
         public Texture gao = null;
-
         public Texture difCube = null;
-
         public Texture inkNor = null;
-
         public TextureCubeMap specularIbl = null;
 
         public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
