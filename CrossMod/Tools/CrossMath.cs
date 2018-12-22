@@ -55,7 +55,7 @@ namespace CrossMod.Tools
                 x = (float)Math.Atan2(mat.M32, mat.M22);
                 z = 0;
             }
-            return new Vector3(x, y, z);
+            return new Vector3(x, y, z) * -1;
         }
 
         public static Vector3 ToEulerAngles(Quaternion q)
