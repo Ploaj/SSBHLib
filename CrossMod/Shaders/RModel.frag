@@ -25,6 +25,12 @@ uniform sampler2D difCubemap;
 uniform int hasDiffuse;
 uniform sampler2D difMap;
 
+uniform int hasDiffuse2;
+uniform sampler2D dif2Map;
+
+uniform int hasDiffuse3;
+uniform sampler2D dif3Map;
+
 uniform sampler2D iblLut;
 
 uniform samplerCube diffusePbrCube;
@@ -205,6 +211,8 @@ vec4 GetAlbedoColor()
     vec4 albedoColor = texture(colMap, map1).rgba;
     vec4 albedoColor2 = texture(col2Map, map1).rgba;
     vec4 diffuseColor = texture(difMap, map1).rgba;
+    vec4 diffuse2Color = texture(dif2Map, map1).rgba;
+    vec4 diffuse3Color = texture(dif3Map, map1).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
@@ -217,6 +225,11 @@ vec4 GetAlbedoColor()
 
     if (hasDiffuse == 1)
         albedoColor.rgb = Blend(albedoColor, diffuseColor);
+    if (hasDiffuse2 == 1)
+        albedoColor.rgb = Blend(albedoColor, diffuse2Color);
+    // TODO: Is the blending always additive?
+    if (hasDiffuse3 == 1)
+        albedoColor.rgb += diffuse3Color.rgb;
 
     return albedoColor;
 }

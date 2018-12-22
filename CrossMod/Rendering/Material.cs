@@ -23,6 +23,12 @@ namespace CrossMod.Rendering
         public Texture dif = null;
         public bool HasDiffuse { get; set; } = false;
 
+        public Texture dif2 = null;
+        public bool HasDiffuse2 { get; set; } = false;
+
+        public Texture dif3 = null;
+        public bool HasDiffuse3 { get; set; } = false;
+
         public Texture nor = null;
         public Texture prm = null;
         public Texture emi = null;
@@ -60,6 +66,8 @@ namespace CrossMod.Rendering
             specularIbl = defaultTextures.blackCube;
             difCube = defaultTextures.defaultBlack;
             dif = defaultTextures.defaultBlack;
+            dif2 = defaultTextures.defaultBlack;
+            dif3 = defaultTextures.defaultBlack;
         }
 
         public GenericMaterial CreateGenericMaterial(Material material)
@@ -144,6 +152,12 @@ namespace CrossMod.Rendering
 
             genericMaterial.AddTexture("difMap", dif);
             genericMaterial.AddBoolToInt("hasDiffuse", HasDiffuse);
+
+            genericMaterial.AddTexture("dif2Map", dif2);
+            genericMaterial.AddBoolToInt("hasDiffuse2", HasDiffuse2);
+
+            genericMaterial.AddTexture("dif3Map", dif3);
+            genericMaterial.AddBoolToInt("hasDiffuse3", HasDiffuse3);
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)

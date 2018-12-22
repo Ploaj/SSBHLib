@@ -225,7 +225,12 @@ namespace CrossMod.Nodes
                     if (!SFGraphics.GlUtils.OpenGLExtensions.IsAvailable("GL_ARB_texture_compression_bptc"))
                         throw new Rendering.Exceptions.MissingExtensionException("GL_ARB_texture_compression_bptc");
 
-                    var sfTex = new SFGraphics.GLObjects.Textures.Texture2D();
+                    var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                    {
+                        // Set defaults until all the sampler parameters are added.
+                        TextureWrapS = TextureWrapMode.Repeat,
+                        TextureWrapT = TextureWrapMode.Repeat
+                    };
 
                     if (glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
                         sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
