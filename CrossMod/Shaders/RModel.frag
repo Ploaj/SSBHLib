@@ -196,6 +196,7 @@ vec3 Blend(vec4 a, vec4 b)
     return mix(a.rgb, b.rgb, b.a);
 }
 
+// TODO: Add to separate shader.
 vec4 GetEmissionColor()
 {
     vec4 emissionColor = texture(emiMap, map1).rgba;
@@ -204,6 +205,7 @@ vec4 GetEmissionColor()
     return emissionColor;
 }
 
+// TODO: Add to separate shader.
 vec4 GetAlbedoColor()
 {
     // Blend two diffuse layers based on alpha.

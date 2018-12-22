@@ -14,8 +14,22 @@ uniform sampler2D col2Map;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
-uniform sampler2D gaoMap;
+uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
+uniform sampler2D gaoMap;
+uniform sampler2D inkNorMap;
+// TODO: Cubemap loading doesn't work yet.
+uniform sampler2D difCubemap;
+
+uniform int hasDiffuse;
+uniform sampler2D difMap;
+
+uniform int hasDiffuse2;
+uniform sampler2D dif2Map;
+
+uniform int hasDiffuse3;
+uniform sampler2D dif3Map;
+
 uniform sampler2D projMap;
 
 uniform sampler2D uvPattern;
@@ -72,17 +86,47 @@ float GgxShading(vec3 N, vec3 H, float roughness)
     return numerator / denominator;
 }
 
+vec3 Blend(vec4 a, vec4 b)
+{
+    return mix(a.rgb, b.rgb, b.a);
+}
+
+// TODO: Add to separate shader.
+vec4 GetEmissionColor()
+{
+    vec4 emissionColor = texture(emiMap, map1).rgba;
+    vec4 emission2Color = texture(emi2Map, map1).rgba;
+    emissionColor.rgb = Blend(emissionColor, emission2Color);
+    return emissionColor;
+}
+
+// TODO: Add to separate shader.
 vec4 GetAlbedoColor()
 {
     // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, map1).rgba;
     vec4 albedoColor2 = texture(col2Map, map1).rgba;
+    vec4 diffuseColor = texture(difMap, map1).rgba;
+    vec4 diffuse2Color = texture(dif2Map, map1).rgba;
+    vec4 diffuse3Color = texture(dif3Map, map1).rgba;
 
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
 
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
+
+    // We can do this because the default value is black.
+    // Materials won't have col and diffuse cubemaps.
+    albedoColor.rgb += texture(difCubemap, map1).rgb;
+
+    if (hasDiffuse == 1)
+        albedoColor.rgb = Blend(albedoColor, diffuseColor);
+    if (hasDiffuse2 == 1)
+        albedoColor.rgb = Blend(albedoColor, diffuse2Color);
+    // TODO: Is the blending always additive?
+    if (hasDiffuse3 == 1)
+        albedoColor.rgb += diffuse3Color.rgb;
 
     return albedoColor;
 }
@@ -99,7 +143,7 @@ void main()
     // Get texture colors.
 	vec4 albedoColor = GetAlbedoColor();
 	vec4 prmColor = texture(prmMap, map1).xyzw;
-	vec4 emiColor = texture(emiMap, map1).rgba;
+	vec4 emiColor = GetEmissionColor();
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;
