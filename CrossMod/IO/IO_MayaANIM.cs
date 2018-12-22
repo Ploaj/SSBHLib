@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OpenTK;
 using CrossMod.Rendering;
+using System.Linq;
 
 namespace CrossMod.IO
 {
@@ -102,7 +103,7 @@ namespace CrossMod.IO
             public AnimData()
             {
                 input = InputType.time;
-                output = OutputType.angular;
+                output = OutputType.linear;
                 preInfinity = InfinityType.constant;
                 postInfinity = InfinityType.constant;
                 weighted = false;
@@ -142,11 +143,11 @@ namespace CrossMod.IO
                     int TrackIndex = 0;
                     if(animBone.atts.Count == 0)
                     {
-                        file.WriteLine($"anim {animBone.name} {Row} 1 {TrackIndex++};");
+                        file.WriteLine($"anim {animBone.name} 0 1 {TrackIndex++};");
                     }
                     foreach (AnimData animData in animBone.atts)
                     {
-                        file.WriteLine($"anim {animData.controlType}.{animData.type} {animData.type} {animBone.name} {Row} 1 {TrackIndex++};");
+                        file.WriteLine($"anim {animData.controlType}.{animData.type} {animData.type} {animBone.name} 0 1 {TrackIndex++};");
                         file.WriteLine("animData {");
                         file.WriteLine($" input {animData.input};");
                         file.WriteLine($" output {animData.output};");
@@ -213,6 +214,7 @@ namespace CrossMod.IO
 
             // get bone order
             List<RBone> BonesInOrder = getBoneTreeOrder(Skeleton);
+            BonesInOrder = BonesInOrder.OrderBy(f => f.Name, StringComparer.Ordinal).ToList();
 
             foreach(RBone b in BonesInOrder)
             {
@@ -244,6 +246,9 @@ namespace CrossMod.IO
                         AnimData rx = new AnimData(); rx.controlType = ControlType.rotate; rx.type = TrackType.rotateX;
                         AnimData ry = new AnimData(); ry.controlType = ControlType.rotate; ry.type = TrackType.rotateY;
                         AnimData rz = new AnimData(); rz.controlType = ControlType.rotate; rz.type = TrackType.rotateZ;
+                        rx.output = OutputType.angular;
+                        ry.output = OutputType.angular;
+                        rz.output = OutputType.angular;
 
                         List<float> KeyFrames = new List<float>();
                         foreach (IOAnimKey key in ioAnimNode.GetKeysForTrack(IOTrackType.ROTX))
@@ -253,7 +258,7 @@ namespace CrossMod.IO
 
                         for(int i = 0; i < KeyFrames.Count; i++)
                         {
-                            Vector3 EulerAngles = Tools.CrossMath.ToEulerAngles(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
+                            Vector3 EulerAngles = quattoeul(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
                             rx.keys.Add(new AnimKey()
                             {
                                 input = KeyFrames[i] + 1,
@@ -288,7 +293,44 @@ namespace CrossMod.IO
 
             anim.Save(fname);
         }
-        
+
+        public static Vector3 quattoeul(Quaternion q)
+        {
+            float sqw = q.W * q.W;
+            float sqx = q.X * q.X;
+            float sqy = q.Y * q.Y;
+            float sqz = q.Z * q.Z;
+
+            float normal = (float)Math.Sqrt(sqw + sqx + sqy + sqz);
+            float pole_result = (q.X * q.Z) + (q.Y * q.W);
+
+            if (pole_result > (0.5 * normal))
+            {
+                float ry = (float)Math.PI / 2;
+                float rz = 0;
+                float rx = 2 * (float)Math.Atan2(q.X, q.W);
+                return new Vector3(rx, ry, rz);
+            }
+            if (pole_result < (-0.5 * normal))
+            {
+                float ry = (float)Math.PI / 2;
+                float rz = 0;
+                float rx = -2 * (float)Math.Atan2(q.X, q.W);
+                return new Vector3(rx, ry, rz);
+            }
+
+            float r11 = 2 * (q.X * q.Y + q.W * q.Z);
+            float r12 = sqw + sqx - sqy - sqz;
+            float r21 = -2 * (q.X * q.Z - q.W * q.Y);
+            float r31 = 2 * (q.Y * q.Z + q.W * q.X);
+            float r32 = sqw - sqx - sqy + sqz;
+
+            float frx = (float)Math.Atan2(r31, r32);
+            float fry = (float)Math.Asin(r21);
+            float frz = (float)Math.Atan2(r11, r12);
+            return new Vector3(frx, fry, frz);
+        }
+
         private static void AddAnimData(AnimBone animBone, IOAnimNode node, IOTrackType type, ControlType ctype, TrackType ttype)
         {
             AnimData d = new AnimData();
