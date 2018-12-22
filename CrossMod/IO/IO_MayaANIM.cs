@@ -135,16 +135,18 @@ namespace CrossMod.IO
                 file.WriteLine("startTime " + 1 + ";");
                 file.WriteLine("endTime " + header.endTime + ";");
 
+                int Row = 0;
+
                 foreach(AnimBone animBone in Bones)
                 {
                     int TrackIndex = 0;
                     if(animBone.atts.Count == 0)
                     {
-                        file.WriteLine($"anim {animBone.name} 0 0 {TrackIndex++};");
+                        file.WriteLine($"anim {animBone.name} {Row} 1 {TrackIndex++};");
                     }
                     foreach (AnimData animData in animBone.atts)
                     {
-                        file.WriteLine($"anim {animData.controlType}.{animData.type} {animData.type} {animBone.name} 0 0 {TrackIndex++};");
+                        file.WriteLine($"anim {animData.controlType}.{animData.type} {animData.type} {animBone.name} {Row} 1 {TrackIndex++};");
                         file.WriteLine("animData {");
                         file.WriteLine($" input {animData.input};");
                         file.WriteLine($" output {animData.output};");
@@ -156,12 +158,13 @@ namespace CrossMod.IO
                         foreach (AnimKey key in animData.keys)
                         {
                             // TODO: fixed splines
-                            file.WriteLine($" {key.input} {key.output:N6} {key.intan} {key.outtan} 1 1 0");
+                            file.WriteLine($" {key.input} {key.output:N6} {key.intan} {key.outtan} 1 1 0;");
                         }
                         file.WriteLine(" }");
 
                         file.WriteLine("}");
                     }
+                    Row++;
                 }
             }
         }
