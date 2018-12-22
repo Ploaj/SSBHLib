@@ -186,8 +186,14 @@ namespace CrossMod
                     }
 
                     if (fileName.EndsWith(".anim"))
-                        IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
-                    
+                    {
+                        bool Ordinal = false;
+                        DialogResult dialogResult = MessageBox.Show("Choose yes for maya 2016+", "Use ordinal bone order?", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                            Ordinal = true;
+                        IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode, Ordinal);
+                    }
+
                     if (fileName.EndsWith(".smd"))
                         IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
                 }

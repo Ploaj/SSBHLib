@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenTK;
 using CrossMod.Rendering;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace CrossMod.IO
 {
@@ -206,7 +207,7 @@ namespace CrossMod.IO
             return children;
         }
 
-        public static void ExportIOAnimationAsANIM(string fname, IOAnimation animation, RSkeleton Skeleton)
+        public static void ExportIOAnimationAsANIM(string fname, IOAnimation animation, RSkeleton Skeleton, bool ordinal = false)
         {
             IO_MayaANIM anim = new IO_MayaANIM();
 
@@ -214,7 +215,11 @@ namespace CrossMod.IO
 
             // get bone order
             List<RBone> BonesInOrder = getBoneTreeOrder(Skeleton);
-            BonesInOrder = BonesInOrder.OrderBy(f => f.Name, StringComparer.Ordinal).ToList();
+            
+            if (ordinal)
+            {
+                BonesInOrder = BonesInOrder.OrderBy(f => f.Name, StringComparer.Ordinal).ToList();
+            }
 
             foreach(RBone b in BonesInOrder)
             {
