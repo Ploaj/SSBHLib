@@ -116,9 +116,7 @@ namespace CrossMod
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Force the shader to be generated again.
-            Rendering.Models.RModel.shader = null;
-            Rendering.Models.RModel.debugShader = null;
-            Rendering.RTexture.textureShader = null;
+            Rendering.ShaderContainer.SetUpShaders();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)

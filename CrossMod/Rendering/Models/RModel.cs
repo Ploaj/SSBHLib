@@ -9,10 +9,6 @@ namespace CrossMod.Rendering.Models
 {
     public class RModel : IRenderable
     {
-        public static Shader shader;
-        public static Shader debugShader;
-        public static Shader uvShader;
-
         public Vector4 BoundingSphere { get; set; }
 
         Matrix4[] boneBinds = new Matrix4[200];
@@ -32,18 +28,16 @@ namespace CrossMod.Rendering.Models
 
         public void Render(Camera Camera, RSkeleton Skeleton = null)
         {
-            SetUpShaders();
-
-            Shader currentShader = GetCurrentShader();
-            if (!currentShader.LinkStatusIsOk)
+            Shader shader = GetCurrentShader();
+            if (!shader.LinkStatusIsOk)
                 return;
 
-            currentShader.UseProgram();
+            shader.UseProgram();
 
-            SetUniforms(currentShader);
-            SetCameraUniforms(Camera, currentShader);
+            SetUniforms(shader);
+            SetCameraUniforms(Camera, shader);
 
-            currentShader.EnableVertexAttributes();
+            shader.EnableVertexAttributes();
 
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
@@ -54,9 +48,9 @@ namespace CrossMod.Rendering.Models
             }
             boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
 
-            DrawMeshes(Camera, Skeleton, currentShader);
+            DrawMeshes(Camera, Skeleton, shader);
 
-            currentShader.DisableVertexAttributes();
+            shader.DisableVertexAttributes();
         }
 
         private static void SetCameraUniforms(Camera Camera, Shader currentShader)
@@ -94,7 +88,6 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderNormalMaps", RenderSettings.Instance.RenderNormalMaps);
             currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);
 
-
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
         }
 
@@ -109,52 +102,11 @@ namespace CrossMod.Rendering.Models
         private static Shader GetCurrentShader()
         {
             if (RenderSettings.Instance.RenderUVs)
-                return uvShader;
+                return ShaderContainer.GetShader("RModelUV");
             else if (RenderSettings.Instance.UseDebugShading)
-                return debugShader;
-            else 
-                return shader;
-        }
-
-        private static void SetUpShaders()
-        {
-            if (shader == null)
-            {
-                shader = new Shader();
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
-                shader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
-
-                System.Diagnostics.Debug.WriteLine(shader.GetErrorLog());
-            }
-
-            if (uvShader == null)
-            {
-                uvShader = new Shader();
-                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.vert"), ShaderType.VertexShader);
-                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
-                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelUV.frag"), ShaderType.FragmentShader);
-                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
-                uvShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
-
-                System.Diagnostics.Debug.WriteLine(uvShader.GetErrorLog());
-            }
-
-            if (debugShader == null)
-            {
-                debugShader = new Shader();
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModelDebug.frag"), ShaderType.FragmentShader);
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
-                debugShader.LoadShader(System.IO.File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
-
-                System.Diagnostics.Debug.WriteLine(debugShader.GetErrorLog());
-            }
+                return ShaderContainer.GetShader("RModelDebug");
+            else
+                return ShaderContainer.GetShader("RModel");
         }
     }
 }
