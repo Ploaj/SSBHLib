@@ -263,7 +263,7 @@ namespace CrossMod.IO
 
                         for(int i = 0; i < KeyFrames.Count; i++)
                         {
-                            Vector3 EulerAngles = quattoeul(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
+                            Vector3 EulerAngles = Tools.CrossMath.ToEulerAnglesXYZ(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
                             rx.keys.Add(new AnimKey()
                             {
                                 input = KeyFrames[i] + 1,
@@ -297,43 +297,6 @@ namespace CrossMod.IO
             }
 
             anim.Save(fname);
-        }
-
-        public static Vector3 quattoeul(Quaternion q)
-        {
-            float sqw = q.W * q.W;
-            float sqx = q.X * q.X;
-            float sqy = q.Y * q.Y;
-            float sqz = q.Z * q.Z;
-
-            float normal = (float)Math.Sqrt(sqw + sqx + sqy + sqz);
-            float pole_result = (q.X * q.Z) + (q.Y * q.W);
-
-            if (pole_result > (0.5 * normal))
-            {
-                float ry = (float)Math.PI / 2;
-                float rz = 0;
-                float rx = 2 * (float)Math.Atan2(q.X, q.W);
-                return new Vector3(rx, ry, rz);
-            }
-            if (pole_result < (-0.5 * normal))
-            {
-                float ry = (float)Math.PI / 2;
-                float rz = 0;
-                float rx = -2 * (float)Math.Atan2(q.X, q.W);
-                return new Vector3(rx, ry, rz);
-            }
-
-            float r11 = 2 * (q.X * q.Y + q.W * q.Z);
-            float r12 = sqw + sqx - sqy - sqz;
-            float r21 = -2 * (q.X * q.Z - q.W * q.Y);
-            float r31 = 2 * (q.Y * q.Z + q.W * q.X);
-            float r32 = sqw - sqx - sqy + sqz;
-
-            float frx = (float)Math.Atan2(r31, r32);
-            float fry = (float)Math.Asin(r21);
-            float frz = (float)Math.Atan2(r11, r12);
-            return new Vector3(frx, fry, frz);
         }
 
         private static void AddAnimData(AnimBone animBone, IOAnimNode node, IOTrackType type, ControlType ctype, TrackType ttype)

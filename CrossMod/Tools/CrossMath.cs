@@ -39,6 +39,25 @@ namespace CrossMod.Tools
             return ToQuaternion(new Vector3(RX, RY, RZ));
         }
 
+        public static Vector3 ToEulerAnglesXYZ(Quaternion q)
+        {
+            Matrix4 mat = Matrix4.CreateFromQuaternion(q);
+            float x, y, z;
+            y = (float)Math.Asin(Clamp(mat.M13, -1, 1));
+
+            if (Math.Abs(mat.M13) < 0.99999)
+            { 
+                x = (float)Math.Atan2(-mat.M23, mat.M33);
+                z = (float)Math.Atan2(-mat.M12, mat.M11);
+            }
+            else
+            {
+                x = (float)Math.Atan2(mat.M32, mat.M22);
+                z = 0;
+            }
+            return new Vector3(x, y, z);
+        }
+
         public static Vector3 ToEulerAngles(Quaternion q)
         {
             Matrix4 mat = Matrix4.CreateFromQuaternion(q);
