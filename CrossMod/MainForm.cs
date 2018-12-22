@@ -166,10 +166,10 @@ namespace CrossMod
 
         private void exportExportableAnimation(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd, *.seanim)|*.smd;*.seanim;"))
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd, *.seanim, *.anim)|*.smd;*.seanim;*.anim"))
             {
                 // need to get RSkeleton First for some types
-                if (fileName.EndsWith(".smd"))
+                if (fileName.EndsWith(".smd") || fileName.EndsWith(".anim"))
                 {
                     Rendering.RSkeleton SkeletonNode = null;
                     if (FileTools.TryOpenFile(out string SkeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
@@ -187,6 +187,9 @@ namespace CrossMod
                         return;
                     }
 
+                    if (fileName.EndsWith(".anim"))
+                        IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
+                    
                     if (fileName.EndsWith(".smd"))
                         IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
                 }

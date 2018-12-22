@@ -87,6 +87,7 @@
     <Compile Include="IO\ColladaSchema.cs" />
     <Compile Include="IO\IOAnimation.cs" />
     <Compile Include="IO\IO_DAE.cs" />
+    <Compile Include="IO\IO_MayaANIM.cs" />
     <Compile Include="IO\IO_OBJ.cs" />
     <Compile Include="IO\IO_SEANIM.cs" />
     <Compile Include="IO\IO_SMD.cs" />

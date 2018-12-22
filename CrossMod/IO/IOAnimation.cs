@@ -84,6 +84,14 @@ namespace CrossMod.IO
             this.Name = Name;
         }
 
+        public List<IOAnimKey> GetKeysForTrack(IOTrackType type)
+        {
+            if (Tracks.ContainsKey(type))
+                return Tracks[type];
+            else
+                return new List<IOAnimKey>();
+        }
+
         public void AddKey(IOTrackType TrackType, IOAnimKey Key)
         {
             if (!Tracks.ContainsKey(TrackType))
