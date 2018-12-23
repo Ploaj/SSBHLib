@@ -191,14 +191,14 @@ namespace CrossMod.Rendering
             // TODO: There's a cleaner way to do this.
             var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
 
-            if (blendState.Unk3 == 1)
+            if (blendState.BlendFactor1 == 1)
                 meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.One;
-            else if (blendState.Unk3 == 6)
+            else if (blendState.BlendFactor1 == 6)
                 meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.SrcAlpha;
 
-            if (blendState.Unk6 == 1)
+            if (blendState.BlendFactor2 == 1)
                 meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.One;
-            else if (blendState.Unk6 == 6)
+            else if (blendState.BlendFactor2 == 6)
                 meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.OneMinusSrcAlpha;
         }
 
