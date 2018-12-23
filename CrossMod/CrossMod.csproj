@@ -89,6 +89,7 @@
     <Compile Include="IO\IO_DAE.cs" />
     <Compile Include="IO\IO_MayaANIM.cs" />
     <Compile Include="IO\IO_OBJ.cs" />
+    <Compile Include="IO\IO_PLY.cs" />
     <Compile Include="IO\IO_SEANIM.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\IExportableAnimationNode.cs" />
