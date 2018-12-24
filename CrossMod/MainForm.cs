@@ -208,7 +208,7 @@ namespace CrossMod
 
         private void exportExportableModelAsSMD(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj*.dae)|*.smd;*.obj;*.dae"))
+            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj*.dae*.ply)|*.smd;*.obj;*.dae;*.ply"))
             {
                 if (fileName.EndsWith(".smd"))
                     IO_SMD.ExportIOModelAsSMD(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
@@ -216,6 +216,8 @@ namespace CrossMod
                     IO_OBJ.ExportIOModelAsOBJ(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
                 if (fileName.EndsWith(".dae"))
                     IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
+                if (fileName.EndsWith(".ply"))
+                    IO_PLY.ExportIOModelAsPLY(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
             }
         }
 
