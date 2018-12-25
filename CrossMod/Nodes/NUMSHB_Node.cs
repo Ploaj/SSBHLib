@@ -6,13 +6,63 @@ using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CrossMod.Nodes
 {
+    // extra node not specified in the SSBH
+    // seems to be triangle adjacency for certain meshes
+    public class ADJB
+    {
+        public Dictionary<int, uint[]> MeshToIndexBuffer = new Dictionary<int, uint[]>();
+
+        public void Read(string FilePath)
+        {
+            using (BinaryReader reader = new BinaryReader(new FileStream(FilePath, FileMode.Open)))
+            {
+                int Count = reader.ReadInt32();
+
+                int PrevID = -1;
+                int PrevOffset = -1;
+                for(int i = 0; i < Count; i++)
+                {
+                    int ID = reader.ReadInt32();
+                    int Offset = reader.ReadInt32();
+
+                    if(PrevOffset != -1)
+                    {
+                        long temp = reader.BaseStream.Position;
+                        reader.BaseStream.Position = 4 + 8 * Count + PrevOffset;
+                        uint[] buffer = new uint[(Offset - PrevOffset) / 2];
+                        for (int j = 0; j < buffer.Length; j++)
+                            buffer[j] = (uint)reader.ReadInt16();
+                        reader.BaseStream.Position = temp;
+                        MeshToIndexBuffer.Add(PrevID, buffer);
+                    }
+
+                    PrevOffset = Offset;
+                    PrevID = ID;
+                }
+
+                if (PrevOffset != -1)
+                {
+                    long temp = reader.BaseStream.Position;
+                    reader.BaseStream.Position = 4 + 8 * Count + PrevOffset;
+                    uint[] buffer = new uint[((int)(reader.BaseStream.Length - 4 - Count * 8) - PrevOffset) / 2];
+                    for (int j = 0; j < buffer.Length; j++)
+                        buffer[j] = (uint)reader.ReadInt16();
+                    reader.BaseStream.Position = temp;
+                    MeshToIndexBuffer.Add(PrevID, buffer);
+                }
+            }
+        }
+    }
+
     [FileTypeAttribute(".numshb")]
     public class NUMSHB_Node : FileNode
     {
         public MESH mesh;
+        public ADJB ExtendedMesh;
 
         public NUMSHB_Node()
         {
@@ -22,6 +72,14 @@ namespace CrossMod.Nodes
 
         public override void Open(string Path)
         {
+            string ADJB = System.IO.Path.GetDirectoryName(Path) + "/model.adjb";
+            System.Console.WriteLine(ADJB);
+            if (System.IO.File.Exists(ADJB))
+            {
+                ExtendedMesh = new CrossMod.Nodes.ADJB();
+                ExtendedMesh.Read(ADJB);
+            }
+
             if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
             {
                 if (ssbhFile is MESH)
@@ -41,6 +99,10 @@ namespace CrossMod.Nodes
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
+                List<MeshObject> obs = new List<MeshObject>();
+                obs.AddRange(mesh.Objects);
+                System.Diagnostics.Debug.WriteLine(obs.IndexOf(meshObject).ToString("X") + " " + meshObject.Name + " " + (meshObject.IndexCount).ToString("X"));
+
                 PrintAttributeInformation(meshObject);
 
                 RMesh rMesh = new RMesh
@@ -56,9 +118,18 @@ namespace CrossMod.Nodes
                 // Get vertex data.
                 var vertexAccessor = new SSBHVertexAccessor(mesh);
                 var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+
+                System.Diagnostics.Debug.WriteLine(vertexIndices.Length.ToString("X") + " " + vertexIndices[0] + " " + vertexIndices[1] + " " + vertexIndices[2]);
+
                 List<CustomVertex> vertices = CreateVertices(Skeleton, meshObject, vertexAccessor, vertexIndices);
 
-                rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(vertexIndices));
+                /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
+                {
+                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
+                }
+                else*/
+                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(vertexIndices));
+
 
                 model.subMeshes.Add(rMesh);
             }

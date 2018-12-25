@@ -178,7 +178,11 @@ namespace CrossMod.IO
             List<RBone> bone = new List<RBone>();
             Queue<RBone> q = new Queue<RBone>();
 
-            QueueBones(Skeleton.Bones[0], q, Skeleton);
+            foreach(RBone b in Skeleton.Bones)
+            {
+                if(b.ParentID == -1)
+                    QueueBones(b, q, Skeleton);
+            }
 
             while (q.Count > 0)
             {

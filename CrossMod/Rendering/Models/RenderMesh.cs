@@ -10,5 +10,9 @@ namespace CrossMod.Rendering.Models
         {
 
         }
+        public RenderMesh(List<CustomVertex> vertices, List<uint> indices, PrimitiveType PrimitiveType) : base(vertices, indices, PrimitiveType, DrawElementsType.UnsignedInt)
+        {
+
+        }
     }
 }

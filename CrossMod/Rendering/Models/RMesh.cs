@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
+using OpenTK.Graphics.OpenGL;
 
 namespace CrossMod.Rendering.Models
 {
@@ -38,6 +39,9 @@ namespace CrossMod.Rendering.Models
             {
                 SetTextureUniforms(shader);
             }
+
+            GL.Enable(EnableCap.PrimitiveRestart);
+            GL.PrimitiveRestartIndex(0xFFFFFFFF);
 
             RenderMesh?.Draw(shader, camera);
         }
