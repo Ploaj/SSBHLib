@@ -29,6 +29,8 @@ namespace CrossMod.Rendering
             DifCubemap = 0x64,
             BakeLitMap = 0x65,
             DiffuseMap = 0x66,
+            DiffuseMap2 = 0x67,
+            DiffuseMap3 = 0x68,
             ProjMap = 0x69,
             InkNorMap = 0x133,
             ColSampler = 0x6C,
@@ -105,7 +107,7 @@ namespace CrossMod.Rendering
                 if (a.DataObject == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"{(MatlEnums.ParamDataType) a.DataType} {a.ParamID} {a.DataObject}");
+                System.Diagnostics.Debug.WriteLine($"{a.DataType} {a.ParamID} {a.DataObject}");
 
                 switch (a.DataType)
                 {
@@ -127,6 +129,9 @@ namespace CrossMod.Rendering
                     case MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
                         meshMaterial.floatByParamId[(long)a.ParamID] = floatValue;
+                        break;
+                    case MatlEnums.ParamDataType.BlendState:
+                        SetBlendState(meshMaterial, a);
                         break;
                 }
             }
@@ -180,6 +185,22 @@ namespace CrossMod.Rendering
             else
                 return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
         }
+        
+        private void SetBlendState(Material meshMaterial, MatlAttribute a)
+        {
+            // TODO: There's a cleaner way to do this.
+            var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
+
+            if (blendState.BlendFactor1 == 1)
+                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+            else if (blendState.BlendFactor1 == 6)
+                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.SrcAlpha;
+
+            if (blendState.BlendFactor2 == 1)
+                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+            else if (blendState.BlendFactor2 == 6)
+                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.OneMinusSrcAlpha;
+        }
 
         private void SetTextureParameter(Material meshMaterial, MatlAttribute a)
         {
@@ -229,6 +250,14 @@ namespace CrossMod.Rendering
                     case (long)ParamId.DiffuseMap:
                         meshMaterial.dif = texture;
                         meshMaterial.HasDiffuse = true;
+                        break;
+                    case (long)ParamId.DiffuseMap2:
+                        meshMaterial.dif2 = texture;
+                        meshMaterial.HasDiffuse2 = true;
+                        break;
+                    case (long)ParamId.DiffuseMap3:
+                        meshMaterial.dif3 = texture;
+                        meshMaterial.HasDiffuse3 = true;
                         break;
                 }
             }
