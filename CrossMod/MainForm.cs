@@ -188,7 +188,7 @@ namespace CrossMod
                     if (fileName.EndsWith(".anim"))
                     {
                         bool Ordinal = false;
-                        DialogResult dialogResult = MessageBox.Show("Choose yes for maya 2016+", "Use ordinal bone order?", MessageBoxButtons.YesNo);
+                        DialogResult dialogResult = MessageBox.Show("In most cases choose \"No\"", "Use ordinal bone order?", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
                             Ordinal = true;
                         IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode, Ordinal);
