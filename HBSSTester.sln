@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSBHLib", "SSBHLib\SSBHLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossMod", "CrossMod\CrossMod.csproj", "{F9AA9734-A74E-4E28-BA16-6E97A063DD20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ANIMCMD", "ANIMCMD\ANIMCMD.csproj", "{51F9759B-37DA-4C15-92F1-0AE8B28875CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F9AA9734-A74E-4E28-BA16-6E97A063DD20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9AA9734-A74E-4E28-BA16-6E97A063DD20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9AA9734-A74E-4E28-BA16-6E97A063DD20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F9759B-37DA-4C15-92F1-0AE8B28875CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F9759B-37DA-4C15-92F1-0AE8B28875CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F9759B-37DA-4C15-92F1-0AE8B28875CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F9759B-37DA-4C15-92F1-0AE8B28875CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
