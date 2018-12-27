@@ -109,6 +109,7 @@
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Rendering\Shapes\RSphere.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
+    <Compile Include="Tools\CRC32.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">

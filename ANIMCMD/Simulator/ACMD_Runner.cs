@@ -122,7 +122,7 @@ namespace ANIMCMD.Simulator
 
         public void wait(float framecount)
         {
-            Executing = (AsynchronusFrame == Frame + framecount);
+            Executing = (Frame == AsynchronusFrame + framecount);
         }
 
         public void FT_MOTION_RATE(float Speed)

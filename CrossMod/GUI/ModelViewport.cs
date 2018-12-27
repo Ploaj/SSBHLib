@@ -162,10 +162,12 @@ namespace CrossMod.GUI
                     boneTree.Nodes.Add(node);
             }
 
+            HashToBoneIndex.Clear();
             foreach (RBone b in skeleton.Bones)
             {
                 if (b.ParentID != -1)
                     boneById[b.ParentID].Nodes.Add(boneById[b.ID]);
+                HashToBoneIndex.Add(Tools.CRC32.Crc32C(b.Name), skeleton.Bones.IndexOf(b));
             }
         }
 
@@ -213,12 +215,17 @@ namespace CrossMod.GUI
             {
                 if (Sphere != null && animationBar.Skeleton != null)
                 {
-                    for(int i = 0; i < ACMDRunner.HitboxCount; i++)
+                    for (int i = 0; i < ACMDRunner.HitboxCount; i++)
                     {
+                        Matrix4 BoneTransform = Matrix4.Identity;
                         Hitbox hb = ACMDRunner.GetHitbox(i);
-                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X, hb.Y, hb.Z), animationBar.Skeleton.GetAnimationSingleBindsTransform(animationBar.Skeleton.GetBoneIndex("Head")));
+                        if (HashToBoneIndex.ContainsKey(hb.BoneCRC))
+                        {
+                            BoneTransform = animationBar.Skeleton.GetAnimationSingleBindsTransform(HashToBoneIndex[hb.BoneCRC]);
+                        }
+                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X, hb.Y, hb.Z), BoneTransform);
 
-                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X2, hb.Y2, hb.Z2), animationBar.Skeleton.GetAnimationSingleBindsTransform(animationBar.Skeleton.GetBoneIndex("Head")));
+                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X2, hb.Y2, hb.Z2), BoneTransform);
                     }
                 }
             }
