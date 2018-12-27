@@ -9,6 +9,8 @@ using OpenTK;
 using OpenTK.Input;
 using CrossMod.Nodes;
 using CrossMod.Rendering.Models;
+using ANIMCMD;
+using ANIMCMD.Simulator;
 
 namespace CrossMod.GUI
 {
@@ -73,6 +75,9 @@ namespace CrossMod.GUI
         float mouseScrollWheel = 0;
 
         private AnimationBar animationBar;
+        private static ACMD_Runner_Pseudo ACMDRunner = new ACMD_Runner_Pseudo();
+        private Dictionary<uint, int> HashToBoneIndex = new Dictionary<uint, int>();
+        private RSphere Sphere;
 
         public ModelViewport()
         {
@@ -81,6 +86,11 @@ namespace CrossMod.GUI
             CreateRenderFrameEvents();
 
             AddAnimationBar();
+        }
+
+        public static void SetCode(string Code)
+        {
+            ACMDRunner.SetScript(Code);
         }
 
         public void ClearFiles()
@@ -177,15 +187,41 @@ namespace CrossMod.GUI
                 glViewport.RenderFrame();
         }
 
+        public int PrevFrame = 0;
         private void RenderNode(object sender, EventArgs e)
         {
             SetUpViewport();
 
+            // hack to speed up hitbox processing
+            // SetFrame is much slower than NextFrame
+            if(PrevFrame != animationBar.Frame)
+            {
+                if (animationBar.Frame - PrevFrame == 1)
+                    ACMDRunner.NextFrame();
+                else
+                    ACMDRunner.SetFrame(animationBar.Frame);
+            }
+            PrevFrame = animationBar.Frame;
+
+            // render the renderable-node
             if (renderableNode != null)
             {
                 renderableNode.Render(camera);
             }
 
+            // draw hitbox spheres
+            {
+                if (Sphere != null && animationBar.Skeleton != null)
+                {
+                    for(int i = 0; i < ACMDRunner.HitboxCount; i++)
+                    {
+                        Hitbox hb = ACMDRunner.GetHitbox(i);
+                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X, hb.Y, hb.Z), animationBar.Skeleton.GetAnimationSingleBindsTransform(animationBar.Skeleton.GetBoneIndex("Head")));
+
+                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X2, hb.Y2, hb.Z2), animationBar.Skeleton.GetAnimationSingleBindsTransform(animationBar.Skeleton.GetBoneIndex("Head")));
+                    }
+                }
+            }
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
@@ -252,6 +288,7 @@ namespace CrossMod.GUI
         private void glViewport_Load(object sender, EventArgs e)
         {
             ShaderContainer.SetUpShaders();
+            Sphere = new RSphere();
             glViewport.RenderFrame();
         }
 

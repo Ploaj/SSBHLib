@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace ANIMCMD
 {
-    public class Class1
+    public class ANIMCMD
     {
+
+
+
     }
 }

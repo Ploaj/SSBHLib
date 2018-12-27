@@ -5,6 +5,8 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using ANIMCMD;
+using ANIMCMD.Simulator;
 
 namespace HBSSTester
 {
@@ -12,6 +14,37 @@ namespace HBSSTester
     {
         static void Main(string[] args)
         {
+            ACMD_Runner_Pseudo runner = new ACMD_Runner_Pseudo();
+            runner.SetScript(@"app::sv_animcmd::frame(2);
+if(app::sv_animcmd::is_excute())
+{
+	app::FighterWorkModuleImpl::method_23(0x2100000C);
+}
+app::sv_animcmd::frame(7);
+if(app::sv_animcmd::is_excute())
+{
+	app::sv_animcmd::ATTACK(0, 0, 0, 11.0, 80, 100, 0, 20, 4.2, 4.4, -1.0, 0.0, 2.4, -1.0, -3.5, 1.1, 1.0, 1, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 1, 3u, 63, 31, 0, null, 2, 2, 1);
+}
+app::sv_animcmd::frame(8);
+if(app::sv_animcmd::is_excute())
+{
+	app::sv_animcmd::ATTACK(1, 0, 0, 11.0, 80, 100, 0, 20, 3.2, -0.4, -1.0, -7.0, -4.4, -1.0, -5.0, 1.1, 1.0, 1, 0, 0, 0, 0.0, 0, 0, 0, 0, 0, 1, 3u, 63, 31, 0, null, 2, 2, 1);
+}
+app::sv_animcmd::frame(11);
+if(app::sv_animcmd::is_excute())
+{
+    app::FighterAttackModuleImpl::method_A();
+}
+app::sv_animcmd::FT_MOTION_RATE(0.85);
+app::sv_animcmd::frame(40);
+if(app::sv_animcmd::is_excute())
+{
+	app::FighterWorkModuleImpl::method_25(0x2100000C);
+}");
+            runner.SetFrame(8);
+            Console.WriteLine(runner.GetHitbox(0).Size);
+            Console.ReadLine();
+
             /*string[] files = Directory.GetFiles("", "*.numshb*", SearchOption.AllDirectories);
 
             List<string> ErrorReading = new List<string>();
@@ -71,11 +104,11 @@ namespace HBSSTester
 
             w.Close();*/
 
-            ISSBH_File File;
-            if(SSBH.TryParseSSBHFile("", out File))
-            {
-                ExportFileAsXML("Test.xml", File);
-            }
+            /* ISSBH_File File;
+             if(SSBH.TryParseSSBHFile("", out File))
+             {
+                 ExportFileAsXML("Test.xml", File);
+             }*/
             //Console.ReadLine();
         }
 

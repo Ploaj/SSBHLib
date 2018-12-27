@@ -38,9 +38,10 @@
             this.frameSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
-            this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,7 +116,8 @@
             // 
             this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.batchRenderModelsToolStripMenuItem,
-            this.printMaterialValuesToolStripMenuItem});
+            this.printMaterialValuesToolStripMenuItem,
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem});
             this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
             this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.experimentalToolStripMenuItem.Text = "Experimental";
@@ -126,6 +128,13 @@
             this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.batchRenderModelsToolStripMenuItem.Text = "Batch Render Models";
             this.batchRenderModelsToolStripMenuItem.Click += new System.EventHandler(this.batchRenderModelsToolStripMenuItem_Click);
+            // 
+            // printMaterialValuesToolStripMenuItem
+            // 
+            this.printMaterialValuesToolStripMenuItem.Name = "printMaterialValuesToolStripMenuItem";
+            this.printMaterialValuesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.printMaterialValuesToolStripMenuItem.Text = "Print Material Values";
+            this.printMaterialValuesToolStripMenuItem.Click += new System.EventHandler(this.printMaterialValuesToolStripMenuItem_Click);
             // 
             // fileTree
             // 
@@ -151,12 +160,12 @@
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
             // 
-            // printMaterialValuesToolStripMenuItem
+            // aNIMCMDPsedocodeRunnerToolStripMenuItem
             // 
-            this.printMaterialValuesToolStripMenuItem.Name = "printMaterialValuesToolStripMenuItem";
-            this.printMaterialValuesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.printMaterialValuesToolStripMenuItem.Text = "Print Material Values";
-            this.printMaterialValuesToolStripMenuItem.Click += new System.EventHandler(this.printMaterialValuesToolStripMenuItem_Click);
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem.Name = "aNIMCMDPsedocodeRunnerToolStripMenuItem";
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem.Text = "Pseudocode Runner";
+            this.aNIMCMDPsedocodeRunnerToolStripMenuItem.Click += new System.EventHandler(this.aNIMCMDPsedocodeRunnerToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -191,6 +200,7 @@
         private System.Windows.Forms.ToolStripMenuItem batchRenderModelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem frameSelectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printMaterialValuesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aNIMCMDPsedocodeRunnerToolStripMenuItem;
     }
 }
 

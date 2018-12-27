@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ANIMCMD\ANIMCMD.csproj">
+      <Project>{51f9759b-37da-4c15-92f1-0ae8b28875cf}</Project>
+      <Name>ANIMCMD</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
       <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
       <Name>SSBHLib</Name>

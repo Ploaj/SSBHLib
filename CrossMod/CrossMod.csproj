@@ -84,6 +84,12 @@
     <Compile Include="GUI\AnimationBar.Designer.cs">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\PseudocodeBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\PseudocodeBox.Designer.cs">
+      <DependentUpon>PseudocodeBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="IO\ColladaSchema.cs" />
     <Compile Include="IO\IOAnimation.cs" />
     <Compile Include="IO\IO_DAE.cs" />
@@ -99,8 +105,9 @@
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
     <Compile Include="Rendering\Models\CustomVertex.cs" />
     <Compile Include="Rendering\Models\RenderMesh.cs" />
-    <Compile Include="Rendering\PrimBonePrism.cs" />
+    <Compile Include="Rendering\Shapes\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
+    <Compile Include="Rendering\Shapes\RSphere.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
@@ -156,6 +163,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\PseudocodeBox.resx">
+      <DependentUpon>PseudocodeBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\RenderSettingsMenu.resx">
       <DependentUpon>RenderSettingsMenu.cs</DependentUpon>
@@ -411,6 +421,12 @@
     <None Include="Shaders\RModelUV.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Shaders\Sphere.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sphere.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\Texture.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -463,6 +479,10 @@
     <Content Include="lib\SFShapes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ANIMCMD\ANIMCMD.csproj">
+      <Project>{51f9759b-37da-4c15-92f1-0ae8b28875cf}</Project>
+      <Name>ANIMCMD</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
       <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
       <Name>SSBHLib</Name>

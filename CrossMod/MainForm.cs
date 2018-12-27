@@ -347,5 +347,10 @@ namespace CrossMod
 
             File.WriteAllText("output.txt", outputText.ToString());
         }
+
+        private void aNIMCMDPsedocodeRunnerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new PseudocodeBox().Show();
+        }
     }
 }
