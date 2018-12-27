@@ -225,7 +225,7 @@ namespace CrossMod.GUI
                         }
                         Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X, hb.Y, hb.Z), BoneTransform);
 
-                        Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X2, hb.Y2, hb.Z2), BoneTransform);
+                        //Sphere.RenderSphere(camera, hb.Size, new Vector3(hb.X2, hb.Y2, hb.Z2), BoneTransform);
                     }
                 }
             }

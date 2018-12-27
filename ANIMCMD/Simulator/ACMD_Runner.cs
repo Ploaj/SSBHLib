@@ -130,7 +130,7 @@ namespace ANIMCMD.Simulator
             FrameSpeed = Speed;
         }
 
-        public void ATTACK(int ID, int Part, long BoneHash, float Damage, int Angle, int KBG, int WKB, int BKB, float Size, float X, float Y, float Z, float X2, float Y2, float Z2)
+        public void ATTACK(int ID, int Part, long BoneHash, float Damage, int Angle, int KBG, int WKB, int BKB, float Size, float X, float Y, float Z)
         {
             Hitboxes.Add(ID, new Hitbox()
             {
@@ -139,10 +139,7 @@ namespace ANIMCMD.Simulator
                 Size = Size,
                 X = X,
                 Y = Y,
-                Z = Z,
-                X2 = X2,
-                Y2 = Y2,
-                Z2 = Z2
+                Z = Z
             });
         }
 
