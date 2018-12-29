@@ -1,4 +1,4 @@
-﻿using CrossMod.Rendering;
+using CrossMod.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,10 +92,10 @@ namespace CrossMod.IO
 
                     // triangles
                     triangles triangles = new triangles();
-                    triangles.count = (ulong)iomesh.Indices.Count;
+                    triangles.count = ((ulong)iomesh.Indices.Count) / 3;
                     triangles.input = new InputLocalOffset[] {
-                    new InputLocalOffset(){offset = 0, semantic = "VERTEX", source = "#" + vertices.id }
-                };
+                        new InputLocalOffset(){offset = 0, semantic = "VERTEX", source = "#" + vertices.id }
+                    };
                     triangles.p = string.Join(" ", iomesh.Indices);
 
                     // creating mesh
@@ -319,7 +319,7 @@ namespace CrossMod.IO
                     {
                         instance_controller controller = new instance_controller()
                         {
-                            url = iomesh.Name + "_" + m.Meshes.IndexOf(iomesh) + "_controller"
+                            url = "#" + iomesh.Name + "_" + m.Meshes.IndexOf(iomesh) + "_controller"
                         };
                         controller.skeleton = new string[] { "#bone0" };
                         node.instance_controller = new instance_controller[] { controller };
