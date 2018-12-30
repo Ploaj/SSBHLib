@@ -6,11 +6,7 @@ namespace CrossMod.Rendering.Models
 {
     public class RenderMesh : GenericMesh<CustomVertex>
     {
-        public RenderMesh(List<CustomVertex> vertices, List<uint> indices) : base(vertices, indices, PrimitiveType.Triangles, DrawElementsType.UnsignedInt)
-        {
-
-        }
-        public RenderMesh(List<CustomVertex> vertices, List<uint> indices, PrimitiveType PrimitiveType) : base(vertices, indices, PrimitiveType, DrawElementsType.UnsignedInt)
+        public RenderMesh(List<CustomVertex> vertices, List<uint> indices) : base(vertices, indices, PrimitiveType.Triangles)
         {
 
         }

@@ -1081,6 +1081,33 @@
             </summary>
             <returns>A String of all detected errors</returns>
         </member>
+        <member name="T:SFGraphics.GLObjects.Textures.Texture3D">
+            <summary>
+            A TextureTarget.Texture3D texture designed for 3D lookup tables.
+            </summary>
+        </member>
+        <member name="P:SFGraphics.GLObjects.Textures.Texture3D.Depth">
+            <summary>
+            The depth of the base mip level in pixels.
+            </summary>
+        </member>
+        <member name="M:SFGraphics.GLObjects.Textures.Texture3D.#ctor">
+            <summary>
+            Creates an empty 3D texture. 
+            The texture is incomplete until the dimensions and format are set.
+            </summary>
+        </member>
+        <member name="M:SFGraphics.GLObjects.Textures.Texture3D.LoadImageData``1(System.Int32,System.Int32,System.Int32,``0[],SFGraphics.GLObjects.Textures.TextureFormats.TextureFormatUncompressed)">
+            <summary>
+            Loads uncompressed texture data of the specified format for the first mip level.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="depth"></param>
+            <param name="imageData"></param>
+            <param name="format"></param>
+        </member>
         <member name="T:SFGraphics.GLObjects.Textures.Utils.MipmapLoading">
             <summary>
             Provides methods for loading mipmaps for OpenGL textures. 

@@ -128,7 +128,7 @@ namespace CrossMod.Nodes
                     rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
                 }
                 else*/
-                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(vertexIndices));
+                rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(vertexIndices));
 
 
                 model.subMeshes.Add(rMesh);
