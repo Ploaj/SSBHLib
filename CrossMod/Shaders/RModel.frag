@@ -51,6 +51,9 @@ uniform vec4 paramA5;
 uniform vec4 paramA0;
 uniform vec4 param98;
 
+uniform int hasParam156;
+uniform vec4 param156;
+
 uniform int paramE9;
 
 uniform float paramC8;
@@ -251,6 +254,10 @@ void main()
     vec4 albedoColor = GetAlbedoColor();
     vec4 emissionColor = GetEmissionColor();
     vec4 prmColor = texture(prmMap, map1).xyzw;
+
+    // Probably some sort of override for PRM color.
+    if (hasParam156 == 1)
+        prmColor = param156;
 
     // Material masking.
     float transitionBlend = 0;

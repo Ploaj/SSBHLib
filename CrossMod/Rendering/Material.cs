@@ -110,6 +110,9 @@ namespace CrossMod.Rendering
             // Sprite sheet UV parameters.
             AddVec4("paramAA", genericMaterial, 0xAA, new Vector4(1));
 
+            AddVec4("param156", genericMaterial, 0x156, new Vector4(0));
+            genericMaterial.AddBoolToInt("hasParam156", vec4ByParamId.ContainsKey(0x156));
+
             // Enables/disables specular occlusion.
             AddBool("paramE9", genericMaterial, 0xE9, true);
 
