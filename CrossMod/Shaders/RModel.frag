@@ -239,6 +239,11 @@ vec4 GetAlbedoColor()
     return albedoColor;
 }
 
+float GetF0(float ior)
+{
+    return pow((1 - ior) / (1 + ior), 2);
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
@@ -299,10 +304,9 @@ void main()
 
     fragColor = vec4(0, 0, 0, 1);
 
-    // TODO: What is the in game value?
-    float maxF0Dialectric = 0.08;
-    vec3 f0 = mix(prmColor.aaa * maxF0Dialectric, albedoColor.rgb, metalness);
-    vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0, roughness);
+    float f0Dialectric = GetF0(paramC8 + 1);
+    vec3 f0Final = mix(prmColor.aaa * f0Dialectric, albedoColor.rgb, metalness);
+    vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0Final, roughness);
 
     // Only use one component to prevent discoloration of diffuse.
     vec3 kDiffuse = (1 - kSpecular.rrr);
@@ -346,7 +350,7 @@ void main()
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
 
-    // 0 = alpha. 1 = alpha.
+    // TODO: 0 = alpha. 1 = alpha.
     // Values can be between 0 and 1, however.
     fragColor.a += param98.x;
 }

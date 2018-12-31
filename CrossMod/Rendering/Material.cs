@@ -119,6 +119,9 @@ namespace CrossMod.Rendering
             // Controls anisotropic specular.
             AddFloat("paramCA", genericMaterial, 0xCA, 0.0f);
 
+            // Controls specular IOR.
+            AddFloat("paramC8", genericMaterial, 0xC8, 0.0f);
+
             // Some sort of sprite sheet scale toggle.
             AddBool("paramF1", genericMaterial, 0xF1, true);
 
