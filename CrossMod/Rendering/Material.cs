@@ -47,6 +47,12 @@ namespace CrossMod.Rendering
         public Dictionary<long, bool> boolByParamId = new Dictionary<long, bool>();
         public Dictionary<long, float> floatByParamId = new Dictionary<long, float>();
 
+
+        // this isn't super clean because of the whole attribute names being different and what not...
+        public Dictionary<long, Vector4> MaterialAnimation = new Dictionary<long, Vector4>();
+
+
+
         public Material(Resources.DefaultTextures defaultTextures)
         {
             // TODO: Don't store another reference.
@@ -211,6 +217,13 @@ namespace CrossMod.Rendering
 
         private void AddVec4(string name, GenericMaterial genericMaterial, long paramId, Vector4 defaultValue)
         {
+            // I can't do this generically because the shader names won't match the attribute names.... too messy
+            if (MaterialAnimation.ContainsKey(paramId))
+            {
+                var value = MaterialAnimation[paramId];
+                genericMaterial.AddVector4(name, value);
+            }
+            else
             // Convert parameters into colors for easier visualization.
             if (vec4ByParamId.ContainsKey(paramId))
             {

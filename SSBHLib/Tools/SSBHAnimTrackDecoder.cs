@@ -107,16 +107,10 @@ namespace SSBHLib.Tools
                             long bytes = (Count >> 3);
                             int bits = ((int)Count & 0x7);
 
-                            if ((i >= 0 && i <= 0 && (TrackFlag & 0x3) == 0x3) //isotrophic scale
-                                || (i >= 0 && i <= 2 && (TrackFlag & 0x3) == 0x1) //normal scale
-                                || (i > 2 && i <= 5 && (TrackFlag & 0x4) > 0)
-                                || (i > 5 && i <= 8 && (TrackFlag & 0x8) > 0))
+                            //reads
                             {
-                                //reads
-                                {
-                                    BitCounts[i] = bits;
-                                    ByteCounts[i] = (int)bytes;
-                                }
+                                BitCounts[i] = bits;
+                                ByteCounts[i] = (int)bytes;
                             }
                         }
 

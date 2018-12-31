@@ -46,7 +46,28 @@ namespace CrossMod.Nodes
                     {
                         foreach (AnimTrack track in animNode.Tracks)
                         {
+                            RMaterialAnimation matAnim = new RMaterialAnimation()
+                            {
+                                MaterialName = animNode.Name,
+                                AttributeName = track.Name
+                            };
                             object[] MaterialAnim = decoder.ReadTrack(track);
+
+                            // only get vectors for now
+                            if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
+                            {
+                                continue;
+                            }
+                            renderAnimation.MaterialNodes.Add(matAnim);
+                            for (int i = 0; i < MaterialAnim.Length; i++)
+                            {
+                                var vec = (AnimTrackCustomVector4)MaterialAnim[i];
+                                matAnim.Keys.Keys.Add(new RKey<Vector4>()
+                                {
+                                    Frame = i,
+                                    Value = new Vector4(vec.X, vec.Y, vec.Z, vec.W)
+                                });
+                            }
                         }
                     }
                 }

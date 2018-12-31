@@ -10,6 +10,7 @@ namespace CrossMod.Rendering
 
         public List<RTransformAnimation> TransformNodes = new List<RTransformAnimation>();
         public List<RVisibilityAnimation> VisibilityNodes = new List<RVisibilityAnimation>();
+        public List<RMaterialAnimation> MaterialNodes = new List<RMaterialAnimation>();
 
         public int GetFrameCount()
         {
@@ -29,6 +30,25 @@ namespace CrossMod.Rendering
                     if (m.Name.StartsWith(a.MeshName))
                     {
                         m.Visible = a.Visibility.GetValue(Frame);
+                    }
+                }
+            }
+
+            // Material
+            foreach (Models.RMesh m in Model.subMeshes)
+                m.Material.MaterialAnimation.Clear();
+            foreach (RMaterialAnimation a in MaterialNodes)
+            {
+                foreach (Models.RMesh m in Model.subMeshes)
+                {
+                    // I can't do this generically because the shader names won't match the attribute names....
+                    if (m.Material.Name.Equals(a.MaterialName))
+                    {
+                        SSBHLib.Formats.Materials.MatlEnums.ParamId ParamID;
+                        if(System.Enum.TryParse(a.AttributeName, out ParamID))
+                        {
+                            m.Material.MaterialAnimation.Add((long)ParamID, a.Keys.GetValue(Frame));
+                        }
                     }
                 }
             }
@@ -57,13 +77,13 @@ namespace CrossMod.Rendering
         }
     }
 
-    public class RMaterialAnimation<T>
+    public class RMaterialAnimation
     {
         public string MaterialName;
 
         public string AttributeName;
 
-        public RKeyGroup<T> Keys = new RKeyGroup<T>();
+        public RKeyGroup<Vector4> Keys = new RKeyGroup<Vector4>();
     }
 
     public class RVisibilityAnimation
