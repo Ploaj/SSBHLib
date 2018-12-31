@@ -155,16 +155,16 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
 
 vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
 {
-    // TODO: Image based lighting doesn't consider anisotropy.
     // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
     vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularTerm = vec3(0);
     specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y);
 
+    // TODO: Does image based lighting consider anisotropy?
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessY = roughness / (1.0 + paramCA);
     float roughnessX = roughness * (1.0 + paramCA);
+    float roughnessY = roughness / (1.0 + paramCA);
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
@@ -177,14 +177,12 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
 
-    // TODO: Some sort of specular intensity?
-    // specularTerm *= paramC8;
-
     return specularTerm;
 }
 
 vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
 {
+    // TODO: How does this work?
     float rimLight = (1 - max(dot(N, V), 0));
     return paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
 }
