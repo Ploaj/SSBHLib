@@ -313,11 +313,16 @@ namespace CrossMod
 
         private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            WriteMaterialValuesToFile();
+        }
+
+        private static void WriteMaterialValuesToFile()
+        {
+            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            uint paramId = Rendering.RenderSettings.Instance.ParamId;
+            var paramId = Rendering.RenderSettings.Instance.ParamId;
 
             var values = new System.Collections.Generic.HashSet<string>();
 
@@ -346,6 +351,54 @@ namespace CrossMod
             }
 
             File.WriteAllText("output.txt", outputText.ToString());
+        }
+
+        private static void WriteAttributesToFile()
+        {
+            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            var name = "colorSet2_1";
+
+            var values = new System.Collections.Generic.HashSet<string>();
+
+            var outputText = new System.Text.StringBuilder();
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
+            {
+                var node = new NUMSHB_Node();
+                node.Open(file);
+
+                AddValue(folderPath, name, values, outputText, file, node);
+            }
+
+            File.WriteAllText("attributeOut.txt", outputText.ToString());
+        }
+
+        private static void AddValue(string folderPath, string name, System.Collections.Generic.HashSet<string> values, System.Text.StringBuilder outputText, string file, NUMSHB_Node node)
+        {
+            foreach (var meshObject in node.mesh.Objects)
+            {
+                foreach (var attribute in meshObject.Attributes)
+                {
+                    if (attribute.Name == name)
+                    {
+                        var text = $"{meshObject.Name} {file.Replace(folderPath, "")}";
+                        if (!values.Contains(text))
+                        {
+                            outputText.AppendLine(text);
+                            values.Add(text);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void printAttributesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WriteAttributesToFile();
         }
     }
 }
