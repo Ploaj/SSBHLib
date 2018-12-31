@@ -4,6 +4,8 @@ in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
+in vec2 uvSet;
+in vec2 uvSet1;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
@@ -50,6 +52,8 @@ uniform vec4 paramA3;
 uniform vec4 paramA5;
 uniform vec4 paramA0;
 uniform vec4 param98;
+
+uniform vec4 param146; //CustomVector31 colmap2 UV Scale/Translation
 
 uniform int hasParam156;
 uniform vec4 param156;
@@ -212,7 +216,7 @@ vec4 GetAlbedoColor()
     // Blend two diffuse layers based on alpha.
     // The second layer is set using the first layer if not present.
     vec4 albedoColor = texture(colMap, map1).rgba;
-    vec4 albedoColor2 = texture(col2Map, map1).rgba;
+    vec4 albedoColor2 = texture(col2Map, vec2(uvSet.x + param146.z, uvSet.y + param146.w) * param146.xy).rgba;
     vec4 diffuseColor = texture(difMap, map1).rgba;
     vec4 diffuse2Color = texture(dif2Map, map1).rgba;
     vec4 diffuse3Color = texture(dif3Map, map1).rgba;

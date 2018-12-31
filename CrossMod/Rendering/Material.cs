@@ -127,6 +127,11 @@ namespace CrossMod.Rendering
 
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
+
+
+            // ploaj added
+            // customvector31 uv scale/translate for colmap2
+            AddVec4("param146", genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)

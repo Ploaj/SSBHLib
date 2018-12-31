@@ -55,7 +55,7 @@ namespace SSBHLib.Tools
 
         public object[] ReadTrack(AnimTrack Track)
         {
-            Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
+            //Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
             {

@@ -123,6 +123,7 @@ namespace CrossMod.Nodes
 
                 List<CustomVertex> vertices = CreateVertices(Skeleton, meshObject, vertexAccessor, vertexIndices);
 
+                vertexAccessor.Dispose();
                 /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
                 {
                     rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
@@ -139,12 +140,13 @@ namespace CrossMod.Nodes
 
         private List<CustomVertex> CreateVertices(RSkeleton Skeleton, MeshObject meshObject, SSBHVertexAccessor vertexAccessor, uint[] vertexIndices)
         {
-
             // Read attribute values.
             var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
             var normals = vertexAccessor.ReadAttribute("Normal0", 0, meshObject.VertexCount, meshObject);
             var tangents = vertexAccessor.ReadAttribute("Tangent0", 0, meshObject.VertexCount, meshObject);
             var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
+            var uvSetValues = vertexAccessor.ReadAttribute("uvSet", 0, meshObject.VertexCount, meshObject);
+            var uvSet1Values = vertexAccessor.ReadAttribute("uvSet1", 0, meshObject.VertexCount, meshObject);
             var bake1Values = vertexAccessor.ReadAttribute("bake1", 0, meshObject.VertexCount, meshObject);
             var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
             var colorSet5Values = vertexAccessor.ReadAttribute("colorSet5", 0, meshObject.VertexCount, meshObject);
@@ -206,6 +208,13 @@ namespace CrossMod.Nodes
 
                 var map1 = GetVector4(map1Values[i]).Xy;
 
+                var uvSet = map1;
+                if (uvSetValues.Length != 0)
+                    uvSet = GetVector4(uvSetValues[i]).Xy;
+                var uvSet1 = new Vector2(0);
+                if (uvSet1Values.Length != 0)
+                    uvSet1 = GetVector4(uvSet1Values[i]).Xy;
+
                 var bones = boneIndices[i];
                 var weights = boneWeights[i];
 
@@ -224,7 +233,7 @@ namespace CrossMod.Nodes
                 if (colorSet5Values.Length != 0)
                     colorSet5 = GetVector4(colorSet5Values[i]) / 128.0f;
 
-                vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, bones, weights, bake1, colorSet1, colorSet5));
+                vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5));
             }
 
             return vertices;
@@ -235,7 +244,7 @@ namespace CrossMod.Nodes
             System.Diagnostics.Debug.WriteLine(meshObject.Name);
             foreach (var attribute in meshObject.Attributes)
             {
-                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4_0} Unk5: {attribute.Unk5_0}");
+                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4_0} Unk5: {attribute.Unk5_0}");
             }
             System.Diagnostics.Debug.WriteLine("");
         }
