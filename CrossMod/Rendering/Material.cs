@@ -49,9 +49,7 @@ namespace CrossMod.Rendering
 
 
         // this isn't super clean because of the whole attribute names being different and what not...
-        public Dictionary<long, Vector4> MaterialAnimation = new Dictionary<long, Vector4>();
-
-
+        public Dictionary<long, Vector4> MaterialAnimation { get; } = new Dictionary<long, Vector4>();
 
         public Material(Resources.DefaultTextures defaultTextures)
         {
@@ -134,9 +132,7 @@ namespace CrossMod.Rendering
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
 
-
-            // ploaj added
-            // customvector31 uv scale/translate for colmap2
+            // Customvector31 uv scale/translate for colmap2
             AddVec4("param146", genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
         }
 
@@ -217,15 +213,15 @@ namespace CrossMod.Rendering
 
         private void AddVec4(string name, GenericMaterial genericMaterial, long paramId, Vector4 defaultValue)
         {
+            // Convert parameters into colors for easier visualization.
+
             // I can't do this generically because the shader names won't match the attribute names.... too messy
             if (MaterialAnimation.ContainsKey(paramId))
             {
                 var value = MaterialAnimation[paramId];
                 genericMaterial.AddVector4(name, value);
             }
-            else
-            // Convert parameters into colors for easier visualization.
-            if (vec4ByParamId.ContainsKey(paramId))
+            else if (vec4ByParamId.ContainsKey(paramId))
             {
                 var value = vec4ByParamId[paramId];
                 genericMaterial.AddVector4(name, value);

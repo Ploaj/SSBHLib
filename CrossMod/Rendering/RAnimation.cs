@@ -37,6 +37,7 @@ namespace CrossMod.Rendering
             // Material
             foreach (Models.RMesh m in Model.subMeshes)
                 m.Material.MaterialAnimation.Clear();
+
             foreach (RMaterialAnimation a in MaterialNodes)
             {
                 foreach (Models.RMesh m in Model.subMeshes)
@@ -44,9 +45,9 @@ namespace CrossMod.Rendering
                     // I can't do this generically because the shader names won't match the attribute names....
                     if (m.Material.Name.Equals(a.MaterialName))
                     {
-                        SSBHLib.Formats.Materials.MatlEnums.ParamId ParamID;
-                        if(System.Enum.TryParse(a.AttributeName, out ParamID))
+                        if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId ParamID))
                         {
+                            System.Diagnostics.Debug.WriteLine($"Animation: {ParamID} {a.Keys.GetValue(Frame)}");
                             m.Material.MaterialAnimation.Add((long)ParamID, a.Keys.GetValue(Frame));
                         }
                     }
