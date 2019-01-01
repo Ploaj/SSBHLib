@@ -166,10 +166,6 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     if (hasParam153 == 1)
         diffuseTerm = param153.rgb + param154.rgb;
 
-    // HACK: Some models have black vertex color for some reason.
-    if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
-        diffuseTerm *= colorSet1.rgb;
-
     return diffuseTerm;
 }
 
@@ -357,6 +353,11 @@ void main()
     // Emission
     vec3 emissionTerm = EmissionTerm(emissionColor);
     fragColor.rgb += emissionTerm * renderEmission;
+
+
+    // HACK: Some models have black vertex color for some reason.
+    if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
+        fragColor.rgb *= colorSet1.rgb;
 
     if (renderWireframe == 1)
     {

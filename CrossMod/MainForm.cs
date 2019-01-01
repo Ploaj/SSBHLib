@@ -340,7 +340,11 @@ namespace CrossMod
                         if ((uint)attribute.ParamID == paramId)
                         {
                             string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
-                            if (!values.Contains(attribute.DataObject.ToString()))
+
+                            // Don't check duplicates for booleans.
+                            if (attribute.DataType == SSBHLib.Formats.Materials.MatlEnums.ParamDataType.Boolean)
+                                outputText.AppendLine(text);
+                            else if (!values.Contains(attribute.DataObject.ToString()))
                             {
                                 outputText.AppendLine(text);
                                 values.Add(attribute.DataObject.ToString());
