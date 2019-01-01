@@ -39,7 +39,10 @@ namespace CrossMod.Rendering
         public Texture bakeLit = null;
         public Texture proj = null;
         public Texture gao = null;
+
         public Texture difCube = null;
+        public bool HasDifCube { get; set; } = false;
+
         public Texture inkNor = null;
         public TextureCubeMap specularIbl = null;
 
@@ -57,8 +60,8 @@ namespace CrossMod.Rendering
             this.defaultTextures = defaultTextures;
 
             // Ensure the textures are never null, so we can modify their state later.
-            col = defaultTextures.defaultBlack;
-            col2 = defaultTextures.defaultBlack;
+            col = defaultTextures.defaultWhite;
+            col2 = defaultTextures.defaultWhite;
             proj = defaultTextures.defaultBlack;
             nor = defaultTextures.defaultNormal;
             inkNor = defaultTextures.defaultWhite;
@@ -69,9 +72,9 @@ namespace CrossMod.Rendering
             gao = defaultTextures.defaultWhite;
             specularIbl = defaultTextures.blackCube;
             difCube = defaultTextures.defaultBlack;
-            dif = defaultTextures.defaultBlack;
-            dif2 = defaultTextures.defaultBlack;
-            dif3 = defaultTextures.defaultBlack;
+            dif = defaultTextures.defaultWhite;
+            dif2 = defaultTextures.defaultWhite;
+            dif3 = defaultTextures.defaultWhite;
         }
 
         public GenericMaterial CreateGenericMaterial(Material material)
@@ -134,6 +137,11 @@ namespace CrossMod.Rendering
 
             // Customvector31 uv scale/translate for colmap2
             AddVec4("param146", genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
+
+            // Wii Fit trainer stage color.
+            genericMaterial.AddBoolToInt("hasParam153", vec4ByParamId.ContainsKey(0x153));
+            AddVec4("param153", genericMaterial, 0x153, new Vector4(0, 0, 0, 0));
+            AddVec4("param154", genericMaterial, 0x154, new Vector4(0, 0, 0, 0));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
@@ -161,7 +169,9 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
             genericMaterial.AddTexture("projMap", proj);
+
             genericMaterial.AddTexture("difCubemap", difCube);
+            genericMaterial.AddBoolToInt("hasDifCubemap", HasDifCube);
 
             genericMaterial.AddTexture("difMap", dif);
             genericMaterial.AddBoolToInt("hasDiffuse", HasDiffuse);

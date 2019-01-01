@@ -21,7 +21,9 @@ uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 uniform sampler2D inkNorMap;
+
 // TODO: Cubemap loading doesn't work yet.
+uniform int hasDifCubemap;
 uniform sampler2D difCubemap;
 
 uniform int hasDiffuse;
@@ -57,6 +59,10 @@ uniform vec4 param146;
 
 uniform int hasParam156;
 uniform vec4 param156;
+
+uniform int hasParam153;
+uniform vec4 param153;
+uniform vec4 param154;
 
 uniform int paramE9;
 
@@ -151,6 +157,9 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
 
     diffuseTerm *= paramA5.rgb;
 
+    if (hasParam153 == 1)
+        diffuseTerm = param153.rgb + param154.rgb;
+
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
         diffuseTerm *= colorSet1.rgb;
@@ -229,9 +238,9 @@ vec4 GetAlbedoColor()
 
     albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
 
-    // We can do this because the default value is black.
     // Materials won't have col and diffuse cubemaps.
-    albedoColor.rgb += texture(difCubemap, map1).rgb;
+    if (hasDifCubemap == 1)
+        albedoColor.rgb = texture(difCubemap, map1).rgb;
 
     if (hasDiffuse == 1)
         albedoColor.rgb = Blend(albedoColor, diffuseColor);

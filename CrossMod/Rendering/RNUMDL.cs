@@ -230,6 +230,7 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.DifCubemap:
                         meshMaterial.difCube = texture;
+                        meshMaterial.HasDifCube = true;
                         break;
                     case (long)ParamId.PrmMap:
                         meshMaterial.prm = texture;
