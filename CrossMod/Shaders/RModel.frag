@@ -63,6 +63,7 @@ uniform vec4 param9B;
 
 // UV transforms.
 uniform vec4 param146;
+uniform vec4 param147;
 uniform vec4 param9E;
 
 uniform int hasParam156;
@@ -151,7 +152,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse)
 {
@@ -232,10 +233,7 @@ void main()
     vec3 R = reflect(V, newNormal);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, param9E, param146, colorSet5);
-    // HACK: The default albedo color is white, which won't work with emission.
-    if (emissionOverride == 1)
-        albedoColor = vec4(0, 0, 0, 1);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
 
     vec4 emissionColor = GetEmissionColor(map1, uvSet, param9E, param146);
     vec4 prmColor = texture(prmMap, map1).xyzw;

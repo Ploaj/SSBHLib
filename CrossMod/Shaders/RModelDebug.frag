@@ -52,6 +52,7 @@ uniform int renderNormalMaps;
 
 // UV transforms.
 uniform vec4 param146;
+uniform vec4 param147;
 uniform vec4 param9E;
 
 uniform mat4 mvp;
@@ -95,7 +96,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 void main()
 {
@@ -107,7 +108,7 @@ void main()
 	vec3 R = reflect(V, newNormal);
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor(map1, uvSet, param9E, param146, colorSet5);
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
 	vec4 emiColor = GetEmissionColor(map1, uvSet, param9E, param146);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;

@@ -53,10 +53,15 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)
     return emissionColor;
 }
 
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2, vec4 colorSet5)
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5)
 {
+    // HACK: The default albedo color is white, which won't work with emission.
+    if (emissionOverride == 1)
+        return vec4(0, 0, 0, 1);
+
     vec2 uvLayer1 = TransformUv(uv1, transform1);
     vec2 uvLayer2 = TransformUv(uv2, transform2);
+    vec2 uvLayer3 = TransformUv(uv3, transform3);
 
     vec4 albedoColor = texture(colMap, uvLayer1).rgba;
     vec4 albedoColor2 = texture(col2Map, uvLayer2).rgba;

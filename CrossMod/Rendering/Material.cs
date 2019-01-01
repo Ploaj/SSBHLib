@@ -138,8 +138,9 @@ namespace CrossMod.Rendering
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
 
-            // Customvector31 UV transform for col map layer 2.
+            // UV transforms.
             AddVec4("param146", genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
+            AddVec4("param147", genericMaterial, 0x147, new Vector4(1, 1, 0, 0));
 
             // UV transform for emissive map layer 1.
             AddVec4("param9E", genericMaterial, 0x9E, new Vector4(1, 1, 0, 0));
