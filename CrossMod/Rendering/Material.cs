@@ -145,6 +145,9 @@ namespace CrossMod.Rendering
             genericMaterial.AddBoolToInt("hasParam153", vec4ByParamId.ContainsKey(0x153));
             AddVec4("param153", genericMaterial, 0x153, new Vector4(0, 0, 0, 0));
             AddVec4("param154", genericMaterial, 0x154, new Vector4(0, 0, 0, 0));
+
+            // Some sort of emission color.
+            AddVec4("param9B", genericMaterial, 0x9B, new Vector4(1));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)

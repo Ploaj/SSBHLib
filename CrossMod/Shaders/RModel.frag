@@ -59,6 +59,7 @@ uniform vec4 paramA3;
 uniform vec4 paramA5;
 uniform vec4 paramA0;
 uniform vec4 param98;
+uniform vec4 param9B;
 
 uniform vec4 param146;
 
@@ -208,7 +209,7 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb;
+    return emissionColor.rgb * param9B.rgb;
 }
 
 vec3 Blend(vec4 a, vec4 b)
