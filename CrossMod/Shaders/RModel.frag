@@ -40,6 +40,8 @@ uniform sampler2D iblLut;
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
+uniform int emissionOverride;
+
 uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderEmission;
@@ -163,6 +165,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
         diffuseTerm *= colorSet1.rgb;
+
     return diffuseTerm;
 }
 
@@ -271,6 +274,10 @@ void main()
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor();
+    // HACK: The default albedo color is white, which won't work with emission.
+    if (emissionOverride == 1)
+        albedoColor = vec4(0, 0, 0, 1);
+
     vec4 emissionColor = GetEmissionColor();
     vec4 prmColor = texture(prmMap, map1).xyzw;
 

@@ -213,6 +213,7 @@ namespace CrossMod.Rendering
                 switch ((long)a.ParamID)
                 {
                     case (long)ParamId.ColMap:
+                        meshMaterial.HasCol = true;
                         meshMaterial.col = texture;
                         break;
                     case (long)ParamId.GaoMap:
@@ -237,6 +238,7 @@ namespace CrossMod.Rendering
                         break;
                     case (long)ParamId.EmiMap:
                         meshMaterial.emi = texture;
+                        meshMaterial.HasEmi = true;
                         break;
                     case (long)ParamId.EmiMap2:
                         meshMaterial.emi2 = texture;

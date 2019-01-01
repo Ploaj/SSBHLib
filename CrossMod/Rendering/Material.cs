@@ -16,6 +16,7 @@ namespace CrossMod.Rendering
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
 
         public Texture col = null;
+        public bool HasCol { get; set; } = false;
 
         public Texture col2 = null;
         public bool HasCol2 { get; set; } = false;
@@ -31,7 +32,9 @@ namespace CrossMod.Rendering
 
         public Texture nor = null;
         public Texture prm = null;
+
         public Texture emi = null;
+        public bool HasEmi { get; set; } = false;
 
         public Texture emi2 = null;
         public bool HasEmi2 { get; set; } = false;
@@ -149,6 +152,7 @@ namespace CrossMod.Rendering
             // Use black for the default value.
             // Some materials seem to use emission as the main diffuse.
             genericMaterial.AddTexture("colMap", col);
+            genericMaterial.AddBoolToInt("hasColMap", HasCol);
 
             // Use the first texture for both layers if the second layer isn't present.
             if (HasCol2)
@@ -181,6 +185,12 @@ namespace CrossMod.Rendering
 
             genericMaterial.AddTexture("dif3Map", dif3);
             genericMaterial.AddBoolToInt("hasDiffuse3", HasDiffuse3);
+
+            // HACK: There's probably a better way to handle blending emission and base color maps.
+            var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
+            var hasEmiMaps = HasEmi || HasEmi2;
+            genericMaterial.AddBoolToInt("emissionOverride", hasEmiMaps && !hasDiffuseMaps);
+
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
