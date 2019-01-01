@@ -13,7 +13,10 @@ in vec3 position;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
+
+uniform int hasCol2Map;
 uniform sampler2D col2Map;
+
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
@@ -239,7 +242,8 @@ vec4 GetAlbedoColor()
     // Vertex color alpha is used for some stages.
     float blend = albedoColor2.a * colorSet5.a;
 
-    albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
+    if (hasCol2Map == 1)
+        albedoColor.rgb = Blend(albedoColor, albedoColor2);
 
     // Materials won't have col and diffuse cubemaps.
     if (hasDifCubemap == 1)

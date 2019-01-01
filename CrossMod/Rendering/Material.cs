@@ -149,16 +149,11 @@ namespace CrossMod.Rendering
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
         {
-            // Use black for the default value.
-            // Some materials seem to use emission as the main diffuse.
             genericMaterial.AddTexture("colMap", col);
             genericMaterial.AddBoolToInt("hasColMap", HasCol);
 
-            // Use the first texture for both layers if the second layer isn't present.
-            if (HasCol2)
-                genericMaterial.AddTexture("col2Map", col2);
-            else
-                genericMaterial.AddTexture("col2Map", col);
+            genericMaterial.AddTexture("col2Map", col2);
+            genericMaterial.AddBoolToInt("hasCol2Map", HasCol2);
 
             genericMaterial.AddTexture("prmMap", prm);
             genericMaterial.AddTexture("norMap", nor);
