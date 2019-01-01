@@ -4,9 +4,12 @@ in vec3 N;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
+in vec2 uvSet;
+in vec2 uvSet1;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
+in vec3 position;
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -47,6 +50,10 @@ uniform int renderMode;
 uniform int renderWireframe;
 uniform int renderNormalMaps;
 
+// UV transforms.
+uniform vec4 param146;
+uniform vec4 param9E;
+
 uniform mat4 mvp;
 uniform vec3 V;
 
@@ -86,50 +93,9 @@ float GgxShading(vec3 N, vec3 H, float roughness)
     return numerator / denominator;
 }
 
-vec3 Blend(vec4 a, vec4 b)
-{
-    return mix(a.rgb, b.rgb, b.a);
-}
-
-// TODO: Add to separate shader.
-vec4 GetEmissionColor()
-{
-    vec4 emissionColor = texture(emiMap, map1).rgba;
-    vec4 emission2Color = texture(emi2Map, map1).rgba;
-    emissionColor.rgb = Blend(emissionColor, emission2Color);
-    return emissionColor;
-}
-
-// TODO: Add to separate shader.
-vec4 GetAlbedoColor()
-{
-    // Blend two diffuse layers based on alpha.
-    // The second layer is set using the first layer if not present.
-    vec4 albedoColor = texture(colMap, map1).rgba;
-    vec4 albedoColor2 = texture(col2Map, map1).rgba;
-    vec4 diffuseColor = texture(difMap, map1).rgba;
-    vec4 diffuse2Color = texture(dif2Map, map1).rgba;
-    vec4 diffuse3Color = texture(dif3Map, map1).rgba;
-
-    // Vertex color alpha is used for some stages.
-    float blend = albedoColor2.a * colorSet5.a;
-
-    albedoColor.rgb = mix(albedoColor.rgb, albedoColor2.rgb, blend);
-
-    // We can do this because the default value is black.
-    // Materials won't have col and diffuse cubemaps.
-    albedoColor.rgb += texture(difCubemap, map1).rgb;
-
-    if (hasDiffuse == 1)
-        albedoColor.rgb = Blend(albedoColor, diffuseColor);
-    if (hasDiffuse2 == 1)
-        albedoColor.rgb = Blend(albedoColor, diffuse2Color);
-    // TODO: Is the blending always additive?
-    if (hasDiffuse3 == 1)
-        albedoColor.rgb += diffuse3Color.rgb;
-
-    return albedoColor;
-}
+// Defined in TextureLayers.frag.
+vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2, vec4 colorSet5);
 
 void main()
 {
@@ -141,9 +107,9 @@ void main()
 	vec3 R = reflect(V, newNormal);
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor();
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, param9E, param146, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
-	vec4 emiColor = GetEmissionColor();
+	vec4 emiColor = GetEmissionColor(map1, uvSet, param9E, param146);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;

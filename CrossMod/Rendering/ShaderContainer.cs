@@ -53,6 +53,7 @@ namespace CrossMod.Rendering
             rModelDebug.LoadShader(File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
             rModelDebug.LoadShader(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
             rModelDebug.LoadShader(File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
+            rModelDebug.LoadShader(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader);
             return rModelDebug;
         }
 
@@ -76,6 +77,7 @@ namespace CrossMod.Rendering
             rModel.LoadShader(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
             rModel.LoadShader(File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
             rModel.LoadShader(File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
+            rModel.LoadShader(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader);
             return rModel;
         }
     }

@@ -61,7 +61,9 @@ uniform vec4 paramA0;
 uniform vec4 param98;
 uniform vec4 param9B;
 
+// UV transforms.
 uniform vec4 param146;
+uniform vec4 param9E;
 
 uniform int hasParam156;
 uniform vec4 param156;
@@ -147,6 +149,10 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
     return 1.0 / (normalization * denominator * denominator);
 }
 
+// Defined in TextureLayers.frag.
+vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2, vec4 colorSet5);
+
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse)
 {
     // Baked ambient lighting.
@@ -208,54 +214,6 @@ vec3 EmissionTerm(vec4 emissionColor)
     return emissionColor.rgb * param9B.rgb;
 }
 
-vec3 Blend(vec4 a, vec4 b)
-{
-    return mix(a.rgb, b.rgb, b.a);
-}
-
-// TODO: Add to separate shader.
-vec4 GetEmissionColor()
-{
-    vec4 emissionColor = texture(emiMap, map1).rgba;
-    vec4 emission2Color = texture(emi2Map, map1).rgba;
-    emissionColor.rgb = Blend(emissionColor, emission2Color);
-    return emissionColor;
-}
-
-// TODO: Add to separate shader.
-vec4 GetAlbedoColor()
-{
-    // Blend two diffuse layers based on alpha.
-    // The second layer is set using the first layer if not present.
-    vec4 albedoColor = texture(colMap, map1).rgba;
-
-    vec2 uvLayer2 = (uvSet + vec2(param146.z*-1, param146.w)) * param146.xy;
-    vec4 albedoColor2 = texture(col2Map, uvLayer2).rgba;
-
-    vec4 diffuseColor = texture(difMap, map1).rgba;
-    vec4 diffuse2Color = texture(dif2Map, map1).rgba;
-    vec4 diffuse3Color = texture(dif3Map, map1).rgba;
-
-    // Vertex color alpha is used for some stages.
-    float blend = albedoColor2.a * colorSet5.a;
-
-    if (hasCol2Map == 1)
-        albedoColor.rgb = Blend(albedoColor, albedoColor2);
-
-    // Materials won't have col and diffuse cubemaps.
-    if (hasDifCubemap == 1)
-        albedoColor.rgb = texture(difCubemap, map1).rgb;
-
-    if (hasDiffuse == 1)
-        albedoColor.rgb = Blend(albedoColor, diffuseColor);
-    if (hasDiffuse2 == 1)
-        albedoColor.rgb = Blend(albedoColor, diffuse2Color);
-    // TODO: Is the blending always additive?
-    if (hasDiffuse3 == 1)
-        albedoColor.rgb += diffuse3Color.rgb;
-
-    return albedoColor;
-}
 
 float GetF0(float ior)
 {
@@ -274,12 +232,12 @@ void main()
     vec3 R = reflect(V, newNormal);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor();
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, param9E, param146, colorSet5);
     // HACK: The default albedo color is white, which won't work with emission.
     if (emissionOverride == 1)
         albedoColor = vec4(0, 0, 0, 1);
 
-    vec4 emissionColor = GetEmissionColor();
+    vec4 emissionColor = GetEmissionColor(map1, uvSet, param9E, param146);
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
     // Probably some sort of override for PRM color.
