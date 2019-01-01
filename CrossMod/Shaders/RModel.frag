@@ -335,7 +335,7 @@ void main()
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
 
-    // TODO: 0 = alpha. 1 = alpha.
-    // Values can be between 0 and 1, however.
-    fragColor.a += param98.x;
+    // Alpha testing.
+    if ((fragColor.a + param98.x) < 0.01)
+        discard;
 }
