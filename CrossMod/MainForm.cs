@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CrossMod.IO;
+using System.Collections.Generic;
 
 namespace CrossMod
 {
@@ -313,20 +314,19 @@ namespace CrossMod
 
         private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            WriteMaterialValuesToFile();
-        }
-
-        private static void WriteMaterialValuesToFile()
-        {
             var folderPath = FileTools.TryOpenFolder("Select Source Directory");
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            var paramId = (SSBHLib.Formats.Materials.MatlEnums.ParamId)Rendering.RenderSettings.Instance.ParamId;
+            WriteMaterialValuesToFile(folderPath);
+        }
 
-            var values = new System.Collections.Generic.HashSet<string>();
+        private static void WriteMaterialValuesToFile(string folderPath)
+        {
+            var enumValues = Enum.GetNames(typeof(SSBHLib.Formats.Materials.MatlEnums.ParamId));
 
-            var outputText = new System.Text.StringBuilder();
+            var valuesByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, HashSet<string>>();
+            var outputByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, System.Text.StringBuilder>();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
@@ -337,24 +337,32 @@ namespace CrossMod
                 {
                     foreach (var attribute in entry.Attributes)
                     {
-                        if (attribute.ParamID == paramId)
-                        {
-                            string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
+                        string text = $"{attribute.ParamID} {attribute.DataObject} {file.Replace(folderPath, "")}";
 
-                            // Don't check duplicates for booleans.
-                            if (attribute.DataType == SSBHLib.Formats.Materials.MatlEnums.ParamDataType.Boolean)
-                                outputText.AppendLine(text);
-                            else if (!values.Contains(attribute.DataObject.ToString()))
-                            {
-                                outputText.AppendLine(text);
-                                values.Add(attribute.DataObject.ToString());
-                            }
+                        if (!outputByParamId.ContainsKey(attribute.ParamID))
+                            outputByParamId.Add(attribute.ParamID, new System.Text.StringBuilder());
+
+                        if (!valuesByParamId.ContainsKey(attribute.ParamID))
+                            valuesByParamId.Add(attribute.ParamID, new HashSet<string>());
+
+                        // Don't check duplicates for booleans.
+                        if (attribute.DataType == SSBHLib.Formats.Materials.MatlEnums.ParamDataType.Boolean)
+                        {
+                            outputByParamId[attribute.ParamID].AppendLine(text);
+                        }
+                        else if (!valuesByParamId.ContainsKey(attribute.ParamID) || !valuesByParamId[attribute.ParamID].Contains(attribute.DataObject.ToString()))
+                        {
+                            outputByParamId[attribute.ParamID].AppendLine(text);
+                            valuesByParamId[attribute.ParamID].Add(attribute.DataObject.ToString());
                         }
                     }
                 }
             }
 
-            File.WriteAllText($"{paramId}_unique_values.txt", outputText.ToString());
+            foreach (var pair in outputByParamId)
+            {
+                File.WriteAllText($"{pair.Key}_unique_values.txt", pair.Value.ToString());
+            }
         }
 
         private static void WriteAttributesToFile()
