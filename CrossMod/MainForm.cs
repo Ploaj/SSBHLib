@@ -93,6 +93,11 @@ namespace CrossMod
             if (Node == null)
                 Node = new FileNode();
 
+            // Change style of unrenderable nodes
+            if (!(Node is IRenderableNode)) {
+                Node.ForeColor = Color.Gray;
+            }
+
             Node.Open(file);
 
             Node.Text = Path.GetFileName(file);
