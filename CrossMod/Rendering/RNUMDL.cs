@@ -97,9 +97,10 @@ namespace CrossMod.Rendering
             if (RMesh.defaultTextures == null)
                 RMesh.defaultTextures = new Resources.DefaultTextures();
 
-            Material meshMaterial = new Material(RMesh.defaultTextures);
-
-            meshMaterial.Name = currentEntry.MaterialLabel;
+            Material meshMaterial = new Material(RMesh.defaultTextures)
+            {
+                Name = currentEntry.MaterialLabel
+            };
 
             System.Diagnostics.Debug.WriteLine("Material Attributes:");
             foreach (MatlAttribute a in currentEntry.Attributes)

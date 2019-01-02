@@ -90,16 +90,14 @@ namespace CrossMod.Rendering
 
     public class RVisibilityAnimation
     {
-        public string MeshName;
-        public RKeyGroup<bool> Visibility { get { return _visibility; } }
-        private RKeyGroup<bool> _visibility = new RKeyGroup<bool>();
+        public string MeshName { get; set; }
+        public RKeyGroup<bool> Visibility { get; } = new RKeyGroup<bool>();
     }
 
     public class RTransformAnimation
     {
-        public string Name;
-        public RKeyGroup<Matrix4> Transform { get { return _transform; } }
-        private RKeyGroup<Matrix4> _transform = new RKeyGroup<Matrix4>();
+        public string Name { get; set; }
+        public RKeyGroup<Matrix4> Transform { get; } = new RKeyGroup<Matrix4>();
     }
 
     public class RKeyGroup<T>

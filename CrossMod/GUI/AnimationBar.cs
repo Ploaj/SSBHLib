@@ -50,8 +50,10 @@ namespace CrossMod.GUI
 
         private void SetupTimer()
         {
-            AnimationPlayer = new Timer();
-            AnimationPlayer.Interval = 100 / 60;
+            AnimationPlayer = new Timer
+            {
+                Interval = 100 / 60
+            };
             AnimationPlayer.Tick += new EventHandler(animationTimer_Tick);
         }
 
