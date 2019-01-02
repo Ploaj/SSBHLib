@@ -103,11 +103,12 @@ namespace CrossMod
         {
             if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                if (renderableNode != null)
-                {
-                    ShowModelViewport();
-                    modelViewport.RenderableNode = renderableNode;
-                }
+                ShowModelViewport();
+                modelViewport.RenderableNode = renderableNode;
+            }
+            else
+            {
+                modelViewport.Clear();
             }
 
             modelViewport.RenderFrame();

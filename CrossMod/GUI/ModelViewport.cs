@@ -18,20 +18,23 @@ namespace CrossMod.GUI
         {
             set
             {
+                ClearDisplay();
+
                 if (value == null)
+                {
+                    renderableNode = null;
                     return;
+                }
                 
                 if (value.GetRenderableNode() is IRenderableAnimation anim)
                 {
                     animationBar.Animation = anim;
                     animationBar.FrameCount = anim.GetFrameCount();
-                    ClearDisplay();
                     controlBox.Visible = true;
                 }
                 else
                 {
                     renderableNode = value.GetRenderableNode();
-                    ClearDisplay();
                 }
 
                 if (renderableNode is RSkeleton skeleton)
