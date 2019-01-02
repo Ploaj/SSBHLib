@@ -322,7 +322,7 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            var paramId = Rendering.RenderSettings.Instance.ParamId;
+            var paramId = (SSBHLib.Formats.Materials.MatlEnums.ParamId)Rendering.RenderSettings.Instance.ParamId;
 
             var values = new System.Collections.Generic.HashSet<string>();
 
@@ -337,7 +337,7 @@ namespace CrossMod
                 {
                     foreach (var attribute in entry.Attributes)
                     {
-                        if ((uint)attribute.ParamID == paramId)
+                        if (attribute.ParamID == paramId)
                         {
                             string text = $"{paramId.ToString("X")} {attribute.DataObject} {file.Replace(folderPath, "")}";
 
@@ -354,7 +354,7 @@ namespace CrossMod
                 }
             }
 
-            File.WriteAllText("output.txt", outputText.ToString());
+            File.WriteAllText($"{paramId}_unique_values.txt", outputText.ToString());
         }
 
         private static void WriteAttributesToFile()
