@@ -186,7 +186,6 @@ namespace CrossMod.GUI
                 renderableNode.Render(camera);
             }
 
-
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
         }

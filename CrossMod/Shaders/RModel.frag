@@ -78,6 +78,9 @@ uniform int paramE9;
 uniform float paramC8;
 uniform float paramCA;
 
+uniform int paramEE;
+uniform float currentFrame;
+
 uniform float transitionFactor;
 uniform int transitionEffect;
 

@@ -8,7 +8,9 @@ namespace CrossMod.Rendering
 {
     public class Material
     {
-        public string Name;
+        public string Name { get; set; }
+
+        public float CurrentFrame { get; set; } = 0;
 
         public Resources.DefaultTextures defaultTextures;
 
@@ -88,6 +90,9 @@ namespace CrossMod.Rendering
             AddTextures(genericMaterial);
             AddMaterialParams(genericMaterial);
 
+            // HACK: There isn't an easy way to access the current frame.
+            genericMaterial.AddFloat("currentFrame", CurrentFrame);
+
             return genericMaterial;
         }
 
@@ -134,6 +139,9 @@ namespace CrossMod.Rendering
 
             // Some sort of sprite sheet scale toggle.
             AddBool("paramF1", genericMaterial, 0xF1, true);
+
+            // Enables/disables UV scrolling animations.
+            AddBool("paramEE", genericMaterial, 0xEE, false);
 
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));

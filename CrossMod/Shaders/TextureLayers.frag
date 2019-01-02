@@ -29,6 +29,9 @@ uniform sampler2D dif3Map;
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
+uniform int paramEE;
+uniform float currentFrame;
+
 uniform int emissionOverride;
 
 vec3 Blend(vec4 a, vec4 b)
@@ -38,7 +41,14 @@ vec3 Blend(vec4 a, vec4 b)
 
 vec2 TransformUv(vec2 uv, vec4 transform)
 {
-    return (uv + vec2(-1.0 * transform.z, transform.w)) * transform.xy;
+    vec2 translate = vec2(-1.0 * transform.z, transform.w);
+
+    // TODO: Does this affect all layers?
+    if (paramEE == 1)
+        translate *= currentFrame / 60.0;
+
+    vec2 scale = transform.xy;
+    return (uv + translate) * scale;
 }
 
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)

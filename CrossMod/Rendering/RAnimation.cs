@@ -17,39 +17,43 @@ namespace CrossMod.Rendering
             return FrameCount;
         }
 
-        public void SetFrameModel(Models.RModel Model, float Frame)
+        public void SetFrameModel(Models.RModel model, float frame)
         {
-            if (Model == null) return;
+            if (model == null)
+                return;
 
             // Visibility
             foreach(RVisibilityAnimation a in VisibilityNodes)
             {
-                foreach (Models.RMesh m in Model.subMeshes)
+                foreach (Models.RMesh m in model.subMeshes)
                 {
                     // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))
                     {
-                        m.Visible = a.Visibility.GetValue(Frame);
+                        m.Visible = a.Visibility.GetValue(frame);
                     }
                 }
             }
 
             // Material
-            foreach (Models.RMesh m in Model.subMeshes)
+            foreach (Models.RMesh m in model.subMeshes)
+            {
                 m.Material.MaterialAnimation.Clear();
+                m.Material.CurrentFrame = frame;
+            }
 
             foreach (RMaterialAnimation a in MaterialNodes)
             {
-                System.Diagnostics.Debug.WriteLine($"Animation: {a.AttributeName} {a.Keys.GetValue(Frame)}");
+                System.Diagnostics.Debug.WriteLine($"Animation: {a.AttributeName} {a.Keys.GetValue(frame)}");
 
-                foreach (Models.RMesh m in Model.subMeshes)
+                foreach (Models.RMesh m in model.subMeshes)
                 {
                     if (m.Material.Name.Equals(a.MaterialName))
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
 
-                            m.Material.MaterialAnimation.Add((long)paramId, a.Keys.GetValue(Frame));
+                            m.Material.MaterialAnimation.Add((long)paramId, a.Keys.GetValue(frame));
                         }
                     }
                 }
