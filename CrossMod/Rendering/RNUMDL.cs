@@ -249,6 +249,7 @@ namespace CrossMod.Rendering
                         meshMaterial.bakeLit = texture;
                         break;
                     case (long)ParamId.InkNorMap:
+                        meshMaterial.HasInkNorMap = true;
                         meshMaterial.inkNor = texture;
                         break;
                     case (long)ParamId.DiffuseMap:

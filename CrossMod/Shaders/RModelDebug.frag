@@ -20,7 +20,10 @@ uniform sampler2D emiMap;
 uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
+
+uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
+
 // TODO: Cubemap loading doesn't work yet.
 uniform sampler2D difCubemap;
 
@@ -101,6 +104,9 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transfor
 void main()
 {
 	vec4 norColor = texture(norMap, map1).xyzw;
+    if (hasInkNorMap == 1)
+        norColor.rgb = texture(inkNorMap, map1).rga;
+
     vec3 newNormal = N;
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
