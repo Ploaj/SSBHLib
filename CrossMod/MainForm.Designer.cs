@@ -1,4 +1,4 @@
-﻿namespace CrossMod
+namespace CrossMod
 {
     partial class MainForm
     {
@@ -140,6 +140,7 @@
             // 
             this.fileTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.fileTree.HideSelection = false;
             this.fileTree.ItemHeight = 24;
             this.fileTree.Location = new System.Drawing.Point(12, 27);
             this.fileTree.Name = "fileTree";

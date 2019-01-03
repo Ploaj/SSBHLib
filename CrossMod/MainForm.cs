@@ -38,7 +38,7 @@ namespace CrossMod
 
         public void ShowModelViewport()
         {
-            HideControl();
+            contentBox.Controls.Clear();
             contentBox.Controls.Add(modelViewport);
         }
 
@@ -94,6 +94,11 @@ namespace CrossMod
             if (Node == null)
                 Node = new FileNode();
 
+            // Change style of unrenderable nodes
+            if (!(Node is IRenderableNode)) {
+                Node.ForeColor = Color.Gray;
+            }
+
             Node.Open(file);
 
             Node.Text = Path.GetFileName(file);
@@ -104,11 +109,12 @@ namespace CrossMod
         {
             if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                if (renderableNode != null)
-                {
-                    ShowModelViewport();
-                    modelViewport.RenderableNode = renderableNode;
-                }
+                ShowModelViewport();
+                modelViewport.RenderableNode = renderableNode;
+            }
+            else
+            {
+                modelViewport.Clear();
             }
 
             modelViewport.RenderFrame();
