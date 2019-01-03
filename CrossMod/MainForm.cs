@@ -20,9 +20,8 @@ namespace CrossMod
 
         private ContextMenu fileTreeContextMenu;
 
-        // Leave this as IEnumerable to improve performance.
-        private readonly IEnumerable<Type> fileNodeTypes = from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
-                                                                where typeof(FileNode).IsAssignableFrom(assemblyType) select assemblyType;
+        private readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+                                                                where typeof(FileNode).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         public MainForm()
         {

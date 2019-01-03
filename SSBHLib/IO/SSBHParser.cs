@@ -1,10 +1,9 @@
-﻿using System;
+﻿using SSBHLib.Formats;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SSBHLib.Formats;
-using SSBHLib.Formats.Animation;
-using System.Collections.Generic;
 
 namespace SSBHLib.IO
 {
@@ -35,8 +34,8 @@ namespace SSBHLib.IO
 
         private int bitPosition = 0;
 
-        private readonly IEnumerable<Type> issbhTypes = from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
-                                                            where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType;
+        private readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+                                                            where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
