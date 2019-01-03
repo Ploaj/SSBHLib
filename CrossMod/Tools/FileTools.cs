@@ -38,11 +38,12 @@ namespace CrossMod
             return false;
         }
         
-        public static bool TrySaveFile(out string fileName, string filter = "")
+        public static bool TrySaveFile(out string fileName, string filter = "", string defaultFileName = "")
         {
             using (var dialog = new SaveFileDialog())
             {
                 dialog.Filter = filter;
+                dialog.FileName = defaultFileName;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {

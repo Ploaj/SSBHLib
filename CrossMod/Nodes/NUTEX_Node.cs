@@ -73,6 +73,11 @@ namespace CrossMod.Nodes
             SelectedImageKey = "texture";
         }
 
+        public override string ToString()
+        {
+            return Text.Contains(".") ? Text.Substring(0, Text.IndexOf(".")) : Text;
+        }
+
         public override void Open(string path)
         {
             using (BinaryReader reader  = new BinaryReader(new FileStream(path, FileMode.Open)))

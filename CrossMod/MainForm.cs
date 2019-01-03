@@ -199,7 +199,7 @@ namespace CrossMod
 
         private void exportExportableTexture(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png"))
+            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", (((MenuItem)sender).Tag).ToString()))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".png"))
