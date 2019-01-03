@@ -160,29 +160,31 @@ namespace CrossMod.Nodes
                                 for (int i = 0; i < values.Length; i++)
                                     vertices[i].Normal = new OpenTK.Vector3(values[i].X, values[i].Y, values[i].Z);
                             }
+
+                            // Flip UVs vertically for export.
                             if (attr.AttributeStrings[0].Name.Equals("map1"))
                             {
                                 outMesh.HasUV0 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    vertices[i].UV0 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV0 = new OpenTK.Vector2(values[i].X, 1 - values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet"))
                             {
                                 outMesh.HasUV1 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    vertices[i].UV1 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV1 = new OpenTK.Vector2(values[i].X, 1 - values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet1"))
                             {
                                 outMesh.HasUV2 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    vertices[i].UV2 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV2 = new OpenTK.Vector2(values[i].X, 1 - values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("uvSet2"))
                             {
                                 outMesh.HasUV3 = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    vertices[i].UV3 = new OpenTK.Vector2(values[i].X, values[i].Y);
+                                    vertices[i].UV3 = new OpenTK.Vector2(values[i].X, 1 - values[i].Y);
                             }
                             if (attr.AttributeStrings[0].Name.Equals("colorSet1"))
                             {
