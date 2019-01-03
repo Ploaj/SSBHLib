@@ -40,11 +40,11 @@ namespace CrossMod.GUI
 
         private IRenderableAnimation animation;
 
-        /**
-         * Sets the current animation.
-         * Setting it to null stops playback, setting it when an animation
-         * is ongoing starts a new animation but from frame 0.
-         */
+        /// <summary>
+        /// Sets the current animation.
+        /// Setting it to null stops playback, setting it when an animation
+        /// is ongoing starts a new animation but from frame 0.
+        /// </summary>
         public IRenderableAnimation Animation
         {
             get
