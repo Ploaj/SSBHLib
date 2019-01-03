@@ -20,7 +20,7 @@ namespace CrossMod
 
         private ContextMenu fileTreeContextMenu;
 
-        private readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+        private static readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
                                                                 where typeof(FileNode).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         public MainForm()

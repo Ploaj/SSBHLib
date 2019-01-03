@@ -34,7 +34,7 @@ namespace SSBHLib.IO
 
         private int bitPosition = 0;
 
-        private readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+        private static readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         public SSBHParser(Stream Stream) : base(Stream)
