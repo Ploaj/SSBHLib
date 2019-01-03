@@ -17,6 +17,8 @@ namespace CrossMod
         private ModelViewport modelViewport;
 
         private ContextMenu fileTreeContextMenu;
+        
+        public static ImageList iconList = new ImageList();
 
         public MainForm()
         {
@@ -28,6 +30,19 @@ namespace CrossMod
             };
 
             fileTreeContextMenu = new ContextMenu();
+
+            iconList.ImageSize = new Size(24, 24);
+
+            iconList.Images.Add("unknown", Properties.Resources.ico_unknown);
+            iconList.Images.Add("folder", Properties.Resources.ico_mesh);
+            iconList.Images.Add("model", Properties.Resources.ico_model);
+            iconList.Images.Add("mesh", Properties.Resources.ico_mesh);
+            iconList.Images.Add("material", Properties.Resources.ico_material);
+            iconList.Images.Add("skeleton", Properties.Resources.ico_skeleton);
+            iconList.Images.Add("texture", Properties.Resources.ico_texture);
+            iconList.Images.Add("animation", Properties.Resources.ico_animation);
+
+            fileTree.ImageList = iconList;
         }
 
         public void HideControl()
@@ -66,6 +81,8 @@ namespace CrossMod
                          select assemblyType).ToArray();
 
             TreeNode Parent = new TreeNode(Path.GetDirectoryName(folderPath));
+            Parent.SelectedImageKey = "folder";
+            Parent.ImageKey = "folder";
             fileTree.Nodes.Add(Parent);
 
             foreach (string file in files)

@@ -66,8 +66,8 @@ namespace CrossMod.Nodes
 
         public NUMSHB_Node()
         {
-            ImageKey = "model";
-            SelectedImageKey = "model";
+            ImageKey = "mesh";
+            SelectedImageKey = "mesh";
         }
 
         public override void Open(string Path)

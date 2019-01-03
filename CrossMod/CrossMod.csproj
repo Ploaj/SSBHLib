@@ -171,6 +171,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="DefaultTextures\diffuseSdr00.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -464,6 +465,14 @@
     <Content Include="lib\SFGraphics.Utils.xml" />
     <Content Include="lib\SFGraphics.xml" />
     <Content Include="lib\SFShapes.dll" />
+    <None Include="Resources\ico_unknown.png" />
+    <None Include="Resources\ico_texture.png" />
+    <None Include="Resources\ico_skeleton.png" />
+    <None Include="Resources\ico_model.png" />
+    <None Include="Resources\ico_mesh.png" />
+    <None Include="Resources\ico_material.png" />
+    <None Include="Resources\ico_folder.png" />
+    <None Include="Resources\ico_animation.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
