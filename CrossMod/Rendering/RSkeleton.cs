@@ -24,6 +24,13 @@ namespace CrossMod.Rendering
         public static Shader boneShader = null;
         private static Matrix4 prismRotation = Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), 1.5708f);
         
+        public void Reset()
+        {
+            foreach(var bone in Bones)
+            {
+                bone.AnimationTransform = bone.Transform;
+            }
+        }
 
         public Matrix4[] GetTransforms()
         {

@@ -28,6 +28,14 @@ namespace CrossMod.Nodes
             if (renderableNode == null)
                 renderableNode = CreateRenderableModel();
 
+            if(renderableNode is RNUMDL MDL)
+            {
+                if(MDL.Skeleton != null)
+                {
+                    MDL.Skeleton.Reset();
+                }
+            }
+
             return renderableNode;
         }
 
