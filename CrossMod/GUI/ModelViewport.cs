@@ -23,17 +23,18 @@ namespace CrossMod.GUI
                 if (value == null)
                 {
                     renderableNode = null;
+                    animationBar.Animation = null;
                     return;
                 }
                 
                 if (value.GetRenderableNode() is IRenderableAnimation anim)
                 {
                     animationBar.Animation = anim;
-                    animationBar.FrameCount = anim.GetFrameCount();
                     controlBox.Visible = true;
                 }
                 else
                 {
+                    animationBar.Animation = null;
                     renderableNode = value.GetRenderableNode();
                 }
 
