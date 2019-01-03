@@ -31,7 +31,7 @@ namespace CrossMod.Nodes
     }
 
     [FileTypeAttribute(".nutexb")]
-    public class NUTEX_Node : FileNode, IRenderableNode
+    public class NUTEX_Node : FileNode, IRenderableNode, IExportableTextureNode
     {
         public List<byte[]> Mipmaps;
         public int Width { get; private set; }
@@ -240,6 +240,13 @@ namespace CrossMod.Nodes
             }
 
             return renderableTexture;
+        }
+
+        public void SaveTexturePNG(string FileName)
+        {
+            System.Drawing.Bitmap Texture = ((RTexture)GetRenderableNode()).renderTexture.GetBitmap(0);
+            Texture.Save(FileName);
+            Texture.Dispose();
         }
     }
 }

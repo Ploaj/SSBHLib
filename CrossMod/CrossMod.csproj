@@ -93,6 +93,7 @@
     <Compile Include="IO\IO_SEANIM.cs" />
     <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\IExportableAnimationNode.cs" />
+    <Compile Include="Nodes\IExportableTextureNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
     <Compile Include="Nodes\SHAN_Node.cs" />

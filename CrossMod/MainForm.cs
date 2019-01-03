@@ -34,7 +34,7 @@ namespace CrossMod
             iconList.ImageSize = new Size(24, 24);
 
             iconList.Images.Add("unknown", Properties.Resources.ico_unknown);
-            iconList.Images.Add("folder", Properties.Resources.ico_mesh);
+            iconList.Images.Add("folder", Properties.Resources.ico_folder);
             iconList.Images.Add("model", Properties.Resources.ico_model);
             iconList.Images.Add("mesh", Properties.Resources.ico_mesh);
             iconList.Images.Add("material", Properties.Resources.ico_material);
@@ -167,6 +167,13 @@ namespace CrossMod
                     fileTreeContextMenu.MenuItems.Clear();
 
                     // gather all options for this node
+                    if (node is IExportableTextureNode exportableTextureNode)
+                    {
+                        MenuItem ExportPNG = new MenuItem("Export As");
+                        ExportPNG.Click += exportExportableTexture;
+                        ExportPNG.Tag = exportableTextureNode;
+                        fileTreeContextMenu.MenuItems.Add(ExportPNG);
+                    }
                     if (node is IExportableModelNode exportableNode)
                     {
                         MenuItem ExportSMD = new MenuItem("Export As");
@@ -185,6 +192,18 @@ namespace CrossMod
                     // show if it has at least 1 option
                     if (fileTreeContextMenu.MenuItems.Count != 0)
                         fileTreeContextMenu.Show(fileTree, p);
+                }
+            }
+        }
+
+        private void exportExportableTexture(object sender, EventArgs args)
+        {
+            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png"))
+            {
+                // need to get RSkeleton First for some types
+                if (fileName.EndsWith(".png"))
+                {
+                    ((IExportableTextureNode)((MenuItem)sender).Tag).SaveTexturePNG(fileName);
                 }
             }
         }
