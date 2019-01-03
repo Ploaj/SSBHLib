@@ -43,15 +43,14 @@ namespace SSBHLib.Formats.Meshes
         
         public int Unk11 { get; set; } // usually 0 long with above?
 
+        public float BoundingSphereX { get; set; }
+        public float BoundingSphereY { get; set; }
+        public float BoundingSphereZ { get; set; }
+        public float BoundingSphereRadius { get; set; }
+
         [ParseTag(InLine = true)]
-        public float[] Floats { get; set; } = new float[26];
+        public float[] HeaderFloats { get; set; } = new float[22];
 
         public MeshAttribute[] Attributes { get; set; }
-
-        public System.Tuple<float, float, float, float> GetBoundingSphere()
-        {
-            // XYZ, Radius
-            return new System.Tuple<float, float, float, float>(Floats[1], Floats[2], Floats[3], Floats[4]);
-        }
     }
 }

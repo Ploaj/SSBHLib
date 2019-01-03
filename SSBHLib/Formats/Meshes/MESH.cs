@@ -52,11 +52,5 @@ namespace SSBHLib.Formats.Meshes
 
         [ParseTag("VersionMinor>8")]
         public long UnknownSize { get; set; }
-
-        public System.Tuple<float, float, float, float> GetBoundingSphere()
-        {
-            // XYZ, Radius
-            return new System.Tuple<float, float, float, float>(BoundingSphereX, BoundingSphereY, BoundingSphereZ, BoundingSphereRadius);
-        }
     }
 }
