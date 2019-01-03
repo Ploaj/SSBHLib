@@ -13,12 +13,16 @@ namespace CrossMod
 {
     public partial class MainForm : Form
     {
+        public static ImageList iconList = new ImageList();
+
         // Controls
         private ModelViewport modelViewport;
 
         private ContextMenu fileTreeContextMenu;
-        
-        public static ImageList iconList = new ImageList();
+
+        // Leave this as IEnumerable to improve performance.
+        private readonly IEnumerable<Type> fileNodeTypes = from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+                                                                where typeof(FileNode).IsAssignableFrom(assemblyType) select assemblyType;
 
         public MainForm()
         {
@@ -73,12 +77,6 @@ namespace CrossMod
 
         private void OpenFiles(string folderPath)
         {
-            // Leave this as IEnumerable to improve performance.
-            IEnumerable<Type> types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                         from assemblyType in domainAssembly.GetTypes()
-                         where typeof(FileNode).IsAssignableFrom(assemblyType)
-                         select assemblyType);
-
             var parentNode = new TreeNode(Path.GetDirectoryName(folderPath))
             {
                 SelectedImageKey = "folder",
@@ -90,7 +88,7 @@ namespace CrossMod
             foreach (string file in Directory.EnumerateFiles(folderPath))
             {
                 stopwatch.Restart();
-                OpenFile(types, parentNode, file);
+                OpenFile(fileNodeTypes, parentNode, file);
                 System.Diagnostics.Debug.WriteLine($"Open {Path.GetFileName(file)} {stopwatch.ElapsedMilliseconds} ms");
             }
         }

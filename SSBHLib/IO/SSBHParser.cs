@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Animation;
+using System.Collections.Generic;
 
 namespace SSBHLib.IO
 {
@@ -33,6 +34,9 @@ namespace SSBHLib.IO
         public long FileSize => BaseStream.Length;
 
         private int bitPosition = 0;
+
+        private readonly IEnumerable<Type> issbhTypes = from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
+                                                            where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType;
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
@@ -65,12 +69,7 @@ namespace SSBHLib.IO
                 Seek(0x10);
             }
 
-            var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                            from assemblyType in domainAssembly.GetTypes()
-                            where typeof(ISSBH_File).IsAssignableFrom(assemblyType)
-                            select assemblyType);
-
-            foreach (var c in Types)
+            foreach (var c in issbhTypes)
             {
                 SSBHFileAttribute attr = c.GetCustomAttributes(
                 typeof(SSBHFileAttribute), true
