@@ -21,7 +21,7 @@ namespace SSBHLib.Formats.Meshes
         
         public int VertexOffset2 { get; set; }
         
-        public int Unk4 { get; set; } // some offset inside of some unforseen buffer
+        public int FinalBufferOffset { get; set; }
         
         public int BufferIndex { get; set; }
         

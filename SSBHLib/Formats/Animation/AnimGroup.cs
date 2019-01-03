@@ -4,7 +4,8 @@
     {
         Transform = 1,
         Visibilty = 2,
-        Material = 4
+        Material = 4,
+        Camera = 5
     }
 
     public class AnimGroup : ISSBH_File
