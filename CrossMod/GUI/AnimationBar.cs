@@ -62,7 +62,17 @@ namespace CrossMod.GUI
                 {
                     animation = value;
                     FrameCount = value.GetFrameCount();
-                    Frame = 0;
+
+                    // Set frame to 0 and ensure the animation always re-renders on swap.
+                    // Value change events don't trigger if the value doesn't change.
+                    if (Frame == 0)
+                    {
+                        UpdateAnimation();
+                    }
+                    else
+                    {
+                        Frame = 0;
+                    }
                 }
             }
         }
@@ -96,6 +106,21 @@ namespace CrossMod.GUI
             };
             AnimationPlayer.Tick += new EventHandler(animationTimer_Tick);
         }
+        
+        /**
+         * Updates the held animation object to hold the current state.
+         * This includes the model, skeleton, and current frame.
+         */
+        private void UpdateAnimation()
+        {
+            if (Animation == null)
+            {
+                return;
+            }
+
+            Animation.SetFrameModel(Model, Frame);
+            Animation.SetFrameSkeleton(Skeleton, Frame);
+        }
 
         private void animationTimer_Tick(object sender, EventArgs e)
         {
@@ -112,8 +137,7 @@ namespace CrossMod.GUI
         private void animationTrack_ValueChanged(object sender, EventArgs e)
         {
             currentFrame.Value = animationTrack.Value;
-            Animation.SetFrameModel(Model, Frame);
-            Animation.SetFrameSkeleton(Skeleton, Frame);
+            UpdateAnimation();
         }
 
         private void playButton_Click(object sender, EventArgs e)
