@@ -68,7 +68,7 @@ namespace SSBHLib.IO
             var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                             from assemblyType in domainAssembly.GetTypes()
                             where typeof(ISSBH_File).IsAssignableFrom(assemblyType)
-                            select assemblyType).ToArray();
+                            select assemblyType);
 
             foreach (var c in Types)
             {
