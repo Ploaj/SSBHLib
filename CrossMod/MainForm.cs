@@ -37,7 +37,7 @@ namespace CrossMod
 
         public void ShowModelViewport()
         {
-            HideControl();
+            contentBox.Controls.Clear();
             contentBox.Controls.Add(modelViewport);
         }
 
