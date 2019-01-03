@@ -1451,8 +1451,7 @@
         </member>
         <member name="M:SFGraphics.GLObjects.Textures.Texture.GetBitmap(System.Int32)">
             <summary>
-            Gets the image data for <paramref name="mipLevel"/>
-            in an ABGR unsigned byte format.
+            Gets the image data for <paramref name="mipLevel"/> in an unsigned byte format.
             </summary>
             <param name="mipLevel">The mip level to read</param>
             <returns>The image data for <paramref name="mipLevel"/></returns>
