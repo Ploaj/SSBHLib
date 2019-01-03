@@ -288,11 +288,14 @@ namespace CrossMod.IO
                     node.ItemsElementName = new ItemsChoiceType2[] { ItemsChoiceType2.matrix };
                     node.Items = new object[] { mat };
 
-                    // deal with parenting
                     boneToNode.Add(b, node);
-                    if(b.ParentID == -1)
+                }
+                // deal with parenting
+                foreach (var b in m.Skeleton.Bones)
+                {
+                    if (b.ParentID == -1)
                     {
-                        scene_nodes.Add(node);
+                        scene_nodes.Add(boneToNode[b]);
                     }
                     else
                     {
@@ -300,7 +303,7 @@ namespace CrossMod.IO
                             boneToNode[m.Skeleton.Bones[b.ParentID]].node1 = new node[0];
                         node[] parentnode = boneToNode[m.Skeleton.Bones[b.ParentID]].node1;
                         Array.Resize<node>(ref parentnode, parentnode.Length + 1);
-                        parentnode[parentnode.Length - 1] = node;
+                        parentnode[parentnode.Length - 1] = boneToNode[b];
                         boneToNode[m.Skeleton.Bones[b.ParentID]].node1 = parentnode;
                     }
                 }
