@@ -59,17 +59,6 @@ namespace CrossMod.GUI
                 }
             }
         }
-
-        public void FrameSelection(RModel model)
-        {
-            if (model == null)
-                return;
-
-            // Bounding spheres will help account for the vastly different model sizes.
-            var sphere = model.BoundingSphere;
-            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 5);
-        }
-
         private IRenderable renderableNode;
 
         public Camera camera = new Camera() { FarClipPlane = 500000 };
@@ -85,6 +74,16 @@ namespace CrossMod.GUI
             CreateRenderFrameEvents();
 
             AddAnimationBar();
+        }
+
+        public void FrameSelection(RModel model)
+        {
+            if (model == null)
+                return;
+
+            // Bounding spheres will help account for the vastly different model sizes.
+            var sphere = model.BoundingSphere;
+            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 5);
         }
 
         public void ClearFiles()
@@ -141,6 +140,9 @@ namespace CrossMod.GUI
 
         private void DisplaySkeleton(RSkeleton skeleton)
         {
+            if (skeleton == null)
+                return;
+
             animationBar.Skeleton = skeleton;
             Dictionary<int, TreeNode> boneById = new Dictionary<int, TreeNode>();
 
