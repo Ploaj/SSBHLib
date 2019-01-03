@@ -78,9 +78,6 @@ uniform int paramE9;
 uniform float paramC8;
 uniform float paramCA;
 
-uniform int paramEE;
-uniform float currentFrame;
-
 uniform float transitionFactor;
 uniform int transitionEffect;
 
@@ -168,9 +165,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
 
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
 
-    // Ambient occlusion.
-    diffuseTerm *= texture(gaoMap, bake1).rgb;
-
+    // Color multiplier param.
     diffuseTerm *= paramA5.rgb;
 
     if (hasParam153 == 1)
@@ -308,6 +303,7 @@ void main()
 
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
+    fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
     vec3 emissionTerm = EmissionTerm(emissionColor);
