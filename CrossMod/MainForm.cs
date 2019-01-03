@@ -85,9 +85,12 @@ namespace CrossMod
             Parent.ImageKey = "folder";
             fileTree.Nodes.Add(Parent);
 
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             foreach (string file in files)
             {
+                stopwatch.Restart();
                 OpenFile(Types, Parent, file);
+                System.Diagnostics.Debug.WriteLine($"Open {Path.GetFileName(file)} {stopwatch.ElapsedMilliseconds} ms");
             }
         }
 

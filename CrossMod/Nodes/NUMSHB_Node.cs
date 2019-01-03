@@ -74,9 +74,9 @@ namespace CrossMod.Nodes
         {
             string ADJB = System.IO.Path.GetDirectoryName(Path) + "/model.adjb";
             System.Console.WriteLine(ADJB);
-            if (System.IO.File.Exists(ADJB))
+            if (File.Exists(ADJB))
             {
-                ExtendedMesh = new CrossMod.Nodes.ADJB();
+                ExtendedMesh = new ADJB();
                 ExtendedMesh.Read(ADJB);
             }
 
@@ -91,7 +91,7 @@ namespace CrossMod.Nodes
 
         public RModel GetRenderModel(RSkeleton Skeleton = null)
         {
-            RModel model = new RModel();
+            var model = new RModel();
 
             // The bounding sphere containing all meshes.
             var modelSphere = mesh.GetBoundingSphere();
@@ -99,13 +99,9 @@ namespace CrossMod.Nodes
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
-                List<MeshObject> obs = new List<MeshObject>();
-                obs.AddRange(mesh.Objects);
-                System.Diagnostics.Debug.WriteLine(obs.IndexOf(meshObject).ToString("X") + " " + meshObject.Name + " " + (meshObject.IndexCount).ToString("X"));
-
                 PrintAttributeInformation(meshObject);
 
-                RMesh rMesh = new RMesh
+                var rMesh = new RMesh
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
@@ -116,26 +112,30 @@ namespace CrossMod.Nodes
                 rMesh.BoundingSphere = new Vector4(sphere.Item1, sphere.Item2, sphere.Item3, sphere.Item4);
 
                 // Get vertex data.
-                var vertexAccessor = new SSBHVertexAccessor(mesh);
-                var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
-
-                System.Diagnostics.Debug.WriteLine(vertexIndices.Length.ToString("X") + " " + vertexIndices[0] + " " + vertexIndices[1] + " " + vertexIndices[2]);
-
-                List<CustomVertex> vertices = CreateVertices(Skeleton, meshObject, vertexAccessor, vertexIndices);
-
-                vertexAccessor.Dispose();
-                /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
-                {
-                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
-                }
-                else*/
-                rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(vertexIndices));
-
+                rMesh.RenderMesh = GetRenderMesh(Skeleton, meshObject, rMesh);
 
                 model.subMeshes.Add(rMesh);
             }
 
             return model;
+        }
+
+        private RenderMesh GetRenderMesh(RSkeleton Skeleton, MeshObject meshObject, RMesh rMesh)
+        {
+            using (var vertexAccessor = new SSBHVertexAccessor(mesh))
+            {
+                var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+
+                System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
+
+                List<CustomVertex> vertices = CreateVertices(Skeleton, meshObject, vertexAccessor, vertexIndices);
+                /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
+                {
+                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
+                }
+                else*/
+                return new RenderMesh(vertices, new List<uint>(vertexIndices));
+            }
         }
 
         private List<CustomVertex> CreateVertices(RSkeleton Skeleton, MeshObject meshObject, SSBHVertexAccessor vertexAccessor, uint[] vertexIndices)
@@ -151,15 +151,12 @@ namespace CrossMod.Nodes
             var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
             var colorSet5Values = vertexAccessor.ReadAttribute("colorSet5", 0, meshObject.VertexCount, meshObject);
 
-
-            Vector3[] generatedBitangents = GenerateBitangents(vertexIndices, positions, map1Values);
-
-            var boneIndices = new IVec4[positions.Length];
-            var boneWeights = new Vector4[positions.Length];
+            var generatedBitangents = GenerateBitangents(vertexIndices, positions, map1Values);
 
             var riggingAccessor = new SSBHRiggingAccessor(mesh);
-            SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
-            Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
+            var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+            var indexByBoneName = new Dictionary<string, int>();
+
             if (Skeleton != null)
             {
                 for (int i = 0; i < Skeleton.Bones.Count; i++)
@@ -168,36 +165,9 @@ namespace CrossMod.Nodes
                 }
             }
 
-            foreach (SSBHVertexInfluence influence in influences)
-            {
-                // Some influences refer to bones that don't exist in the skeleton.
-                // _eff bones?
-                if (!indexByBoneName.ContainsKey(influence.BoneName))
-                    continue;
+            GetRiggingData(positions, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
 
-                if (boneWeights[influence.VertexIndex].X == 0)
-                {
-                    boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];
-                    boneWeights[influence.VertexIndex].X = influence.Weight;
-                }
-                else if (boneWeights[influence.VertexIndex].Y == 0)
-                {
-                    boneIndices[influence.VertexIndex].Y = indexByBoneName[influence.BoneName];
-                    boneWeights[influence.VertexIndex].Y = influence.Weight;
-                }
-                else if (boneWeights[influence.VertexIndex].Z == 0)
-                {
-                    boneIndices[influence.VertexIndex].Z = indexByBoneName[influence.BoneName];
-                    boneWeights[influence.VertexIndex].Z = influence.Weight;
-                }
-                else if (boneWeights[influence.VertexIndex].W == 0)
-                {
-                    boneIndices[influence.VertexIndex].W = indexByBoneName[influence.BoneName];
-                    boneWeights[influence.VertexIndex].W = influence.Weight;
-                }
-            }
-
-            var vertices = new List<CustomVertex>();
+            var vertices = new List<CustomVertex>(positions.Length);
             for (int i = 0; i < positions.Length; i++)
             {
                 var position = GetVector4(positions[i]).Xyz;
@@ -237,6 +207,40 @@ namespace CrossMod.Nodes
             }
 
             return vertices;
+        }
+
+        private static void GetRiggingData(SSBHVertexAttribute[] positions, SSBHVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
+        {
+            boneIndices = new IVec4[positions.Length];
+            boneWeights = new Vector4[positions.Length];
+            foreach (SSBHVertexInfluence influence in influences)
+            {
+                // Some influences refer to bones that don't exist in the skeleton.
+                // _eff bones?
+                if (!indexByBoneName.ContainsKey(influence.BoneName))
+                    continue;
+
+                if (boneWeights[influence.VertexIndex].X == 0)
+                {
+                    boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];
+                    boneWeights[influence.VertexIndex].X = influence.Weight;
+                }
+                else if (boneWeights[influence.VertexIndex].Y == 0)
+                {
+                    boneIndices[influence.VertexIndex].Y = indexByBoneName[influence.BoneName];
+                    boneWeights[influence.VertexIndex].Y = influence.Weight;
+                }
+                else if (boneWeights[influence.VertexIndex].Z == 0)
+                {
+                    boneIndices[influence.VertexIndex].Z = indexByBoneName[influence.BoneName];
+                    boneWeights[influence.VertexIndex].Z = influence.Weight;
+                }
+                else if (boneWeights[influence.VertexIndex].W == 0)
+                {
+                    boneIndices[influence.VertexIndex].W = indexByBoneName[influence.BoneName];
+                    boneWeights[influence.VertexIndex].W = influence.Weight;
+                }
+            }
         }
 
         private static void PrintAttributeInformation(MeshObject meshObject)
@@ -292,30 +296,6 @@ namespace CrossMod.Nodes
                     return VertexAttribPointerType.HalfFloat;
                 default:
                     return VertexAttribPointerType.Float;
-            }
-        }
-
-        private void AddWeight(ref Vector4 bones, ref Vector4 boneWeights, ushort bone, float weight)
-        {
-            if (boneWeights.X == 0)
-            {
-                bones.X = bone;
-                boneWeights.X = weight;
-            }
-            else if (boneWeights.Y == 0)
-            {
-                bones.Y = bone;
-                boneWeights.Y = weight;
-            }
-            else if (boneWeights.Z == 0)
-            {
-                bones.Z = bone;
-                boneWeights.Z = weight;
-            }
-            else if (boneWeights.W == 0)
-            {
-                bones.W = bone;
-                boneWeights.W = weight;
             }
         }
     }
