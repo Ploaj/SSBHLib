@@ -170,11 +170,13 @@ namespace CrossMod.Rendering
 
             foreach (RBone b in Bones)
             {
-                boneShader.SetMatrix4x4("bone", ref b.WorldTransform);
+                Matrix4 transform = b.GetAnimationTransform(this);
+                boneShader.SetMatrix4x4("bone", ref transform);
                 boneShader.SetInt("hasParent", b.ParentID != -1 ? 1 : 0);
                 if(b.ParentID != -1)
                 {
-                    boneShader.SetMatrix4x4("parent", ref Bones[b.ParentID].WorldTransform);
+                    Matrix4 parenttransform = Bones[b.ParentID].GetAnimationTransform(this);
+                    boneShader.SetMatrix4x4("parent", ref parenttransform);
                 }
                 bonePrism.Draw(boneShader, null);
 

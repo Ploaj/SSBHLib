@@ -11,6 +11,8 @@ namespace CrossMod.Nodes
     {
         private SKEL _skel;
 
+        private RSkeleton Skeleton;
+
         public SKEL_Node()
         {
             ImageKey = "skeleton";
@@ -32,21 +34,26 @@ namespace CrossMod.Nodes
         public IRenderable GetRenderableNode()
         {
             if (_skel == null) return null;
-
-            RSkeleton Skeleton = new RSkeleton();
             
-            for(int i = 0; i < _skel.BoneEntries.Length; i++)
+            if(Skeleton == null)
             {
-                RBone Bone = new RBone();
-                Bone.Name = _skel.BoneEntries[i].Name;
-                Bone.ID = _skel.BoneEntries[i].ID;
-                Bone.ParentID = _skel.BoneEntries[i].ParentID;
-                Bone.Transform = Skel_to_TKMatrix(_skel.Transform[i]);
-                Bone.InvTransform = Skel_to_TKMatrix(_skel.InvTransform[i]);
-                Bone.WorldTransform = Skel_to_TKMatrix(_skel.WorldTransform[i]);
-                Bone.InvWorldTransform = Skel_to_TKMatrix(_skel.InvWorldTransform[i]);
-                Skeleton.Bones.Add(Bone);
+                Skeleton = new RSkeleton();
+
+                for (int i = 0; i < _skel.BoneEntries.Length; i++)
+                {
+                    RBone Bone = new RBone();
+                    Bone.Name = _skel.BoneEntries[i].Name;
+                    Bone.ID = _skel.BoneEntries[i].ID;
+                    Bone.ParentID = _skel.BoneEntries[i].ParentID;
+                    Bone.Transform = Skel_to_TKMatrix(_skel.Transform[i]);
+                    Bone.InvTransform = Skel_to_TKMatrix(_skel.InvTransform[i]);
+                    Bone.WorldTransform = Skel_to_TKMatrix(_skel.WorldTransform[i]);
+                    Bone.InvWorldTransform = Skel_to_TKMatrix(_skel.InvWorldTransform[i]);
+                    Skeleton.Bones.Add(Bone);
+                }
             }
+
+            Skeleton.Reset();
 
             return Skeleton;
         }
