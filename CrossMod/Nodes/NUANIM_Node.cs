@@ -20,8 +20,7 @@ namespace CrossMod.Nodes
         
         public override void Open(string Path)
         {
-            ISSBH_File SSBHFile;
-            if (SSBH.TryParseSSBHFile(Path, out SSBHFile))
+            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File SSBHFile))
             {
                 if (SSBHFile is ANIM anim)
                 {
@@ -32,106 +31,121 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            if (animation == null) return null;
-            RAnimation renderAnimation = new RAnimation() { FrameCount = (int)animation.FrameCount };
+            if (animation == null)
+                return null;
+
+            RAnimation renderAnimation = new RAnimation()
+            {
+                FrameCount = (int)animation.FrameCount
+            };
 
             SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
-                // Material Animations
                 if (animGroup.Type == ANIM_TYPE.Material)
                 {
-                    foreach (AnimNode animNode in animGroup.Nodes)
-                    {
-                        foreach (AnimTrack track in animNode.Tracks)
-                        {
-                            RMaterialAnimation matAnim = new RMaterialAnimation()
-                            {
-                                MaterialName = animNode.Name,
-                                AttributeName = track.Name
-                            };
-                            object[] MaterialAnim = decoder.ReadTrack(track);
-
-                            // only get vectors for now
-                            if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
-                            {
-                                continue;
-                            }
-                            renderAnimation.MaterialNodes.Add(matAnim);
-                            for (int i = 0; i < MaterialAnim.Length; i++)
-                            {
-                                var vec = (AnimTrackCustomVector4)MaterialAnim[i];
-                                matAnim.Keys.Keys.Add(new RKey<Vector4>()
-                                {
-                                    Frame = i,
-                                    Value = new Vector4(vec.X, vec.Y, vec.Z, vec.W)
-                                });
-                            }
-                        }
-                    }
+                    ReadMaterialAnimations(renderAnimation, decoder, animGroup);
                 }
-                // Visibility Animations
-                if (animGroup.Type == ANIM_TYPE.Visibilty)
+                else if (animGroup.Type == ANIM_TYPE.Visibilty)
                 {
-                    foreach (AnimNode animNode in animGroup.Nodes)
-                    {
-                        RVisibilityAnimation visAnim = new RVisibilityAnimation()
-                        {
-                            MeshName = animNode.Name
-                        };
-                        foreach (AnimTrack track in animNode.Tracks)
-                        {
-                            if (track.Name.Equals("Visibility"))
-                            {
-                                object[] Visibility = decoder.ReadTrack(track);
-                                
-                                for (int i = 0; i < Visibility.Length; i++)
-                                {
-                                    visAnim.Visibility.Keys.Add(new RKey<bool>()
-                                    {
-                                        Frame = i,
-                                        Value = ((AnimTrackBool)Visibility[i]).Value
-                                    });
-                                }
-                            }
-                        }
-                        renderAnimation.VisibilityNodes.Add(visAnim);
-                    }
+                    ReadVisAnimations(renderAnimation, decoder, animGroup);
                 }
-                // Bone Animations
-                if (animGroup.Type == ANIM_TYPE.Transform)
+                else if (animGroup.Type == ANIM_TYPE.Transform)
                 {
-                    foreach (AnimNode animNode in animGroup.Nodes)
-                    {
-                        RTransformAnimation tfrmAnim = new RTransformAnimation()
-                        {
-                            Name = animNode.Name
-                        };
-                        foreach (AnimTrack track in animNode.Tracks)
-                        {
-                            if (track.Name.Equals("Transform"))
-                            {
-                                object[] Transform = decoder.ReadTrack(track);
-                                for (int i = 0; i < Transform.Length; i++)
-                                {
-                                    AnimTrackTransform t = (AnimTrackTransform)Transform[i];
-                                    tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
-                                    {
-                                        Frame = i,
-                                        Value = GetMatrix((AnimTrackTransform)Transform[i])
-                                    });
-                                }
-                            }
-                        }
-                        renderAnimation.TransformNodes.Add(tfrmAnim);
-                    }
+                    ReadBoneAnimations(renderAnimation, decoder, animGroup);
                 }
             }
             
-                
-
             return renderAnimation;
+        }
+
+        private static void ReadMaterialAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    RMaterialAnimation matAnim = new RMaterialAnimation()
+                    {
+                        MaterialName = animNode.Name,
+                        AttributeName = track.Name
+                    };
+                    object[] MaterialAnim = decoder.ReadTrack(track);
+
+                    // only get vectors for now
+                    if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
+                    {
+                        continue;
+                    }
+                    renderAnimation.MaterialNodes.Add(matAnim);
+                    for (int i = 0; i < MaterialAnim.Length; i++)
+                    {
+                        var vec = (AnimTrackCustomVector4)MaterialAnim[i];
+                        matAnim.Keys.Keys.Add(new RKey<Vector4>()
+                        {
+                            Frame = i,
+                            Value = new Vector4(vec.X, vec.Y, vec.Z, vec.W)
+                        });
+                    }
+                }
+            }
+        }
+
+        private static void ReadBoneAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                RTransformAnimation tfrmAnim = new RTransformAnimation()
+                {
+                    Name = animNode.Name
+                };
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    if (track.Name.Equals("Transform"))
+                    {
+                        object[] Transform = decoder.ReadTrack(track);
+                        for (int i = 0; i < Transform.Length; i++)
+                        {
+                            AnimTrackTransform t = (AnimTrackTransform)Transform[i];
+                            tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
+                            {
+                                Frame = i,
+                                Value = GetMatrix((AnimTrackTransform)Transform[i])
+                            });
+                        }
+                    }
+                }
+                renderAnimation.TransformNodes.Add(tfrmAnim);
+            }
+        }
+
+        private static void ReadVisAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                RVisibilityAnimation visAnim = new RVisibilityAnimation()
+                {
+                    MeshName = animNode.Name
+                };
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    if (track.Name.Equals("Visibility"))
+                    {
+                        object[] Visibility = decoder.ReadTrack(track);
+
+                        for (int i = 0; i < Visibility.Length; i++)
+                        {
+                            visAnim.Visibility.Keys.Add(new RKey<bool>()
+                            {
+                                Frame = i,
+                                Value = ((AnimTrackBool)Visibility[i]).Value
+                            });
+                        }
+                    }
+                }
+                renderAnimation.VisibilityNodes.Add(visAnim);
+            }
         }
 
         private static Matrix4 GetMatrix(AnimTrackTransform Transform)
@@ -143,10 +157,12 @@ namespace CrossMod.Nodes
 
         public IOAnimation GetIOAnimation()
         {
-            IOAnimation Anim = new IOAnimation();
-            Anim.Name = Text;
-            Anim.FrameCount = animation.FrameCount;
-            Anim.RotationType = IORotationType.Quaternion;
+            IOAnimation anim = new IOAnimation
+            {
+                Name = Text,
+                FrameCount = animation.FrameCount,
+                RotationType = IORotationType.Quaternion
+            };
 
             SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
 
@@ -165,16 +181,16 @@ namespace CrossMod.Nodes
                                 for (int i = 0; i < Transform.Length; i++)
                                 {
                                     AnimTrackTransform t = (AnimTrackTransform)Transform[i];
-                                    Anim.AddKey(animNode.Name, IOTrackType.POSX, i, t.X);
-                                    Anim.AddKey(animNode.Name, IOTrackType.POSY, i, t.Y);
-                                    Anim.AddKey(animNode.Name, IOTrackType.POSZ, i, t.Z);
-                                    Anim.AddKey(animNode.Name, IOTrackType.ROTX, i, t.RX);
-                                    Anim.AddKey(animNode.Name, IOTrackType.ROTY, i, t.RY);
-                                    Anim.AddKey(animNode.Name, IOTrackType.ROTZ, i, t.RZ);
-                                    Anim.AddKey(animNode.Name, IOTrackType.ROTW, i, t.RW);
-                                    Anim.AddKey(animNode.Name, IOTrackType.SCAX, i, t.SX);
-                                    Anim.AddKey(animNode.Name, IOTrackType.SCAY, i, t.SY);
-                                    Anim.AddKey(animNode.Name, IOTrackType.SCAZ, i, t.SZ);
+                                    anim.AddKey(animNode.Name, IOTrackType.POSX, i, t.X);
+                                    anim.AddKey(animNode.Name, IOTrackType.POSY, i, t.Y);
+                                    anim.AddKey(animNode.Name, IOTrackType.POSZ, i, t.Z);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTX, i, t.RX);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTY, i, t.RY);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTZ, i, t.RZ);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTW, i, t.RW);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAX, i, t.SX);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAY, i, t.SY);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAZ, i, t.SZ);
                                 }
                             }
                         }
@@ -182,7 +198,7 @@ namespace CrossMod.Nodes
                 }
             }
 
-            return Anim;
+            return anim;
         }
     }
 }

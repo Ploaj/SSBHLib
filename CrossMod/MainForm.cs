@@ -73,34 +73,35 @@ namespace CrossMod
 
         private void OpenFiles(string folderPath)
         {
-            string[] files = Directory.GetFiles(folderPath);
-
-            var Types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+            // Leave this as IEnumerable to improve performance.
+            IEnumerable<Type> types = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                          from assemblyType in domainAssembly.GetTypes()
                          where typeof(FileNode).IsAssignableFrom(assemblyType)
-                         select assemblyType).ToArray();
+                         select assemblyType);
 
-            TreeNode Parent = new TreeNode(Path.GetDirectoryName(folderPath));
-            Parent.SelectedImageKey = "folder";
-            Parent.ImageKey = "folder";
-            fileTree.Nodes.Add(Parent);
+            var parentNode = new TreeNode(Path.GetDirectoryName(folderPath))
+            {
+                SelectedImageKey = "folder",
+                ImageKey = "folder"
+            };
+            fileTree.Nodes.Add(parentNode);
 
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            foreach (string file in files)
+            foreach (string file in Directory.EnumerateFiles(folderPath))
             {
                 stopwatch.Restart();
-                OpenFile(Types, Parent, file);
+                OpenFile(types, parentNode, file);
                 System.Diagnostics.Debug.WriteLine($"Open {Path.GetFileName(file)} {stopwatch.ElapsedMilliseconds} ms");
             }
         }
 
-        private static void OpenFile(Type[] Types, TreeNode Parent, string file)
+        private static void OpenFile(IEnumerable<Type> Types, TreeNode Parent, string file)
         {
             FileNode Node = null;
 
             string Extension = Path.GetExtension(file);
 
-            foreach (Type type in Types)
+            foreach (var type in Types)
             {
                 if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
                 {
