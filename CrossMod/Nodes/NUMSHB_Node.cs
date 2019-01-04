@@ -94,8 +94,7 @@ namespace CrossMod.Nodes
             var model = new RModel();
 
             // The bounding sphere containing all meshes.
-            var modelSphere = mesh.GetBoundingSphere();
-            model.BoundingSphere = new Vector4(modelSphere.Item1, modelSphere.Item2, modelSphere.Item3, modelSphere.Item4);
+            model.BoundingSphere = new Vector4(mesh.BoundingSphereX, mesh.BoundingSphereY, mesh.BoundingSphereZ, mesh.BoundingSphereRadius);
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
@@ -108,8 +107,7 @@ namespace CrossMod.Nodes
                 };
 
                 // Get bounding sphere.
-                var sphere = meshObject.GetBoundingSphere();
-                rMesh.BoundingSphere = new Vector4(sphere.Item1, sphere.Item2, sphere.Item3, sphere.Item4);
+                rMesh.BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY, meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius);
 
                 // Get vertex data.
                 rMesh.RenderMesh = GetRenderMesh(Skeleton, meshObject, rMesh);

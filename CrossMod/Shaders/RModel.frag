@@ -23,6 +23,8 @@ uniform sampler2D emiMap;
 uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
+
+uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
 // TODO: Cubemap loading doesn't work yet.
@@ -219,11 +221,22 @@ float GetF0(float ior)
     return pow((1 - ior) / (1 + ior), 2);
 }
 
+float GetTransitionBlend(float blendMap, float transitionFactor)
+{
+    if (blendMap <= (1 - transitionFactor))
+        return 1.0;
+    else
+        return 0.0;
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, map1).xyzw;
+    if (hasInkNorMap == 1)
+        norColor.rgb = texture(inkNorMap, map1).rga;
+
     vec3 newNormal = N;
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
@@ -241,9 +254,7 @@ void main()
         prmColor = param156;
 
     // Material masking.
-    float transitionBlend = 0;
-    if (norColor.b <= (1 - transitionFactor))
-        transitionBlend = 1;
+    float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
 
     switch (transitionEffect)
     {
@@ -328,11 +339,15 @@ void main()
     fragColor.a = albedoColor.a;
     fragColor.a *= emissionColor.a;
 
+
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
 
     // Alpha testing.
     if ((fragColor.a + param98.x) < 0.01)
+        discard;
+    // TODO: How does this work?
+    if (hasInkNorMap == 1 && transitionBlend < 1)
         discard;
 }

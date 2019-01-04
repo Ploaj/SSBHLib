@@ -49,6 +49,8 @@ namespace CrossMod.Rendering
         public bool HasDifCube { get; set; } = false;
 
         public Texture inkNor = null;
+        public bool HasInkNorMap { get; set; } = false;
+
         public TextureCubeMap specularIbl = null;
 
         public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
@@ -172,7 +174,9 @@ namespace CrossMod.Rendering
 
             genericMaterial.AddTexture("prmMap", prm);
             genericMaterial.AddTexture("norMap", nor);
+
             genericMaterial.AddTexture("inkNorMap", inkNor);
+            genericMaterial.AddBoolToInt("hasInkNorMap", HasInkNorMap);
 
             genericMaterial.AddTexture("emiMap", emi);
             if (HasEmi2)
