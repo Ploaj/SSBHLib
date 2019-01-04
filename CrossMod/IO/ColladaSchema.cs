@@ -2578,18 +2578,18 @@ namespace CrossMod.IO
 
         /// <remarks />
         [XmlAttribute]
-        public string source
-        {
-            get { return sourceField; }
-            set { sourceField = value; }
-        }
-
-        /// <remarks />
-        [XmlAttribute]
         public ulong set
         {
             get { return setField; }
             set { setField = value; }
+        }
+
+        /// <remarks />
+        [XmlAttribute]
+        public string source
+        {
+            get { return sourceField; }
+            set { sourceField = value; }
         }
 
         /// <remarks />

@@ -25,6 +25,9 @@ namespace CrossMod.IO
                     List<double> list_positions = new List<double>();
                     List<double> list_normals = new List<double>();
                     List<double> list_uvs = new List<double>();
+                    List<double> list_uvs2 = new List<double>();
+                    List<double> list_uvs3 = new List<double>();
+                    List<double> list_uvs4 = new List<double>();
                     List<double> list_colors = new List<double>();
                     foreach (IOVertex v in iomesh.Vertices)
                     {
@@ -34,9 +37,14 @@ namespace CrossMod.IO
                         list_normals.Add(v.Normal.X);
                         list_normals.Add(v.Normal.Y);
                         list_normals.Add(v.Normal.Z);
-                        list_uvs.Add(v.UV0.X);
-                        list_uvs.Add(v.UV0.Y);
+                        list_uvs.Add(v.UV0.X); list_uvs.Add(v.UV0.Y);
+                        list_uvs2.Add(v.UV1.X); list_uvs2.Add(v.UV1.Y);
+                        list_uvs3.Add(v.UV2.X); list_uvs3.Add(v.UV2.Y);
+                        list_uvs4.Add(v.UV3.X); list_uvs4.Add(v.UV3.Y);
                     }
+
+                    // Generate Sources
+                    List<source> Sources = new List<source>();
 
                     // Position
                     source source_position = new source();
@@ -51,6 +59,7 @@ namespace CrossMod.IO
                         new param() { name="Y", type="float"},
                         new param() { name="Z", type="float"} });
                     }
+                    Sources.Add(source_position);
 
                     // Normal
                     source source_normal = new source();
@@ -65,19 +74,11 @@ namespace CrossMod.IO
                         new param() { name="Y", type="float"},
                         new param() { name="Z", type="float"} });
                     }
+                    Sources.Add(source_normal);
 
-                    // UV0
-                    source source_uv0 = new source();
-                    {
-                        float_array floats = new float_array();
-                        floats.count = (ulong)list_uvs.Count;
-                        floats.id = g.id + "_uv0_arr";
-                        floats.Values = list_uvs.ToArray();
-
-                        source_uv0 = CreateSource(list_uvs.Count, 2, floats.id, floats, new param[] {
-                        new param() { name="S", type="float"},
-                        new param() { name="T", type="float"} });
-                    }
+                    List<InputLocalOffset> InputLocalOffsets = new List<InputLocalOffset>();
+                    int LocalOffset = 0;
+                    int UVSet = 0;
 
                     // vertices
 
@@ -86,21 +87,91 @@ namespace CrossMod.IO
                     vertices.input = new InputLocal[]
                     {
                     new InputLocal() { source = "#" + source_position.id, semantic = "POSITION" },
-                    new InputLocal() { source = "#" + source_normal.id, semantic = "NORMAL" },
-                    new InputLocal() { source = "#" + source_uv0.id, semantic = "TEXCOORD" }
+                    new InputLocal() { source = "#" + source_normal.id, semantic = "NORMAL" }
                     };
+                    InputLocalOffsets.Add(new InputLocalOffset() { offset = (ulong)LocalOffset++, semantic = "VERTEX", source = "#" + vertices.id });
+
+                    // UV0
+                    if (iomesh.HasUV0)
+                    {
+                        source source_uv0 = new source();
+                        {
+                            float_array floats = new float_array();
+                            floats.count = (ulong)list_uvs.Count;
+                            floats.id = g.id + $"_uv{UVSet}_arr";
+                            floats.Values = list_uvs.ToArray();
+
+                            source_uv0 = CreateSource(list_uvs.Count, 2, floats.id, floats, new param[] {
+                            new param() { name="S", type="float"},
+                            new param() { name="T", type="float"} });
+                        }
+                        Sources.Add(source_uv0);
+                        InputLocalOffsets.Add(new InputLocalOffset() { source = "#" + source_uv0.id, semantic = "TEXCOORD", offset = (ulong)LocalOffset++, set = (ulong)UVSet++ });
+                    }
+                    if (iomesh.HasUV1)
+                    {
+                        source source_uv0 = new source();
+                        {
+                            float_array floats = new float_array();
+                            floats.count = (ulong)list_uvs2.Count;
+                            floats.id = g.id + $"_uv{UVSet}_arr";
+                            floats.Values = list_uvs2.ToArray();
+
+                            source_uv0 = CreateSource(list_uvs2.Count, 2, floats.id, floats, new param[] {
+                            new param() { name="S", type="float"},
+                            new param() { name="T", type="float"} });
+                        }
+                        Sources.Add(source_uv0);
+                        InputLocalOffsets.Add(new InputLocalOffset() { source = "#" + source_uv0.id, semantic = "TEXCOORD", offset = (ulong)LocalOffset++, set = (ulong)UVSet++ });
+                    }
+                    if (iomesh.HasUV2)
+                    {
+                        source source_uv0 = new source();
+                        {
+                            float_array floats = new float_array();
+                            floats.count = (ulong)list_uvs3.Count;
+                            floats.id = g.id + $"_uv{UVSet}_arr";
+                            floats.Values = list_uvs3.ToArray();
+
+                            source_uv0 = CreateSource(list_uvs3.Count, 2, floats.id, floats, new param[] {
+                            new param() { name="S", type="float"},
+                            new param() { name="T", type="float"} });
+                        }
+                        Sources.Add(source_uv0);
+                        InputLocalOffsets.Add(new InputLocalOffset() { source = "#" + source_uv0.id, semantic = "TEXCOORD", offset = (ulong)LocalOffset++, set = (ulong)UVSet++ });
+                    }
+                    if (iomesh.HasUV3)
+                    {
+                        source source_uv0 = new source();
+                        {
+                            float_array floats = new float_array();
+                            floats.count = (ulong)list_uvs4.Count;
+                            floats.id = g.id + $"_uv{UVSet}_arr";
+                            floats.Values = list_uvs4.ToArray();
+
+                            source_uv0 = CreateSource(list_uvs4.Count, 2, floats.id, floats, new param[] {
+                            new param() { name="S", type="float"},
+                            new param() { name="T", type="float"} });
+                        }
+                        Sources.Add(source_uv0);
+                        InputLocalOffsets.Add(new InputLocalOffset() { source = "#" + source_uv0.id, semantic = "TEXCOORD", offset = (ulong)LocalOffset++, set = (ulong)UVSet++ });
+                    }
 
                     // triangles
                     triangles triangles = new triangles();
                     triangles.count = ((ulong)iomesh.Indices.Count) / 3;
-                    triangles.input = new InputLocalOffset[] {
-                        new InputLocalOffset(){offset = 0, semantic = "VERTEX", source = "#" + vertices.id }
-                    };
-                    triangles.p = string.Join(" ", iomesh.Indices);
+                    triangles.input = InputLocalOffsets.ToArray();
+                    StringBuilder trianglebuilder = new StringBuilder();
+                    foreach(var i in iomesh.Indices)
+                    {
+                        for(int j = 0; j< InputLocalOffsets.Count; j++)
+                            trianglebuilder.Append($"{i} ");
+                    }
+                    triangles.p = trianglebuilder.ToString();
 
                     // creating mesh
                     mesh geomesh = new mesh();
-                    geomesh.source = new source[] { source_position, source_normal, source_uv0 };
+                    geomesh.source = Sources.ToArray();
                     geomesh.Items = new object[] { triangles };
                     geomesh.vertices = vertices;
 
