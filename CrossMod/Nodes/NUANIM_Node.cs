@@ -74,7 +74,7 @@ namespace CrossMod.Nodes
                     object[] MaterialAnim = decoder.ReadTrack(track);
 
                     // only get vectors for now
-                    if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
+                    if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0] == null || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
                     {
                         continue;
                     }

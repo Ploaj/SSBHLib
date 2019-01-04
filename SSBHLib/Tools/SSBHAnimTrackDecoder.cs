@@ -160,50 +160,51 @@ namespace SSBHLib.Tools
 
         private List<float[]> DecompressValues(SSBHParser parser, uint DataOffset, SSBHAnimCompressedHeader Header, int ValueCount)
         {
-            List<float[]> Transforms = new List<float[]>(Header.FrameCount);
+            List<float[]> transforms = new List<float[]>(Header.FrameCount);
 
             // PreProcess
-            SSBHAnimCompressedItem[] Items = parser.ByteToType<SSBHAnimCompressedItem>(ValueCount);
+            SSBHAnimCompressedItem[] items = parser.ByteToType<SSBHAnimCompressedItem>(ValueCount);
 
             parser.Seek(DataOffset + Header.DefaultDataOffset);
 
-            float[] DefaultValues = new float[ValueCount];
+            float[] defaultValues = new float[ValueCount];
             for(int i = 0; i < ValueCount; i++)
             {
-                DefaultValues[i] = parser.ReadSingle();
+                defaultValues[i] = parser.ReadSingle();
             }
 
             parser.Seek(DataOffset + Header.CompressedDataOffset);
-            for (int frame = 0; frame < Header.FrameCount; frame++)
+            for (int frameIndex = 0; frameIndex < Header.FrameCount; frameIndex++)
             {
-                float[] Values = new float[ValueCount];
+                float[] values = new float[ValueCount];
                 for (int i = 0; i < ValueCount; i++)
-                    Values[i] = DefaultValues[i];
+                    values[i] = defaultValues[i];
 
-                for (int itemIndex = 0; itemIndex < Items.Length; itemIndex++)
+                for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
-                    var item = Items[itemIndex];
+                    var item = items[itemIndex];
 
                     // Decompress
-                    int ValueBitCount = (int)item.Count;
-                    if (ValueBitCount == 0) continue;
+                    int valueBitCount = (int)item.Count;
+                    if (valueBitCount == 0)
+                        continue;
 
-                    int Value = parser.ReadBits(ValueBitCount);
+                    int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
-                    for (int k = 0; k < ValueBitCount; k++)
+                    for (int k = 0; k < valueBitCount; k++)
                         scale |= 0x1 << k;
 
-                    float FrameValue = Lerp(item.Start, item.End, 0, 1, Value / (float)scale);
-                    if (float.IsNaN(FrameValue))
-                        FrameValue = 0;
+                    float frameValue = Lerp(item.Start, item.End, 0, 1, value / (float)scale);
+                    if (float.IsNaN(frameValue))
+                        frameValue = 0;
 
-                    Values[itemIndex] = FrameValue;
+                    values[itemIndex] = frameValue;
                 }
 
-                Transforms[frame] = Values;
+                transforms.Add(values);
             }
 
-            return Transforms;
+            return transforms;
         }
 
         private AnimTrackTransform[] DecompressTransform(SSBHParser parser, uint DataOffset, SSBHAnimCompressedHeader Header)
