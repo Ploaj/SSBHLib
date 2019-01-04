@@ -139,7 +139,7 @@ namespace CrossMod.Nodes
                             visAnim.Visibility.Keys.Add(new RKey<bool>()
                             {
                                 Frame = i,
-                                Value = ((AnimTrackBool)Visibility[i]).Value
+                                Value = (bool)Visibility[i]
                             });
                         }
                     }

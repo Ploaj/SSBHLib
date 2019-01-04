@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace SSBHLib.IO
 {
@@ -276,6 +277,27 @@ namespace SSBHLib.IO
             }
             
             return value;
+        }
+
+        public T[] ByteToType<T>(int Count)
+        {
+            T[] Items = new T[Count];
+
+            for (int i = 0; i < Count; i++)
+                Items[i] = ByteToType<T>();
+
+            return Items;
+        }
+
+        public T ByteToType<T>()
+        {
+            byte[] bytes = ReadBytes(Marshal.SizeOf(typeof(T)));
+
+            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            T theStructure = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            handle.Free();
+
+            return theStructure;
         }
     }
 }
