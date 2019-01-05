@@ -403,9 +403,9 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            var name = "colorSet2_1";
+            var name = "colorSet5";
 
-            var values = new System.Collections.Generic.HashSet<string>();
+            var values = new HashSet<string>();
 
             var outputText = new System.Text.StringBuilder();
 
