@@ -161,6 +161,7 @@ namespace CrossMod.Rendering
 
             // Enables/disables UV scrolling animations.
             AddBool("paramEE", genericMaterial, 0xEE, false);
+            AddBool("paramED", genericMaterial, 0xED, false);
 
             // Alpha offset.
             AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));

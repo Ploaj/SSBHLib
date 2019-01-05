@@ -29,7 +29,9 @@ uniform sampler2D dif3Map;
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
 
+// UV scrolling animations.
 uniform int paramEE;
+uniform int paramED;
 uniform float currentFrame;
 
 uniform int emissionOverride;
@@ -44,7 +46,7 @@ vec2 TransformUv(vec2 uv, vec4 transform)
     vec2 translate = vec2(-1.0 * transform.z, transform.w);
 
     // TODO: Does this affect all layers?
-    if (paramEE == 1)
+    if (paramEE == 1 || paramED == 1)
         translate *= currentFrame / 60.0;
 
     vec2 scale = transform.xy;
