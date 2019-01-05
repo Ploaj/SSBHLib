@@ -5,15 +5,17 @@ using System.Windows.Forms;
 
 namespace CrossMod.GUI
 {
-    // this tool is for playing RAnimation files with skeleton
+    /// <summary>
+    /// A <see cref="Control"/> for playing RAnimation files with a skeleton.
+    /// </summary>
     public partial class AnimationBar : UserControl
     {
+        private static readonly string playingText = "||";
+        private static readonly string stoppedText = ">";
+
         public int FrameCount
         {
-            get
-            {
-                return animationTrack.Maximum;
-            }
+            get => animationTrack.Maximum;
             protected set
             {
                 animationTrack.Maximum = value;
@@ -25,20 +27,15 @@ namespace CrossMod.GUI
 
         public int Frame
         {
-            get
-            {
-                return animationTrack.Value;
-            }
+            get => animationTrack.Value;
             set
             {
                 animationTrack.Value = value;
             }
         }
 
-        public RModel Model;
-        public RSkeleton Skeleton;
-
-        private IRenderableAnimation animation;
+        public RModel Model { get; set; }
+        public RSkeleton Skeleton { get; set; }
 
         /// <summary>
         /// Sets the current animation.
@@ -76,8 +73,11 @@ namespace CrossMod.GUI
                 }
             }
         }
+        private IRenderableAnimation animation;
 
-        private Timer AnimationPlayer;
+        private Timer animationPlayer;
+
+        public bool IsPlaying => playButton.Text.Equals(playingText);
 
         public AnimationBar()
         {
@@ -88,23 +88,23 @@ namespace CrossMod.GUI
 
         public void Start()
         {
-            playButton.Text = "||";
-            AnimationPlayer.Start();
+            playButton.Text = playingText;
+            animationPlayer.Start();
         }
 
         public void Stop()
         {
-            playButton.Text = ">";
-            AnimationPlayer.Stop();
+            playButton.Text = stoppedText;
+            animationPlayer.Stop();
         }
 
         private void SetupTimer()
         {
-            AnimationPlayer = new Timer
+            animationPlayer = new Timer
             {
                 Interval = 100 / 60
             };
-            AnimationPlayer.Tick += new EventHandler(animationTimer_Tick);
+            animationPlayer.Tick += new EventHandler(animationTimer_Tick);
         }
         
         /**
@@ -114,9 +114,7 @@ namespace CrossMod.GUI
         private void UpdateAnimation()
         {
             if (Animation == null)
-            {
                 return;
-            }
 
             Animation.SetFrameModel(Model, Frame);
             Animation.SetFrameSkeleton(Skeleton, Frame);
@@ -124,6 +122,7 @@ namespace CrossMod.GUI
 
         private void animationTimer_Tick(object sender, EventArgs e)
         {
+            // Loop back to the beginning at the end.
             if(animationTrack.Value == animationTrack.Maximum)
             {
                 animationTrack.Value = 0;
@@ -142,14 +141,10 @@ namespace CrossMod.GUI
 
         private void playButton_Click(object sender, EventArgs e)
         {
-            if (playButton.Text.Equals(">"))
-            {
-                Start();
-            }
-            else
-            {
+            if (IsPlaying)
                 Stop();
-            }
+            else
+                Start();
         }
     }
 }
