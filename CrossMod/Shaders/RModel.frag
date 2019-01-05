@@ -83,6 +83,8 @@ uniform float paramCA;
 uniform float transitionFactor;
 uniform int transitionEffect;
 
+uniform vec3 chrLightDir;
+
 uniform mat4 mvp;
 uniform vec3 V;
 
@@ -159,7 +161,8 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transfor
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse)
 {
     // Baked ambient lighting.
-    vec3 diffuseLight = diffuseIbl;
+    vec3 diffuseLight = vec3(0);
+    diffuseLight += diffuseIbl;
     diffuseLight += texture(bakeLitMap, bake1).rgb;
 
     // Direct lighting.

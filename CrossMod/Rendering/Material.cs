@@ -95,7 +95,24 @@ namespace CrossMod.Rendering
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
+            AddQuaternion("chrLightDir", genericMaterial, 1, 0, 0, 0);
+
             return genericMaterial;
+        }
+
+        private static void AddQuaternion(string name, GenericMaterial genericMaterial, float w, float x, float y, float z)
+        {
+            var lightDirection = GetLightDirectionFromQuaternion(x, y, z, w);
+            genericMaterial.AddVector3(name, lightDirection);
+        }
+
+        private static Vector3 GetLightDirectionFromQuaternion(float w, float x, float y, float z)
+        {
+            var quaternion = new Quaternion(x, y, z, w);
+            var matrix = Matrix4.CreateFromQuaternion(quaternion);
+
+            var lightDirection = Vector4.Transform(new Vector4(0, 0, 1, 0), matrix);
+            return lightDirection.Normalized().Xyz;
         }
 
         private void AddTextures(GenericMaterial genericMaterial)

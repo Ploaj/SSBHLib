@@ -96,15 +96,25 @@ namespace CrossMod.Nodes
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
+                //System.Diagnostics.Debug.WriteLine(animNode.Name);
+
                 RTransformAnimation tfrmAnim = new RTransformAnimation()
                 {
                     Name = animNode.Name
                 };
                 foreach (AnimTrack track in animNode.Tracks)
                 {
+                    object[] Transform = decoder.ReadTrack(track);
+
+                    //System.Diagnostics.Debug.WriteLine($"\t{track.Name}");
+                    //foreach (var value in Transform)
+                    //{
+                    //    System.Diagnostics.Debug.WriteLine($"\t\t{value}");
+                    //}
+
                     if (track.Name.Equals("Transform"))
                     {
-                        object[] Transform = decoder.ReadTrack(track);
+
                         for (int i = 0; i < Transform.Length; i++)
                         {
                             AnimTrackTransform t = (AnimTrackTransform)Transform[i];
