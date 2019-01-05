@@ -35,35 +35,46 @@
     <Reference Include="GenericValueEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\GenericValueEditor.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\OpenTK.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
+    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\OpenTK.GLControl.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SELib">
       <HintPath>..\..\..\Libraries\SELib\SELib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFGenericModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGenericModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFGraphics, Version=1.0.6906.615, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFGraphics.Controls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.Controls.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFGraphics.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.Utils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFShapes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFShapes.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -372,8 +383,6 @@
     <None Include="DefaultTextures\specularSdr59.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="OpenTK.dll.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -452,20 +461,38 @@
     <Content Include="DefaultTextures\UVPattern.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="lib\GenericValueEditor.dll" />
-    <Content Include="lib\GenericValueEditor.xml" />
-    <Content Include="lib\SELib.dll">
+    <Content Include="Lib\GenericValueEditor.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="lib\SFGenericModel.dll" />
-    <Content Include="lib\SFGenericModel.xml" />
-    <Content Include="lib\SFGraphics.Controls.dll" />
-    <Content Include="lib\SFGraphics.Controls.xml" />
-    <Content Include="lib\SFGraphics.dll" />
-    <Content Include="lib\SFGraphics.Utils.dll" />
-    <Content Include="lib\SFGraphics.Utils.xml" />
-    <Content Include="lib\SFGraphics.xml" />
-    <Content Include="lib\SFShapes.dll" />
+    <Content Include="Lib\GenericValueEditor.xml" />
+    <Content Include="Lib\OpenTK.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\OpenTK.GLControl.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SELib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGenericModel.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGenericModel.xml" />
+    <Content Include="Lib\SFGraphics.Controls.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGraphics.Controls.xml" />
+    <Content Include="Lib\SFGraphics.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGraphics.Utils.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGraphics.Utils.xml" />
+    <Content Include="Lib\SFGraphics.xml" />
+    <Content Include="Lib\SFShapes.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\ico_unknown.png" />
     <None Include="Resources\ico_texture.png" />
     <None Include="Resources\ico_skeleton.png" />
