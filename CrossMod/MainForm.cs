@@ -13,7 +13,7 @@ namespace CrossMod
 {
     public partial class MainForm : Form
     {
-        public static ImageList iconList = new ImageList();
+        public static ImageList iconList;
 
         // Controls
         private ModelViewport modelViewport;
@@ -34,6 +34,8 @@ namespace CrossMod
 
             fileTreeContextMenu = new ContextMenu();
 
+
+            iconList = iconList = new ImageList();
             iconList.ImageSize = new Size(24, 24);
 
             iconList.Images.Add("unknown", Properties.Resources.ico_unknown);
