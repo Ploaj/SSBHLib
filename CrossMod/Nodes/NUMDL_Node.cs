@@ -205,6 +205,7 @@ namespace CrossMod.Nodes
                                     vertices[i].Normal = OpenTK.Vector3.TransformNormal(vertices[i].Normal, outModel.Skeleton.Bones[parentIndex].WorldTransform);
                                     vertices[i].BoneIndices.X = indexByBoneName[obj.ParentBoneName];
                                     vertices[i].BoneWeights.X = 1;
+                                    outMesh.HasBoneWeights = true;
                                 }
                         }
 
@@ -213,6 +214,8 @@ namespace CrossMod.Nodes
     
                         foreach(SSBHVertexInfluence influence in influences)
                         {
+                            outMesh.HasBoneWeights = true;
+
                             // Some influences refer to bones that don't exist in the skeleton.
                             // _eff bones?
                             if (!indexByBoneName.ContainsKey(influence.BoneName))

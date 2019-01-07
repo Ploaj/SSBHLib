@@ -11,7 +11,94 @@ namespace CrossMod.IO
     {
         public static void ExportIOModelAsDAE(string FileName, IOModel m)
         {
-            COLLADA colladaFile = new COLLADA();
+            using (DAEWriter writer = new DAEWriter(FileName))
+            {
+                writer.WriteAsset();
+
+                writer.WriteLibraryImages();
+
+                if (m.HasSkeleton)
+                {
+                    foreach (var bone in m.Skeleton.Bones)
+                    {
+                        float[] Transform = new float[] { bone.Transform.M11, bone.Transform.M21, bone.Transform.M31, bone.Transform.M41,
+                    bone.Transform.M12, bone.Transform.M22, bone.Transform.M32, bone.Transform.M42,
+                    bone.Transform.M13, bone.Transform.M23, bone.Transform.M33, bone.Transform.M43,
+                    bone.Transform.M14, bone.Transform.M24, bone.Transform.M34, bone.Transform.M44 };
+                        float[] InvTransform = new float[] { bone.InvWorldTransform.M11, bone.InvWorldTransform.M21, bone.InvWorldTransform.M31, bone.InvWorldTransform.M41,
+                    bone.InvWorldTransform.M12, bone.InvWorldTransform.M22, bone.InvWorldTransform.M32, bone.InvWorldTransform.M42,
+                    bone.InvWorldTransform.M13, bone.InvWorldTransform.M23, bone.InvWorldTransform.M33, bone.InvWorldTransform.M43,
+                    bone.InvWorldTransform.M14, bone.InvWorldTransform.M24, bone.InvWorldTransform.M34, bone.InvWorldTransform.M44 };
+                        writer.AddJoint(bone.Name, bone.ParentID == -1 ? "" : m.Skeleton.Bones[bone.ParentID].Name, Transform, InvTransform);
+                    }
+                }
+
+                writer.StartGeometrySection();
+                foreach(var mesh in m.Meshes)
+                {
+                    writer.StartGeometryMesh(mesh.Name);
+
+                    // collect sources
+                    List<float> Position = new List<float>();
+                    List<float> Normal = new List<float>();
+                    List<float> UV0 = new List<float>();
+                    List<int[]> BoneIndices = new List<int[]>();
+                    List<float[]> BoneWeights = new List<float[]>();
+
+                    foreach (var vertex in mesh.Vertices)
+                    {
+                        Position.Add(vertex.Position.X); Position.Add(vertex.Position.Y); Position.Add(vertex.Position.Z);
+                        Normal.Add(vertex.Normal.X); Normal.Add(vertex.Normal.Y); Normal.Add(vertex.Normal.Z);
+                        UV0.Add(vertex.UV0.X); UV0.Add(vertex.UV0.Y);
+
+                        List<int> bIndices = new List<int>();
+                        List<float> bWeights = new List<float>();
+                        if (vertex.BoneWeights.X > 0)
+                        {
+                            bIndices.Add((int)vertex.BoneIndices.X);
+                            bWeights.Add(vertex.BoneWeights.X);
+                        }
+                        if (vertex.BoneWeights.Y > 0)
+                        {
+                            bIndices.Add((int)vertex.BoneIndices.Y);
+                            bWeights.Add(vertex.BoneWeights.Y);
+                        }
+                        if (vertex.BoneWeights.Z > 0)
+                        {
+                            bIndices.Add((int)vertex.BoneIndices.Z);
+                            bWeights.Add(vertex.BoneWeights.Z);
+                        }
+                        if (vertex.BoneWeights.W > 0)
+                        {
+                            bIndices.Add((int)vertex.BoneIndices.W);
+                            bWeights.Add(vertex.BoneWeights.W);
+                        }
+                        BoneIndices.Add(bIndices.ToArray());
+                        BoneWeights.Add(bWeights.ToArray());
+                    }
+
+                    // write sources
+                    if(mesh.HasPositions)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.POSITION, Position.ToArray(), mesh.Indices.ToArray());
+
+                    if (mesh.HasNormals)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.NORMAL, Normal.ToArray(), mesh.Indices.ToArray());
+
+                    if (mesh.HasUV0)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV0.ToArray(), mesh.Indices.ToArray(), 0);
+
+                    if (mesh.HasBoneWeights)
+                    {
+                        writer.AttachGeometryController(BoneIndices, BoneWeights);
+                    }
+
+                    writer.EndGeometryMesh();
+                }
+                writer.EndGeometrySection();
+            }
+            return;
+
+            /*COLLADA colladaFile = new COLLADA();
 
             List<geometry> list_geometries = new List<geometry>(m.Meshes.Count);
 
@@ -423,10 +510,10 @@ namespace CrossMod.IO
             colladaFile.Items = new object[] { lib_geometry, lib_controllers, scenes };
             colladaFile.scene = scene;
 
-            colladaFile.Save(FileName);
+            colladaFile.Save(FileName);*/
         }
 
-        private static source CreateSource(int count, int stride, string arraySource, object ArrayItem, param[] Params)
+        /*private static source CreateSource(int count, int stride, string arraySource, object ArrayItem, param[] Params)
         {
             source source = new source();
 
@@ -440,6 +527,6 @@ namespace CrossMod.IO
             source.technique_common.accessor.stride = (ulong)stride;
                 source.technique_common.accessor.param = Params;
             return source;
-        }
+        }*/
     }
 }
