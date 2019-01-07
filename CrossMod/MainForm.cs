@@ -270,12 +270,18 @@ namespace CrossMod
                 if (fileName.EndsWith(".dae"))
                 {
                     bool Optimize = false;
+                    bool Materials = false;
                     DialogResult dialogResult = MessageBox.Show("Smaller filesize but takes longer to export", "Optimize Geometry?", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
                         Optimize = true;
                     }
-                    IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel(), Optimize);
+                    dialogResult = MessageBox.Show("Export texture names inside of dae?", "Export Materials?", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        Materials = true;
+                    }
+                    IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel(), Optimize, Materials);
                 }
                 if (fileName.EndsWith(".ply"))
                     IO_PLY.ExportIOModelAsPLY(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());

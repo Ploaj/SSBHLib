@@ -6,14 +6,41 @@ namespace CrossMod.IO
 {
     class IO_DAE
     {
-        public static void ExportIOModelAsDAE(string FileName, IOModel m, bool Optimize)
+        public static void ExportIOModelAsDAE(string FileName, IOModel m, bool Optimize, bool ExportMaterials)
         {
             using (DAEWriter writer = new DAEWriter(FileName, Optimize))
             {
                 writer.WriteAsset();
 
-                writer.WriteLibraryImages();
+                if (m.HasMaterials && ExportMaterials)
+                {
+                    List<string> TextureNames = new List<string>();
+                    foreach (var mat in m.Materials)
+                    {
+                        if (mat.DiffuseTexture != null && !TextureNames.Contains(mat.DiffuseTexture.Name))
+                            TextureNames.Add(mat.DiffuseTexture.Name);
+                    }
+                    writer.WriteLibraryImages(TextureNames.ToArray());
 
+                    writer.StartMaterialSection();
+                    foreach (var mat in m.Materials)
+                    {
+                        writer.WriteMaterial(mat.Name);
+                    }
+                    writer.EndMaterialSection();
+
+                    writer.StartEffectSection();
+                    foreach (var mat in m.Materials)
+                    {
+                        writer.WriteEffect(mat.Name, mat.DiffuseTexture == null ? "" : mat.DiffuseTexture.Name);
+                    }
+                    writer.EndEffectSection();
+                }
+                else
+                {
+                    writer.WriteLibraryImages();
+                }
+                
                 if (m.HasSkeleton)
                 {
                     foreach (var bone in m.Skeleton.Bones)
@@ -34,6 +61,11 @@ namespace CrossMod.IO
                 foreach(var mesh in m.Meshes)
                 {
                     writer.StartGeometryMesh(mesh.Name);
+
+                    if(mesh.MaterialIndex != -1)
+                    {
+                        writer.CurrentMaterial = m.Materials[mesh.MaterialIndex].Name;
+                    }
 
                     // collect sources
                     List<float> Position = new List<float>();

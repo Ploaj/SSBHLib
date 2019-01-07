@@ -4,6 +4,7 @@ using CrossMod.Rendering.Models;
 using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats;
+using SSBHLib.Formats.Materials;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 
@@ -105,6 +106,7 @@ namespace CrossMod.Nodes
             IOModel outModel = new IOModel();
 
             MESH meshFile = null;
+            MATL materialFile = null;
 
             foreach (FileNode n in Parent.Nodes)
             {
@@ -116,6 +118,10 @@ namespace CrossMod.Nodes
                 {
                     outModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
                 }
+                if (n.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
+                {
+                    materialFile = ((MATL_Node)n).Material;
+                }
             }
 
             Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
@@ -124,6 +130,29 @@ namespace CrossMod.Nodes
                 for(int i = 0; i < outModel.Skeleton.Bones.Count; i++)
                 {
                     indexByBoneName.Add(outModel.Skeleton.Bones[i].Name, i);
+                }
+            }
+
+            Dictionary<string, int> materialNameToIndex = new Dictionary<string, int>();
+            if(materialFile != null)
+            {
+                int materialIndex = 0;
+                foreach(var entry in materialFile.Entries)
+                {
+                    materialNameToIndex.Add(entry.MaterialLabel, materialIndex++);
+                    IOMaterial material = new IOMaterial();
+                    material.Name = entry.MaterialLabel;
+                    outModel.Materials.Add(material);
+
+                    foreach (var attr in entry.Attributes)
+                    {
+                        if(attr.ParamID == MatlEnums.ParamId.Texture0)
+                        {
+                            IOTexture dif = new IOTexture();
+                            dif.Name = attr.DataObject.ToString();
+                            material.DiffuseTexture = dif;
+                        }
+                    }
                 }
             }
             
@@ -139,6 +168,19 @@ namespace CrossMod.Nodes
                             Name = obj.Name,
                         };
                         outModel.Meshes.Add(outMesh);
+                        
+                        // get material
+                        if(materialFile != null)
+                        {
+                            foreach(var entry in _model.ModelEntries)
+                            {
+                                if(entry.MeshName.Equals(obj.Name) && entry.SubIndex == obj.SubMeshIndex)
+                                {
+                                    outMesh.MaterialIndex = materialNameToIndex[entry.MaterialName];
+                                    break;
+                                }
+                            }
+                        }
 
                         IOVertex[] vertices = new IOVertex[obj.VertexCount];
                         for (int i = 0; i < vertices.Length; i++)

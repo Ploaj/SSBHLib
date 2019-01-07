@@ -40,10 +40,12 @@ namespace CrossMod.IO
 
         // for writing geometry
         public string CurrentGeometryID;
+        public string CurrentMaterial;
         private List<Tuple<string, VERTEX_SEMANTIC, uint[], int>> GeometrySources = new List<Tuple<string, VERTEX_SEMANTIC, uint[], int>>();
         private Dictionary<string, Tuple<List<int[]>, List<float[]>>> GeometryControllers = new Dictionary<string, Tuple<List<int[]>, List<float[]>>>();
         private Dictionary<string, string> MeshToSkinLink = new Dictionary<string, string>();
         private Dictionary<string, string> MeshIdToMeshName = new Dictionary<string, string>();
+        private Dictionary<string, string> MeshIdToMaterial = new Dictionary<string, string>();
 
         // for writing bones
         private List<JOINT> Joints = new List<JOINT>();
@@ -101,9 +103,129 @@ namespace CrossMod.IO
         }
 
 
-        public void WriteLibraryImages()
+        public void WriteLibraryImages(string[] TextureNames = null)
         {
             writer.WriteStartElement("library_images");
+            if (TextureNames != null)
+            {
+                foreach(var tn in TextureNames)
+                {
+                    writer.WriteStartElement("image");
+                    writer.WriteAttributeString("id", tn);
+                    writer.WriteStartElement("init_from");
+                    writer.WriteString(tn + ".png");
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
+            }
+            writer.WriteEndElement();
+        }
+
+
+        /// <summary>
+        /// Begins writing the material section
+        /// </summary>
+        public void StartMaterialSection()
+        {
+            writer.WriteStartElement("library_materials");
+        }
+
+        /// <summary>
+        /// Writes a material information with an effect reference
+        /// </summary>
+        /// <param name="Name"></param>
+        public void WriteMaterial(string Name)
+        {
+            writer.WriteStartElement("material");
+            writer.WriteAttributeString("id", Name);
+            writer.WriteStartElement("instance_effect");
+            writer.WriteAttributeString("url", "#Effect_" + Name);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Ends writing the material section
+        /// </summary>
+        public void EndMaterialSection()
+        {
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Begins writing the effect section
+        /// </summary>
+        public void StartEffectSection()
+        {
+            writer.WriteStartElement("library_effects");
+        }
+
+        /// <summary>
+        /// Writes a effect
+        /// </summary>
+        public void WriteEffect(string Name, string DiffuseTextureName)
+        {
+            writer.WriteStartElement("effect");
+            writer.WriteAttributeString("id", "Effect_" + Name);
+            writer.WriteStartElement("profile_COMMON");
+
+            {
+                writer.WriteStartElement("newparam");
+                writer.WriteAttributeString("sid", "surface_" + Name);
+                writer.WriteStartElement("surface");
+                writer.WriteAttributeString("type", "2D");
+                {
+                    writer.WriteStartElement("init_from");
+                    writer.WriteString(DiffuseTextureName);
+                    writer.WriteEndElement();
+
+                    writer.WriteStartElement("format");
+                    writer.WriteString("A8R8G8B8");
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+
+
+            {
+                writer.WriteStartElement("newparam");
+                writer.WriteAttributeString("sid", "sampler_" + Name);
+                writer.WriteStartElement("sampler2D");
+                {
+                    writer.WriteStartElement("source");
+                    writer.WriteString("surface_" + Name);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+
+            {
+                writer.WriteStartElement("technique");
+                writer.WriteAttributeString("sid", "common");
+                writer.WriteStartElement("phong");
+                {
+                    writer.WriteStartElement("diffuse");
+                    writer.WriteStartElement("texture");
+                    writer.WriteAttributeString("texture", "sampler_" + Name);
+                    writer.WriteAttributeString("texcoord", "");
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Ends writing the effect section
+        /// </summary>
+        public void EndEffectSection()
+        {
             writer.WriteEndElement();
         }
 
@@ -273,6 +395,12 @@ namespace CrossMod.IO
 
                 // triangles
                 writer.WriteStartElement("triangles");
+                if (CurrentMaterial != "")
+                {
+                    writer.WriteAttributeString("material", $"{CurrentMaterial}");
+                    MeshIdToMaterial.Add(CurrentGeometryID, CurrentMaterial);
+                    CurrentMaterial = "";
+                }
                 writer.WriteAttributeString("count", Position.Item3.Length.ToString());
                 WriteInput("VERTEX", $"{verticesid}", 0);
                 int offset = 1;
@@ -638,6 +766,17 @@ namespace CrossMod.IO
                     writer.WriteStartElement("skeleton");
                     writer.WriteString("#Armature_" + Joints[0].Name);
                     writer.WriteEndElement();
+                    if (MeshIdToMaterial.ContainsKey(m.Key))
+                    {
+                        writer.WriteStartElement("bind_material");
+                        writer.WriteStartElement("technique_common");
+                        writer.WriteStartElement("instance_material");
+                        writer.WriteAttributeString("symbol", MeshIdToMaterial[m.Key]);
+                        writer.WriteAttributeString("target", "#" + MeshIdToMaterial[m.Key]);
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                    }
                     writer.WriteEndElement();
                 }
 

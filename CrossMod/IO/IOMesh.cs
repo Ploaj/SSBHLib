@@ -24,6 +24,8 @@ namespace CrossMod.IO
         public List<IOVertex> Vertices { get; } = new List<IOVertex>();
         public List<uint> Indices { get; } = new List<uint>();
 
+        public int MaterialIndex = -1;
+
         public bool HasPositions { get; set; } = false;
         public bool HasNormals { get; set; } = false;
         public bool HasUV0 { get; set; } = false;
