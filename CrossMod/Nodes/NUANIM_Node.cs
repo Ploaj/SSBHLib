@@ -114,14 +114,14 @@ namespace CrossMod.Nodes
 
                     if (track.Name.Equals("Transform"))
                     {
-
                         for (int i = 0; i < Transform.Length; i++)
                         {
                             AnimTrackTransform t = (AnimTrackTransform)Transform[i];
                             tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
                             {
                                 Frame = i,
-                                Value = GetMatrix((AnimTrackTransform)Transform[i])
+                                Value = GetMatrix((AnimTrackTransform)Transform[i]),
+                                AbsoluteScale = t.AbsoluteScale
                             });
                         }
                     }

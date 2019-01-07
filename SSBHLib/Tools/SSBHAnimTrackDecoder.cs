@@ -22,6 +22,8 @@ namespace SSBHLib.Tools
         public float SY;
         public float SZ;
 
+        public float AbsoluteScale;
+
         public override string ToString()
         {
             return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}))";
@@ -242,12 +244,13 @@ namespace SSBHLib.Tools
                     RW = WROT,
                     SX = XSCA,
                     SY = YSCA,
-                    SZ = ZSCA
+                    SZ = ZSCA,
+                    AbsoluteScale = 1
                 };
                 for (int itemIndex = 0; itemIndex < Items.Length; itemIndex++)
                 {
                     // First check if this track should be parsed
-                    if (!((itemIndex >= 0 && itemIndex <= 0 && (Header.Flags & 0x3) == 0x3) //isotrophic scale
+                    if (!((itemIndex == 0 && (Header.Flags & 0x3) == 0x3) //isotrophic scale
                                 || (itemIndex >= 0 && itemIndex <= 2 && (Header.Flags & 0x3) == 0x1) //normal scale
                                 || (itemIndex > 2 && itemIndex <= 5 && (Header.Flags & 0x4) > 0)
                                 || (itemIndex > 5 && itemIndex <= 8 && (Header.Flags & 0x8) > 0)))
@@ -271,15 +274,13 @@ namespace SSBHLib.Tools
                         FrameValue = 0;
 
                     // the Transform type relies a lot on flags
-
+                    
                     if ((Header.Flags & 0x3) == 0x3)
                     {
                         //Scale Isotropic
                         if(itemIndex == 0)
                         {
-                            Transform.SX = FrameValue;
-                            Transform.SY = FrameValue;
-                            Transform.SZ = FrameValue;
+                            Transform.AbsoluteScale = FrameValue;
                         }
                     }
                     if ((Header.Flags & 0x3) == 0x1)
@@ -356,6 +357,7 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
+                    AbsoluteScale = 1
                 };
                 reader.ReadInt32(); // ????
 

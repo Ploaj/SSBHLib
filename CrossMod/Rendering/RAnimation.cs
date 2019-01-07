@@ -44,7 +44,7 @@ namespace CrossMod.Rendering
 
             foreach (RMaterialAnimation a in MaterialNodes)
             {
-                System.Diagnostics.Debug.WriteLine($"Animation: {a.AttributeName} {a.Keys.GetValue(frame)}");
+                //System.Diagnostics.Debug.WriteLine($"Animation: {a.AttributeName} {a.Keys.GetValue(frame)}");
 
                 foreach (Models.RMesh m in model.subMeshes)
                 {
@@ -52,7 +52,6 @@ namespace CrossMod.Rendering
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
-
                             m.Material.MaterialAnimation.Add((long)paramId, a.Keys.GetValue(frame));
                         }
                     }
@@ -71,7 +70,20 @@ namespace CrossMod.Rendering
                 {
                     if (b.Name.Equals(a.Name))
                     {
-                        b.AnimationTransform = a.Transform.GetValue(Frame);
+                        var key = a.Transform.GetKey(Frame);
+                        b.AnimationTransform = key.Value;
+                        // work around
+                        /*if (key.AbsoluteScale != 1)
+                        {
+                            if (b.ParentID != -1)
+                            {
+                                b.AnimationTransform = b.AnimationTransform.ClearScale();
+                                if(b.Name.Equals("HandL"))
+                                System.Console.WriteLine(key.AbsoluteScale + " " + (Skeleton.Bones[b.ParentID].GetAnimationTransform(Skeleton).ExtractScale() / key.AbsoluteScale).ToString());
+                                Vector3 ParentScale = Skeleton.Bones[b.ParentID].GetAnimationTransform(Skeleton).ExtractScale();
+                                b.AnimationTransform *= Matrix4.CreateScale(ParentScale.X - key.AbsoluteScale);
+                            }
+                        }*/
                         break;
                     }
                 }
@@ -108,6 +120,15 @@ namespace CrossMod.Rendering
     {
         public List<RKey<T>> Keys = new List<RKey<T>>();
 
+
+        public RKey<T> GetKey(float Frame)
+        {
+            //TODO: actually grab the right frame
+            if (Frame >= Keys.Count)
+                return Keys[0];
+            return Keys[(int)Frame];
+        }
+
         public T GetValue(float Frame)
         {
             //TODO: actually grab the right frame
@@ -121,5 +142,6 @@ namespace CrossMod.Rendering
     {
         public float Frame;
         public T Value;
+        public float AbsoluteScale = 1; // workaround for strange scaling type
     }
 }
