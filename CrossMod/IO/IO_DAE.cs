@@ -42,6 +42,7 @@ namespace CrossMod.IO
                     List<float> UV1 = new List<float>();
                     List<float> UV2 = new List<float>();
                     List<float> UV3 = new List<float>();
+                    List<float> Color = new List<float>();
                     List<int[]> BoneIndices = new List<int[]>();
                     List<float[]> BoneWeights = new List<float[]>();
 
@@ -53,6 +54,7 @@ namespace CrossMod.IO
                         UV1.Add(vertex.UV1.X); UV1.Add(vertex.UV1.Y);
                         UV2.Add(vertex.UV2.X); UV2.Add(vertex.UV2.Y);
                         UV3.Add(vertex.UV3.X); UV3.Add(vertex.UV3.Y);
+                        Color.AddRange(new float[] { vertex.Color.X, vertex.Color.Y, vertex.Color.Z, vertex.Color.W });
 
                         List<int> bIndices = new List<int>();
                         List<float> bWeights = new List<float>();
@@ -87,6 +89,9 @@ namespace CrossMod.IO
                     if (mesh.HasNormals)
                         writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.NORMAL, Normal.ToArray(), mesh.Indices.ToArray());
 
+                    if (mesh.HasColor)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.COLOR, Color.ToArray(), mesh.Indices.ToArray());
+
                     if (mesh.HasUV0)
                         writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV0.ToArray(), mesh.Indices.ToArray(), 0);
 
@@ -98,6 +103,7 @@ namespace CrossMod.IO
 
                     if (mesh.HasUV3)
                         writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV3.ToArray(), mesh.Indices.ToArray(), 3);
+
 
                     if (mesh.HasBoneWeights)
                     {
