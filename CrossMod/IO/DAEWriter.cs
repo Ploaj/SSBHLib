@@ -33,6 +33,8 @@ namespace CrossMod.IO
 
         private XmlTextWriter writer;
 
+        private bool Optimize = false;
+
         // for keeping track of used is so there are no repeats
         private Dictionary<string, int> UsedIDs = new Dictionary<string, int>();
 
@@ -50,11 +52,12 @@ namespace CrossMod.IO
         /// Creates a new DAEWriter
         /// </summary>
         /// <param name="FileName"></param>
-        public DAEWriter(string FileName)
+        public DAEWriter(string FileName, bool Optimize = false)
         {
             writer = new XmlTextWriter(FileName, Encoding.UTF8);
             writer.Formatting = Formatting.Indented;
             writer.Indentation = 2;
+            this.Optimize = Optimize;
             WriteHeader();
         }
 
@@ -127,6 +130,46 @@ namespace CrossMod.IO
         }
 
         /// <summary>
+        /// Super slow
+        /// </summary>
+        /// <param name="Values"></param>
+        /// <param name="Indices"></param>
+        /// <param name="Stride"></param>
+        /// <param name="newValues"></param>
+        /// <param name="newIndices"></param>
+        private void OptimizeFloatSource(float[] Values, uint[] Indices, int Stride, out float[] newValues, out uint[] newIndices)
+        {
+            List<uint> newIndex = new List<uint>();
+            List<float[]> Bank = new List<float[]>();
+            for(int i = 0; i < Indices.Length; i++)
+            {
+                float[] point = new float[Stride];
+                for (int j = 0; j < Stride; j++)
+                    point[j] = Values[Indices[i] * Stride + j];
+
+                int index = Bank.FindIndex(point.SequenceEqual);
+                if (index == -1)
+                {
+                    newIndex.Add((uint)Bank.Count);
+                    Bank.Add(point);
+                }
+                else
+                {
+                    newIndex.Add((uint)index);
+                }
+            }
+            newValues = new float[Bank.Count * Stride];
+            for(int i = 0; i < Bank.Count; i++)
+            {
+                for(int j = 0; j < Stride; j++)
+                {
+                    newValues[i * Stride + j] = Bank[i][j];
+                }
+            }
+            newIndices = newIndex.ToArray();
+        }
+
+        /// <summary>
         /// Writes a geometry source to file
         /// </summary>
         /// <param name="Name"></param>
@@ -140,6 +183,9 @@ namespace CrossMod.IO
                 Stride = 2;
             if (Semantic == VERTEX_SEMANTIC.COLOR)
                 Stride = 2;
+
+            if (Optimize)
+                OptimizeFloatSource(Values, Indices, Stride, out Values, out Indices);
 
             string sourceid = GetUniqueID(Name + "-" + Semantic.ToString().ToLower());
             writer.WriteStartElement("source");

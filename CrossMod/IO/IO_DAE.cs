@@ -1,17 +1,14 @@
 using CrossMod.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrossMod.IO
 {
     class IO_DAE
     {
-        public static void ExportIOModelAsDAE(string FileName, IOModel m)
+        public static void ExportIOModelAsDAE(string FileName, IOModel m, bool Optimize)
         {
-            using (DAEWriter writer = new DAEWriter(FileName))
+            using (DAEWriter writer = new DAEWriter(FileName, Optimize))
             {
                 writer.WriteAsset();
 
