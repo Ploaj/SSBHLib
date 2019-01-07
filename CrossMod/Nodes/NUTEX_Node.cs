@@ -5,6 +5,8 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SFGraphics.GLObjects.Textures;
+using SFGraphics.GLObjects.Textures.TextureFormats;
 
 namespace CrossMod.Nodes
 {
@@ -44,14 +46,13 @@ namespace CrossMod.Nodes
         // Don't generate redundant textures.
         private RTexture renderableTexture = null;
 
-        // TODO: Fix formats using InternalFormat.Rgba.
-        public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
+        public readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.SrgbAlpha },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Rgba },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.B8G8R8A8_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, InternalFormat.Srgb },
             { NUTEX_FORMAT.BC1_UNORM, InternalFormat.CompressedRgbaS3tcDxt1Ext },
             { NUTEX_FORMAT.BC1_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt1Ext },
             { NUTEX_FORMAT.BC2_UNORM, InternalFormat.CompressedRgbaS3tcDxt3Ext },
@@ -65,6 +66,17 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC6_UFLOAT, InternalFormat.CompressedRgbBptcUnsignedFloat },
             { NUTEX_FORMAT.BC7_UNORM, InternalFormat.CompressedRgbaBptcUnorm },
             { NUTEX_FORMAT.BC7_SRGB, InternalFormat.CompressedSrgbAlphaBptcUnorm }
+        };
+
+        /// <summary>
+        /// Channel information for uncompressed formats.
+        /// </summary>
+        public readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
+        {
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R8G8B8A8_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_UNORM, PixelFormat.Bgra },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, PixelFormat.Bgra },
         };
 
         public NUTEX_Node()
@@ -96,13 +108,7 @@ namespace CrossMod.Nodes
 
                 reader.ReadChars(4); // TNX magic
 
-                TexName = "";
-                for (int i = 0; i < 0x40; i++)
-                {
-                    byte b = reader.ReadByte();
-                    if (b != 0)
-                        TexName += (char)b;
-                }
+                TexName = ReadTexName(reader);
 
                 Width = reader.ReadInt32();
                 Height = reader.ReadInt32();
@@ -122,11 +128,11 @@ namespace CrossMod.Nodes
                 char[] Magic = reader.ReadChars(4);
                 int MajorVersion = reader.ReadInt16();
                 int MinorVersion = reader.ReadInt16();
-                
+
                 uint blkWidth = (uint)blkDims[Format].X;
                 uint blkHeight = (uint)blkDims[Format].Y;
 
-                uint blockHeight = SwitchSwizzler.GetBlockHeight(SwitchSwizzler.DIV_ROUND_UP((uint)Height, blkHeight));
+                uint blockHeight = SwitchSwizzler.GetBlockHeight(SwitchSwizzler.DivRoundUp((uint)Height, blkHeight));
                 uint BlockHeightLog2 = (uint)Convert.ToString(blockHeight, 2).Length - 1;
                 uint tileMode = 0;
 
@@ -141,20 +147,26 @@ namespace CrossMod.Nodes
                     if (i == 0 && size % Alignment != 0)
                         size += Alignment - (size % Alignment);
 
-                    try
-                    {
-                        byte[] deswiz = SwitchSwizzler.deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), reader.ReadBytes(ImageSize));
-                        byte[] trimmed = new byte[mipmapSizes[0]];
-                        Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
+                    byte[] deswiz = SwitchSwizzler.Deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), reader.ReadBytes(ImageSize));
+                    byte[] trimmed = new byte[mipmapSizes[0]];
+                    Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
 
-                        Mipmaps.Add(trimmed);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
+                    Mipmaps.Add(trimmed);
                 }
             }
+        }
+
+        private string ReadTexName(BinaryReader reader)
+        {
+            var result = "";
+            for (int i = 0; i < 0x40; i++)
+            {
+                byte b = reader.ReadByte();
+                if (b != 0)
+                    result += (char)b;
+            }
+
+            return result;
         }
 
         public static readonly Dictionary<NUTEX_FORMAT, Vector2> blkDims = new Dictionary<NUTEX_FORMAT, Vector2>()
@@ -185,6 +197,7 @@ namespace CrossMod.Nodes
             {
                 case NUTEX_FORMAT.R8G8B8A8_UNORM:
                 case NUTEX_FORMAT.R8G8B8A8_SRGB:
+                case NUTEX_FORMAT.B8G8R8A8_UNORM:
                     return 4;
                 case NUTEX_FORMAT.BC1_UNORM:
                     return 8;
@@ -209,7 +222,8 @@ namespace CrossMod.Nodes
                 case NUTEX_FORMAT.BC7_UNORM:
                 case NUTEX_FORMAT.BC7_SRGB:
                     return 16;
-                default: return 0x00;
+                default:
+                    return 0;
             }
         }
 
@@ -224,21 +238,29 @@ namespace CrossMod.Nodes
                     IsSrgb = Format.ToString().ToLower().Contains("srgb")
                 };
 
-                if (glFormatByNuTexFormat.ContainsKey(Format))
+                if (internalFormatByNuTexFormat.ContainsKey(Format))
                 {
                     // This may require a higher OpenGL version for BC7.
                     if (!SFGraphics.GlUtils.OpenGLExtensions.IsAvailable("GL_ARB_texture_compression_bptc"))
                         throw new Rendering.Exceptions.MissingExtensionException("GL_ARB_texture_compression_bptc");
 
-                    var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                    var sfTex = new Texture2D()
                     {
                         // Set defaults until all the sampler parameters are added.
                         TextureWrapS = TextureWrapMode.Repeat,
                         TextureWrapT = TextureWrapMode.Repeat
                     };
 
-                    if (glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
-                        sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
+                    if (TextureFormatTools.IsCompressed(internalFormatByNuTexFormat[Format]))
+                    {
+                        sfTex.LoadImageData(Width, Height, Mipmaps, internalFormatByNuTexFormat[Format]);
+                    }
+                    else
+                    {
+                        // TODO: Uncompressed mipmaps.
+                        var format = new TextureFormatUncompressed((PixelInternalFormat)internalFormatByNuTexFormat[Format], pixelFormatByNuTexFormat[Format], PixelType.UnsignedByte);
+                        sfTex.LoadImageData(Width, Height, Mipmaps[0], format);
+                    }
 
                     renderableTexture.renderTexture = sfTex;
                 }

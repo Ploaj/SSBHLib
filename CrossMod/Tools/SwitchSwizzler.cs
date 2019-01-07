@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
 
 namespace CrossMod.Tools
 {
@@ -17,22 +12,24 @@ namespace CrossMod.Tools
 
         public static uint GetBlockHeight(uint height)
         {
-            uint blockHeight = pow2_round_up(height / 8);
+            uint blockHeight = Pow2RoundUp(height / 8);
             if (blockHeight > 16)
                 blockHeight = 16;
 
             return blockHeight;
         }
 
-        public static uint DIV_ROUND_UP(uint n, uint d)
+        public static uint DivRoundUp(uint n, uint d)
         {
             return (n + d - 1) / d;
         }
-        public static uint round_up(uint x, uint y)
+
+        public static uint RoundUp(uint x, uint y)
         {
             return ((x - 1) | (y - 1)) + 1;
         }
-        public static uint pow2_round_up(uint x)
+
+        public static uint Pow2RoundUp(uint x)
         {
             x -= 1;
             x |= x >> 1;
@@ -43,12 +40,12 @@ namespace CrossMod.Tools
             return x + 1;
         }
 
-        public static byte[] _swizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int blockHeightLog2, byte[] data, int toSwizzle)
+        public static byte[] Swizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int blockHeightLog2, byte[] data, int toSwizzle)
         {
             uint block_height = (uint)(1 << blockHeightLog2);
 
-            width = DIV_ROUND_UP(width, blkWidth);
-            height = DIV_ROUND_UP(height, blkHeight);
+            width = DivRoundUp(width, blkWidth);
+            height = DivRoundUp(height, blkHeight);
 
             uint pitch;
             uint surfSize;
@@ -57,14 +54,14 @@ namespace CrossMod.Tools
                 pitch = width * bpp;
 
                 if (roundPitch == 1)
-                    pitch = round_up(pitch, 32);
+                    pitch = RoundUp(pitch, 32);
 
                 surfSize = pitch * height;
             }
             else
             {
-                pitch = round_up(width * bpp, 64);
-                surfSize = pitch * round_up(height, block_height * 8);
+                pitch = RoundUp(width * bpp, 64);
+                surfSize = pitch * RoundUp(height, block_height * 8);
             }
 
             byte[] result = new byte[surfSize];
@@ -79,7 +76,7 @@ namespace CrossMod.Tools
                     if (tileMode == 1)
                         pos = y * pitch + x * bpp;
                     else
-                        pos = getAddrBlockLinear(x, y, width, bpp, 0, block_height);
+                        pos = GetAddrBlockLinear(x, y, width, bpp, 0, block_height);
 
                     pos_ = (y * width + x) * bpp;
 
@@ -95,22 +92,22 @@ namespace CrossMod.Tools
             return result;
         }
 
-        public static byte[] deswizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
+        public static byte[] Deswizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
         {
-            return _swizzle(width, height, blkWidth, blkHeight, roundPitch, bpp, tileMode, size_range, data, 0);
+            return Swizzle(width, height, blkWidth, blkHeight, roundPitch, bpp, tileMode, size_range, data, 0);
         }
 
-        public static byte[] swizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
+        public static byte[] Swizzle(uint width, uint height, uint blkWidth, uint blkHeight, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
         {
-            return _swizzle(width, height, blkWidth, blkHeight, roundPitch, bpp, tileMode, size_range, data, 1);
+            return Swizzle(width, height, blkWidth, blkHeight, roundPitch, bpp, tileMode, size_range, data, 1);
         }
 
-        static uint getAddrBlockLinear(uint x, uint y, uint width, uint bytes_per_pixel, uint base_address, uint block_height)
+        static uint GetAddrBlockLinear(uint x, uint y, uint width, uint bytes_per_pixel, uint base_address, uint block_height)
         {
             /*
               From Tega X1 TRM 
                                */
-            uint image_width_in_gobs = DIV_ROUND_UP(width * bytes_per_pixel, 64);
+            uint image_width_in_gobs = DivRoundUp(width * bytes_per_pixel, 64);
 
 
             uint GOB_address = (base_address
