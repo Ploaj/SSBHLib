@@ -96,13 +96,7 @@ namespace CrossMod.Nodes
 
                 reader.ReadChars(4); // TNX magic
 
-                TexName = "";
-                for (int i = 0; i < 0x40; i++)
-                {
-                    byte b = reader.ReadByte();
-                    if (b != 0)
-                        TexName += (char)b;
-                }
+                TexName = ReadTexName(reader);
 
                 Width = reader.ReadInt32();
                 Height = reader.ReadInt32();
@@ -122,11 +116,11 @@ namespace CrossMod.Nodes
                 char[] Magic = reader.ReadChars(4);
                 int MajorVersion = reader.ReadInt16();
                 int MinorVersion = reader.ReadInt16();
-                
+
                 uint blkWidth = (uint)blkDims[Format].X;
                 uint blkHeight = (uint)blkDims[Format].Y;
 
-                uint blockHeight = SwitchSwizzler.GetBlockHeight(SwitchSwizzler.DIV_ROUND_UP((uint)Height, blkHeight));
+                uint blockHeight = SwitchSwizzler.GetBlockHeight(SwitchSwizzler.DivRoundUp((uint)Height, blkHeight));
                 uint BlockHeightLog2 = (uint)Convert.ToString(blockHeight, 2).Length - 1;
                 uint tileMode = 0;
 
@@ -141,20 +135,26 @@ namespace CrossMod.Nodes
                     if (i == 0 && size % Alignment != 0)
                         size += Alignment - (size % Alignment);
 
-                    try
-                    {
-                        byte[] deswiz = SwitchSwizzler.deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), reader.ReadBytes(ImageSize));
-                        byte[] trimmed = new byte[mipmapSizes[0]];
-                        Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
+                    byte[] deswiz = SwitchSwizzler.Deswizzle((uint)Width, (uint)Height, blkWidth, blkHeight, 0, bpp, tileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), reader.ReadBytes(ImageSize));
+                    byte[] trimmed = new byte[mipmapSizes[0]];
+                    Array.Copy(deswiz, 0, trimmed, 0, trimmed.Length);
 
-                        Mipmaps.Add(trimmed);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
+                    Mipmaps.Add(trimmed);
                 }
             }
+        }
+
+        private string ReadTexName(BinaryReader reader)
+        {
+            var result = "";
+            for (int i = 0; i < 0x40; i++)
+            {
+                byte b = reader.ReadByte();
+                if (b != 0)
+                    result += (char)b;
+            }
+
+            return result;
         }
 
         public static readonly Dictionary<NUTEX_FORMAT, Vector2> blkDims = new Dictionary<NUTEX_FORMAT, Vector2>()
@@ -185,6 +185,7 @@ namespace CrossMod.Nodes
             {
                 case NUTEX_FORMAT.R8G8B8A8_UNORM:
                 case NUTEX_FORMAT.R8G8B8A8_SRGB:
+                case NUTEX_FORMAT.B8G8R8A8_UNORM:
                     return 4;
                 case NUTEX_FORMAT.BC1_UNORM:
                     return 8;
@@ -209,7 +210,8 @@ namespace CrossMod.Nodes
                 case NUTEX_FORMAT.BC7_UNORM:
                 case NUTEX_FORMAT.BC7_SRGB:
                     return 16;
-                default: return 0x00;
+                default:
+                    return 0;
             }
         }
 
