@@ -5,6 +5,8 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SFGraphics.GLObjects.Textures;
+using SFGraphics.GLObjects.Textures.TextureFormats;
 
 namespace CrossMod.Nodes
 {
@@ -44,8 +46,7 @@ namespace CrossMod.Nodes
         // Don't generate redundant textures.
         private RTexture renderableTexture = null;
 
-        // TODO: Fix formats using InternalFormat.Rgba.
-        public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
+        public readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
             { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.SrgbAlpha },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
@@ -65,6 +66,17 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC6_UFLOAT, InternalFormat.CompressedRgbBptcUnsignedFloat },
             { NUTEX_FORMAT.BC7_UNORM, InternalFormat.CompressedRgbaBptcUnorm },
             { NUTEX_FORMAT.BC7_SRGB, InternalFormat.CompressedSrgbAlphaBptcUnorm }
+        };
+
+        /// <summary>
+        /// Channel information for uncompressed formats.
+        /// </summary>
+        public readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
+        {
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R8G8B8A8_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_UNORM, PixelFormat.Bgra },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, PixelFormat.Bgra },
         };
 
         public NUTEX_Node()
@@ -226,28 +238,27 @@ namespace CrossMod.Nodes
                     IsSrgb = Format.ToString().ToLower().Contains("srgb")
                 };
 
-                if (glFormatByNuTexFormat.ContainsKey(Format))
+                if (internalFormatByNuTexFormat.ContainsKey(Format))
                 {
                     // This may require a higher OpenGL version for BC7.
                     if (!SFGraphics.GlUtils.OpenGLExtensions.IsAvailable("GL_ARB_texture_compression_bptc"))
                         throw new Rendering.Exceptions.MissingExtensionException("GL_ARB_texture_compression_bptc");
 
-                    var sfTex = new SFGraphics.GLObjects.Textures.Texture2D()
+                    var sfTex = new Texture2D()
                     {
                         // Set defaults until all the sampler parameters are added.
                         TextureWrapS = TextureWrapMode.Repeat,
                         TextureWrapT = TextureWrapMode.Repeat
                     };
 
-                    if (SFGraphics.GLObjects.Textures.TextureFormats.TextureFormatTools.IsCompressed(glFormatByNuTexFormat[Format]))
+                    if (TextureFormatTools.IsCompressed(internalFormatByNuTexFormat[Format]))
                     {
-                        sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
+                        sfTex.LoadImageData(Width, Height, Mipmaps, internalFormatByNuTexFormat[Format]);
                     }
                     else
                     {
                         // TODO: Uncompressed mipmaps.
-                        // TODO: Support other pixel formats.
-                        var format = new SFGraphics.GLObjects.Textures.TextureFormats.TextureFormatUncompressed((PixelInternalFormat)glFormatByNuTexFormat[Format], PixelFormat.Rgba, PixelType.UnsignedByte);
+                        var format = new TextureFormatUncompressed((PixelInternalFormat)internalFormatByNuTexFormat[Format], pixelFormatByNuTexFormat[Format], PixelType.UnsignedByte);
                         sfTex.LoadImageData(Width, Height, Mipmaps[0], format);
                     }
 
