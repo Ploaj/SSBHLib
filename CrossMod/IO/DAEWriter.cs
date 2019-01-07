@@ -252,43 +252,83 @@ namespace CrossMod.IO
         }
 
         /// <summary>
+        /// Provides a container for using arrays of values as keys in <see cref="Dictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class ValueContainer<T> : IEquatable<ValueContainer<T>> where T : struct
+        {
+            public T[] Values { get; }
+            private readonly int hashCode;
+
+            public ValueContainer(T[] values)
+            {
+                Values = values;
+                hashCode = ((System.Collections.IStructuralEquatable)Values).GetHashCode(EqualityComparer<T>.Default);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as ValueContainer<T>);
+            }
+
+            public bool Equals(ValueContainer<T> other)
+            {
+                // Compare precalculated hash first for performance reasons.
+                // The entire sequence needs to be compared to resolve collisions.
+                return other != null && hashCode == other.hashCode && Enumerable.SequenceEqual(Values, other.Values);
+            }
+
+            public override int GetHashCode()
+            {
+                return hashCode;
+            }
+        }
+
+        /// <summary>
         /// Super slow
         /// </summary>
-        /// <param name="Values"></param>
-        /// <param name="Indices"></param>
-        /// <param name="Stride"></param>
+        /// <param name="values"></param>
+        /// <param name="indices"></param>
+        /// <param name="stride"></param>
         /// <param name="newValues"></param>
         /// <param name="newIndices"></param>
-        private void OptimizeFloatSource(float[] Values, uint[] Indices, int Stride, out float[] newValues, out uint[] newIndices)
+        private void OptimizeSource<T>(T[] values, uint[] indices, int stride, out T[] newValues, out uint[] newIndices) where T : struct
         {
-            List<uint> newIndex = new List<uint>();
-            List<float[]> Bank = new List<float[]>();
-            for(int i = 0; i < Indices.Length; i++)
-            {
-                float[] point = new float[Stride];
-                for (int j = 0; j < Stride; j++)
-                    point[j] = Values[Indices[i] * Stride + j];
+            var optimizedIndices = new List<uint>();
+            var optimizedValues = new List<T>();
 
-                int index = Bank.FindIndex(point.SequenceEqual);
-                if (index == -1)
+            // Use a special class to store values, so we can have the performance benefits of a dictionary.
+            var vertexBank = new Dictionary<ValueContainer<T>, uint>();
+        
+            for(int i = 0; i < indices.Length; i++)
+            {
+                var vertexValues = new ValueContainer<T>(GetVertexValues(values, indices, stride, i));
+
+                if (!vertexBank.ContainsKey(vertexValues))
                 {
-                    newIndex.Add((uint)Bank.Count);
-                    Bank.Add(point);
+                    uint index = (uint)vertexBank.Count;
+                    optimizedIndices.Add(index);
+                    vertexBank.Add(vertexValues, index);
+                    optimizedValues.AddRange(vertexValues.Values);
                 }
                 else
                 {
-                    newIndex.Add((uint)index);
+                    optimizedIndices.Add(vertexBank[vertexValues]);
+
                 }
             }
-            newValues = new float[Bank.Count * Stride];
-            for(int i = 0; i < Bank.Count; i++)
-            {
-                for(int j = 0; j < Stride; j++)
-                {
-                    newValues[i * Stride + j] = Bank[i][j];
-                }
-            }
-            newIndices = newIndex.ToArray();
+
+            newIndices = optimizedIndices.ToArray();
+            newValues = optimizedValues.ToArray();
+        }
+
+        private static T[] GetVertexValues<T>(T[] values, uint[] indices, int stride, int i)
+        {
+            var vertexValues = new T[stride];
+            for (int j = 0; j < stride; j++)
+                vertexValues[j] = values[indices[i] * stride + j];
+
+            return vertexValues;
         }
 
         /// <summary>
@@ -307,7 +347,7 @@ namespace CrossMod.IO
                 Stride = 2;
 
             if (Optimize)
-                OptimizeFloatSource(Values, Indices, Stride, out Values, out Indices);
+                OptimizeSource(Values, Indices, Stride, out Values, out Indices);
 
             string sourceid = GetUniqueID(Name + "-" + Semantic.ToString().ToLower());
             writer.WriteStartElement("source");
