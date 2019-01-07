@@ -47,11 +47,11 @@ namespace CrossMod.Nodes
         // TODO: Fix formats using InternalFormat.Rgba.
         public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Srgb },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Rgba },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.B8G8R8A8_SRGB, InternalFormat.Rgba },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, InternalFormat.Srgb },
             { NUTEX_FORMAT.BC1_UNORM, InternalFormat.CompressedRgbaS3tcDxt1Ext },
             { NUTEX_FORMAT.BC1_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt1Ext },
             { NUTEX_FORMAT.BC2_UNORM, InternalFormat.CompressedRgbaS3tcDxt3Ext },
@@ -237,8 +237,17 @@ namespace CrossMod.Nodes
                         TextureWrapT = TextureWrapMode.Repeat
                     };
 
-                    if (glFormatByNuTexFormat[Format] != InternalFormat.Rgba)
+                    if (SFGraphics.GLObjects.Textures.TextureFormats.TextureFormatTools.IsCompressed(glFormatByNuTexFormat[Format]))
+                    {
                         sfTex.LoadImageData(Width, Height, Mipmaps, glFormatByNuTexFormat[Format]);
+                    }
+                    else
+                    {
+                        // TODO: Uncompressed mipmaps.
+                        // TODO: Support other pixel formats.
+                        var format = new SFGraphics.GLObjects.Textures.TextureFormats.TextureFormatUncompressed((PixelInternalFormat)glFormatByNuTexFormat[Format], PixelFormat.Rgba, PixelType.UnsignedByte);
+                        sfTex.LoadImageData(Width, Height, Mipmaps[0], format);
+                    }
 
                     renderableTexture.renderTexture = sfTex;
                 }
