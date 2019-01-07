@@ -47,7 +47,7 @@ namespace CrossMod.Nodes
         // TODO: Fix formats using InternalFormat.Rgba.
         public readonly Dictionary<NUTEX_FORMAT, InternalFormat> glFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
-            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Srgb },
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.SrgbAlpha },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, InternalFormat.Rgba },
