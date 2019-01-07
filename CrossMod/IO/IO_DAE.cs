@@ -42,6 +42,9 @@ namespace CrossMod.IO
                     List<float> Position = new List<float>();
                     List<float> Normal = new List<float>();
                     List<float> UV0 = new List<float>();
+                    List<float> UV1 = new List<float>();
+                    List<float> UV2 = new List<float>();
+                    List<float> UV3 = new List<float>();
                     List<int[]> BoneIndices = new List<int[]>();
                     List<float[]> BoneWeights = new List<float[]>();
 
@@ -50,6 +53,9 @@ namespace CrossMod.IO
                         Position.Add(vertex.Position.X); Position.Add(vertex.Position.Y); Position.Add(vertex.Position.Z);
                         Normal.Add(vertex.Normal.X); Normal.Add(vertex.Normal.Y); Normal.Add(vertex.Normal.Z);
                         UV0.Add(vertex.UV0.X); UV0.Add(vertex.UV0.Y);
+                        UV1.Add(vertex.UV1.X); UV1.Add(vertex.UV1.Y);
+                        UV2.Add(vertex.UV2.X); UV2.Add(vertex.UV2.Y);
+                        UV3.Add(vertex.UV3.X); UV3.Add(vertex.UV3.Y);
 
                         List<int> bIndices = new List<int>();
                         List<float> bWeights = new List<float>();
@@ -86,6 +92,15 @@ namespace CrossMod.IO
 
                     if (mesh.HasUV0)
                         writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV0.ToArray(), mesh.Indices.ToArray(), 0);
+
+                    if (mesh.HasUV1)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV1.ToArray(), mesh.Indices.ToArray(), 1);
+
+                    if (mesh.HasUV2)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV2.ToArray(), mesh.Indices.ToArray(), 2);
+
+                    if (mesh.HasUV3)
+                        writer.WriteGeometrySource(mesh.Name, DAEWriter.VERTEX_SEMANTIC.TEXCOORD, UV3.ToArray(), mesh.Indices.ToArray(), 3);
 
                     if (mesh.HasBoneWeights)
                     {
