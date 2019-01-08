@@ -232,7 +232,7 @@ namespace CrossMod.Nodes
                             {
                                 outMesh.HasColor = true;
                                 for (int i = 0; i < values.Length; i++)
-                                    vertices[i].Color = new OpenTK.Vector4(values[i].X, values[i].Y, values[i].Z, values[i].W);
+                                    vertices[i].Color = new OpenTK.Vector4(values[i].X, values[i].Y, values[i].Z, values[i].W) / 127f;
                             }
                         }
 
