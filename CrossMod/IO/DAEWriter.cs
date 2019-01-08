@@ -344,7 +344,7 @@ namespace CrossMod.IO
             if (Semantic == VERTEX_SEMANTIC.TEXCOORD)
                 Stride = 2;
             if (Semantic == VERTEX_SEMANTIC.COLOR)
-                Stride = 2;
+                Stride = 4;
 
             if (Optimize)
                 OptimizeSource(Values, Indices, Stride, out Values, out Indices);
