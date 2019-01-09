@@ -1,12 +1,25 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
+    public enum MATL_FillMode
+    {
+        Line,
+        Solid
+    }
+
+    public enum MATL_CullMode
+    {
+        Back,
+        Front,
+        FrontAndBack
+    }
+
     public partial class MatlAttribute
     {
         public class MatlRasterizerState : ISSBH_File
         {
-            public int Unk1 { get; set; }
+            public int FillMode { get; set; }
 
-            public int Unk2 { get; set; }
+            public int CullMode { get; set; }
 
             public float Unk3 { get; set; }
 
@@ -18,7 +31,7 @@
 
             public int Unk7 { get; set; }
 
-            public int Unk8 { get; set; }
+            public float Unk8 { get; set; }
 
             public override string ToString()
             {
