@@ -26,8 +26,16 @@ namespace SSBHLib.Formats.Meshes
         public float BoundingSphereZ { get; set; }
         public float BoundingSphereRadius { get; set; }
 
+        public float MinBoundingBoxX { get; set; }
+        public float MinBoundingBoxY { get; set; }
+        public float MinBoundingBoxZ { get; set; }
+
+        public float MaxBoundingBoxX { get; set; }
+        public float MaxBoundingBoxY { get; set; }
+        public float MaxBoundingBoxZ { get; set; }
+
         [ParseTag(InLine = true)]
-        public float[] HeaderFloats { get; set; } = new float[22];
+        public float[] UnknownFloats { get; set; } = new float[16]; // Possibly a matrix
 
         [ParseTag("VersionMinor>8")]
         public MeshObject[] Objects { get; set; }

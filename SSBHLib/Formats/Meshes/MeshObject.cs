@@ -35,7 +35,7 @@ namespace SSBHLib.Formats.Meshes
 
         public uint ElementOffset { get; set; }
         
-        public int Unk8 { get; set; } // usually 4?
+        public int Unk8 { get; set; } // usually 4? maybe something to do with the final buffer offset?
     
         public int DrawElementType { get; set; }
         
@@ -47,9 +47,17 @@ namespace SSBHLib.Formats.Meshes
         public float BoundingSphereY { get; set; }
         public float BoundingSphereZ { get; set; }
         public float BoundingSphereRadius { get; set; }
+        
+        public float MinBoundingBoxX { get; set; }
+        public float MinBoundingBoxY { get; set; }
+        public float MinBoundingBoxZ { get; set; }
+
+        public float MaxBoundingBoxX { get; set; }
+        public float MaxBoundingBoxY { get; set; }
+        public float MaxBoundingBoxZ { get; set; }
 
         [ParseTag(InLine = true)]
-        public float[] HeaderFloats { get; set; } = new float[22];
+        public float[] UnknownFloats { get; set; } = new float[16]; // Possibly a matrix
 
         public MeshAttribute[] Attributes { get; set; }
     }
