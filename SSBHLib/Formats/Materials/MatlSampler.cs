@@ -17,8 +17,8 @@
             public int Unk11 { get; set; }
             public int Unk12 { get; set; }
             public float Unk13 { get; set; }
-            public int Unk14 { get; set; }
-            public int Unk15 { get; set; }
+            //public int Unk14 { get; set; }
+            //public int Unk15 { get; set; }
 
             public override string ToString()
             {

@@ -374,14 +374,14 @@
 
         public enum ParamDataType
         {
-            String = 0xB,
-            Vector4 = 0x5,
-            Boolean = 0x2,
             Float = 0x1,
+            Boolean = 0x2,
+            Vector4 = 0x5,
+            String = 0xB,
             Sampler = 0xE,
-            RasterizerState = 0x12,
+            UvTransform = 0x10,
             BlendState = 0x11,
-            UvTransform = 0x10
+            RasterizerState = 0x12,
         }
     }
 }

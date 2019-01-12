@@ -3,11 +3,11 @@
     [SSBHFileAttribute("LDOM")]
     public class MODL : ISSBH_File
     {
-        public uint Magic { get; set; } //= new char[] { 'L', 'D', 'O', 'M' };
+        public uint Magic { get; set; } = 0x4D4F444C;//= new char[] { 'L', 'D', 'O', 'M' };
 
-        public ushort MajorVersion { get; set; }
+        public ushort MajorVersion { get; set; } = 1;
 
-        public ushort MinorVersion { get; set; }
+        public ushort MinorVersion { get; set; } = 7;
         
         public string ModelFileName { get; set; }
         

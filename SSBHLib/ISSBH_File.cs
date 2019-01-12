@@ -4,8 +4,20 @@ namespace SSBHLib
 {
     public abstract class ISSBH_File
     {
-
+        /// <summary>
+        /// This pretty much exists for MATL's only
+        /// </summary>
+        /// <param name="Parser"></param>
         public virtual void PostProcess(SSBHParser Parser)
+        {
+
+        }
+
+        /// <summary>
+        /// This pretty much exists for MATL's only
+        /// </summary>
+        /// <param name="Parser"></param>
+        public virtual void PostWrite(SSBHExporter Exporter)
         {
 
         }

@@ -11,7 +11,8 @@ namespace SSBHLib.Formats.Materials
         public MatlEnums.ParamDataType DataType { get; set; }
 
         // not part of the entry
-        public object DataObject;
+        [ParseTag(Ignore = true)]
+        public object DataObject { get; set; }
 
         public override void PostProcess(SSBHParser R)
         {

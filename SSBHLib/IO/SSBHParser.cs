@@ -134,6 +134,8 @@ namespace SSBHLib.IO
                 {
                     if (attr is ParseTag tag)
                     {
+                        if (tag.Ignore)
+                            skip = true;
                         if (!tag.IF.Equals(""))
                         {
                             string[] args = tag.IF.Split('>');

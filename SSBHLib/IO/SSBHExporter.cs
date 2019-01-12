@@ -33,7 +33,7 @@ namespace SSBHLib.IO
 
                 // write file contents
                 exporter.AddSSBHFile(file);
-                exporter.Pad(8);
+                exporter.Pad(4);
             }
         }
 
@@ -45,6 +45,8 @@ namespace SSBHLib.IO
             {
                 if (attr is ParseTag tag)
                 {
+                    if (tag.Ignore)
+                        return true;
                     if (!tag.IF.Equals(""))
                     {
                         string[] args = tag.IF.Split('>');
@@ -167,6 +169,14 @@ namespace SSBHLib.IO
                         }
                     }
                 }
+                else if (prop.PropertyType == typeof(SSBHOffset)) // HACK for materials
+                {
+                    var DataObject = File.GetType().GetProperty("DataObject").GetValue(File);
+                    Console.WriteLine(DataObject.GetType());
+                    objectOffset.Add((uint)Position, DataObject);
+                    objectQueue.AddLast(DataObject);
+                    Write((long)0);
+                }
                 else
                 {
                     WriteProperty(prop.GetValue(File));
@@ -175,19 +185,32 @@ namespace SSBHLib.IO
 
             // Post Write
             // TODO: mostly for materials....
+            File.PostWrite(this);
         }
 
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
-            /*SSBHOffset*/
+            if (value is Formats.Materials.MatlAttribute.MtalString)
+            {
+                // special write function for matl string
+                Pad(0x8);
+                Write((long)8);
+                value = ((Formats.Materials.MatlAttribute.MtalString)value).Text;
+                Write(((string)value).ToCharArray());
+                Write((byte)0);
+                Pad(0x4);
+            }
+            else
             if (value is ISSBH_File v)
             {
                 WriteSSBHFile(v);
                 Pad(0x8);
             }
             else if (t.IsEnum)
-                Write((long)value);
+                Write((long)((int)value));
+            else if (t == typeof(bool))
+                Write((bool)value ? (long)1 : (long)0);
             else if (t == typeof(byte))
                 Write((byte)value);
             else if (t == typeof(char))
@@ -210,10 +233,10 @@ namespace SSBHLib.IO
             {
                 Write(((string)value).ToCharArray());
                 Write((byte)0);
-                Pad(0x4); //8 or 4?
+                Pad(0x4); 
             }
             else
-                throw new NotSupportedException($"{t.GetType()} is not a supported type.");
+                throw new NotSupportedException($"{t} is not a supported type.");
         }
 
         public void Pad(int toSize, byte paddingValue = 0)
