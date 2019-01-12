@@ -13,13 +13,13 @@ namespace SSBHLib.Formats.Meshes
     [SSBHFileAttribute("HSEM")]
     public class MESH : ISSBH_File
     {
-        public uint Magic { get; set; }
-        
-        public ushort VersionMajor { get; set; } // 0x0001
-        
-        public ushort VersionMinor { get; set; } // 0x000A and 0x0008 - Most use 0x000A
-        
-        public string ModelName { get; set; } // unused
+        public uint Magic { get; set; } = 0x4D455348;
+
+        public ushort VersionMajor { get; set; } = 0x1;// 0x0001
+
+        public ushort VersionMinor { get; set; } = 0xA;// 0x000A and 0x0008 - Most use 0x000A
+
+        public string ModelName { get; set; } = "";// unused
 
         public float BoundingSphereX { get; set; }
         public float BoundingSphereY { get; set; }
@@ -44,7 +44,7 @@ namespace SSBHLib.Formats.Meshes
         public int[] BufferSizes { get; set; }
 
         [ParseTag("VersionMinor>8")]
-        public long PolygonIndexCount { get; set; } // seems to match index count?
+        public long PolygonIndexSize { get; set; } // seems to match index count?
 
         [ParseTag("VersionMinor>8")]
         public MeshBuffer[] VertexBuffers { get; set; }

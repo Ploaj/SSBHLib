@@ -79,6 +79,7 @@ namespace SSBHLib.IO
             {
                 var obj = objectQueue.First();
                 objectQueue.RemoveFirst();
+                if (obj == null) continue;
 
                 // I guess?
                 if (obj is Array)

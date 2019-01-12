@@ -81,7 +81,7 @@ namespace SSBHLib.Tools
             }
 
             int Size = 3;
-            if (AttributeName.Contains("colorSet"))
+            if (AttributeName.Contains("colorSet") || AttributeName.Equals("Normal0") || AttributeName.Equals("Tangent0"))
                 Size = 4;
             if (AttributeName.Equals("map1") || AttributeName.Equals("bake1") || AttributeName.Contains("uvSet"))
                 Size = 2;
