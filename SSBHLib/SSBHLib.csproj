@@ -74,6 +74,7 @@
     <Compile Include="Tools\SSBHAnimTrackDecoder.cs" />
     <Compile Include="Tools\SSBHMeshMaker.cs" />
     <Compile Include="Tools\SSBHRiggingAccessor.cs" />
+    <Compile Include="Tools\SSBHRiggingCompiler.cs" />
     <Compile Include="Tools\SSBHVertexReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

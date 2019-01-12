@@ -6,7 +6,7 @@
         
         public long SubMeshIndex { get; set; }
     
-        public long Unk_Flags { get; set; }
+        public long Flags { get; set; } // 0x0100 | (max number of weights the vertices use i.e. 0 if single bound 4 if multibound)
 
         public MeshBoneBuffer[] Buffers { get; set; }
     }
