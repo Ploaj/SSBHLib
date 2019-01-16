@@ -38,6 +38,9 @@ namespace SSBHLib.Tools
             public string Name;
             public string ParentBone;
             public int VertexCount;
+            public SSBHVertexAttribute BoundingSphere;
+            public SSBHVertexAttribute BBMin;
+            public SSBHVertexAttribute BBMax;
             public Dictionary<MESHAttribute, float[]> VertexData = new Dictionary<MESHAttribute, float[]>();
             public List<uint> Indices = new List<uint>();
             public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
@@ -58,8 +61,25 @@ namespace SSBHLib.Tools
             CurrentMesh.ParentBone = ParentBoneName;
             CurrentMesh.Indices.AddRange(Indices);
             CurrentMesh.VertexCount = Positions.Length;
+            //CurrentMesh.BoundingSphere = BoundingSphereGenerator.GetMinimumBoundingSphere(Positions);
             meshes.Add(CurrentMesh);
             AddAttributeToMeshObject(MESHAttribute.Position0, Positions);
+        }
+
+        /// <summary>
+        /// Sets bounding sphere of current mesh
+        /// </summary>
+        public void SetBoundingSphere(float X, float Y, float Z, float R)
+        {
+            if (CurrentMesh == null)
+                return;
+            CurrentMesh.BoundingSphere = new SSBHVertexAttribute()
+            {
+                X = X,
+                Y = Y,
+                Z = Z,
+                W = R
+            };
         }
 
         /// <summary>
@@ -130,6 +150,10 @@ namespace SSBHLib.Tools
                     MeshGroups.Add(mo.Name, 0);
 
                 mo.SubMeshIndex = MeshGroups[mo.Name];
+                mo.BoundingSphereX = tempmesh.BoundingSphere.X;
+                mo.BoundingSphereY = tempmesh.BoundingSphere.Y;
+                mo.BoundingSphereZ = tempmesh.BoundingSphere.Z;
+                mo.BoundingSphereRadius = tempmesh.BoundingSphere.W;
 
                 // Create Rigging
                 RiggingGroups.Add(SSBHRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
@@ -317,7 +341,7 @@ namespace SSBHLib.Tools
                 case 5: return 2;
                 case 8: return 2;
                 default:
-                    return 2;
+                    return 1;
             }
         }
 

@@ -141,6 +141,11 @@ namespace SSBHLib.IO
 
                 if (prop.PropertyType == typeof(string))
                 {
+                    if (prop.GetValue(File) == null)
+                    {
+                        Write((long)0);
+                        continue;
+                    }
                     objectQueue.AddLast(prop.GetValue(File));
                     objectOffset.Add((uint)Position, prop.GetValue(File));
                     Write((long)0);

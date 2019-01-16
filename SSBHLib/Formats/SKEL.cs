@@ -3,11 +3,11 @@
     [SSBHFileAttribute("LEKS")]
     public class SKEL : ISSBH_File
     {
-        public uint Magic { get; set; } //= new char[] { 'L', 'D', 'O', 'M' };
+        public uint Magic { get; set; }  = 0x534B454C;
 
-        public ushort MajorVersion { get; set; }
+        public ushort MajorVersion { get; set; } = 1;
 
-        public ushort MinorVersion { get; set; }
+        public ushort MinorVersion { get; set; } = 0;
 
         public SKEL_BoneEntry[] BoneEntries { get; set; }
 

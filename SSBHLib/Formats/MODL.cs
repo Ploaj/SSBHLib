@@ -15,7 +15,7 @@
 
         public MODL_MaterialName[] MaterialFileNames { get; set; }
 
-        public string UnknownFileName { get; set; }
+        public string UnknownFileName { get; set; } = "";
 
         public string MeshString { get; set; }
 

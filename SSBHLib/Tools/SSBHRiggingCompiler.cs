@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SSBHLib.Formats.Meshes;
+using System.Linq;
 
 namespace SSBHLib.Tools
 {
@@ -39,12 +40,13 @@ namespace SSBHLib.Tools
 
             // create bone groups
             group.Flags = 0x0100 | MaxInfluenceCount;
-            group.Buffers = new MeshBoneBuffer[boneNameToData.Count];
-            int bufindex = 0;
+            List<MeshBoneBuffer> bonebuffers = new List<MeshBoneBuffer>();
             foreach(var pair in boneNameToData)
             {
-                group.Buffers[bufindex++] = new MeshBoneBuffer() { BoneName = pair.Key, Data = pair.Value.ToArray() };
+                bonebuffers.Add(new MeshBoneBuffer() { BoneName = pair.Key, Data = pair.Value.ToArray() });
             }
+            group.Buffers = bonebuffers.ToArray().OrderBy(o => o.BoneName, StringComparer.Ordinal).ToArray();
+
 
             return group;
         }

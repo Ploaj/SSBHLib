@@ -38,8 +38,11 @@ namespace CrossMod.Rendering
             // Material
             foreach (Models.RMesh m in model.subMeshes)
             {
-                m.Material.MaterialAnimation.Clear();
-                m.Material.CurrentFrame = frame;
+                if(m.Material != null)
+                {
+                    m.Material.MaterialAnimation.Clear();
+                    m.Material.CurrentFrame = frame;
+                }
             }
 
             foreach (RMaterialAnimation a in MaterialNodes)
@@ -48,7 +51,7 @@ namespace CrossMod.Rendering
 
                 foreach (Models.RMesh m in model.subMeshes)
                 {
-                    if (m.Material.Name.Equals(a.MaterialName))
+                    if (m.Material != null && m.Material.Name.Equals(a.MaterialName))
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
