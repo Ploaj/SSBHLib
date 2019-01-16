@@ -91,10 +91,10 @@ namespace CrossMod.Nodes
 
         public RModel GetRenderModel(RSkeleton Skeleton = null)
         {
-            var model = new RModel();
-
-            // The bounding sphere containing all meshes.
-            model.BoundingSphere = new Vector4(mesh.BoundingSphereX, mesh.BoundingSphereY, mesh.BoundingSphereZ, mesh.BoundingSphereRadius);
+            var model = new RModel
+            {
+                BoundingSphere = new Vector4(mesh.BoundingSphereX, mesh.BoundingSphereY, mesh.BoundingSphereZ, mesh.BoundingSphereRadius)
+            };
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
@@ -149,7 +149,13 @@ namespace CrossMod.Nodes
             var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
             var colorSet5Values = vertexAccessor.ReadAttribute("colorSet5", 0, meshObject.VertexCount, meshObject);
 
-            var generatedBitangents = GenerateBitangents(vertexIndices, positions, map1Values);
+            // TODO: Convert vectors.
+            var intIndices = new List<int>();
+            foreach (var value in vertexIndices)
+            {
+                intIndices.Add((int)value);
+            }
+            SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(GetVectors3d(positions), GetVectors3d(normals), GetVectors2d(map1Values), intIndices, out Vector3[] newTangents, out Vector3[] bitangents);
 
             var riggingAccessor = new SSBHRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
@@ -172,7 +178,7 @@ namespace CrossMod.Nodes
 
                 var normal = GetVector4(normals[i]).Xyz;
                 var tangent = GetVector4(tangents[i]).Xyz;
-                var bitangent = GetBitangent(generatedBitangents, i, normal);
+                var bitangent = bitangents[i];
 
                 var map1 = GetVector4(map1Values[i]).Xy;
 
@@ -205,6 +211,26 @@ namespace CrossMod.Nodes
             }
 
             return vertices;
+        }
+
+        private static List<Vector3> GetVectors3d(SSBHVertexAttribute[] values)
+        {
+            var vectors = new List<Vector3>();
+            foreach (var value in values)
+            {
+                vectors.Add(GetVector4(value).Xyz);
+            }
+            return vectors;
+        }
+
+        private static List<Vector2> GetVectors2d(SSBHVertexAttribute[] values)
+        {
+            var vectors = new List<Vector2>();
+            foreach (var value in values)
+            {
+                vectors.Add(GetVector4(value).Xy);
+            }
+            return vectors;
         }
 
         private static void GetRiggingData(SSBHVertexAttribute[] positions, SSBHVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
@@ -250,31 +276,7 @@ namespace CrossMod.Nodes
             }
             System.Diagnostics.Debug.WriteLine("");
         }
-
-        private static Vector3 GetBitangent(Vector3[] generatedBitangents, int i, Vector3 normal)
-        {
-            // Account for mirrored normal maps.
-            var bitangent = SFGraphics.Utils.VectorUtils.Orthogonalize(generatedBitangents[i], normal);
-            bitangent *= -1;
-            return bitangent;
-        }
-
-        private static Vector3[] GenerateBitangents(uint[] indices, SSBHVertexAttribute[] positions, SSBHVertexAttribute[] uvs)
-        {
-            var generatedBitangents = new Vector3[positions.Length];
-            for (int i = 0; i < indices.Length; i += 3)
-            {
-                SFGraphics.Utils.VectorUtils.GenerateTangentBitangent(GetVector4(positions[indices[i]]).Xyz, GetVector4(positions[indices[i + 1]]).Xyz, GetVector4(positions[indices[i + 2]]).Xyz,
-                    GetVector4(uvs[indices[i]]).Xy, GetVector4(uvs[indices[i + 1]]).Xy, GetVector4(uvs[indices[i + 2]]).Xy, out Vector3 tangent, out Vector3 bitangent);
-
-                generatedBitangents[indices[i]] += bitangent;
-                generatedBitangents[indices[i + 1]] += bitangent;
-                generatedBitangents[indices[i + 2]] += bitangent;
-            }
-
-            return generatedBitangents;
-        }
-
+       
         private static Vector4 GetVector4(SSBHVertexAttribute values)
         {
             return new Vector4(values.X, values.Y, values.Z, values.W);
