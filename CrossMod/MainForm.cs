@@ -68,36 +68,56 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            OpenFiles(folderPath);
+            LoadWorkspace(folderPath);
 
             ShowModelViewport();
         }
 
-        private void OpenFiles(string folderPath)
+        /// <summary>
+        /// Loads a directory and all sub-directories into the filetree.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        private void LoadWorkspace(string folderPath)
         {
-            var parentNode = new TreeNode(Path.GetDirectoryName(folderPath))
+            var mainNode = OpenDirectory(folderPath);
+            fileTree.Nodes.Add(mainNode);
+
+            // Enable rendering of the model if we have directly selected a model file.
+            // Nested ones won't render a model
+            foreach (var node in mainNode.Nodes)
+            {
+                if ((node as FileNode)?.Text?.EndsWith("numdlb") == true)
+                {
+                    fileTree.SelectedNode = node as FileNode;
+                }
+            }
+        }
+
+        private TreeNode OpenDirectory(string folderPath, bool isRoot=true)
+        {
+            var value = (isRoot) ? Path.GetDirectoryName(folderPath) : Path.GetFileName(folderPath);
+            var parentNode = new TreeNode(value)
             {
                 SelectedImageKey = "folder",
                 ImageKey = "folder"
             };
-            fileTree.Nodes.Add(parentNode);
 
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            FileNode numdlbNode = null;
-            foreach (string file in Directory.EnumerateFiles(folderPath))
+            foreach (var name in Directory.EnumerateFileSystemEntries(folderPath))
             {
-                stopwatch.Restart();
-                OpenFile(fileNodeTypes, parentNode, file, ref numdlbNode);
-                System.Diagnostics.Debug.WriteLine($"Open {Path.GetFileName(file)} {stopwatch.ElapsedMilliseconds} ms");
+                if (Directory.Exists(name))
+                {
+                    parentNode.Nodes.Add(OpenDirectory(name, isRoot=false));
+                }
+                else
+                {
+                    parentNode.Nodes.Add(OpenFile(fileNodeTypes, name));
+                }
             }
 
-            // Enable rendering of the model.
-            // Wait for all nodes to be initialized to ensure the skeleton isn't null.
-            if (numdlbNode != null)
-                fileTree.SelectedNode = numdlbNode;
+            return parentNode;
         }
 
-        private void OpenFile(IEnumerable<Type> Types, TreeNode Parent, string file, ref FileNode numdlbNode)
+        private TreeNode OpenFile(IEnumerable<Type> Types, string file)
         {
             FileNode fileNode = null;
 
@@ -125,11 +145,7 @@ namespace CrossMod
             fileNode.Open(file);
 
             fileNode.Text = Path.GetFileName(file);
-            Parent.Nodes.Add(fileNode);
-
-            // Select model nodes to enable rendering.
-            if (fileNode.Text.EndsWith("numdlb"))
-                numdlbNode = fileNode;
+            return fileNode;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -324,7 +340,7 @@ namespace CrossMod
 
                 string sourceFolder = Directory.GetParent(file).FullName;
 
-                OpenFiles(sourceFolder);
+                LoadWorkspace(sourceFolder);
 
                 ShowModelViewport();
 
