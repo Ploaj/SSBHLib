@@ -76,21 +76,21 @@ namespace CrossMod
             // 
             this.openModelFolderToolStripMenuItem.Name = "openModelFolderToolStripMenuItem";
             this.openModelFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openModelFolderToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.openModelFolderToolStripMenuItem.Text = "Open Model Folder";
-            this.openModelFolderToolStripMenuItem.Click += new System.EventHandler(this.openModelFolderToolStripMenuItem_Click);
+            this.openModelFolderToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.openModelFolderToolStripMenuItem.Text = "Open Folder";
+            this.openModelFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
             // reloadShadersToolStripMenuItem
             // 
             this.reloadShadersToolStripMenuItem.Name = "reloadShadersToolStripMenuItem";
-            this.reloadShadersToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.reloadShadersToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.reloadShadersToolStripMenuItem.Text = "Reload Shaders";
             this.reloadShadersToolStripMenuItem.Click += new System.EventHandler(this.reloadShadersToolStripMenuItem_Click);
             // 
             // clearWorkspaceToolStripMenuItem
             // 
             this.clearWorkspaceToolStripMenuItem.Name = "clearWorkspaceToolStripMenuItem";
-            this.clearWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.clearWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.clearWorkspaceToolStripMenuItem.Text = "Clear Workspace";
             this.clearWorkspaceToolStripMenuItem.Click += new System.EventHandler(this.clearWorkspaceToolStripMenuItem_Click);
             // 
@@ -106,14 +106,14 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 

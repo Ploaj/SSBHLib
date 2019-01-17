@@ -59,7 +59,7 @@ namespace CrossMod
             contentBox.Controls.Add(modelViewport);
         }
 
-        private void openModelFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string folderPath = FileTools.TryOpenFolder();
             if (string.IsNullOrEmpty(folderPath))
@@ -110,7 +110,7 @@ namespace CrossMod
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Force the shader to be generated again.
+            // Force the shaders to be generated again.
             Rendering.ShaderContainer.SetUpShaders();
         }
 

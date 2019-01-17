@@ -6,7 +6,7 @@ using System.IO;
 namespace CrossMod.Rendering
 {
     /// <summary>
-    /// A global static class used to create and retrieve shaders.
+    /// Stores all <see cref="Shader"/> instances used for rendering.
     /// </summary>
     public static class ShaderContainer
     {
