@@ -118,6 +118,10 @@ namespace CrossMod.GUI
             glViewport.OnRenderFrame += RenderNode;
         }
 
+        /// <summary>
+        /// Populates the meshes tab, and binds the given model to subcomponents such as the animation bar.
+        /// </summary>
+        /// <param name="model"></param>
         private void DisplayMeshes(RModel model)
         {
             animationBar.Model = model;
@@ -138,6 +142,10 @@ namespace CrossMod.GUI
             }
         }
 
+        /// <summary>
+        /// Populates the bones tab, and binds the given skeleton to subcomponents such as the animation bar
+        /// </summary>
+        /// <param name="skeleton"></param>
         private void DisplaySkeleton(RSkeleton skeleton)
         {
             if (skeleton == null)

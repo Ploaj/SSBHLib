@@ -5,6 +5,9 @@ using System.IO;
 
 namespace CrossMod.Rendering
 {
+    /// <summary>
+    /// A global static class used to create and retrieve shaders.
+    /// </summary>
     public static class ShaderContainer
     {
         private static Dictionary<string, Shader> shaderByName = new Dictionary<string, Shader>();
