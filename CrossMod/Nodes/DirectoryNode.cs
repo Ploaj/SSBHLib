@@ -29,7 +29,7 @@ namespace CrossMod.Nodes
         /// <param name="isRoot">Whether this is the topmost parent. Decides whether to display full or partial name.</param>
         public DirectoryNode(string path, bool isRoot=true) : base(path)
         {
-            Text = (isRoot) ? Path.GetDirectoryName(path) : Path.GetFileName(path);
+            Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
             SelectedImageKey = "folder";
             ImageKey = "folder";
         }
