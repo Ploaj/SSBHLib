@@ -13,16 +13,16 @@ namespace CrossMod.Nodes
 
         private RSkeleton Skeleton;
 
-        public SKEL_Node()
+        public SKEL_Node(string path) : base(path)
         {
             ImageKey = "skeleton";
             SelectedImageKey = "skeleton";
         }
 
-        public override void Open(string Path)
+        public override void Open()
         {
             ISSBH_File SSBHFile;
-            if (SSBH.TryParseSSBHFile(Path, out SSBHFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out SSBHFile))
             {
                 if(SSBHFile is SKEL)
                 {

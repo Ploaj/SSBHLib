@@ -9,15 +9,15 @@ namespace CrossMod.Nodes
     {
         public HLPB helperBones;
 
-        public NUHLPB_Node()
+        public NUHLPB_Node(string path): base(path)
         {
             ImageKey = "skeleton";
             SelectedImageKey = "skeleton";
         }
         
-        public override void Open(string Path)
+        public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
                 if (ssbhFile is HLPB)
                 {

@@ -11,15 +11,15 @@ namespace CrossMod.Nodes
     public class SHAN_Node : FileNode
     {
 
-        public SHAN_Node()
+        public SHAN_Node(string path) : base(path)
         {
             ImageKey = "animation";
             SelectedImageKey = "animation";
         }
 
-        public override void Open(string Path)
+        public override void Open()
         {
-            using (BinaryReader R = new BinaryReader(new FileStream(Path, FileMode.Open)))
+            using (BinaryReader R = new BinaryReader(new FileStream(AbsolutePath, FileMode.Open)))
             {
                 char[] Magic = R.ReadChars(4);
                 uint DefaultID = R.ReadUInt32();

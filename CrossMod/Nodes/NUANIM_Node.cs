@@ -12,15 +12,15 @@ namespace CrossMod.Nodes
     {
         private ANIM animation;
 
-        public NUANIM_Node()
+        public NUANIM_Node(string path): base(path)
         {
             ImageKey = "animation";
             SelectedImageKey = "animation";
         }
         
-        public override void Open(string Path)
+        public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File SSBHFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File SSBHFile))
             {
                 if (SSBHFile is ANIM anim)
                 {

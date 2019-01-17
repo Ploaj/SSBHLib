@@ -105,6 +105,7 @@
     <Compile Include="IO\IO_PLY.cs" />
     <Compile Include="IO\IO_SEANIM.cs" />
     <Compile Include="IO\IO_SMD.cs" />
+    <Compile Include="Nodes\DirectoryNode.cs" />
     <Compile Include="Nodes\IExportableAnimationNode.cs" />
     <Compile Include="Nodes\IExportableTextureNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />

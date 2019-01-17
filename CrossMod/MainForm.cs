@@ -20,9 +20,6 @@ namespace CrossMod
 
         private ContextMenu fileTreeContextMenu;
 
-        private static readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
-                                                                where typeof(FileNode).IsAssignableFrom(assemblyType) select assemblyType).ToList();
-
         public MainForm()
         {
             InitializeComponent();
@@ -68,68 +65,32 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            OpenFiles(folderPath);
+            LoadWorkspace(folderPath);
 
             ShowModelViewport();
         }
 
-        private void OpenFiles(string folderPath)
+        /// <summary>
+        /// Loads a directory and all sub-directories into the filetree.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        private void LoadWorkspace(string folderPath)
         {
-            var parentNode = new TreeNode(Path.GetDirectoryName(folderPath))
+            var mainNode = new DirectoryNode(folderPath);
+            mainNode.Open();
+            fileTree.Nodes.Add(mainNode);
+
+            mainNode.Expand();
+
+            // Enable rendering of the model if we have directly selected a model file.
+            // Nested ones won't render a model
+            foreach (var node in mainNode.Nodes)
             {
-                SelectedImageKey = "folder",
-                ImageKey = "folder"
-            };
-            fileTree.Nodes.Add(parentNode);
-
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            FileNode numdlbNode = null;
-            foreach (string file in Directory.EnumerateFiles(folderPath))
-            {
-                stopwatch.Restart();
-                OpenFile(fileNodeTypes, parentNode, file, ref numdlbNode);
-                System.Diagnostics.Debug.WriteLine($"Open {Path.GetFileName(file)} {stopwatch.ElapsedMilliseconds} ms");
-            }
-
-            // Enable rendering of the model.
-            // Wait for all nodes to be initialized to ensure the skeleton isn't null.
-            if (numdlbNode != null)
-                fileTree.SelectedNode = numdlbNode;
-        }
-
-        private void OpenFile(IEnumerable<Type> Types, TreeNode Parent, string file, ref FileNode numdlbNode)
-        {
-            FileNode fileNode = null;
-
-            string Extension = Path.GetExtension(file);
-
-            foreach (var type in Types)
-            {
-                if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
+                if ((node as FileNode)?.Text?.EndsWith("numdlb") == true)
                 {
-                    if (attr.Extension.Equals(Extension))
-                    {
-                        fileNode = (FileNode)Activator.CreateInstance(type);
-                    }
+                    fileTree.SelectedNode = node as FileNode;
                 }
             }
-
-            if (fileNode == null)
-                fileNode = new FileNode();
-
-            // Change style of unrenderable nodes
-            if (!(fileNode is IRenderableNode)) {
-                fileNode.ForeColor = Color.Gray;
-            }
-
-            fileNode.Open(file);
-
-            fileNode.Text = Path.GetFileName(file);
-            Parent.Nodes.Add(fileNode);
-
-            // Select model nodes to enable rendering.
-            if (fileNode.Text.EndsWith("numdlb"))
-                numdlbNode = fileNode;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -227,8 +188,8 @@ namespace CrossMod
                     {
                         if (SkeletonFileName != null)
                         {
-                            SKEL_Node node = new SKEL_Node();
-                            node.Open(SkeletonFileName);
+                            SKEL_Node node = new SKEL_Node(SkeletonFileName);
+                            node.Open();
                             SkeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
                         }
                     }
@@ -324,7 +285,7 @@ namespace CrossMod
 
                 string sourceFolder = Directory.GetParent(file).FullName;
 
-                OpenFiles(sourceFolder);
+                LoadWorkspace(sourceFolder);
 
                 ShowModelViewport();
 
@@ -378,8 +339,8 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
-                var matl = new MATL_Node();
-                matl.Open(file);
+                var matl = new MATL_Node(file);
+                matl.Open();
 
                 foreach (var entry in matl.Material.Entries)
                 {
@@ -427,8 +388,8 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
             {
-                var node = new NUMSHB_Node();
-                node.Open(file);
+                var node = new NUMSHB_Node(file);
+                node.Open();
 
                 AddValue(folderPath, name, values, outputText, file, node);
             }
@@ -459,6 +420,20 @@ namespace CrossMod
         private void printAttributesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WriteAttributesToFile();
+        }
+
+        /// <summary>
+        /// When a node 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            var node = e.Node as DirectoryNode;
+            if (node != null)
+            {
+                node.OpenNodes();
+            }
         }
     }
 }

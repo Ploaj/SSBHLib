@@ -64,15 +64,15 @@ namespace CrossMod.Nodes
         public MESH mesh;
         public ADJB ExtendedMesh;
 
-        public NUMSHB_Node()
+        public NUMSHB_Node(string path): base(path)
         {
             ImageKey = "mesh";
             SelectedImageKey = "mesh";
         }
 
-        public override void Open(string Path)
+        public override void Open()
         {
-            string ADJB = System.IO.Path.GetDirectoryName(Path) + "/model.adjb";
+            string ADJB = System.IO.Path.GetDirectoryName(AbsolutePath) + "/model.adjb";
             System.Console.WriteLine(ADJB);
             if (File.Exists(ADJB))
             {
@@ -80,7 +80,7 @@ namespace CrossMod.Nodes
                 ExtendedMesh.Read(ADJB);
             }
 
-            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
                 if (ssbhFile is MESH)
                 {
