@@ -8,15 +8,15 @@ namespace CrossMod.Nodes
     {
         public MATL Material { get; set; }
         
-        public MATL_Node()
+        public MATL_Node(string path) : base(path)
         {
             ImageKey = "material";
             SelectedImageKey = "material";
         }
 
-        public override void Open(string Path)
+        public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
                 if (ssbhFile is MATL)
                 {

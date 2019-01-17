@@ -79,7 +79,7 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.B8G8R8A8_SRGB, PixelFormat.Bgra },
         };
 
-        public NUTEX_Node()
+        public NUTEX_Node(string path): base(path)
         {
             ImageKey = "texture";
             SelectedImageKey = "texture";
@@ -90,9 +90,9 @@ namespace CrossMod.Nodes
             return Text.Contains(".") ? Text.Substring(0, Text.IndexOf(".")) : Text;
         }
 
-        public override void Open(string path)
+        public override void Open()
         {
-            using (BinaryReader reader  = new BinaryReader(new FileStream(path, FileMode.Open)))
+            using (BinaryReader reader  = new BinaryReader(new FileStream(AbsolutePath, FileMode.Open)))
             {
                 Mipmaps = new List<byte[]>();
                 // TODO: Why are there empty streams?

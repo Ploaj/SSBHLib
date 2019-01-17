@@ -39,9 +39,9 @@ namespace CrossMod
             this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
-            this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,6 +136,13 @@ namespace CrossMod
             this.printMaterialValuesToolStripMenuItem.Text = "Print Material Values";
             this.printMaterialValuesToolStripMenuItem.Click += new System.EventHandler(this.printMaterialValuesToolStripMenuItem_Click);
             // 
+            // printAttributesToolStripMenuItem
+            // 
+            this.printAttributesToolStripMenuItem.Name = "printAttributesToolStripMenuItem";
+            this.printAttributesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.printAttributesToolStripMenuItem.Text = "Print Attributes";
+            this.printAttributesToolStripMenuItem.Click += new System.EventHandler(this.printAttributesToolStripMenuItem_Click);
+            // 
             // fileTree
             // 
             this.fileTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -146,6 +153,7 @@ namespace CrossMod
             this.fileTree.Name = "fileTree";
             this.fileTree.Size = new System.Drawing.Size(241, 538);
             this.fileTree.TabIndex = 2;
+            this.fileTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.fileTree_BeforeExpand);
             this.fileTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.fileTree_AfterSelect);
             this.fileTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.fileTree_MouseUp);
             // 
@@ -160,13 +168,6 @@ namespace CrossMod
             this.contentBox.TabIndex = 3;
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
-            // 
-            // printAttributesToolStripMenuItem
-            // 
-            this.printAttributesToolStripMenuItem.Name = "printAttributesToolStripMenuItem";
-            this.printAttributesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.printAttributesToolStripMenuItem.Text = "Print Attributes";
-            this.printAttributesToolStripMenuItem.Click += new System.EventHandler(this.printAttributesToolStripMenuItem_Click);
             // 
             // MainForm
             // 

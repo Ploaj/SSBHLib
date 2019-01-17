@@ -16,7 +16,7 @@ namespace CrossMod.Nodes
         private MODL _model;
         private IRenderable renderableNode = null;
 
-        public NUMDL_Node()
+        public NUMDL_Node(string path): base(path)
         {
             ImageKey = "model";
             SelectedImageKey = "model";
@@ -90,9 +90,9 @@ namespace CrossMod.Nodes
             return renderableNode;
         }
 
-        public override void Open(string Path)
+        public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(Path, out ISSBH_File ssbhFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
                 if (ssbhFile is MODL)
                 {
