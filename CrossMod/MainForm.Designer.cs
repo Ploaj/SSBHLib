@@ -42,7 +42,12 @@ namespace CrossMod
             this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -145,13 +150,12 @@ namespace CrossMod
             // 
             // fileTree
             // 
-            this.fileTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.fileTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileTree.HideSelection = false;
             this.fileTree.ItemHeight = 24;
-            this.fileTree.Location = new System.Drawing.Point(12, 27);
+            this.fileTree.Location = new System.Drawing.Point(0, 0);
             this.fileTree.Name = "fileTree";
-            this.fileTree.Size = new System.Drawing.Size(241, 538);
+            this.fileTree.Size = new System.Drawing.Size(240, 538);
             this.fileTree.TabIndex = 2;
             this.fileTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.fileTree_BeforeExpand);
             this.fileTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.fileTree_AfterSelect);
@@ -159,29 +163,50 @@ namespace CrossMod
             // 
             // contentBox
             // 
-            this.contentBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.contentBox.Location = new System.Drawing.Point(259, 27);
+            this.contentBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.contentBox.Location = new System.Drawing.Point(0, 0);
             this.contentBox.Name = "contentBox";
-            this.contentBox.Size = new System.Drawing.Size(601, 538);
+            this.contentBox.Size = new System.Drawing.Size(604, 538);
             this.contentBox.TabIndex = 3;
             this.contentBox.TabStop = false;
             this.contentBox.Text = "Viewer";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.Location = new System.Drawing.Point(12, 27);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.fileTree);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.contentBox);
+            this.splitContainer1.Size = new System.Drawing.Size(848, 538);
+            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.TabIndex = 4;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(872, 577);
-            this.Controls.Add(this.contentBox);
-            this.Controls.Add(this.fileTree);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "CrossMod";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -203,6 +228,7 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem frameSelectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printMaterialValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printAttributesToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
 
