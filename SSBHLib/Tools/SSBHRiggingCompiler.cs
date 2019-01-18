@@ -7,12 +7,13 @@ namespace SSBHLib.Tools
 {
     public class SSBHRiggingCompiler
     {
-
         public static MeshRiggingGroup CreateRiggingGroup(string MeshName, int MeshIndex, SSBHVertexInfluence[] influences)
         {
-            var group = new MeshRiggingGroup();
-            group.Name = MeshName;
-            group.SubMeshIndex = MeshIndex;
+            var group = new MeshRiggingGroup
+            {
+                Name = MeshName,
+                SubMeshIndex = MeshIndex
+            };
 
             Dictionary<string, List<byte>> boneNameToData = new Dictionary<string, List<byte>>();
             Dictionary<ushort, int> vertexToWeightCount = new Dictionary<ushort, int>();

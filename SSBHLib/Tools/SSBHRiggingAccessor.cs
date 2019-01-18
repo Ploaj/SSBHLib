@@ -4,34 +4,18 @@ using System.IO;
 
 namespace SSBHLib.Tools
 {
-    public struct SSBHVertexInfluence
-    {
-        public string BoneName;
-        public ushort VertexIndex;
-        public float Weight;
-    }
-
     public class SSBHRiggingAccessor
     {
         private MESH MeshFile;
 
-        public SSBHRiggingAccessor(MESH MeshFile)
+        public SSBHRiggingAccessor(MESH meshFile)
         {
-            this.MeshFile = MeshFile;
+            MeshFile = meshFile;
         }
 
-        public SSBHVertexInfluence[] ReadRiggingBuffer(string MeshName, int SubIndex)
+        public SSBHVertexInfluence[] ReadRiggingBuffer(string meshName, int subIndex)
         {
-            MeshRiggingGroup riggingGroup = null;
-
-            foreach(MeshRiggingGroup g in MeshFile.RiggingBuffers)
-            {
-                if (g.Name.Equals(MeshName) && g.SubMeshIndex == SubIndex)
-                {
-                    riggingGroup = g;
-                    break;
-                }
-            }
+            MeshRiggingGroup riggingGroup = FindRiggingGroup(meshName, subIndex);
 
             if (riggingGroup == null)
                 return new SSBHVertexInfluence[0];
@@ -57,5 +41,20 @@ namespace SSBHLib.Tools
             return Influences.ToArray();
         }
 
+        private MeshRiggingGroup FindRiggingGroup(string meshName, int subIndex)
+        {
+            MeshRiggingGroup riggingGroup = null;
+
+            foreach (MeshRiggingGroup g in MeshFile.RiggingBuffers)
+            {
+                if (g.Name.Equals(meshName) && g.SubMeshIndex == subIndex)
+                {
+                    riggingGroup = g;
+                    break;
+                }
+            }
+
+            return riggingGroup;
+        }
     }
 }

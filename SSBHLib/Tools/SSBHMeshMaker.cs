@@ -53,32 +53,34 @@ namespace SSBHLib.Tools
         /// Begins creating a new mesh object with given attributes
         /// </summary>
         /// <param name="name">The name of the Mesh Object</param>
-        /// <param name="Indices">The vertex indices as triangles</param>
-        public void StartMeshObject(string name, uint[] Indices, SSBHVertexAttribute[] Positions, string ParentBoneName = "")
+        /// <param name="indices">The vertex indices as triangles</param>
+        public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "")
         {
-            CurrentMesh = new TempMesh();
-            CurrentMesh.Name = name;
-            CurrentMesh.ParentBone = ParentBoneName;
-            CurrentMesh.Indices.AddRange(Indices);
-            CurrentMesh.VertexCount = Positions.Length;
-            //CurrentMesh.BoundingSphere = BoundingSphereGenerator.GetMinimumBoundingSphere(Positions);
+            CurrentMesh = new TempMesh
+            {
+                Name = name,
+                ParentBone = parentBoneName
+            };
+            CurrentMesh.Indices.AddRange(indices);
+            CurrentMesh.VertexCount = positions.Length;
+
             meshes.Add(CurrentMesh);
-            AddAttributeToMeshObject(MESHAttribute.Position0, Positions);
+            AddAttributeToMeshObject(MESHAttribute.Position0, positions);
         }
 
         /// <summary>
         /// Sets bounding sphere of current mesh
         /// </summary>
-        public void SetBoundingSphere(float X, float Y, float Z, float R)
+        public void SetBoundingSphere(float x, float y, float z, float r)
         {
             if (CurrentMesh == null)
                 return;
             CurrentMesh.BoundingSphere = new SSBHVertexAttribute()
             {
-                X = X,
-                Y = Y,
-                Z = Z,
-                W = R
+                X = x,
+                Y = y,
+                Z = z,
+                W = r
             };
         }
 
@@ -87,24 +89,24 @@ namespace SSBHLib.Tools
         /// Note: must call StartMeshObject first
         /// </summary>
         /// <param name="attribute"></param>
-        /// <param name="values"></param>
-        public void AddAttributeToMeshObject(MESHAttribute attribute, SSBHVertexAttribute[] Values)
+        /// <param name="inputValues"></param>
+        public void AddAttributeToMeshObject(MESHAttribute attribute, SSBHVertexAttribute[] inputValues)
         {
             if (CurrentMesh == null)
                 return;
 
-            int Size = GetAttributeSize(attribute);
-            float[] values = new float[Values.Length * Size];
-            for (int i = 0; i < Values.Length; i++)
+            int size = GetAttributeSize(attribute);
+            float[] values = new float[inputValues.Length * size];
+            for (int i = 0; i < inputValues.Length; i++)
             {
-                if(Size > 0)
-                    values[i * Size + 0] = Values[i].X;
-                if (Size > 1)
-                    values[i * Size + 1] = Values[i].Y;
-                if (Size > 2)
-                    values[i * Size + 2] = Values[i].Z;
-                if (Size > 3)
-                    values[i * Size + 3] = Values[i].W;
+                if (size > 0)
+                    values[i * size + 0] = inputValues[i].X;
+                if (size > 1)
+                    values[i * size + 1] = inputValues[i].Y;
+                if (size > 2)
+                    values[i * size + 2] = inputValues[i].Z;
+                if (size > 3)
+                    values[i * size + 3] = inputValues[i].W;
             }
 
             CurrentMesh.VertexData.Add(attribute, values);
@@ -127,10 +129,12 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         public MESH GetMeshFile()
         {
-            MESH mesh = new MESH();
-            //TODO: bounding box stuff
-            // Riggin
-            mesh.Objects = new MeshObject[meshes.Count];
+            MESH mesh = new MESH
+            {
+                //TODO: bounding box stuff
+                // Rigging
+                Objects = new MeshObject[meshes.Count]
+            };
 
             // create mesh objects and buffers
             BinaryWriter vertexBuffer1 = new BinaryWriter(new MemoryStream());
@@ -142,8 +146,10 @@ namespace SSBHLib.Tools
             List<MeshRiggingGroup> RiggingGroups = new List<MeshRiggingGroup>();
             foreach (var tempmesh in meshes)
             {
-                MeshObject mo = new MeshObject();
-                mo.Name = tempmesh.Name;
+                MeshObject mo = new MeshObject
+                {
+                    Name = tempmesh.Name
+                };
                 if (MeshGroups.ContainsKey(mo.Name))
                     MeshGroups[mo.Name] += 1;
                 else
@@ -162,7 +168,7 @@ namespace SSBHLib.Tools
                 mesh.Objects[meshIndex++] = mo;
 
                 mo.ParentBoneName = tempmesh.ParentBone;
-                if(tempmesh.ParentBone == null || tempmesh.ParentBone.Equals(""))
+                if (tempmesh.ParentBone == null || tempmesh.ParentBone.Equals(""))
                     mo.HasRigging = 1;
                 
                 int Stride1 = 0;
@@ -177,21 +183,21 @@ namespace SSBHLib.Tools
                 int attributeIndex = 0;
                 foreach (var keypair in tempmesh.VertexData)
                 {
-                    MeshAttribute attr = new MeshAttribute();
-                    attr.Name = GetAttributeName(keypair.Key);
-                    attr.Index = GetAttributeIndex(keypair.Key);
-                    attr.BufferIndex = GetBufferIndex(keypair.Key);
-                    attr.DataType = GetAttributeDataType(keypair.Key);
-                    attr.BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? Stride1 : Stride2;
-                    attr.AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToString() } };
+                    MeshAttribute attr = new MeshAttribute
+                    {
+                        Name = GetAttributeName(keypair.Key),
+                        Index = GetAttributeIndex(keypair.Key),
+                        BufferIndex = GetBufferIndex(keypair.Key),
+                        DataType = GetAttributeDataType(keypair.Key),
+                        BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? Stride1 : Stride2,
+                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToString() } }
+                    };
                     mo.Attributes[attributeIndex++] = attr;
 
                     if (GetBufferIndex(keypair.Key) == 0)
                         Stride1 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
                     else
                         Stride2 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
-
-                    
                 }
 
                 // now that strides are known...
@@ -252,7 +258,6 @@ namespace SSBHLib.Tools
                 new MeshBuffer(){ Buffer = new byte[0] }
             };
 
-
             mesh.RiggingBuffers = RiggingGroups.ToArray().OrderBy(o => o.Name, StringComparer.Ordinal).ToArray();
 
             vertexBuffer1.Close();
@@ -268,8 +273,8 @@ namespace SSBHLib.Tools
             {
                 case 0: writer.Write(value); break;
                 case 2: writer.Write((byte)value); break;
-                case 5: writer.Write((ushort)fromFloat(value)); break;
-                case 8: writer.Write((ushort)fromFloat(value)); break;
+                case 5: writer.Write((ushort)FromFloat(value)); break;
+                case 8: writer.Write((ushort)FromFloat(value)); break;
                 default:
                     break;
             }
@@ -320,7 +325,6 @@ namespace SSBHLib.Tools
             }
         }
 
-
         private string GetAttributeName(MESHAttribute attribute)
         {
             switch (attribute)
@@ -334,12 +338,17 @@ namespace SSBHLib.Tools
 
         private int GetAttributeDataSize(MESHAttribute attribute)
         {
+            // TODO: Use enum?
             switch (GetAttributeDataType(attribute))
             {
-                case 0: return 4;
-                case 2: return 1;
-                case 5: return 2;
-                case 8: return 2;
+                case 0:
+                    return 4;
+                case 2:
+                    return 1;
+                case 5:
+                    return 2;
+                case 8:
+                    return 2;
                 default:
                     return 1;
             }
@@ -347,6 +356,7 @@ namespace SSBHLib.Tools
 
         private int GetAttributeDataType(MESHAttribute attribute)
         {
+            // TODO: Use enum?
             switch (attribute)
             {
                 case MESHAttribute.Position0:
@@ -408,13 +418,12 @@ namespace SSBHLib.Tools
             }
         }
 
-
         public static int SingleToInt32Bits(float value)
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        public static int fromFloat(float fval)
+        public static int FromFloat(float fval)
         {
             int fbits = SingleToInt32Bits(fval);
             int sign = fbits >> 16 & 0x8000;          // sign only

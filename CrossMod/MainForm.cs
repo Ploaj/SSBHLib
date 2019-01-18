@@ -429,8 +429,7 @@ namespace CrossMod
         /// <param name="e"></param>
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            var node = e.Node as DirectoryNode;
-            if (node != null)
+            if (e.Node is DirectoryNode node)
             {
                 node.OpenNodes();
             }

@@ -37,12 +37,12 @@ namespace SSBHLib.Tools
         public float Z;
         public float W;
 
-        public AnimTrackCustomVector4(float X, float Y, float Z, float W)
+        public AnimTrackCustomVector4(float x, float y, float z, float w)
         {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
-            this.W = W;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
 
         public override string ToString()
@@ -79,9 +79,9 @@ namespace SSBHLib.Tools
             this.AnimFile = AnimFile;
         }
 
-        private bool CheckFlag(uint Flags, uint Mask, ANIM_TRACKFLAGS ToCheck)
+        private bool CheckFlag(uint flags, uint mask, ANIM_TRACKFLAGS expectedValue)
         {
-            return (Flags & Mask) == (uint)ToCheck;
+            return (flags & mask) == (uint)expectedValue;
         }
 
         public object[] ReadTrack(AnimTrack Track)
@@ -115,14 +115,14 @@ namespace SSBHLib.Tools
             return output.ToArray();
         }
 
-        private object[] ReadCompressed(SSBHParser reader, uint Flags)
+        private object[] ReadCompressed(SSBHParser reader, uint flags)
         {
             List<object> output = new List<object>();
 
             uint DataOffset = (uint)reader.BaseStream.Position;
             SSBHAnimCompressedHeader Header = reader.ByteToType<SSBHAnimCompressedHeader>();
 
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
             {
                 reader.Seek((int)DataOffset + Header.CompressedDataOffset);
                 // note: there is a section for "default" and "compressed items" but they seem to always be 0-ed out
@@ -132,25 +132,25 @@ namespace SSBHLib.Tools
                     output.Add(reader.ReadBits(Header.BitsPerEntry) == 1);
                 }
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
                 // TODO: What type is this
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Float))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Float))
             {
                 //TODO: What type is this
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
             {
                 //TODO: What type is this
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
             {
                 var decompressed = DecompressValues(reader, DataOffset, Header, 4);
                 foreach(var decom in decompressed)
                     output.Add(new AnimTrackCustomVector4(decom[0], decom[1], decom[2], decom[3]));
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
             {
                 var decompressed = DecompressTransform(reader, DataOffset, Header);
                 foreach (var v in decompressed)
@@ -160,26 +160,26 @@ namespace SSBHLib.Tools
             return output.ToArray();
         }
 
-        private List<float[]> DecompressValues(SSBHParser parser, uint DataOffset, SSBHAnimCompressedHeader Header, int ValueCount)
+        private List<float[]> DecompressValues(SSBHParser parser, uint dataOffset, SSBHAnimCompressedHeader header, int valueCount)
         {
-            List<float[]> transforms = new List<float[]>(Header.FrameCount);
+            List<float[]> transforms = new List<float[]>(header.FrameCount);
 
             // PreProcess
-            SSBHAnimCompressedItem[] items = parser.ByteToType<SSBHAnimCompressedItem>(ValueCount);
+            SSBHAnimCompressedItem[] items = parser.ByteToType<SSBHAnimCompressedItem>(valueCount);
 
-            parser.Seek(DataOffset + Header.DefaultDataOffset);
+            parser.Seek(dataOffset + header.DefaultDataOffset);
 
-            float[] defaultValues = new float[ValueCount];
-            for(int i = 0; i < ValueCount; i++)
+            float[] defaultValues = new float[valueCount];
+            for(int i = 0; i < valueCount; i++)
             {
                 defaultValues[i] = parser.ReadSingle();
             }
 
-            parser.Seek(DataOffset + Header.CompressedDataOffset);
-            for (int frameIndex = 0; frameIndex < Header.FrameCount; frameIndex++)
+            parser.Seek(dataOffset + header.CompressedDataOffset);
+            for (int frameIndex = 0; frameIndex < header.FrameCount; frameIndex++)
             {
-                float[] values = new float[ValueCount];
-                for (int i = 0; i < ValueCount; i++)
+                float[] values = new float[valueCount];
+                for (int i = 0; i < valueCount; i++)
                     values[i] = defaultValues[i];
 
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
@@ -209,14 +209,14 @@ namespace SSBHLib.Tools
             return transforms;
         }
 
-        private AnimTrackTransform[] DecompressTransform(SSBHParser parser, uint DataOffset, SSBHAnimCompressedHeader Header)
+        private AnimTrackTransform[] DecompressTransform(SSBHParser parser, uint dataOffset, SSBHAnimCompressedHeader header)
         {
-            AnimTrackTransform[] Transforms = new AnimTrackTransform[Header.FrameCount];
+            AnimTrackTransform[] transforms = new AnimTrackTransform[header.FrameCount];
 
             // PreProcess
             SSBHAnimCompressedItem[] Items = parser.ByteToType<SSBHAnimCompressedItem>(9);
             
-            parser.Seek(DataOffset + Header.DefaultDataOffset);
+            parser.Seek(dataOffset + header.DefaultDataOffset);
 
             float XSCA = parser.ReadSingle();
             float YSCA = parser.ReadSingle();
@@ -230,10 +230,10 @@ namespace SSBHLib.Tools
             float ZPOS = parser.ReadSingle();
             float WPOS = parser.ReadInt32(); // ????
 
-            parser.Seek(DataOffset + Header.CompressedDataOffset);
-            for(int frame = 0; frame < Header.FrameCount; frame++)
+            parser.Seek(dataOffset + header.CompressedDataOffset);
+            for(int frame = 0; frame < header.FrameCount; frame++)
             {
-                AnimTrackTransform Transform = new AnimTrackTransform()
+                AnimTrackTransform transform = new AnimTrackTransform()
                 {
                     X = XPOS,
                     Y = YPOS,
@@ -250,10 +250,11 @@ namespace SSBHLib.Tools
                 for (int itemIndex = 0; itemIndex < Items.Length; itemIndex++)
                 {
                     // First check if this track should be parsed
-                    if (!((itemIndex == 0 && (Header.Flags & 0x3) == 0x3) //isotrophic scale
-                                || (itemIndex >= 0 && itemIndex <= 2 && (Header.Flags & 0x3) == 0x1) //normal scale
-                                || (itemIndex > 2 && itemIndex <= 5 && (Header.Flags & 0x4) > 0)
-                                || (itemIndex > 5 && itemIndex <= 8 && (Header.Flags & 0x8) > 0)))
+                    // TODO: Don't hard code these flags.
+                    if (!((itemIndex == 0 && (header.Flags & 0x3) == 0x3) //isotropic scale
+                                || (itemIndex >= 0 && itemIndex <= 2 && (header.Flags & 0x3) == 0x1) //normal scale
+                                || (itemIndex > 2 && itemIndex <= 5 && (header.Flags & 0x4) > 0)
+                                || (itemIndex > 5 && itemIndex <= 8 && (header.Flags & 0x8) > 0)))
                     {
                         continue;
                     }
@@ -261,41 +262,42 @@ namespace SSBHLib.Tools
                     var item = Items[itemIndex];
 
                     // Decompress
-                    int ValueBitCount = (int)item.Count;
-                    if (ValueBitCount == 0) continue;
+                    int valueBitCount = (int)item.Count;
+                    if (valueBitCount == 0)
+                        continue;
 
-                    int Value = parser.ReadBits(ValueBitCount);
+                    int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
-                    for (int k = 0; k < ValueBitCount; k++)
+                    for (int k = 0; k < valueBitCount; k++)
                         scale |= 0x1 << k;
 
-                    float FrameValue = Lerp(item.Start, item.End, 0, 1, Value / (float)scale);
-                    if (float.IsNaN(FrameValue))
-                        FrameValue = 0;
+                    float frameValue = Lerp(item.Start, item.End, 0, 1, value / (float)scale);
+                    if (float.IsNaN(frameValue))
+                        frameValue = 0;
 
                     // the Transform type relies a lot on flags
                     
-                    if ((Header.Flags & 0x3) == 0x3)
+                    if ((header.Flags & 0x3) == 0x3)
                     {
                         //Scale Isotropic
                         if(itemIndex == 0)
                         {
-                            Transform.AbsoluteScale = FrameValue;
+                            transform.AbsoluteScale = frameValue;
                         }
                     }
-                    if ((Header.Flags & 0x3) == 0x1)
+                    if ((header.Flags & 0x3) == 0x1)
                     {
                         //Scale normal
                         switch (itemIndex)
                         {
                             case 0:
-                                Transform.SX = FrameValue;
+                                transform.SX = frameValue;
                                 break;
                             case 1:
-                                Transform.SY = FrameValue;
+                                transform.SY = frameValue;
                                 break;
                             case 2:
-                                Transform.SZ = FrameValue;
+                                transform.SZ = frameValue;
                                 break;
                         }
                     }
@@ -303,47 +305,47 @@ namespace SSBHLib.Tools
                     switch (itemIndex)
                     {
                         case 3:
-                            Transform.RX = FrameValue;
+                            transform.RX = frameValue;
                             break;
                         case 4:
-                            Transform.RY = FrameValue;
+                            transform.RY = frameValue;
                             break;
                         case 5:
-                            Transform.RZ = FrameValue;
+                            transform.RZ = frameValue;
                             break;
                         case 6:
-                            Transform.X = FrameValue;
+                            transform.X = frameValue;
                             break;
                         case 7:
-                            Transform.Y = FrameValue;
+                            transform.Y = frameValue;
                             break;
                         case 8:
-                            Transform.Z = FrameValue;
+                            transform.Z = frameValue;
                             break;
                     }
                 }
 
                 // Rotations have an extra bit at the end
-                if ((Header.Flags & 0x4) > 0)
+                if ((header.Flags & 0x4) > 0)
                 {
-                    bool Wflip = parser.ReadBits(1) == 1;
+                    bool wFlip = parser.ReadBits(1) == 1;
 
                     // W is calculated
-                    Transform.RW = (float)Math.Sqrt(Math.Abs(1 - (Transform.RX * Transform.RX + Transform.RY * Transform.RY + Transform.RZ * Transform.RZ)));
+                    transform.RW = (float)Math.Sqrt(Math.Abs(1 - (transform.RX * transform.RX + transform.RY * transform.RY + transform.RZ * transform.RZ)));
 
-                    if (Wflip)
-                        Transform.RW = -Transform.RW;
+                    if (wFlip)
+                        transform.RW = -transform.RW;
                 }
 
-                Transforms[frame] = Transform;
+                transforms[frame] = transform;
             }
 
-            return Transforms;
+            return transforms;
         }
 
-        private object ReadDirect(SSBHParser reader, uint Flags)
+        private object ReadDirect(SSBHParser reader, uint flags)
         {
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
             {
                 var Transform = new AnimTrackTransform()
                 {
@@ -363,22 +365,24 @@ namespace SSBHLib.Tools
 
                 return Transform;
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
+
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
                 // TODO: What type is this
             }
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Float))
+
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Float))
                 return reader.ReadSingle();
 
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
             {
                 //TODO: What type is this
             }
 
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
                 return reader.ReadByte() == 1;
 
-            if (CheckFlag(Flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
+            if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
                 return new AnimTrackCustomVector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
             return null;

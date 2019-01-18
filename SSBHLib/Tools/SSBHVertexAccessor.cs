@@ -4,16 +4,6 @@ using SSBHLib.Formats.Meshes;
 
 namespace SSBHLib.Tools
 {
-    public struct SSBHVertexAttribute
-    {
-        public float X, Y, Z, W;
-
-        public override string ToString()
-        {
-            return $"({X}, {Y}, {Z}, {W})";
-        }
-    }
-
     public class SSBHVertexAccessor : IDisposable
     {
         private readonly BinaryReader[] buffers;
@@ -50,21 +40,21 @@ namespace SSBHLib.Tools
             return null;
         }
 
-        public uint[] ReadIndices(int Position, int Count, MeshObject MeshObject)
+        public uint[] ReadIndices(int position, int count, MeshObject meshObject)
         {
-            uint[] indicies = new uint[Count];
+            uint[] indices = new uint[count];
 
-            indexBuffer.BaseStream.Position = MeshObject.ElementOffset + Position * (MeshObject.DrawElementType == 1 ? 4 : 2);
-            for(int i = 0; i < Count; i++)
+            indexBuffer.BaseStream.Position = meshObject.ElementOffset + position * (meshObject.DrawElementType == 1 ? 4 : 2);
+            for(int i = 0; i < count; i++)
             {
-                indicies[i] = MeshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
+                indices[i] = meshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
             }
-            return indicies;
+            return indices;
         }
 
-        public SSBHVertexAttribute[] ReadAttribute(string AttributeName, int Position, int Count, MeshObject MeshObject)
+        public SSBHVertexAttribute[] ReadAttribute(string attributeName, int position, int count, MeshObject meshObject)
         {
-            MeshAttribute attr = GetAttribute(AttributeName, MeshObject);
+            MeshAttribute attr = GetAttribute(attributeName, meshObject);
 
             if(attr == null)
             {
@@ -72,24 +62,24 @@ namespace SSBHLib.Tools
             }
             BinaryReader SelectedBuffer = buffers[attr.BufferIndex];
 
-            int Offset = MeshObject.VertexOffset;
-            int Stride = MeshObject.Stride;
+            int Offset = meshObject.VertexOffset;
+            int Stride = meshObject.Stride;
             if(attr.BufferIndex == 1)
             {
-                Offset = MeshObject.VertexOffset2;
-                Stride = MeshObject.Stride2;
+                Offset = meshObject.VertexOffset2;
+                Stride = meshObject.Stride2;
             }
 
             int Size = 3;
-            if (AttributeName.Contains("colorSet") || AttributeName.Equals("Normal0") || AttributeName.Equals("Tangent0"))
+            if (attributeName.Contains("colorSet") || attributeName.Equals("Normal0") || attributeName.Equals("Tangent0"))
                 Size = 4;
-            if (AttributeName.Equals("map1") || AttributeName.Equals("bake1") || AttributeName.Contains("uvSet"))
+            if (attributeName.Equals("map1") || attributeName.Equals("bake1") || attributeName.Contains("uvSet"))
                 Size = 2;
 
-            SSBHVertexAttribute[] a = new SSBHVertexAttribute[Count];
-            for(int i = 0; i < Count; i++)
+            SSBHVertexAttribute[] a = new SSBHVertexAttribute[count];
+            for(int i = 0; i < count; i++)
             {
-                SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset + Stride * (Position + i);
+                SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset + Stride * (position + i);
                 a[i] = new SSBHVertexAttribute();
 
                 if (Size > 0)
