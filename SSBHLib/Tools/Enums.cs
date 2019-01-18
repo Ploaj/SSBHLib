@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib
 {
-    public enum UltimateAttribute
+    public enum UltimateVertexAttribute
     {
         Position0,
         Normal0,

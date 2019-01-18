@@ -61,6 +61,7 @@
     <Compile Include="Formats\Meshes\MeshBuffer.cs" />
     <Compile Include="Formats\Meshes\MeshObject.cs" />
     <Compile Include="Formats\Meshes\MeshRiggingGroup.cs" />
+    <Compile Include="Formats\NRPD.cs" />
     <Compile Include="Formats\SHDR.cs" />
     <Compile Include="Formats\SKEL.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="SSBH.cs" />
     <Compile Include="Formats\MODL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\Enums.cs" />
     <Compile Include="Tools\SSBHAnimTrackDecoder.cs" />
     <Compile Include="Tools\SSBHMeshMaker.cs" />
     <Compile Include="Tools\SSBHRiggingAccessor.cs" />

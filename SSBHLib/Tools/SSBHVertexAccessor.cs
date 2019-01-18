@@ -1,30 +1,35 @@
 ﻿using System;
 using System.IO;
 using SSBHLib.Formats.Meshes;
+using System.Collections.Generic;
 
 namespace SSBHLib.Tools
 {
-    public class SSBHVertexAccessor : IDisposable
+    /// <summary>
+    /// Helper class for reading vertex information out of a MESH file
+    /// </summary>
+    public class SSBHVertexAccessor
     {
-        private readonly BinaryReader[] buffers;
-        private readonly BinaryReader indexBuffer;
-        
         private readonly MESH meshFile;
 
+        /// <summary>
+        /// Creates a new vertex accessor for given mesh file
+        /// </summary>
+        /// <param name="meshFile"></param>
         public SSBHVertexAccessor(MESH meshFile)
         {
             if (meshFile == null) return;
 
             this.meshFile = meshFile;
-
-            buffers = new BinaryReader[meshFile.VertexBuffers.Length];
-            for(int i = 0; i < meshFile.VertexBuffers.Length; i++)
-            {
-                buffers[i] = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[i].Buffer));
-            }
-            indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer));
         }
 
+        /// <summary>
+        /// Gets the mesh attribute from given attribute name.
+        /// Returns null if not found
+        /// </summary>
+        /// <param name="AttributeName">Name of attribute</param>
+        /// <param name="MeshObject"></param>
+        /// <returns></returns>
         private MeshAttribute GetAttribute(string AttributeName, MeshObject MeshObject)
         {
             foreach (MeshAttribute a in MeshObject.Attributes)
@@ -40,31 +45,122 @@ namespace SSBHLib.Tools
             return null;
         }
 
+        /// <summary>
+        /// Reads the triangle indices from the given mesh object
+        /// </summary>
+        /// <param name="meshObject"></param>
+        /// <returns></returns>
+        public uint[] ReadIndicies(MeshObject meshObject)
+        {
+            return ReadIndices(0, meshObject.IndexCount, meshObject);
+        }
+
+        /// <summary>
+        /// Reads the triangle indices from the given mesh object starting from position
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="count"></param>
+        /// <param name="meshObject"></param>
+        /// <returns></returns>
         public uint[] ReadIndices(int position, int count, MeshObject meshObject)
         {
             uint[] indices = new uint[count];
-
-            indexBuffer.BaseStream.Position = meshObject.ElementOffset + position * (meshObject.DrawElementType == 1 ? 4 : 2);
-            for(int i = 0; i < count; i++)
+            using (var indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
-                indices[i] = meshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
+                indexBuffer.BaseStream.Position = meshObject.ElementOffset + position * (meshObject.DrawElementType == 1 ? 4 : 2);
+                for (int i = 0; i < count; i++)
+                {
+                    indices[i] = meshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
+                }
             }
+
             return indices;
         }
 
+        /// <summary>
+        /// Reads all attributes from the given mesh object
+        /// </summary>
+        /// <returns>Tuple containing attribute name and the values</returns>
+        public Tuple<string, SSBHVertexAttribute[]>[] ReadAttributes(MeshObject meshObject)
+        {
+            List<Tuple<string, SSBHVertexAttribute[]>> attrs = new List<Tuple<string, SSBHVertexAttribute[]>>(meshObject.Attributes.Length);
+
+            foreach(var attr in meshObject.Attributes)
+            {
+                foreach(var attrname in attr.AttributeStrings)
+                {
+                    attrs.Add(new Tuple<string, SSBHVertexAttribute[]>(attrname.Name, ReadAttribute(attr, meshObject)));
+                }
+            }
+
+            return attrs.ToArray();
+        }
+
+        /// <summary>
+        /// Reads the vertex attribute information for the given attribute name inside of the mesh object
+        /// </summary>
+        /// <param name="attributeName"></param>
+        /// <param name="meshObject"></param>
+        /// <returns>null if attribute name not found</returns>
+        public SSBHVertexAttribute[] ReadAttribute(string attributeName, MeshObject meshObject)
+        {
+            return ReadAttribute(attributeName, 0, meshObject.VertexCount, meshObject);
+        }
+
+        /// <summary>
+        /// Reads the vertex attribute information for the given attribute name inside of the mesh object
+        /// </summary>
+        /// <param name="attributeName"></param>
+        /// <param name="meshObject"></param>
+        /// <returns>null if attribute name not found</returns>
+        public SSBHVertexAttribute[] ReadAttribute(MeshAttribute attributeName, MeshObject meshObject)
+        {
+            return ReadAttribute(attributeName, 0, meshObject.VertexCount, meshObject);
+        }
+
+        /// <summary>
+        /// Reads the attribute data from the mesh object with the given name
+        /// </summary>
+        /// <param name="attributeName"></param>
+        /// <param name="position"></param>
+        /// <param name="count"></param>
+        /// <param name="meshObject"></param>
+        /// <returns>null if attribute name not found</returns>
         public SSBHVertexAttribute[] ReadAttribute(string attributeName, int position, int count, MeshObject meshObject)
         {
             MeshAttribute attr = GetAttribute(attributeName, meshObject);
 
-            if(attr == null)
+            return ReadAttribute(attr, position, count, meshObject);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attr"></param>
+        /// <param name="position"></param>
+        /// <param name="count"></param>
+        /// <param name="meshObject"></param>
+        /// <returns></returns>
+        private SSBHVertexAttribute[] ReadAttribute(MeshAttribute attr, int position, int count, MeshObject meshObject)
+        {
+            if (attr == null)
             {
                 return new SSBHVertexAttribute[0];
             }
+
+            string attributeName = attr.AttributeStrings[0].Name;
+
+            var buffers = new BinaryReader[meshFile.VertexBuffers.Length];
+            for (int i = 0; i < meshFile.VertexBuffers.Length; i++)
+            {
+                buffers[i] = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[i].Buffer));
+            }
+
             BinaryReader SelectedBuffer = buffers[attr.BufferIndex];
 
             int Offset = meshObject.VertexOffset;
             int Stride = meshObject.Stride;
-            if(attr.BufferIndex == 1)
+            if (attr.BufferIndex == 1)
             {
                 Offset = meshObject.VertexOffset2;
                 Stride = meshObject.Stride2;
@@ -77,7 +173,7 @@ namespace SSBHLib.Tools
                 Size = 2;
 
             SSBHVertexAttribute[] a = new SSBHVertexAttribute[count];
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset + Stride * (position + i);
                 a[i] = new SSBHVertexAttribute();
@@ -92,9 +188,21 @@ namespace SSBHLib.Tools
                     a[i].W = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
             }
 
+            foreach (var buffer in buffers)
+            {
+                buffer.Close();
+                buffer.Dispose();
+            }
+
             return a;
         }
 
+        /// <summary>
+        /// Reads attribute from buffer with given data type
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         private float ReadAttribute(BinaryReader buffer, SSBVertexAttribFormat format)
         {
             switch (format)
@@ -135,17 +243,6 @@ namespace SSBHLib.Tools
             return BitConverter.ToSingle(BitConverter.GetBytes(          // combine all parts
                 (hbits & 0x8000) << 16          // sign  << ( 31 - 15 )
                 | (exp | mant) << 13), 0);         // value << ( 23 - 10 )
-        }
-
-        public void Dispose()
-        {
-            foreach(BinaryReader R in buffers)
-            {
-                R.Close();
-                R.Dispose();
-            }
-            indexBuffer.Close();
-            indexBuffer.Dispose();
         }
     }
 }

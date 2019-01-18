@@ -6,28 +6,6 @@ using System.Linq;
 
 namespace SSBHLib.Tools
 {
-    public enum MESHAttribute
-    {
-        Position0,
-        Normal0,
-        Tangent0,
-        map1,
-        uvSet,
-        uvSet1,
-        uvSet2,
-        colorSet1,
-        colorSet2,
-        colorSet2_1,
-        colorSet2_2,
-        colorSet2_3,
-        colorSet3,
-        colorSet4,
-        colorSet5,
-        colorSet6,
-        colorSet7,
-        bake1,
-    }
-
     /// <summary>
     /// Helps generate a MESH file
     /// </summary>
@@ -41,7 +19,7 @@ namespace SSBHLib.Tools
             public SSBHVertexAttribute BoundingSphere;
             public SSBHVertexAttribute BBMin;
             public SSBHVertexAttribute BBMax;
-            public Dictionary<MESHAttribute, float[]> VertexData = new Dictionary<MESHAttribute, float[]>();
+            public Dictionary<UltimateVertexAttribute, float[]> VertexData = new Dictionary<UltimateVertexAttribute, float[]>();
             public List<uint> Indices = new List<uint>();
             public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
         }
@@ -65,7 +43,7 @@ namespace SSBHLib.Tools
             CurrentMesh.VertexCount = positions.Length;
 
             meshes.Add(CurrentMesh);
-            AddAttributeToMeshObject(MESHAttribute.Position0, positions);
+            AddAttributeToMeshObject(UltimateVertexAttribute.Position0, positions);
         }
 
         /// <summary>
@@ -90,7 +68,7 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="inputValues"></param>
-        public void AddAttributeToMeshObject(MESHAttribute attribute, SSBHVertexAttribute[] inputValues)
+        public void AddAttributeToMeshObject(UltimateVertexAttribute attribute, SSBHVertexAttribute[] inputValues)
         {
             if (CurrentMesh == null)
                 return;
@@ -280,63 +258,63 @@ namespace SSBHLib.Tools
             }
         }
 
-        private int GetBufferIndex(MESHAttribute attribute)
+        private int GetBufferIndex(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
-                case MESHAttribute.Position0:
-                case MESHAttribute.Normal0:
-                case MESHAttribute.Tangent0:
+                case UltimateVertexAttribute.Position0:
+                case UltimateVertexAttribute.Normal0:
+                case UltimateVertexAttribute.Tangent0:
                     return 0;
                 default:
                     return 1;
             }
         }
 
-        public static int GetAttributeSize(MESHAttribute attribute)
+        public static int GetAttributeSize(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
-                case MESHAttribute.Position0:
+                case UltimateVertexAttribute.Position0:
                     return 3;
-                case MESHAttribute.Normal0:
+                case UltimateVertexAttribute.Normal0:
                     return 4;
-                case MESHAttribute.Tangent0:
+                case UltimateVertexAttribute.Tangent0:
                     return 4;
-                case MESHAttribute.map1:
-                case MESHAttribute.uvSet:
-                case MESHAttribute.uvSet1:
-                case MESHAttribute.uvSet2:
-                case MESHAttribute.bake1:
+                case UltimateVertexAttribute.map1:
+                case UltimateVertexAttribute.uvSet:
+                case UltimateVertexAttribute.uvSet1:
+                case UltimateVertexAttribute.uvSet2:
+                case UltimateVertexAttribute.bake1:
                     return 2;
-                case MESHAttribute.colorSet1:
-                case MESHAttribute.colorSet2:
-                case MESHAttribute.colorSet2_1:
-                case MESHAttribute.colorSet2_2:
-                case MESHAttribute.colorSet2_3:
-                case MESHAttribute.colorSet3:
-                case MESHAttribute.colorSet4:
-                case MESHAttribute.colorSet5:
-                case MESHAttribute.colorSet6:
-                case MESHAttribute.colorSet7:
+                case UltimateVertexAttribute.colorSet1:
+                case UltimateVertexAttribute.colorSet2:
+                case UltimateVertexAttribute.colorSet2_1:
+                case UltimateVertexAttribute.colorSet2_2:
+                case UltimateVertexAttribute.colorSet2_3:
+                case UltimateVertexAttribute.colorSet3:
+                case UltimateVertexAttribute.colorSet4:
+                case UltimateVertexAttribute.colorSet5:
+                case UltimateVertexAttribute.colorSet6:
+                case UltimateVertexAttribute.colorSet7:
                     return 4;
                 default:
                     return 3;
             }
         }
 
-        private string GetAttributeName(MESHAttribute attribute)
+        private string GetAttributeName(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
-                case MESHAttribute.Tangent0:
+                case UltimateVertexAttribute.Tangent0:
                     return "map1";
                 default:
                     return attribute.ToString();
             }
         }
 
-        private int GetAttributeDataSize(MESHAttribute attribute)
+        private int GetAttributeDataSize(UltimateVertexAttribute attribute)
         {
             // TODO: Use enum?
             switch (GetAttributeDataType(attribute))
@@ -354,65 +332,65 @@ namespace SSBHLib.Tools
             }
         }
 
-        private int GetAttributeDataType(MESHAttribute attribute)
+        private int GetAttributeDataType(UltimateVertexAttribute attribute)
         {
             // TODO: Use enum?
             switch (attribute)
             {
-                case MESHAttribute.Position0:
+                case UltimateVertexAttribute.Position0:
                     return 0;
-                case MESHAttribute.Normal0:
-                case MESHAttribute.Tangent0:
+                case UltimateVertexAttribute.Normal0:
+                case UltimateVertexAttribute.Tangent0:
                     return 5;
-                case MESHAttribute.map1:
-                case MESHAttribute.uvSet:
-                case MESHAttribute.uvSet1:
-                case MESHAttribute.uvSet2:
-                case MESHAttribute.bake1:
+                case UltimateVertexAttribute.map1:
+                case UltimateVertexAttribute.uvSet:
+                case UltimateVertexAttribute.uvSet1:
+                case UltimateVertexAttribute.uvSet2:
+                case UltimateVertexAttribute.bake1:
                     return 8;
-                case MESHAttribute.colorSet1:
-                case MESHAttribute.colorSet2:
-                case MESHAttribute.colorSet2_1:
-                case MESHAttribute.colorSet2_2:
-                case MESHAttribute.colorSet2_3:
-                case MESHAttribute.colorSet3:
-                case MESHAttribute.colorSet4:
-                case MESHAttribute.colorSet5:
-                case MESHAttribute.colorSet6:
-                case MESHAttribute.colorSet7:
+                case UltimateVertexAttribute.colorSet1:
+                case UltimateVertexAttribute.colorSet2:
+                case UltimateVertexAttribute.colorSet2_1:
+                case UltimateVertexAttribute.colorSet2_2:
+                case UltimateVertexAttribute.colorSet2_3:
+                case UltimateVertexAttribute.colorSet3:
+                case UltimateVertexAttribute.colorSet4:
+                case UltimateVertexAttribute.colorSet5:
+                case UltimateVertexAttribute.colorSet6:
+                case UltimateVertexAttribute.colorSet7:
                     return 2;
                 default:
                     return -1;
             }
         }
 
-        private int GetAttributeIndex(MESHAttribute attribute)
+        private int GetAttributeIndex(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
-                case MESHAttribute.Position0:
+                case UltimateVertexAttribute.Position0:
                     return 0;
-                case MESHAttribute.Normal0:
+                case UltimateVertexAttribute.Normal0:
                     return 1;
-                case MESHAttribute.Tangent0:
+                case UltimateVertexAttribute.Tangent0:
                     return 3;
-                case MESHAttribute.map1:
+                case UltimateVertexAttribute.map1:
                     return 4;
-                case MESHAttribute.uvSet:
-                case MESHAttribute.uvSet1:
-                case MESHAttribute.uvSet2:
-                case MESHAttribute.bake1:
-                case MESHAttribute.colorSet1:
+                case UltimateVertexAttribute.uvSet:
+                case UltimateVertexAttribute.uvSet1:
+                case UltimateVertexAttribute.uvSet2:
+                case UltimateVertexAttribute.bake1:
+                case UltimateVertexAttribute.colorSet1:
                     return 5;
-                case MESHAttribute.colorSet2:
-                case MESHAttribute.colorSet2_1:
-                case MESHAttribute.colorSet2_2:
-                case MESHAttribute.colorSet2_3:
-                case MESHAttribute.colorSet3:
-                case MESHAttribute.colorSet4:
-                case MESHAttribute.colorSet5:
-                case MESHAttribute.colorSet6:
-                case MESHAttribute.colorSet7:
+                case UltimateVertexAttribute.colorSet2:
+                case UltimateVertexAttribute.colorSet2_1:
+                case UltimateVertexAttribute.colorSet2_2:
+                case UltimateVertexAttribute.colorSet2_3:
+                case UltimateVertexAttribute.colorSet3:
+                case UltimateVertexAttribute.colorSet4:
+                case UltimateVertexAttribute.colorSet5:
+                case UltimateVertexAttribute.colorSet6:
+                case UltimateVertexAttribute.colorSet7:
                 default:
                     return -1;
             }
