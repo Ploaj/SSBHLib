@@ -120,7 +120,7 @@ namespace CrossMod.Nodes
 
         private RenderMesh GetRenderMesh(RSkeleton Skeleton, MeshObject meshObject, RMesh rMesh)
         {
-            using (var vertexAccessor = new SSBHVertexAccessor(mesh))
+            var vertexAccessor = new SSBHVertexAccessor(mesh);
             {
                 var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
 

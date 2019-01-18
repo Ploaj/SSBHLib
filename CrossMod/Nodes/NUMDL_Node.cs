@@ -158,7 +158,7 @@ namespace CrossMod.Nodes
             
             if (meshFile != null)
             {
-                using (SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(meshFile))
+                SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(meshFile);
                 {
                     SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(meshFile);
                     foreach (MeshObject obj in meshFile.Objects)

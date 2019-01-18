@@ -13,6 +13,25 @@ namespace SSBHLib.Tools
         private readonly MESH meshFile;
 
         /// <summary>
+        /// Creates a vertex accessor from given MESH filepath
+        /// </summary>
+        /// <param name="FilePath"></param>
+        public SSBHVertexAccessor(string MESHFilePath)
+        {
+            ISSBH_File File;
+            if(SSBH.TryParseSSBHFile(MESHFilePath, out File))
+            {
+                if (File == null)
+                    throw new FileNotFoundException("File was null");
+
+                if (File is MESH mesh)
+                    meshFile = mesh;
+                else
+                    throw new FormatException("Given file was not a MESH file");
+            }
+        }
+
+        /// <summary>
         /// Creates a new vertex accessor for given mesh file
         /// </summary>
         /// <param name="meshFile"></param>
