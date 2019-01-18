@@ -396,12 +396,12 @@ namespace SSBHLib.Tools
             }
         }
 
-        public static int SingleToInt32Bits(float value)
+        private static int SingleToInt32Bits(float value)
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        public static int FromFloat(float fval)
+        private static int FromFloat(float fval)
         {
             int fbits = SingleToInt32Bits(fval);
             int sign = fbits >> 16 & 0x8000;          // sign only

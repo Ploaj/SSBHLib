@@ -5,8 +5,18 @@ using System.Linq;
 
 namespace SSBHLib.Tools
 {
+    /// <summary>
+    /// Tools for compiling rigging information into a Mesh Rigging Group
+    /// </summary>
     public class SSBHRiggingCompiler
     {
+        /// <summary>
+        /// Creates a mesh rigging group
+        /// </summary>
+        /// <param name="MeshName"></param>
+        /// <param name="MeshIndex"></param>
+        /// <param name="influences"></param>
+        /// <returns></returns>
         public static MeshRiggingGroup CreateRiggingGroup(string MeshName, int MeshIndex, SSBHVertexInfluence[] influences)
         {
             var group = new MeshRiggingGroup
