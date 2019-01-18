@@ -8,56 +8,6 @@ using System.Runtime.InteropServices;
 namespace SSBHLib.Tools
 {
     /// <summary>
-    /// Represents a generic transforms with Translation, Rotation (as quaternion), and Scale
-    /// </summary>
-    public struct AnimTrackTransform
-    {
-        public float X;
-        public float Y;
-        public float Z;
-
-        public float RX;
-        public float RY;
-        public float RZ;
-        public float RW;
-
-        public float SX;
-        public float SY;
-        public float SZ;
-
-        public float AbsoluteScale;
-
-        public override string ToString()
-        {
-            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}))";
-        }
-    }
-
-    /// <summary>
-    /// Represents a generic vector 4
-    /// </summary>
-    public struct AnimTrackCustomVector4
-    {
-        public float X;
-        public float Y;
-        public float Z;
-        public float W;
-
-        public AnimTrackCustomVector4(float x, float y, float z, float w)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-            W = w;
-        }
-
-        public override string ToString()
-        {
-            return $"({X}, {Y}, {Z}, {W})";
-        }
-    }
-
-    /// <summary>
     /// Decoder for the ANIM track data
     /// </summary>
     public class SSBHAnimTrackDecoder
@@ -86,10 +36,10 @@ namespace SSBHLib.Tools
         /// <summary>
         /// Creates decoder for given ANIM file
         /// </summary>
-        /// <param name="AnimFile"></param>
-        public SSBHAnimTrackDecoder(ANIM AnimFile)
+        /// <param name="animFile"></param>
+        public SSBHAnimTrackDecoder(ANIM animFile)
         {
-            this.animFile = AnimFile;
+            this.animFile = animFile;
         }
 
         /// <summary>
@@ -105,37 +55,35 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads the data out of the given track
-        /// This data can be a few different types <see cref="AnimTrackCustomVector4"/>
-        /// and <see cref="AnimTrackTransform"/>
+        /// Reads the data out of the given track.
         /// </summary>
-        /// <param name="Track"></param>
+        /// <param name="track"></param>
         /// <returns></returns>
-        public object[] ReadTrack(AnimTrack Track)
+        public object[] ReadTrack(AnimTrack track)
         {
             //Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> output = new List<object>();
             using (SSBHParser parser = new SSBHParser(new MemoryStream(animFile.Buffer)))
             {
-                parser.Seek(Track.DataOffset);
+                parser.Seek(track.DataOffset);
 
-                if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Constant))
+                if (CheckFlag(track.Flags, 0xFF00, ANIM_TRACKFLAGS.Constant))
                 {
-                    output.Add(ReadDirect(parser, Track.Flags));
+                    output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.ConstTransform))
+                if (CheckFlag(track.Flags, 0xFF00, ANIM_TRACKFLAGS.ConstTransform))
                 {
                     // TODO: investigate more
-                    output.Add(ReadDirect(parser, Track.Flags));
+                    output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Direct))
+                if (CheckFlag(track.Flags, 0xFF00, ANIM_TRACKFLAGS.Direct))
                 {
-                    for(int i = 0; i < Track.FrameCount; i++)
-                        output.Add(ReadDirect(parser, Track.Flags));
+                    for(int i = 0; i < track.FrameCount; i++)
+                        output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(Track.Flags, 0xFF00, ANIM_TRACKFLAGS.Compressed))
+                if (CheckFlag(track.Flags, 0xFF00, ANIM_TRACKFLAGS.Compressed))
                 {
-                    output.AddRange(ReadCompressed(parser, Track.Flags));
+                    output.AddRange(ReadCompressed(parser, track.Flags));
                 }
             }
 
@@ -152,18 +100,12 @@ namespace SSBHLib.Tools
         {
             List<object> output = new List<object>();
 
-            uint DataOffset = (uint)reader.BaseStream.Position;
-            SSBHAnimCompressedHeader Header = reader.ByteToType<SSBHAnimCompressedHeader>();
+            uint dataOffset = (uint)reader.BaseStream.Position;
+            SSBHAnimCompressedHeader header = reader.ByteToType<SSBHAnimCompressedHeader>();
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
             {
-                reader.Seek((int)DataOffset + Header.CompressedDataOffset);
-                // note: there is a section for "default" and "compressed items" but they seem to always be 0-ed out
-
-                for (int i = 0; i < Header.FrameCount; i++)
-                {
-                    output.Add(reader.ReadBits(Header.BitsPerEntry) == 1);
-                }
+                ReadBooleans(reader, output, dataOffset, header);
             }
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
@@ -179,18 +121,39 @@ namespace SSBHLib.Tools
             }
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Vector4))
             {
-                var decompressed = DecompressValues(reader, DataOffset, Header, 4);
-                foreach(var decom in decompressed)
-                    output.Add(new AnimTrackCustomVector4(decom[0], decom[1], decom[2], decom[3]));
+                ReadVector4(reader, output, dataOffset, header);
             }
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
             {
-                var decompressed = DecompressTransform(reader, DataOffset, Header);
-                foreach (var v in decompressed)
-                    output.Add(v);
+                ReadTransform(reader, output, dataOffset, header);
             }
 
             return output.ToArray();
+        }
+
+        private void ReadTransform(SSBHParser reader, List<object> output, uint dataOffset, SSBHAnimCompressedHeader header)
+        {
+            var decompressed = DecompressTransform(reader, dataOffset, header);
+            foreach (var v in decompressed)
+                output.Add(v);
+        }
+
+        private void ReadVector4(SSBHParser reader, List<object> output, uint dataOffset, SSBHAnimCompressedHeader header)
+        {
+            var decompressed = DecompressValues(reader, dataOffset, header, 4);
+            foreach (var decom in decompressed)
+                output.Add(new AnimTrackCustomVector4(decom[0], decom[1], decom[2], decom[3]));
+        }
+
+        private static void ReadBooleans(SSBHParser reader, List<object> output, uint dataOffset, SSBHAnimCompressedHeader header)
+        {
+            reader.Seek((int)dataOffset + header.CompressedDataOffset);
+            // note: there is a section for "default" and "compressed items" but they seem to always be 0-ed out
+
+            for (int i = 0; i < header.FrameCount; i++)
+            {
+                output.Add(reader.ReadBits(header.BitsPerEntry) == 1);
+            }
         }
 
         /// <summary>
@@ -210,15 +173,12 @@ namespace SSBHLib.Tools
 
             parser.Seek(dataOffset + header.DefaultDataOffset);
 
-            float[] defaultValues = new float[valueCount];
-            for(int i = 0; i < valueCount; i++)
-            {
-                defaultValues[i] = parser.ReadSingle();
-            }
+            float[] defaultValues = GetDefaultValues(parser, valueCount);
 
             parser.Seek(dataOffset + header.CompressedDataOffset);
             for (int frameIndex = 0; frameIndex < header.FrameCount; frameIndex++)
             {
+                // Copy default values.
                 float[] values = new float[valueCount];
                 for (int i = 0; i < valueCount; i++)
                     values[i] = defaultValues[i];
@@ -232,6 +192,7 @@ namespace SSBHLib.Tools
                     if (valueBitCount == 0)
                         continue;
 
+                    // TODO: What is this?
                     int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
                     for (int k = 0; k < valueBitCount; k++)
@@ -250,6 +211,17 @@ namespace SSBHLib.Tools
             return transforms;
         }
 
+        private static float[] GetDefaultValues(SSBHParser parser, int valueCount)
+        {
+            float[] defaultValues = new float[valueCount];
+            for (int i = 0; i < valueCount; i++)
+            {
+                defaultValues[i] = parser.ReadSingle();
+            }
+
+            return defaultValues;
+        }
+
         /// <summary>
         /// decompresses transform values from a track
         /// </summary>
@@ -262,7 +234,7 @@ namespace SSBHLib.Tools
             AnimTrackTransform[] transforms = new AnimTrackTransform[header.FrameCount];
 
             // PreProcess
-            SSBHAnimCompressedItem[] Items = parser.ByteToType<SSBHAnimCompressedItem>(9);
+            SSBHAnimCompressedItem[] items = parser.ByteToType<SSBHAnimCompressedItem>(9);
             
             parser.Seek(dataOffset + header.DefaultDataOffset);
 
@@ -295,7 +267,7 @@ namespace SSBHLib.Tools
                     SZ = ZSCA,
                     AbsoluteScale = 1
                 };
-                for (int itemIndex = 0; itemIndex < Items.Length; itemIndex++)
+                for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
                     // First check if this track should be parsed
                     // TODO: Don't hard code these flags.
@@ -307,7 +279,7 @@ namespace SSBHLib.Tools
                         continue;
                     }
 
-                    var item = Items[itemIndex];
+                    var item = items[itemIndex];
 
                     // Decompress
                     int valueBitCount = (int)item.Count;

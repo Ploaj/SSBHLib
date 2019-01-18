@@ -7,8 +7,8 @@ namespace SSBHLib
         /// <summary>
         /// This pretty much exists for MATL's only
         /// </summary>
-        /// <param name="Parser"></param>
-        public virtual void PostProcess(SSBHParser Parser)
+        /// <param name="parser"></param>
+        public virtual void PostProcess(SSBHParser parser)
         {
 
         }

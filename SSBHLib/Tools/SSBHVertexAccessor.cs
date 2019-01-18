@@ -16,15 +16,14 @@ namespace SSBHLib.Tools
         /// Creates a vertex accessor from given MESH filepath
         /// </summary>
         /// <param name="FilePath"></param>
-        public SSBHVertexAccessor(string MESHFilePath)
+        public SSBHVertexAccessor(string meshFilePath)
         {
-            ISSBH_File File;
-            if(SSBH.TryParseSSBHFile(MESHFilePath, out File))
+            if (SSBH.TryParseSSBHFile(meshFilePath, out ISSBH_File file))
             {
-                if (File == null)
+                if (file == null)
                     throw new FileNotFoundException("File was null");
 
-                if (File is MESH mesh)
+                if (file is MESH mesh)
                     meshFile = mesh;
                 else
                     throw new FormatException("Given file was not a MESH file");
@@ -37,25 +36,25 @@ namespace SSBHLib.Tools
         /// <param name="meshFile"></param>
         public SSBHVertexAccessor(MESH meshFile)
         {
-            if (meshFile == null) return;
+            if (meshFile == null)
+                return;
 
             this.meshFile = meshFile;
         }
 
         /// <summary>
-        /// Gets the mesh attribute from given attribute name.
-        /// Returns null if not found
+        /// Returns the mesh attribute from the given attribute name or <c>null</c> if not found.
         /// </summary>
-        /// <param name="AttributeName">Name of attribute</param>
-        /// <param name="MeshObject"></param>
-        /// <returns></returns>
-        private MeshAttribute GetAttribute(string AttributeName, MeshObject MeshObject)
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="meshObject">The mesh to search</param>
+        /// <returns>The mesh attribute for the given attribute name or <c>null</c> if not found.</returns>
+        private MeshAttribute GetAttribute(string attributeName, MeshObject meshObject)
         {
-            foreach (MeshAttribute a in MeshObject.Attributes)
+            foreach (MeshAttribute a in meshObject.Attributes)
             {
                 foreach (MeshAttributeString s in a.AttributeStrings)
                 {
-                    if (s.Name.Equals(AttributeName))
+                    if (s.Name.Equals(attributeName))
                     {
                         return a;
                     }
@@ -65,28 +64,28 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads the triangle indices from the given mesh object
+        /// Reads the triangle indices from the given mesh object.
         /// </summary>
         /// <param name="meshObject"></param>
         /// <returns></returns>
-        public uint[] ReadIndicies(MeshObject meshObject)
+        public uint[] ReadIndices(MeshObject meshObject)
         {
             return ReadIndices(0, meshObject.IndexCount, meshObject);
         }
 
         /// <summary>
-        /// Reads the triangle indices from the given mesh object starting from position
+        /// Reads the triangle indices from the given mesh object starting from <paramref name="startPosition"/>.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="startPosition"></param>
         /// <param name="count"></param>
         /// <param name="meshObject"></param>
         /// <returns></returns>
-        public uint[] ReadIndices(int position, int count, MeshObject meshObject)
+        public uint[] ReadIndices(int startPosition, int count, MeshObject meshObject)
         {
             uint[] indices = new uint[count];
             using (var indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
-                indexBuffer.BaseStream.Position = meshObject.ElementOffset + position * (meshObject.DrawElementType == 1 ? 4 : 2);
+                indexBuffer.BaseStream.Position = meshObject.ElementOffset + startPosition * (meshObject.DrawElementType == 1 ? 4 : 2);
                 for (int i = 0; i < count; i++)
                 {
                     indices[i] = meshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
@@ -97,9 +96,9 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads all attributes from the given mesh object
+        /// Reads all attributes from the given mesh object.
         /// </summary>
-        /// <returns>Tuple containing attribute name and the values</returns>
+        /// <returns>A <see cref="Tuple"/> containing the attribute name and its values</returns>
         public Tuple<string, SSBHVertexAttribute[]>[] ReadAttributes(MeshObject meshObject)
         {
             List<Tuple<string, SSBHVertexAttribute[]>> attrs = new List<Tuple<string, SSBHVertexAttribute[]>>(meshObject.Attributes.Length);
@@ -116,7 +115,7 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads the vertex attribute information for the given attribute name inside of the mesh object
+        /// Reads the vertex attribute information for the given attribute name inside of the mesh object.
         /// </summary>
         /// <param name="attributeName"></param>
         /// <param name="meshObject"></param>
@@ -127,7 +126,7 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads the vertex attribute information for the given attribute name inside of the mesh object
+        /// Reads the vertex attribute information for the given attribute name inside of the mesh object.
         /// </summary>
         /// <param name="attributeName"></param>
         /// <param name="meshObject"></param>
@@ -185,26 +184,22 @@ namespace SSBHLib.Tools
                 Stride = meshObject.Stride2;
             }
 
-            int Size = 3;
-            if (attributeName.Contains("colorSet") || attributeName.Equals("Normal0") || attributeName.Equals("Tangent0"))
-                Size = 4;
-            if (attributeName.Equals("map1") || attributeName.Equals("bake1") || attributeName.Contains("uvSet"))
-                Size = 2;
+            int attributeLength = GetAttributeLength(attributeName);
 
-            SSBHVertexAttribute[] a = new SSBHVertexAttribute[count];
+            SSBHVertexAttribute[] attributes = new SSBHVertexAttribute[count];
             for (int i = 0; i < count; i++)
             {
                 SelectedBuffer.BaseStream.Position = Offset + attr.BufferOffset + Stride * (position + i);
-                a[i] = new SSBHVertexAttribute();
+                attributes[i] = new SSBHVertexAttribute();
 
-                if (Size > 0)
-                    a[i].X = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
-                if (Size > 1)
-                    a[i].Y = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
-                if (Size > 2)
-                    a[i].Z = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
-                if (Size > 3)
-                    a[i].W = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
+                if (attributeLength > 0)
+                    attributes[i].X = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
+                if (attributeLength > 1)
+                    attributes[i].Y = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
+                if (attributeLength > 2)
+                    attributes[i].Z = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
+                if (attributeLength > 3)
+                    attributes[i].W = ReadAttribute(SelectedBuffer, (SSBVertexAttribFormat)attr.DataType);
             }
 
             foreach (var buffer in buffers)
@@ -213,7 +208,17 @@ namespace SSBHLib.Tools
                 buffer.Dispose();
             }
 
-            return a;
+            return attributes;
+        }
+
+        private static int GetAttributeLength(string attributeName)
+        {
+            int attributeSize = 3;
+            if (attributeName.Contains("colorSet") || attributeName.Equals("Normal0") || attributeName.Equals("Tangent0"))
+                attributeSize = 4;
+            if (attributeName.Equals("map1") || attributeName.Equals("bake1") || attributeName.Contains("uvSet"))
+                attributeSize = 2;
+            return attributeSize;
         }
 
         /// <summary>
@@ -226,17 +231,22 @@ namespace SSBHLib.Tools
         {
             switch (format)
             {
-                case SSBVertexAttribFormat.Byte: return buffer.ReadByte();
-                case SSBVertexAttribFormat.Float: return buffer.ReadSingle();
-                case SSBVertexAttribFormat.HalfFloat: return ReadHalfFloat(buffer);
-                case SSBVertexAttribFormat.HalfFloat2: return ReadHalfFloat(buffer);
-                default: return buffer.ReadByte();
+                case SSBVertexAttribFormat.Byte:
+                    return buffer.ReadByte();
+                case SSBVertexAttribFormat.Float:
+                    return buffer.ReadSingle();
+                case SSBVertexAttribFormat.HalfFloat:
+                    return ReadHalfFloat(buffer);
+                case SSBVertexAttribFormat.HalfFloat2:
+                    return ReadHalfFloat(buffer);
+                default:
+                    return buffer.ReadByte();
             }
         }
 
-        private float ReadHalfFloat(BinaryReader Reader)
+        private float ReadHalfFloat(BinaryReader reader)
         {
-            int hbits = Reader.ReadInt16();
+            int hbits = reader.ReadInt16();
 
             int mant = hbits & 0x03ff;            // 10 bits mantissa
             int exp = hbits & 0x7c00;            // 5 bits exponent

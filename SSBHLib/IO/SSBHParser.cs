@@ -69,19 +69,16 @@ namespace SSBHLib.IO
                 Seek(0x10);
             }
 
-            foreach (var c in issbhTypes)
+            foreach (var type in issbhTypes)
             {
-                SSBHFileAttribute attr = c.GetCustomAttributes(
-                typeof(SSBHFileAttribute), true
-                ).FirstOrDefault() as SSBHFileAttribute;
-                if (attr != null)
+                if (type.GetCustomAttributes(typeof(SSBHFileAttribute), true).FirstOrDefault() is SSBHFileAttribute attr)
                 {
                     if (attr.Magic.Equals(Magic))
                     {
                         MethodInfo method = typeof(SSBHParser).GetMethod("Parse");
 
-                        method = method.MakeGenericMethod(c);
-                        
+                        method = method.MakeGenericMethod(type);
+
                         File = (ISSBH_File)method.Invoke(this, null);
                         return true;
                     }
@@ -128,14 +125,14 @@ namespace SSBHLib.IO
             //Reading Object
             foreach (var prop in tObject.GetType().GetProperties())
             {
-                object[] attrs = prop.GetCustomAttributes(true);
                 bool skip = false;
-                foreach (object attr in attrs)
+                foreach (var attribute in prop.GetCustomAttributes(true))
                 {
-                    if (attr is ParseTag tag)
+                    if (attribute is ParseTag tag)
                     {
                         if (tag.Ignore)
                             skip = true;
+
                         if (!tag.IF.Equals(""))
                         {
                             string[] args = tag.IF.Split('>');

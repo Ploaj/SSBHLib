@@ -37,7 +37,7 @@ namespace SSBHLib.IO
             }
         }
 
-        private bool Skip(ISSBH_File File, PropertyInfo prop)
+        private bool Skip(ISSBH_File file, PropertyInfo prop)
         {
             object[] attrs = prop.GetCustomAttributes(true);
             bool skip = false;
@@ -51,7 +51,7 @@ namespace SSBHLib.IO
                     {
                         string[] args = tag.IF.Split('>');
                         PropertyInfo checkprop = null;
-                        foreach (PropertyInfo pi in File.GetType().GetProperties())
+                        foreach (PropertyInfo pi in file.GetType().GetProperties())
                         {
                             if (pi.Name.Equals(args[0]))
                             {
@@ -62,7 +62,7 @@ namespace SSBHLib.IO
                         skip = true;
                         if (checkprop != null)
                         {
-                            if ((ushort)checkprop.GetValue(File) > int.Parse(args[1]))
+                            if ((ushort)checkprop.GetValue(file) > int.Parse(args[1]))
                             {
                                 skip = false;
                                 break;
@@ -81,7 +81,8 @@ namespace SSBHLib.IO
             {
                 var obj = objectQueue.First();
                 objectQueue.RemoveFirst();
-                if (obj == null) continue;
+                if (obj == null)
+                    continue;
 
                 // I guess?
                 if (obj is Array)
@@ -115,13 +116,13 @@ namespace SSBHLib.IO
                     }
                     else
                     {
-                        LinkedList<object> ObjectQueueTemp = objectQueue;
+                        LinkedList<object> objectQueueTemp = objectQueue;
                         objectQueue = new LinkedList<object>();
                         foreach (object o in Array)
                         {
                             WriteProperty(o);
                         }
-                        foreach(object o in ObjectQueueTemp)
+                        foreach(object o in objectQueueTemp)
                             objectQueue.AddLast(o);
                     }
                 }
@@ -132,65 +133,65 @@ namespace SSBHLib.IO
             }
         }
 
-        private void WriteSSBHFile(ISSBH_File File)
+        private void WriteSSBHFile(ISSBH_File file)
         {
-            foreach (var prop in File.GetType().GetProperties())
+            foreach (var prop in file.GetType().GetProperties())
             {
-                if (Skip(File, prop))
+                if (Skip(file, prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
                 {
-                    if (prop.GetValue(File) == null)
+                    if (prop.GetValue(file) == null)
                     {
                         Write((long)0);
                         continue;
                     }
-                    objectQueue.AddLast(prop.GetValue(File));
-                    objectOffset.Add((uint)Position, prop.GetValue(File));
+                    objectQueue.AddLast(prop.GetValue(file));
+                    objectOffset.Add((uint)Position, prop.GetValue(file));
                     Write((long)0);
                 }
                 else if (prop.PropertyType.IsArray)
                 {
-                    var Array = (prop.GetValue(File) as Array);
-                    bool Inline = false;
+                    var array = (prop.GetValue(file) as Array);
+                    bool inline = false;
                     if (prop.GetCustomAttribute(typeof(ParseTag)) != null)
-                        Inline = ((ParseTag)prop.GetCustomAttribute(typeof(ParseTag))).InLine;
+                        inline = ((ParseTag)prop.GetCustomAttribute(typeof(ParseTag))).InLine;
 
-                    if (!Inline)
+                    if (!inline)
                     {
-                        if (Array.Length > 0)
-                            objectOffset.Add((uint)Position, Array);
-                        objectQueue.AddLast(Array);
+                        if (array.Length > 0)
+                            objectOffset.Add((uint)Position, array);
+                        objectQueue.AddLast(array);
                         Write((long)0);
-                        Write((long)Array.Length);
+                        Write((long)array.Length);
                     }
                     else
                     {
                         // inline array
-                        foreach (object o in Array)
+                        foreach (object o in array)
                         {
                             WriteProperty(o);
                         }
                     }
                 }
-                else if (prop.PropertyType == typeof(SSBHOffset)) // HACK for materials
+                else if (prop.PropertyType == typeof(SSBHOffset)) 
                 {
-                    var DataObject = File.GetType().GetProperty("DataObject").GetValue(File);
-                    Console.WriteLine(DataObject.GetType());
-                    objectOffset.Add((uint)Position, DataObject);
-                    objectQueue.AddLast(DataObject);
+                    // HACK: for materials
+                    var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
+                    objectOffset.Add((uint)Position, dataObject);
+                    objectQueue.AddLast(dataObject);
                     Write((long)0);
                 }
                 else
                 {
-                    WriteProperty(prop.GetValue(File));
+                    WriteProperty(prop.GetValue(file));
                 }
             }
 
-            // Post Write
-            // TODO: mostly for materials....
-            File.PostWrite(this);
+
+            // TODO: Post Write is only used for materials.
+            file.PostWrite(this);
         }
 
         public void WriteProperty(object value)
@@ -206,8 +207,7 @@ namespace SSBHLib.IO
                 Write((byte)0);
                 Pad(0x4);
             }
-            else
-            if (value is ISSBH_File v)
+            else if (value is ISSBH_File v)
             {
                 WriteSSBHFile(v);
                 Pad(0x8);
