@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace SSBHLib.Tools
 {
+    /// <summary>
+    /// Represents a generic transforms with Translation, Rotation (as quaternion), and Scale
+    /// </summary>
     public struct AnimTrackTransform
     {
         public float X;
@@ -30,6 +33,9 @@ namespace SSBHLib.Tools
         }
     }
 
+    /// <summary>
+    /// Represents a generic vector 4
+    /// </summary>
     public struct AnimTrackCustomVector4
     {
         public float X;
@@ -51,6 +57,9 @@ namespace SSBHLib.Tools
         }
     }
 
+    /// <summary>
+    /// Decoder for the ANIM track data
+    /// </summary>
     public class SSBHAnimTrackDecoder
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -72,23 +81,41 @@ namespace SSBHLib.Tools
             public ulong Count;
         }
 
-        private ANIM AnimFile;
+        private readonly ANIM animFile;
 
+        /// <summary>
+        /// Creates decoder for given ANIM file
+        /// </summary>
+        /// <param name="AnimFile"></param>
         public SSBHAnimTrackDecoder(ANIM AnimFile)
         {
-            this.AnimFile = AnimFile;
+            this.animFile = AnimFile;
         }
 
+        /// <summary>
+        /// return true if given flag is set
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <param name="mask"></param>
+        /// <param name="expectedValue"></param>
+        /// <returns></returns>
         private bool CheckFlag(uint flags, uint mask, ANIM_TRACKFLAGS expectedValue)
         {
             return (flags & mask) == (uint)expectedValue;
         }
 
+        /// <summary>
+        /// Reads the data out of the given track
+        /// This data can be a few different types <see cref="AnimTrackCustomVector4"/>
+        /// and <see cref="AnimTrackTransform"/>
+        /// </summary>
+        /// <param name="Track"></param>
+        /// <returns></returns>
         public object[] ReadTrack(AnimTrack Track)
         {
             //Console.WriteLine(Track.Name + " " + Track.Flags.ToString("X") + " " + Track.FrameCount + " " + Track.DataOffset.ToString("X"));
             List<object> output = new List<object>();
-            using (SSBHParser parser = new SSBHParser(new MemoryStream(AnimFile.Buffer)))
+            using (SSBHParser parser = new SSBHParser(new MemoryStream(animFile.Buffer)))
             {
                 parser.Seek(Track.DataOffset);
 
@@ -115,6 +142,12 @@ namespace SSBHLib.Tools
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Reads the data from a compressed track
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         private object[] ReadCompressed(SSBHParser reader, uint flags)
         {
             List<object> output = new List<object>();
@@ -160,6 +193,14 @@ namespace SSBHLib.Tools
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Decompresses values in a track
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <param name="dataOffset"></param>
+        /// <param name="header"></param>
+        /// <param name="valueCount"></param>
+        /// <returns></returns>
         private List<float[]> DecompressValues(SSBHParser parser, uint dataOffset, SSBHAnimCompressedHeader header, int valueCount)
         {
             List<float[]> transforms = new List<float[]>(header.FrameCount);
@@ -209,6 +250,13 @@ namespace SSBHLib.Tools
             return transforms;
         }
 
+        /// <summary>
+        /// decompresses transform values from a track
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <param name="dataOffset"></param>
+        /// <param name="header"></param>
+        /// <returns></returns>
         private AnimTrackTransform[] DecompressTransform(SSBHParser parser, uint dataOffset, SSBHAnimCompressedHeader header)
         {
             AnimTrackTransform[] transforms = new AnimTrackTransform[header.FrameCount];
@@ -343,6 +391,12 @@ namespace SSBHLib.Tools
             return transforms;
         }
 
+        /// <summary>
+        /// Reads direct information from track
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         private object ReadDirect(SSBHParser reader, uint flags)
         {
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Transform))
@@ -388,6 +442,15 @@ namespace SSBHLib.Tools
             return null;
         }
 
+        /// <summary>
+        /// A standard linear interpolation function
+        /// </summary>
+        /// <param name="av"></param>
+        /// <param name="bv"></param>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static float Lerp(float av, float bv, float v0, float v1, float t)
         {
             if (v0 == v1) return av;
