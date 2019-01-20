@@ -116,6 +116,7 @@
     <Compile Include="Nodes\IExportableTextureNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Nodes\ScriptNode.cs" />
     <Compile Include="Nodes\SHAN_Node.cs" />
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
     <Compile Include="Rendering\Models\CustomVertex.cs" />

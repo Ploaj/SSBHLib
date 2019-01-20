@@ -85,11 +85,15 @@ namespace CrossMod
 
             // Enable rendering of the model if we have directly selected a model file.
             // Nested ones won't render a model
-            foreach (var node in mainNode.Nodes)
+            foreach (FileNode node in mainNode.Nodes)
             {
-                if ((node as FileNode)?.Text?.EndsWith("numdlb") == true)
+                if (node.Text?.EndsWith("numdlb") == true)
                 {
                     fileTree.SelectedNode = node as FileNode;
+                }
+                else if (node is ScriptNode scriptNode)
+                {
+                    modelViewport.ScriptNode = scriptNode;
                 }
             }
         }

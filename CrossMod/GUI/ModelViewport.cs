@@ -59,6 +59,7 @@ namespace CrossMod.GUI
                 }
             }
         }
+        public ScriptNode ScriptNode { get; set; }
         private IRenderable renderableNode;
 
         public Camera camera = new Camera() { FarClipPlane = 500000 };
@@ -128,12 +129,14 @@ namespace CrossMod.GUI
 
             if (model != null)
             {
+                //remove any meshes that aren't on the model
                 foreach (ListViewItem item in meshList.Items)
                 {
                     RMesh mesh = (RMesh)item.Tag;
                     if (!model.subMeshes.Contains(mesh))
                         meshList.Items.Remove(item);
                 }
+                //only add meshes that aren't in the mesh list already
                 foreach (var mesh in model.subMeshes)
                 {
                     if (!meshList.Items.ContainsKey(mesh.Name))
