@@ -56,8 +56,7 @@ namespace CrossMod
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.viewportToolStripMenuItem,
-            this.experimentalToolStripMenuItem,
-            this.cameraToolStripMenuItem});
+            this.experimentalToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(872, 24);
@@ -100,7 +99,8 @@ namespace CrossMod
             // 
             this.viewportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.renderSettingsToolStripMenuItem,
-            this.frameSelectionToolStripMenuItem});
+            this.frameSelectionToolStripMenuItem,
+            this.cameraToolStripMenuItem});
             this.viewportToolStripMenuItem.Name = "viewportToolStripMenuItem";
             this.viewportToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.viewportToolStripMenuItem.Text = "Viewport";
@@ -108,14 +108,14 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 
@@ -196,7 +196,7 @@ namespace CrossMod
             // cameraToolStripMenuItem
             // 
             this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
-            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cameraToolStripMenuItem.Text = "Camera";
             this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
