@@ -55,6 +55,7 @@
             this.currentFrame.Name = "currentFrame";
             this.currentFrame.Size = new System.Drawing.Size(64, 20);
             this.currentFrame.TabIndex = 1;
+            this.currentFrame.ValueChanged += new System.EventHandler(this.currentFrame_ValueChanged);
             // 
             // totalFrame
             // 

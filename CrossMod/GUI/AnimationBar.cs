@@ -139,6 +139,12 @@ namespace CrossMod.GUI
             UpdateAnimation();
         }
 
+        private void currentFrame_ValueChanged(object sender, EventArgs e)
+        {
+            animationTrack.Value = (int)currentFrame.Value;
+            Update();
+        }
+
         private void playButton_Click(object sender, EventArgs e)
         {
             if (IsPlaying)
