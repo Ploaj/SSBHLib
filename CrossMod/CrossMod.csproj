@@ -95,6 +95,12 @@
     <Compile Include="GUI\AnimationBar.Designer.cs">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\CameraControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\CameraControl.Designer.cs">
+      <DependentUpon>CameraControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="IO\ColladaSchema.cs" />
     <Compile Include="IO\DAEWriter.cs" />
     <Compile Include="IO\IOAnimation.cs" />
@@ -168,6 +174,9 @@
     <Compile Include="Tools\SwitchSwizzler.cs" />
     <EmbeddedResource Include="GUI\AnimationBar.resx">
       <DependentUpon>AnimationBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\CameraControl.resx">
+      <DependentUpon>CameraControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>

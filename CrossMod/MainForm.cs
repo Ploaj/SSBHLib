@@ -20,6 +20,8 @@ namespace CrossMod
 
         private ContextMenu fileTreeContextMenu;
 
+        private CameraControl cameraControl;
+
         public MainForm()
         {
             InitializeComponent();
@@ -30,7 +32,6 @@ namespace CrossMod
             };
 
             fileTreeContextMenu = new ContextMenu();
-
 
             iconList = iconList = new ImageList();
             iconList.ImageSize = new Size(24, 24);
@@ -433,6 +434,13 @@ namespace CrossMod
             {
                 node.OpenNodes();
             }
+        }
+
+        private void cameraToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cameraControl == null || cameraControl.IsDisposed)
+                cameraControl = new CameraControl(modelViewport);
+            cameraControl.Show();
         }
     }
 }
