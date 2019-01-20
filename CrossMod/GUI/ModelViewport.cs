@@ -128,16 +128,26 @@ namespace CrossMod.GUI
 
             if (model != null)
             {
+                foreach (ListViewItem item in meshList.Items)
+                {
+                    RMesh mesh = (RMesh)item.Tag;
+                    if (!model.subMeshes.Contains(mesh))
+                        meshList.Items.Remove(item);
+                }
                 foreach (var mesh in model.subMeshes)
                 {
-                    ListViewItem item = new ListViewItem
+                    if (!meshList.Items.ContainsKey(mesh.Name))
                     {
-                        Text = mesh.Name,
-                        Tag = mesh,
-                        Checked = true
-                    };
+                        ListViewItem item = new ListViewItem
+                        {
+                            Name = mesh.Name,
+                            Text = mesh.Name,
+                            Tag = mesh,
+                            Checked = false
+                        };
 
-                    meshList.Items.Add(item);
+                        meshList.Items.Add(item);
+                    }
                 }
             }
         }
@@ -176,7 +186,7 @@ namespace CrossMod.GUI
         private void ClearDisplay()
         {
             boneTree.Nodes.Clear();
-            meshList.Items.Clear();
+            //meshList.Items.Clear();
             controlBox.Visible = false;
         }
 
@@ -238,12 +248,12 @@ namespace CrossMod.GUI
             {
                 if (Mouse.GetState().IsButtonDown(MouseButton.Left))
                 {
-                    camera.RotationXRadians += ((newMousePosition.Y - mousePosition.Y) / 100f);
+                    camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
                     camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
                 }
                 if (Mouse.GetState().IsButtonDown(MouseButton.Right))
                 {
-                    camera.Pan((newMousePosition.X - mousePosition.X), (newMousePosition.Y - mousePosition.Y));
+                    camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
                 }
                 if (Keyboard.GetState().IsKeyDown(Key.W))
                     camera.Zoom(0.5f);
