@@ -440,6 +440,7 @@ namespace CrossMod
         {
             if (cameraControl == null || cameraControl.IsDisposed)
                 cameraControl = new CameraControl(modelViewport);
+            cameraControl.Focus();
             cameraControl.Show();
         }
     }
