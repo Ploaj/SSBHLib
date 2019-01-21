@@ -65,7 +65,7 @@ namespace CrossMod.Nodes
 
         public class Script
         {
-            public Command[] commands;
+            public Command[] Commands;
 
             public int Position { get; set; }
             public float ACMDFrame { get; set; }
@@ -76,8 +76,8 @@ namespace CrossMod.Nodes
             public Script(List<string> wholeCommands, ScriptNode observer)
             {
                 Observer = observer;
-                commands = new Command[wholeCommands.Count];
-                for (int i = 0; i < commands.Length; i++)
+                Commands = new Command[wholeCommands.Count];
+                for (int i = 0; i < Commands.Length; i++)
                 {
                     string current = wholeCommands[i];
                     int firstSpace = current.IndexOf(' ');
@@ -85,13 +85,13 @@ namespace CrossMod.Nodes
                     {
                         Command.CmdType type = (Command.CmdType)Enum.Parse(typeof(Command.CmdType), current.Substring(0, firstSpace));
                         string[] args = current.Substring(firstSpace + 1).Split(' ');
-                        commands[i] = new Command(type, args, this);
+                        Commands[i] = new Command(type, args, this);
                     }
                     else
                     {
                         Command.CmdType type = (Command.CmdType)Enum.Parse(typeof(Command.CmdType), current);
                         string[] args = new string[0];
-                        commands[i] = new Command(type, args, this);
+                        Commands[i] = new Command(type, args, this);
                     }
                 }
             }
@@ -104,10 +104,13 @@ namespace CrossMod.Nodes
 
             public void Update(float frame)
             {
-                ACMDFrame = frame + 1;//frame in ACMD is indexed at 1
-                if (ACMDFrame < WaitUntil)
-                    return;
-                commands[Position].Interpret();
+                ACMDFrame = frame + 1;//frame in ACMD is indexed at 1 (for now...)
+                while (Position < Commands.Length)
+                {
+                    if (ACMDFrame < WaitUntil)
+                        return;
+                    Commands[Position++].Interpret();
+                }
             }
 
             public class Command
