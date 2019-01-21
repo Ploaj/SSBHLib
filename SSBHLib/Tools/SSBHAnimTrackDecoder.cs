@@ -265,7 +265,7 @@ namespace SSBHLib.Tools
                     SX = XSCA,
                     SY = YSCA,
                     SZ = ZSCA,
-                    AbsoluteScale = 1
+                    AbsoluteScale = 0
                 };
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
@@ -385,7 +385,7 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    AbsoluteScale = 1
+                    AbsoluteScale = 0
                 };
                 reader.ReadInt32(); // ????
 
