@@ -85,16 +85,24 @@ namespace CrossMod
 
             // Enable rendering of the model if we have directly selected a model file.
             // Nested ones won't render a model
+            SKEL_Node Skel = null;
             foreach (FileNode node in mainNode.Nodes)
             {
                 if (node.Text?.EndsWith("numdlb") == true)
                 {
                     fileTree.SelectedNode = node as FileNode;
                 }
-                else if (node is ScriptNode scriptNode)
+                else if (Skel == null && node is SKEL_Node)
                 {
-                    modelViewport.ScriptNode = scriptNode;
+                    Skel = node as SKEL_Node;
                 }
+            }
+            foreach (ScriptNode scriptNode in mainNode.Nodes)
+            {
+                scriptNode.SkelNode = Skel;
+                modelViewport.ScriptNode = scriptNode;
+                //only do this once, easier to write it this way than search for the script node
+                break;
             }
         }
 
@@ -171,7 +179,7 @@ namespace CrossMod
 
         private void exportExportableTexture(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", (((MenuItem)sender).Tag).ToString()))
+            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".png"))
