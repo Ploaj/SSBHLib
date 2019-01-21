@@ -21,6 +21,10 @@ namespace CrossMod.Nodes
         {
             Scripts = new Dictionary<string, Script>();
             Attacks = new Attack[8];
+            for (int i = 0; i < Attacks.Length; i++)
+            {
+                Attacks[i] = Attack.Default();
+            }
             ReadScriptFile();
         }
 
@@ -57,6 +61,10 @@ namespace CrossMod.Nodes
 
         public void Start()
         {
+            for (int i = 0; i < Attacks.Length; i++)
+            {
+                Attacks[i] = Attack.Default();
+            }
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Start();
         }
@@ -65,6 +73,16 @@ namespace CrossMod.Nodes
         {
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Update(frame);
+        }
+
+        public void Render()
+        {
+            for (int i = 0; i < Attacks.Length; i++)
+            {
+                Attack attack = Attacks[i];
+                if (attack.Enabled)
+                    attack.Render();
+            }
         }
 
         public class Script

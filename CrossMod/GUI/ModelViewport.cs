@@ -221,6 +221,10 @@ namespace CrossMod.GUI
             {
                 renderableNode.Render(camera);
             }
+            if (ScriptNode != null)
+            {
+                ScriptNode.Render();
+            }
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();

@@ -11,17 +11,17 @@ namespace CrossMod.Rendering
     public static class ShapeDrawing
     {
         #region Taken from Brawllib render TKContext.cs
-        public static void drawSphere(Vector3 center, float radius, uint precision, bool useWireframe = false)
+        public static void DrawSphere(Vector3 center, float radius, uint precision, bool useWireframe = false)
         {
-            drawSphereTransformed(center, radius, precision, Matrix4.Identity, useWireframe);
+            DrawSphereTransformed(center, radius, precision, Matrix4.Identity, useWireframe);
         }
 
-        public static void drawWireframeSphere(Vector3 center, float radius, uint precision)
+        public static void DrawWireframeSphere(Vector3 center, float radius, uint precision)
         {
-            drawSphere(center, radius, precision, true);
+            DrawSphere(center, radius, precision, true);
         }
 
-        public static void beginTopLevelStencil()
+        public static void BeginTopLevelStencil()
         {
             GL.Enable(EnableCap.StencilTest);
 
@@ -34,7 +34,7 @@ namespace CrossMod.Rendering
 
         // The same as beginTopLevelStencil but writes 0s instead of 1s
         // Also it does not clear the stencil buffer
-        public static void beginTopLevelAntiStencil()
+        public static void BeginTopLevelAntiStencil()
         {
             GL.Enable(EnableCap.StencilTest);
 
@@ -44,13 +44,13 @@ namespace CrossMod.Rendering
             GL.ColorMask(false, false, false, false);
         }
 
-        public static void endTopLevelStencilAndDraw()
+        public static void EndTopLevelStencilAndDraw()
         {
             GL.ColorMask(true, true, true, true);
             GL.StencilFunc(StencilFunction.Equal, 1, 0xFF);
             GL.StencilMask(0x00);
 
-            drawSphere(Vector3.Zero, 100, 10);
+            DrawSphere(Vector3.Zero, 100, 10);
 
             GL.StencilMask(0xFF);
             GL.Clear(ClearBufferMask.StencilBufferBit);
@@ -58,7 +58,7 @@ namespace CrossMod.Rendering
             GL.Enable(EnableCap.DepthTest);
         }
 
-        public static void resetStencil()
+        public static void ResetStencil()
         {
             GL.Enable(EnableCap.StencilTest);
 
@@ -78,7 +78,7 @@ namespace CrossMod.Rendering
             GL.Enable(EnableCap.DepthTest);
         }
 
-        public static void drawSphereTransformedVisible(Vector3 center, float radius, uint precision, Matrix4 transform)
+        public static void DrawSphereTransformedVisible(Vector3 center, float radius, uint precision, Matrix4 transform)
         {
             GL.Enable(EnableCap.StencilTest);
 
@@ -88,14 +88,14 @@ namespace CrossMod.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
             GL.ColorMask(false, false, false, false);
 
-            drawSphereTransformed(center, radius, precision, transform);
+            DrawSphereTransformed(center, radius, precision, transform);
 
             GL.ColorMask(true, true, true, true);
             GL.StencilFunc(StencilFunction.Equal, 1, 0xFF);
             GL.StencilMask(0x00);
             GL.Disable(EnableCap.CullFace);
 
-            drawSphere(Vector3.Zero, 100, 10);
+            DrawSphere(Vector3.Zero, 100, 10);
 
             GL.StencilMask(0xFF);
             GL.Clear(ClearBufferMask.StencilBufferBit);
@@ -104,7 +104,7 @@ namespace CrossMod.Rendering
             GL.Enable(EnableCap.CullFace);
         }
 
-        public static void drawWireframeSphereTransformedVisible(Vector3 center, float radius, uint precision, Matrix4 transform)
+        public static void DrawWireframeSphereTransformedVisible(Vector3 center, float radius, uint precision, Matrix4 transform)
         {
             GL.Enable(EnableCap.StencilTest);
 
@@ -114,14 +114,14 @@ namespace CrossMod.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
             GL.ColorMask(false, false, false, false);
 
-            drawWireframeSphereTransformed(center, radius, precision, transform);
+            DrawWireframeSphereTransformed(center, radius, precision, transform);
 
             GL.ColorMask(true, true, true, true);
             GL.StencilFunc(StencilFunction.Equal, 1, 0xFF);
             GL.StencilMask(0x00);
             GL.Disable(EnableCap.CullFace);
 
-            drawSphere(Vector3.Zero, 100, 10);
+            DrawSphere(Vector3.Zero, 100, 10);
 
             GL.StencilMask(0xFF);
             GL.Clear(ClearBufferMask.StencilBufferBit);
@@ -130,7 +130,7 @@ namespace CrossMod.Rendering
             GL.Enable(EnableCap.CullFace);
         }
 
-        public static void drawSphereTransformed(Vector3 center, float radius, uint precision, Matrix4 transform, bool useWireframe = false)
+        public static void DrawSphereTransformed(Vector3 center, float radius, uint precision, Matrix4 transform, bool useWireframe = false)
         {
             PrimitiveType primitiveType = PrimitiveType.TriangleStrip;
             if (useWireframe)
@@ -188,7 +188,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        public static void drawWireframeSphereTransformed(Vector3 center, float radius, uint precision, Matrix4 transform)
+        public static void DrawWireframeSphereTransformed(Vector3 center, float radius, uint precision, Matrix4 transform)
         {
             if (radius < 0.0f)
                 radius = -radius;
@@ -242,7 +242,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        public static void drawReducedCylinderTransformed(Vector3 p1, Vector3 p2, float R, Matrix4 transform)
+        public static void DrawReducedCylinderTransformed(Vector3 p1, Vector3 p2, float R, Matrix4 transform)
         {
             Vector3 yAxis = new Vector3(0, 1, 0);
             Vector3 d = p2 - p1;
@@ -261,8 +261,8 @@ namespace CrossMod.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
             GL.ColorMask(false, false, false, false);
 
-            drawSphereTransformed(p1, R, 20, transform);
-            drawSphereTransformed(p2, R, 20, transform);
+            DrawSphereTransformed(p1, R, 20, transform);
+            DrawSphereTransformed(p2, R, 20, transform);
 
             //  sides
             GL.PushMatrix();
@@ -286,7 +286,7 @@ namespace CrossMod.Rendering
             GL.StencilMask(0x00);
             GL.Disable(EnableCap.CullFace);
 
-            drawSphere(Vector3.Zero, 100, 10);
+            DrawSphere(Vector3.Zero, 100, 10);
 
             GL.StencilMask(0xFF);
             GL.Clear(ClearBufferMask.StencilBufferBit);
@@ -295,7 +295,7 @@ namespace CrossMod.Rendering
             GL.Enable(EnableCap.CullFace);
         }
 
-        public static void drawWireframeCylinderTransformed(Vector3 p1, Vector3 p2, float R, Matrix4 transform)
+        public static void DrawWireframeCylinderTransformed(Vector3 p1, Vector3 p2, float R, Matrix4 transform)
         {
             Vector3 yAxis = new Vector3(0, 1, 0);
             Vector3 d = p2 - p1;
@@ -314,8 +314,8 @@ namespace CrossMod.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
             GL.ColorMask(false, false, false, false);
 
-            drawWireframeSphereTransformed(p1, R, 10, transform);
-            drawWireframeSphereTransformed(p2, R, 10, transform);
+            DrawWireframeSphereTransformed(p1, R, 10, transform);
+            DrawWireframeSphereTransformed(p2, R, 10, transform);
 
             //  sides
             GL.PushMatrix();
@@ -345,7 +345,7 @@ namespace CrossMod.Rendering
             GL.StencilMask(0x00);
             GL.Disable(EnableCap.CullFace);
 
-            drawSphere(Vector3.Zero, 100, 10);
+            DrawSphere(Vector3.Zero, 100, 10);
 
             GL.StencilMask(0xFF);
             GL.Clear(ClearBufferMask.StencilBufferBit);
@@ -467,7 +467,7 @@ namespace CrossMod.Rendering
             GL.End();
         }
 
-        public static void drawCircleOutline(Vector3 center, float radius, uint precision)
+        public static void DrawCircleOutline(Vector3 center, float radius, uint precision)
         {
             float theta = 2.0f * (float)Math.PI / precision;
             float cosine = (float)Math.Cos(theta);

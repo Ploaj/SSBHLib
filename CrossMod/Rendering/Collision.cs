@@ -27,18 +27,24 @@ namespace CrossMod.Rendering
             Angle = angle;
         }
 
-        public override void Render(Camera camera)
+        public override void Render()
         {
             if (!Enabled)
                 return;
             //TODO: this whole thing
-            ShapeDrawing.drawSphere(Pos, Size, 30);
-            
-            base.Render(camera);
+            ShapeDrawing.DrawSphere(Vector3.Zero, Size, 30);
+            base.Render();
+        }
+
+        public static Attack Default()
+        {
+            Attack def = new Attack(0x031ed91fca, 0, 0, 0, Vector3.Zero);
+            def.Enabled = false;
+            return def;
         }
     }
 
-    public class Collision : IRenderable
+    public class Collision
     {
         public ulong Bone { get; set; }
         public float Size { get; set; }
@@ -70,12 +76,13 @@ namespace CrossMod.Rendering
         /// Renders the outline of the collision
         /// </summary>
         /// <param name="camera"></param>
-        public virtual void Render(Camera camera)
+        public virtual void Render()
         {
             if (!Enabled)
                 return;
             //TODO: also this whole thing
-            ShapeDrawing.drawCircleOutline(Pos, Size, 30);
+            //this doesn't work for some reason
+            //ShapeDrawing.drawCircleOutline(Pos, Size, 30);
         }
 
         public enum Shape
