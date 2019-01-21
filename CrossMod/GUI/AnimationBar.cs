@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using CrossMod.Nodes;
 using System;
 using System.Windows.Forms;
 
@@ -20,7 +21,7 @@ namespace CrossMod.GUI
             {
                 animationTrack.Maximum = value;
                 totalFrame.Maximum = value;
-                currentFrame.Maximum = value;
+                currentFrame_UpDown.Maximum = value;
                 totalFrame.Value = value;
             }
         }
@@ -36,6 +37,7 @@ namespace CrossMod.GUI
 
         public RModel Model { get; set; }
         public RSkeleton Skeleton { get; set; }
+        public ScriptNode scriptNode { get; set; }
 
         /// <summary>
         /// Sets the current animation.
@@ -71,6 +73,7 @@ namespace CrossMod.GUI
                         Frame = 0;
                     }
                 }
+                UpdateScript();
             }
         }
         private IRenderableAnimation animation;
@@ -120,29 +123,39 @@ namespace CrossMod.GUI
             Animation.SetFrameSkeleton(Skeleton, Frame);
         }
 
+        private void UpdateScript()
+        {
+            if (scriptNode == null)
+                return;
+
+            if (Frame == 0)
+                scriptNode.Start();
+            scriptNode.Update(Frame);
+        }
+
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             // Loop back to the beginning at the end.
             if(animationTrack.Value == animationTrack.Maximum)
             {
-                animationTrack.Value = 0;
+                Frame = 0;
             }
             else
             {
-                animationTrack.Value++;
+                Frame++;
             }
         }
 
         private void animationTrack_ValueChanged(object sender, EventArgs e)
         {
-            currentFrame.Value = animationTrack.Value;
+            currentFrame_UpDown.Value = Frame;
             UpdateAnimation();
+            UpdateScript();
         }
 
         private void currentFrame_ValueChanged(object sender, EventArgs e)
         {
-            animationTrack.Value = (int)currentFrame.Value;
-            Update();
+            Frame = (int)currentFrame_UpDown.Value;
         }
 
         private void playButton_Click(object sender, EventArgs e)

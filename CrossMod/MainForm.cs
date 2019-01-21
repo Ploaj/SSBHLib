@@ -97,17 +97,26 @@ namespace CrossMod
                     Skel = node as SKEL_Node;
                 }
             }
-            foreach (ScriptNode scriptNode in mainNode.Nodes)
+            foreach (FileNode node in mainNode.Nodes)
             {
-                scriptNode.SkelNode = Skel;
-                modelViewport.ScriptNode = scriptNode;
-                //only do this once, easier to write it this way than search for the script node
-                break;
+                if (node is ScriptNode scriptNode)
+                {
+                    scriptNode.SkelNode = Skel;
+                    modelViewport.ScriptNode = scriptNode;
+                    //only do this once, there should only be one anyway
+                    break;
+                }
             }
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            //oof
+            if (fileTree.SelectedNode.Text.EndsWith("nuanmb") && modelViewport.ScriptNode != null)
+            {
+                modelViewport.ScriptNode.CurrentAnimationName = fileTree.SelectedNode.Text;
+            }
+
             if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
                 ShowModelViewport();
@@ -117,7 +126,7 @@ namespace CrossMod
             {
                 modelViewport.Clear();
             }
-
+            
             modelViewport.RenderFrame();
         }
 

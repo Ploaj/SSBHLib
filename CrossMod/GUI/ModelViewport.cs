@@ -59,7 +59,16 @@ namespace CrossMod.GUI
                 }
             }
         }
-        public ScriptNode ScriptNode { get; set; }
+        private ScriptNode _scriptNode { get; set; }
+        public ScriptNode ScriptNode
+        {
+            get { return _scriptNode; }
+            set
+            {
+                _scriptNode = value;
+                animationBar.scriptNode = value;
+            }
+        }
         private IRenderable renderableNode;
 
         public Camera camera = new Camera() { FarClipPlane = 500000 };
@@ -107,7 +116,7 @@ namespace CrossMod.GUI
             animationBar = new AnimationBar
             {
                 Dock = DockStyle.Fill,
-                AutoSize = true
+                AutoSize = true,
             };
             controlBox.Controls.Add(animationBar);
         }

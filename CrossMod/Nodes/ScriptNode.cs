@@ -20,8 +20,8 @@ namespace CrossMod.Nodes
         public ScriptNode(string path) : base(path)
         {
             Scripts = new Dictionary<string, Script>();
-            ReadScriptFile();
             Attacks = new Attack[8];
+            ReadScriptFile();
         }
 
         private void ReadScriptFile()
@@ -52,9 +52,13 @@ namespace CrossMod.Nodes
         {
             CurrentAnimationName = name;
             if (Scripts.ContainsKey(CurrentAnimationName))
-            {
                 Scripts[CurrentAnimationName].Start();
-            }
+        }
+
+        public void Start()
+        {
+            if (Scripts.ContainsKey(CurrentAnimationName))
+                Scripts[CurrentAnimationName].Start();
         }
 
         public void Update(float frame)
@@ -124,7 +128,7 @@ namespace CrossMod.Nodes
                 {
                     this.type = type;
                     this.args = args;
-                    this.Parent = parent;
+                    Parent = parent;
                 }
 
                 public void Interpret()
