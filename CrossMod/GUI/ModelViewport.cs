@@ -59,15 +59,10 @@ namespace CrossMod.GUI
                 }
             }
         }
-        private ScriptNode _scriptNode { get; set; }
         public ScriptNode ScriptNode
         {
-            get { return _scriptNode; }
-            set
-            {
-                _scriptNode = value;
-                animationBar.scriptNode = value;
-            }
+            get { return animationBar.scriptNode; }
+            set { animationBar.scriptNode = value; }
         }
         private IRenderable renderableNode;
 
