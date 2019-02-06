@@ -190,7 +190,7 @@ namespace CrossMod.Nodes
                             break;
                         case CmdType.attack:
                             {
-                                Attack attack = new Attack(
+                                Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
                                     UlongParse(args[1]),
                                     IntParse(args[2]),
                                     IntParse(args[3]),
@@ -199,13 +199,27 @@ namespace CrossMod.Nodes
                                         float.Parse(args[5]),
                                         float.Parse(args[6]),
                                         float.Parse(args[7])));
-                                if (bool.Parse(args[8]))
-                                {
-                                    attack.ShapeType = Collision.Shape.capsule;
-                                    attack.Pos2 = new OpenTK.Vector3(float.Parse(args[9]), float.Parse(args[10]), float.Parse(args[11]));
-                                }
-                                Parent.Observer.Attacks[IntParse(args[0])] = attack;
                             }
+                            break;
+                        case CmdType.attack_capsule:
+                            {//NOTICE: only renders base sphere; capsule drawing is not implemented
+                                Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
+                                    UlongParse(args[1]),
+                                    IntParse(args[2]),
+                                    IntParse(args[3]),
+                                    float.Parse(args[4]),
+                                    new OpenTK.Vector3(
+                                        float.Parse(args[5]),
+                                        float.Parse(args[6]),
+                                        float.Parse(args[7])),
+                                    new Vector3(
+                                        float.Parse(args[8]),
+                                        float.Parse(args[9]),
+                                        float.Parse(args[10])));
+                            }
+                            break;
+                        case CmdType.atk_clear:
+                            Parent.Observer.Attacks[IntParse(args[0])].Enabled = false;
                             break;
                         case CmdType.atk_clear_all:
                             foreach (var attack in Parent.Observer.Attacks)
@@ -233,6 +247,8 @@ namespace CrossMod.Nodes
                     frame,
                     wait,
                     attack,
+                    attack_capsule,
+                    atk_clear,
                     atk_clear_all,
                 }
             }
