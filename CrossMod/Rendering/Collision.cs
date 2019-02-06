@@ -27,9 +27,8 @@ namespace CrossMod.Rendering
             if (!Enabled)
                 return;
 
-            shader.SetVector3("offset", Pos);
             shader.SetMatrix4x4("bone", ref boneTransform);
-            shader.SetFloat("size", Size);
+            shader.SetVector3("offset", Pos);
 
             Draw(shader, null);
         }
