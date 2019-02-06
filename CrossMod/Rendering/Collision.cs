@@ -35,7 +35,7 @@ namespace CrossMod.Rendering
 
         public static Attack Default()
         {
-            Attack def = new Attack(0x031ed91fca, 0, 0, 0, Vector3.Zero);
+            Attack def = new Attack(0x031ed91fca, 0, 0, 1, Vector3.Zero);
             def.Enabled = false;
             return def;
         }
