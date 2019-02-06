@@ -105,11 +105,7 @@ namespace CrossMod.Rendering
 
         private static List<Vector3> DefaultSpherePositions(float size, int precision = 20)
         {
-            List<Vector3> vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 20).Item1;
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                vertices[i] *= size;
-            }
+            List<Vector3> vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, size, 20).Item1;
             //Later down the road, make my own method so I can support capsules
             return vertices;
         }
