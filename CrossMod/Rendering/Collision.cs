@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel;
+using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 
@@ -84,10 +85,18 @@ namespace CrossMod.Rendering
             Enabled = true;
         }
 
+        public override List<VertexAttribute> GetVertexAttributes()
+        {
+            return new List<VertexAttribute>()
+            {
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float)
+            };
+        }
+
         /// <summary>
         /// Renders the outline of the collision
         /// </summary>
-        /// <param name="camera"></param>
+        /// <param name="shader"></param>
         public virtual void Render(Shader shader)
         {
             if (!Enabled)
@@ -103,7 +112,7 @@ namespace CrossMod.Rendering
             capsule
         }
 
-        private static List<Vector3> DefaultSpherePositions(float size, int precision = 20)
+        private static List<Vector3> DefaultSpherePositions(float size, int precision = 30)
         {
             List<Vector3> vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, size, 20).Item1;
             //Later down the road, make my own method so I can support capsules

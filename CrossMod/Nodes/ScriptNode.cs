@@ -45,7 +45,32 @@ namespace CrossMod.Nodes
             sphereShader = new Shader();
             sphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.frag"), ShaderType.FragmentShader);
             sphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.vert"), ShaderType.VertexShader);
+        }
+
+        public void Update(float frame)
+        {
+            if (Scripts.ContainsKey(CurrentAnimationName))
+                Scripts[CurrentAnimationName].Update(frame);
+        }
+
+        public void Render(Camera camera)
+        {
             sphereShader.UseProgram();
+
+            Matrix4 mvp = camera.MvpMatrix;
+            sphereShader.SetMatrix4x4("mvp", ref mvp);
+
+            for (int i = 0; i < Attacks.Length; i++)
+            {
+                Attack attack = Attacks[i];
+                if (attack.Enabled)
+                {
+                    sphereShader.SetVector4("sColor", new Vector4(Attack.AttackColors[i], 0.5f));
+
+                    Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.Bone]).ClearScale();
+                    attack.RenderAttack(sphereShader, boneTransform);
+                }
+            }
         }
 
         private void ReadScriptFile()
@@ -87,30 +112,6 @@ namespace CrossMod.Nodes
             }
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Start();
-        }
-
-        public void Update(float frame)
-        {
-            if (Scripts.ContainsKey(CurrentAnimationName))
-                Scripts[CurrentAnimationName].Update(frame);
-        }
-
-        public void Render(Camera camera)
-        {
-            Matrix4 mvp = camera.MvpMatrix;
-            sphereShader.SetMatrix4x4("mvp", ref mvp);
-
-            for (int i = 0; i < Attacks.Length; i++)
-            {
-                Attack attack = Attacks[i];
-                if (attack.Enabled)
-                {
-                    sphereShader.SetVector4("sphereColor", new Vector4(Attack.AttackColors[i], 0.5f));
-
-                    Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.Bone]).ClearScale();
-                    attack.RenderAttack(sphereShader, boneTransform);
-                }
-            }
         }
 
         public class Script
