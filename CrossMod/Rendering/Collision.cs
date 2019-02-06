@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFGraphics.Cameras;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using SFShapes;
-using CrossMod.Nodes;
+using SFGenericModel;
+using SFGraphics.GLObjects.Shaders;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
@@ -27,13 +22,16 @@ namespace CrossMod.Rendering
             Angle = angle;
         }
 
-        public override void Render()
+        public void RenderAttack(Shader shader, Matrix4 boneTransform)
         {
             if (!Enabled)
                 return;
-            //TODO: this whole thing
-            ShapeDrawing.DrawSphere(Vector3.Zero, Size, 30);
-            base.Render();
+
+            shader.SetVector3("offset", Pos);
+            shader.SetMatrix4x4("bone", ref boneTransform);
+            shader.SetFloat("size", Size);
+
+            Draw(shader, null);
         }
 
         public static Attack Default()
@@ -42,9 +40,22 @@ namespace CrossMod.Rendering
             def.Enabled = false;
             return def;
         }
+        
+        //from Smash 4 values for Duck Hunt Reticle color (based on player ID)
+        public static Vector3[] AttackColors = new Vector3[]
+        {
+            new Vector3(1f, 0f, 0f),
+            new Vector3(0.7843f, 0.3529f, 1f),
+            new Vector3(1f, 0.7843f, 0.7843f),
+            new Vector3(0.7843f, 0.7059f, 0f),
+            new Vector3(1f, 0.4706f, 0f),
+            new Vector3(0f, 1f, 0.8431f),
+            new Vector3(0.7843f, 0f, 1f),
+            new Vector3(0.3765f, 0.2863f, 0.5294f),
+        };
     }
 
-    public class Collision
+    public class Collision : GenericMesh<Vector3>
     {
         public ulong Bone { get; set; }
         public float Size { get; set; }
@@ -54,6 +65,7 @@ namespace CrossMod.Rendering
         public bool Enabled { get; set; }
 
         public Collision(ulong bone, float size, Vector3 pos)
+            : base(DefaultSpherePositions(size), PrimitiveType.TriangleStrip)
         {
             Bone = bone;
             Pos = pos;
@@ -63,6 +75,7 @@ namespace CrossMod.Rendering
             Enabled = true;
         }
         public Collision(ulong bone, float size, Vector3 pos, Vector3 pos2)
+            : base(DefaultSpherePositions(size), PrimitiveType.TriangleStrip)
         {
             Bone = bone;
             Pos = pos;
@@ -76,13 +89,12 @@ namespace CrossMod.Rendering
         /// Renders the outline of the collision
         /// </summary>
         /// <param name="camera"></param>
-        public virtual void Render()
+        public virtual void Render(Shader shader)
         {
             if (!Enabled)
                 return;
             //TODO: also this whole thing
-            //this doesn't work for some reason
-            //ShapeDrawing.drawCircleOutline(Pos, Size, 30);
+            Draw(shader, null);
         }
 
         public enum Shape
@@ -90,6 +102,17 @@ namespace CrossMod.Rendering
             sphere,
             aabb,
             capsule
+        }
+
+        private static List<Vector3> DefaultSpherePositions(float size, int precision = 20)
+        {
+            List<Vector3> vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 20).Item1;
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                vertices[i] *= size;
+            }
+            //Later down the road, make my own method so I can support capsules
+            return vertices;
         }
     }
 }

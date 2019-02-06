@@ -1,7 +1,12 @@
-﻿using System;
+﻿using CrossMod.Rendering;
+using CrossMod.Tools;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using SFGraphics.Cameras;
+using SFGraphics.GLObjects.Shaders;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using CrossMod.Rendering;
 
 namespace CrossMod.Nodes
 {
@@ -11,21 +16,36 @@ namespace CrossMod.Nodes
         //Initialized with ScriptNode
         public Dictionary<string, Script> Scripts { get; set; }
         public Attack[] Attacks { get; set; }
+        public Dictionary<ulong, int> BoneIDs { get; set; }
+        public Shader sphereShader { get; set; }
 
         //Needs separate initialization
-        public SKEL_Node SkelNode { set { RSkel = value.GetRenderableNode() as RSkeleton; } }
-        public RSkeleton RSkel { get; set; }
+        public SKEL_Node SkelNode { set
+            {
+                Skel = value.GetRenderableNode() as RSkeleton;
+                BoneIDs.Clear();
+                BoneIDs.Add(Hash.Hash40("top"), 0);//should work hopefully
+                for (int i = 0; i < Skel.Bones.Count; i++)
+                    BoneIDs.Add(Hash.Hash40(Skel.Bones[i].Name), i);
+            } }
+        public RSkeleton Skel { get; set; }
         public string CurrentAnimationName { get; set; }
 
         public ScriptNode(string path) : base(path)
         {
             Scripts = new Dictionary<string, Script>();
-            Attacks = new Attack[8];
+            BoneIDs = new Dictionary<ulong, int>();
+            Attacks = new Attack[8];//possibly fighter specific value
             for (int i = 0; i < Attacks.Length; i++)
             {
                 Attacks[i] = Attack.Default();
             }
             ReadScriptFile();
+
+            sphereShader = new Shader();
+            sphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.frag"), ShaderType.FragmentShader);
+            sphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.vert"), ShaderType.VertexShader);
+            sphereShader.UseProgram();
         }
 
         private void ReadScriptFile()
@@ -34,7 +54,7 @@ namespace CrossMod.Nodes
             List<string> commands = new List<string>();
             for (int i = 0; i < lines.Length; i++)
             {
-                if (lines[i].StartsWith("#begin"))
+                if (lines[i].StartsWith("#begin "))
                 {
                     string name = lines[i++].Substring("#begin ".Length);
                     commands.Clear();
@@ -75,13 +95,21 @@ namespace CrossMod.Nodes
                 Scripts[CurrentAnimationName].Update(frame);
         }
 
-        public void Render()
+        public void Render(Camera camera)
         {
+            Matrix4 mvp = camera.MvpMatrix;
+            sphereShader.SetMatrix4x4("mvp", ref mvp);
+
             for (int i = 0; i < Attacks.Length; i++)
             {
                 Attack attack = Attacks[i];
                 if (attack.Enabled)
-                    attack.Render();
+                {
+                    sphereShader.SetVector4("sphereColor", new Vector4(Attack.AttackColors[i], 0.5f));
+
+                    Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.Bone]).ClearScale();
+                    attack.RenderAttack(sphereShader, boneTransform);
+                }
             }
         }
 
@@ -109,7 +137,7 @@ namespace CrossMod.Nodes
                         string[] args = current.Substring(firstSpace + 1).Split(' ');
                         Commands[i] = new Command(type, args, this);
                     }
-                    else
+                    else//if there are no spaces
                     {
                         Command.CmdType type = (Command.CmdType)Enum.Parse(typeof(Command.CmdType), current);
                         string[] args = new string[0];

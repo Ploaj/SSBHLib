@@ -218,7 +218,7 @@ namespace CrossMod.GUI
             }
             if (ScriptNode != null)
             {
-                ScriptNode.Render();
+                ScriptNode.Render(camera);
             }
 
             // Clean up any unused resources.
