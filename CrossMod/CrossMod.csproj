@@ -124,7 +124,6 @@
     <Compile Include="Rendering\Models\RenderMesh.cs" />
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
-    <Compile Include="Rendering\ShapeDrawing.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />

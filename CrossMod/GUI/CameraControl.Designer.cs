@@ -94,35 +94,35 @@
             this.posY_tb.Location = new System.Drawing.Point(36, 45);
             this.posY_tb.Name = "posY_tb";
             this.posY_tb.Size = new System.Drawing.Size(90, 20);
-            this.posY_tb.TabIndex = 5;
+            this.posY_tb.TabIndex = 1;
             // 
             // posZ_tb
             // 
             this.posZ_tb.Location = new System.Drawing.Point(36, 71);
             this.posZ_tb.Name = "posZ_tb";
             this.posZ_tb.Size = new System.Drawing.Size(90, 20);
-            this.posZ_tb.TabIndex = 4;
+            this.posZ_tb.TabIndex = 2;
             // 
             // posX_tb
             // 
             this.posX_tb.Location = new System.Drawing.Point(36, 19);
             this.posX_tb.Name = "posX_tb";
             this.posX_tb.Size = new System.Drawing.Size(90, 20);
-            this.posX_tb.TabIndex = 3;
+            this.posX_tb.TabIndex = 0;
             // 
             // rotX_tb
             // 
             this.rotX_tb.Location = new System.Drawing.Point(36, 19);
             this.rotX_tb.Name = "rotX_tb";
             this.rotX_tb.Size = new System.Drawing.Size(90, 20);
-            this.rotX_tb.TabIndex = 0;
+            this.rotX_tb.TabIndex = 3;
             // 
             // rotY_tb
             // 
             this.rotY_tb.Location = new System.Drawing.Point(36, 45);
             this.rotY_tb.Name = "rotY_tb";
             this.rotY_tb.Size = new System.Drawing.Size(90, 20);
-            this.rotY_tb.TabIndex = 1;
+            this.rotY_tb.TabIndex = 4;
             // 
             // label4
             // 
@@ -162,7 +162,7 @@
             this.update_button.Location = new System.Drawing.Point(9, 71);
             this.update_button.Name = "update_button";
             this.update_button.Size = new System.Drawing.Size(117, 20);
-            this.update_button.TabIndex = 4;
+            this.update_button.TabIndex = 5;
             this.update_button.Text = "Update Camera";
             this.update_button.UseVisualStyleBackColor = true;
             this.update_button.Click += new System.EventHandler(this.update_button_Click);
