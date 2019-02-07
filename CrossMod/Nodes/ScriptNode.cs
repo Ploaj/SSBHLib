@@ -77,7 +77,7 @@ namespace CrossMod.Nodes
                 if (!coll.Enabled)
                     continue;
 
-                Vector4 color = new Vector4(Collision.IDColors[i], 0.7f);
+                Vector4 color = new Vector4(Collision.IDColors[i % 8], 0.7f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
                 
