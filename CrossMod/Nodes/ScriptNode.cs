@@ -160,9 +160,9 @@ namespace CrossMod.Nodes
         public void Start()
         {
             for (int i = 0; i < Attacks.Length; i++)
-            {
                 Attacks[i] = Attack.Default();
-            }
+            for (int i = 0; i < Grabs.Length; i++)
+                Grabs[i] = Catch.Default();
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Start();
         }
