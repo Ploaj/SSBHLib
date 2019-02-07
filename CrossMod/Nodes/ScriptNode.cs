@@ -77,11 +77,7 @@ namespace CrossMod.Nodes
                 if (!coll.Enabled)
                     continue;
 
-                Vector4 color = Collision.DefaultColor;
-                if (coll is Attack)
-                    color = new Vector4(Attack.AttackColors[i], 0.7f);
-                else if (coll is Catch)
-                    color = new Vector4(1, 0, 1, 1);
+                Vector4 color = new Vector4(Collision.IDColors[i], 0.7f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
                 

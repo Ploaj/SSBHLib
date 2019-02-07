@@ -29,19 +29,6 @@ namespace CrossMod.Rendering
             def.Enabled = false;
             return def;
         }
-        
-        //from Smash 4 values for Duck Hunt Reticle color (based on player ID)
-        public static Vector3[] AttackColors = new Vector3[]
-        {
-            new Vector3(1f, 0f, 0f),
-            new Vector3(0.7843f, 0.3529f, 1f),
-            new Vector3(1f, 0.7843f, 0.7843f),
-            new Vector3(0.7843f, 0.7059f, 0f),
-            new Vector3(1f, 0.4706f, 0f),
-            new Vector3(0f, 1f, 0.8431f),
-            new Vector3(0.7843f, 0f, 1f),
-            new Vector3(0.3765f, 0.2863f, 0.5294f),
-        };
     }
 
     //stub class
@@ -66,8 +53,6 @@ namespace CrossMod.Rendering
         public Vector3 Pos2 { get; set; }
         public Shape ShapeType { get; set; }
         public bool Enabled { get; set; }
-
-        public static Vector4 DefaultColor { get; set; } = new Vector4(1, 1, 1, 1);
 
         public static List<Vector4> UnitSphere { get; set; }
         public static List<Vector4> UnitCapsule { get; set; }
@@ -107,5 +92,20 @@ namespace CrossMod.Rendering
             aabb,
             capsule
         }
+
+        //from Smash 4 values for Duck Hunt Reticle color (based on player ID)
+        public static Vector3[] IDColors = new Vector3[]
+        {
+            new Vector3(1f, 0f, 0f),
+            new Vector3(0.7843f, 0.3529f, 1f),
+            new Vector3(1f, 0.7843f, 0.7843f),
+            new Vector3(0.7843f, 0.7059f, 0f),
+            new Vector3(1f, 0.4706f, 0f),
+            new Vector3(0f, 1f, 0.8431f),
+            new Vector3(0.7843f, 0f, 1f),
+            new Vector3(0.3765f, 0.2863f, 0.5294f),
+        };
+
+        public static Vector3 DefaultColor = new Vector3(1, 1, 1);
     }
 }
