@@ -308,8 +308,8 @@ namespace CrossMod.Nodes
                             Parent.Observer.Grabs[IntParse(args[0])].Enabled = false;
                             break;
                         case CmdType.catch_clear_all:
-                            foreach (var attack in Parent.Observer.Attacks)
-                                attack.Enabled = false;
+                            foreach (var grab in Parent.Observer.Grabs)
+                                grab.Enabled = false;
                             break;
                     }
                 }
