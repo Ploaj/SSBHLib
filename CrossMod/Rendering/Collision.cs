@@ -23,17 +23,6 @@ namespace CrossMod.Rendering
             Angle = angle;
         }
 
-        public void RenderAttack(Shader shader, Matrix4 boneTransform)
-        {
-            if (!Enabled)
-                return;
-
-            shader.SetMatrix4x4("bone", ref boneTransform);
-            shader.SetVector3("offset", Pos);
-
-            Draw(shader, null);
-        }
-
         public static Attack Default()
         {
             Attack def = new Attack(0x031ed91fca, 0, 0, 1, Vector3.Zero);
@@ -55,7 +44,8 @@ namespace CrossMod.Rendering
         };
     }
 
-    public class Collision : GenericMesh<Vector3>
+    //this is probably a bad idea. Later I need to separate collision from shape drawing
+    public class Collision : GenericMesh<Vector4>
     {
         public ulong Bone { get; set; }
         public float Size { get; set; }
@@ -64,8 +54,11 @@ namespace CrossMod.Rendering
         public Shape ShapeType { get; set; }
         public bool Enabled { get; set; }
 
+        public static List<Vector4> UnitSphere { get; set; }
+        public static List<Vector4> UnitCapsule { get; set; }
+
         public Collision(ulong bone, float size, Vector3 pos)
-            : base(DefaultSpherePositions(size), PrimitiveType.TriangleStrip)
+            : base(UnitSphere, PrimitiveType.TriangleStrip)
         {
             Bone = bone;
             Pos = pos;
@@ -75,7 +68,7 @@ namespace CrossMod.Rendering
             Enabled = true;
         }
         public Collision(ulong bone, float size, Vector3 pos, Vector3 pos2)
-            : base(DefaultSpherePositions(size), PrimitiveType.TriangleStrip)
+            : base(UnitCapsule, PrimitiveType.TriangleStrip)
         {
             Bone = bone;
             Pos = pos;
@@ -92,31 +85,27 @@ namespace CrossMod.Rendering
                 new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float)
             };
         }
+        
+        //public void RenderSphere(Shader shader)
+        //{
+        //    shader.SetVector3("offset", Pos);
+        //    shader.SetFloat("size", Size);
 
-        /// <summary>
-        /// Renders the outline of the collision
-        /// </summary>
-        /// <param name="shader"></param>
-        public virtual void Render(Shader shader)
-        {
-            if (!Enabled)
-                return;
-            //TODO: also this whole thing
-            Draw(shader, null);
-        }
+        //    Draw(shader, null);
+        //}
+
+        //public void RenderCapsule(Shader shader)
+        //{
+        //    shader.SetFloat("size", Size);
+
+        //    Draw(shader, null);
+        //}
 
         public enum Shape
         {
             sphere,
             aabb,
             capsule
-        }
-
-        private static List<Vector3> DefaultSpherePositions(float size, int precision = 30)
-        {
-            List<Vector3> vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, size, 20).Item1;
-            //Later down the road, make my own method so I can support capsules
-            return vertices;
         }
     }
 }
