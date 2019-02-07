@@ -15,8 +15,9 @@ namespace CrossMod.Nodes
     {
         public Dictionary<string, Script> Scripts { get; set; }
         public Dictionary<ulong, int> BoneIDs { get; set; }
-
+        
         public Attack[] Attacks { get; set; }
+        public Catch[] Grabs { get; set; }
 
         public Shader SphereShader { get; set; }
         public Shader CapsuleShader { get; set; }
@@ -42,10 +43,11 @@ namespace CrossMod.Nodes
             Scripts = new Dictionary<string, Script>();
             BoneIDs = new Dictionary<ulong, int>();
             Attacks = new Attack[8];//possibly fighter specific value
+            Grabs = new Catch[8];
             for (int i = 0; i < Attacks.Length; i++)
-            {
                 Attacks[i] = Attack.Default();
-            }
+            for (int i = 0; i < Grabs.Length; i++)
+                Grabs[i] = Catch.Default();
             ReadScriptFile();
 
             SphereShader = new Shader();
@@ -66,36 +68,44 @@ namespace CrossMod.Nodes
         {
             Matrix4 mvp = camera.MvpMatrix;
 
-            for (int i = 0; i < Attacks.Length; i++)
+            List<Collision> collisions = new List<Collision>();
+            collisions.AddRange(Attacks);
+            collisions.AddRange(Grabs);
+            for (int i = 0; i < collisions.Count; i++)
             {
-                Attack attack = Attacks[i];
-                if (!attack.Enabled)
+                Collision coll = collisions[i];
+                if (!coll.Enabled)
                     continue;
 
-                Vector4 Color = new Vector4(Attack.AttackColors[i], 0.6f);
-                Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.Bone]).ClearScale();
+                Vector4 color = Collision.DefaultColor;
+                if (coll is Attack)
+                    color = new Vector4(Attack.AttackColors[i], 0.7f);
+                else if (coll is Catch)
+                    color = new Vector4(1, 0, 1, 1);
 
-                if (IsSphere(attack))
+                Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
+                
+                if (IsSphere(coll))
                 {
                     SphereShader.UseProgram();
                     SphereShader.SetMatrix4x4("mvp", ref mvp);
-                    SphereShader.SetVector4("color", Color);
+                    SphereShader.SetVector4("color", color);
                     SphereShader.SetMatrix4x4("bone", ref boneTransform);
-                    SphereShader.SetVector3("offset", attack.Pos);
-                    SphereShader.SetFloat("size", attack.Size);
-                    attack.Draw(SphereShader, camera);
+                    SphereShader.SetVector3("offset", coll.Pos);
+                    SphereShader.SetFloat("size", coll.Size);
+                    coll.Draw(SphereShader, camera);
                 }
-                else if (attack.ShapeType == Collision.Shape.capsule)
+                else if (coll.ShapeType == Collision.Shape.capsule)
                 {
                     CapsuleShader.UseProgram();
                     CapsuleShader.SetMatrix4x4("mvp", ref mvp);
-                    CapsuleShader.SetVector4("color", Color);
+                    CapsuleShader.SetVector4("color", color);
 
-                    Vector3 position1 = Vector3.TransformPosition(attack.Pos, boneTransform);
-                    Vector3 position2 = Vector3.TransformPosition(attack.Pos2, boneTransform);
-
+                    Vector3 position1 = Vector3.TransformPosition(coll.Pos, boneTransform);
+                    Vector3 position2 = Vector3.TransformPosition(coll.Pos2, boneTransform);
                     Vector3 to = position2 - position1;
                     to.NormalizeFast();
+
                     Vector3 axis = Vector3.Cross(Vector3.UnitY, to);
                     float omega = (float)System.Math.Acos(Vector3.Dot(Vector3.UnitY, to));
                     Matrix4 rotation = Matrix4.CreateFromAxisAngle(axis, omega);
@@ -105,9 +115,8 @@ namespace CrossMod.Nodes
 
                     CapsuleShader.SetMatrix4x4("transform1", ref transform1);
                     CapsuleShader.SetMatrix4x4("transform2", ref transform2);
-
-                    CapsuleShader.SetFloat("size", attack.Size);
-                    attack.Draw(CapsuleShader, camera);
+                    CapsuleShader.SetFloat("size", coll.Size);
+                    coll.Draw(CapsuleShader, camera);
                 }
             }
         }
@@ -240,7 +249,7 @@ namespace CrossMod.Nodes
                             {
                                 Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
                                     UlongParse(args[1]),
-                                    IntParse(args[2]),
+                                    float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
                                     new OpenTK.Vector3(
@@ -253,7 +262,7 @@ namespace CrossMod.Nodes
                             {
                                 Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
                                     UlongParse(args[1]),
-                                    IntParse(args[2]),
+                                    float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
                                     new OpenTK.Vector3(
@@ -273,21 +282,40 @@ namespace CrossMod.Nodes
                             foreach (var attack in Parent.Observer.Attacks)
                                 attack.Enabled = false;
                             break;
+                        case CmdType.@catch:
+                            {
+                                Parent.Observer.Grabs[int.Parse(args[0])] = new Catch(
+                                    UlongParse(args[1]),
+                                    float.Parse(args[2]),
+                                    new Vector3(
+                                        float.Parse(args[3]),
+                                        float.Parse(args[4]),
+                                        float.Parse(args[5])));
+                            }
+                            break;
+                        case CmdType.catch_capsule:
+                            {
+                                Parent.Observer.Grabs[int.Parse(args[0])] = new Catch(
+                                    UlongParse(args[1]),
+                                    float.Parse(args[2]),
+                                    new Vector3(
+                                        float.Parse(args[3]),
+                                        float.Parse(args[4]),
+                                        float.Parse(args[5])),
+                                    new Vector3(
+                                        float.Parse(args[6]),
+                                        float.Parse(args[7]),
+                                        float.Parse(args[8])));
+                            }
+                            break;
+                        case CmdType.catch_clear:
+                            Parent.Observer.Grabs[IntParse(args[0])].Enabled = false;
+                            break;
+                        case CmdType.catch_clear_all:
+                            foreach (var attack in Parent.Observer.Attacks)
+                                attack.Enabled = false;
+                            break;
                     }
-                }
-
-                private int IntParse(string word)
-                {
-                    if (int.TryParse(word, out int result))
-                        return result;
-                    return int.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
-                }
-
-                private ulong UlongParse(string word)
-                {
-                    if (ulong.TryParse(word, out ulong result))
-                        return result;
-                    return ulong.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
                 }
 
                 public enum CmdType
@@ -298,6 +326,24 @@ namespace CrossMod.Nodes
                     attack_capsule,
                     atk_clear,
                     atk_clear_all,
+                    @catch,
+                    catch_capsule,
+                    catch_clear,
+                    catch_clear_all
+                }
+
+                private int IntParse(string word)
+                {
+                    if (word.StartsWith("0x"))
+                        return int.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
+                    return int.Parse(word);
+                }
+
+                private ulong UlongParse(string word)
+                {
+                    if (word.StartsWith("0x"))
+                        return ulong.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
+                    return ulong.Parse(word);
                 }
             }
         }

@@ -44,6 +44,19 @@ namespace CrossMod.Rendering
         };
     }
 
+    //stub class
+    public class Catch : Collision
+    {
+        public Catch(ulong bone, float size, Vector3 pos) : base(bone, size, pos) { }
+
+        public Catch(ulong bone, float size, Vector3 pos, Vector3 pos2) : base(bone, size, pos, pos2) { }
+
+        public static Catch Default()
+        {
+            return new Catch(0x031ed91fca, 1, Vector3.Zero) { Enabled = false };
+        }
+    }
+
     //this is probably a bad idea. Later I need to separate collision from shape drawing
     public class Collision : GenericMesh<Vector4>
     {
@@ -53,6 +66,8 @@ namespace CrossMod.Rendering
         public Vector3 Pos2 { get; set; }
         public Shape ShapeType { get; set; }
         public bool Enabled { get; set; }
+
+        public static Vector4 DefaultColor { get; set; } = new Vector4(1, 1, 1, 1);
 
         public static List<Vector4> UnitSphere { get; set; }
         public static List<Vector4> UnitCapsule { get; set; }
@@ -85,21 +100,6 @@ namespace CrossMod.Rendering
                 new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float)
             };
         }
-        
-        //public void RenderSphere(Shader shader)
-        //{
-        //    shader.SetVector3("offset", Pos);
-        //    shader.SetFloat("size", Size);
-
-        //    Draw(shader, null);
-        //}
-
-        //public void RenderCapsule(Shader shader)
-        //{
-        //    shader.SetFloat("size", Size);
-
-        //    Draw(shader, null);
-        //}
 
         public enum Shape
         {
