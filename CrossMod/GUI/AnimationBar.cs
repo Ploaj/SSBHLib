@@ -14,24 +14,39 @@ namespace CrossMod.GUI
         private static readonly string playingText = "||";
         private static readonly string stoppedText = ">";
 
+        private int _FrameCount { get; set; }
         public int FrameCount
         {
-            get => animationTrack.Maximum;
+            get => _FrameCount;
             protected set
             {
-                animationTrack.Maximum = value;
+                //animationTrack.Maximum = value;
                 totalFrame.Maximum = value;
                 currentFrame_UpDown.Maximum = value;
                 totalFrame.Value = value;
             }
         }
 
-        public int Frame
+        //public int Frame
+        //{
+        //    get => animationTrack.Value;
+        //    set
+        //    {
+        //        animationTrack.Value = value;
+        //        _ExactFrame = value;
+        //    }
+        //}
+
+        //Comes with floating point precision so we can use frame speed modifiers
+        public float Frame { get; set; }
+
+        public float MotionRate
         {
-            get => animationTrack.Value;
-            set
+            get
             {
-                animationTrack.Value = value;
+                if (scriptNode == null)
+                    return 1;
+                return scriptNode.MotionRate;
             }
         }
 
@@ -70,7 +85,7 @@ namespace CrossMod.GUI
                     }
                     else
                     {
-                        Frame = 0;
+                        currentFrame_UpDown.Value = 0;
                     }
                 }
                 UpdateScript();
@@ -85,8 +100,9 @@ namespace CrossMod.GUI
         public AnimationBar()
         {
             InitializeComponent();
-            animationTrack.TickFrequency = 1;
+            //animationTrack.TickFrequency = 1;
             SetupTimer();
+            currentFrame_UpDown.Increment = (decimal)MotionRate;
         }
 
         public void Start()
@@ -131,31 +147,35 @@ namespace CrossMod.GUI
             if (Frame == 0)
                 scriptNode.Start();
             scriptNode.Update(Frame);
+
+            currentFrame_UpDown.Increment = (decimal)MotionRate;
         }
 
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             // Loop back to the beginning at the end.
-            if(animationTrack.Value == animationTrack.Maximum)
+            if (Frame >= FrameCount/* && FrameCount > 0*/)
             {
                 Frame = 0;
             }
             else
             {
-                Frame++;
+                Frame += MotionRate;
             }
         }
 
-        private void animationTrack_ValueChanged(object sender, EventArgs e)
-        {
-            currentFrame_UpDown.Value = Frame;
-            UpdateAnimation();
-            UpdateScript();
-        }
+        //private void animationTrack_ValueChanged(object sender, EventArgs e)
+        //{
+        //    currentFrame_UpDown.Value = Frame;
+        //    UpdateAnimation();
+        //    UpdateScript();
+        //}
 
         private void currentFrame_ValueChanged(object sender, EventArgs e)
         {
-            Frame = (int)currentFrame_UpDown.Value;
+            Frame = (float)currentFrame_UpDown.Value;
+            UpdateAnimation();
+            UpdateScript();
         }
 
         private void playButton_Click(object sender, EventArgs e)

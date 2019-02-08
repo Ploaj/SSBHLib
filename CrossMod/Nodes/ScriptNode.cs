@@ -18,11 +18,11 @@ namespace CrossMod.Nodes
         
         public Attack[] Attacks { get; set; }
         public Catch[] Grabs { get; set; }
+        public float MotionRate { get; set; } = 1f;
 
-        public Shader SphereShader { get; set; }
-        public Shader CapsuleShader { get; set; }
-
-        //Needs separate initialization
+        private Shader SphereShader { get; set; }
+        private Shader CapsuleShader { get; set; }
+        
         public SKEL_Node SkelNode { set
             {
                 Skel = value.GetRenderableNode() as RSkeleton;
@@ -163,6 +163,8 @@ namespace CrossMod.Nodes
                 Attacks[i] = Attack.Default();
             for (int i = 0; i < Grabs.Length; i++)
                 Grabs[i] = Catch.Default();
+            MotionRate = 1f;
+
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Start();
         }
@@ -311,6 +313,9 @@ namespace CrossMod.Nodes
                             foreach (var grab in Parent.Observer.Grabs)
                                 grab.Enabled = false;
                             break;
+                        case CmdType.ft_motion_rate:
+                            Parent.Observer.MotionRate = 1f / float.Parse(args[0]);
+                            break;
                     }
                 }
 
@@ -325,7 +330,8 @@ namespace CrossMod.Nodes
                     @catch,
                     catch_capsule,
                     catch_clear,
-                    catch_clear_all
+                    catch_clear_all,
+                    ft_motion_rate
                 }
 
                 private int IntParse(string word)
