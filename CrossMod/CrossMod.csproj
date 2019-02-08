@@ -125,6 +125,8 @@
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
+    <Compile Include="Rendering\Shapes\Capsule.cs" />
+    <Compile Include="Rendering\Shapes\Sphere.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">
@@ -407,9 +409,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Shaders\Capsule.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Shaders\Capsule.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -443,7 +442,7 @@
     <None Include="Shaders\RModelUV.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Sphere.frag">
+    <None Include="Shaders\SolidColor.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Sphere.vert">
@@ -465,9 +464,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Rendering\Shapes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="DefaultTextures\default_black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

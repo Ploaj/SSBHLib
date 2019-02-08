@@ -7,6 +7,7 @@ using SFGraphics.GLObjects.Shaders;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using CrossMod.Rendering.Shapes;
 
 namespace CrossMod.Nodes
 {
@@ -20,8 +21,8 @@ namespace CrossMod.Nodes
         public Catch[] Grabs { get; set; }
         public float MotionRate { get; set; } = 1f;
 
-        private Shader SphereShader { get; set; }
-        private Shader CapsuleShader { get; set; }
+        private Sphere Sphere { get; set; }
+        private Capsule Capsule { get; set; }
         
         public SKEL_Node SkelNode { set
             {
@@ -36,10 +37,6 @@ namespace CrossMod.Nodes
 
         public ScriptNode(string path) : base(path)
         {
-            var vertices = SFShapes.ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
-            Collision.UnitSphere = GenerateSphere4(vertices);
-            Collision.UnitCapsule = GenerateCapsule(vertices);
-
             Scripts = new Dictionary<string, Script>();
             BoneIDs = new Dictionary<ulong, int>();
             Attacks = new Attack[8];//possibly fighter specific value
@@ -50,12 +47,8 @@ namespace CrossMod.Nodes
                 Grabs[i] = Catch.Default();
             ReadScriptFile();
 
-            SphereShader = new Shader();
-            SphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.frag"), ShaderType.FragmentShader);
-            SphereShader.LoadShader(File.ReadAllText("Shaders/Sphere.vert"), ShaderType.VertexShader);
-            CapsuleShader = new Shader();
-            CapsuleShader.LoadShader(File.ReadAllText("Shaders/Capsule.frag"), ShaderType.FragmentShader);
-            CapsuleShader.LoadShader(File.ReadAllText("Shaders/Capsule.vert"), ShaderType.VertexShader);
+            Sphere = new Sphere();
+            Capsule = new Capsule();
         }
 
         public void Update(float frame)
@@ -79,43 +72,18 @@ namespace CrossMod.Nodes
                 Collision coll = collisions[i];
                 if (!coll.Enabled)
                     continue;
-
-                Vector4 color = new Vector4(Collision.IDColors[i % 8], 0.5f);
+                
+                Vector4 color = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
                 
                 if (IsSphere(coll))
                 {
-                    SphereShader.UseProgram();
-                    SphereShader.SetMatrix4x4("mvp", ref mvp);
-                    SphereShader.SetVector4("color", color);
-                    SphereShader.SetMatrix4x4("bone", ref boneTransform);
-                    SphereShader.SetVector3("offset", coll.Pos);
-                    SphereShader.SetFloat("size", coll.Size);
-                    coll.Draw(SphereShader, camera);
+                    Sphere.Render(coll.Size, coll.Pos, boneTransform, mvp, color);
                 }
                 else if (coll.ShapeType == Collision.Shape.capsule)
                 {
-                    CapsuleShader.UseProgram();
-                    CapsuleShader.SetMatrix4x4("mvp", ref mvp);
-                    CapsuleShader.SetVector4("color", color);
-
-                    Vector3 position1 = Vector3.TransformPosition(coll.Pos, boneTransform);
-                    Vector3 position2 = Vector3.TransformPosition(coll.Pos2, boneTransform);
-                    Vector3 to = position2 - position1;
-                    to.NormalizeFast();
-
-                    Vector3 axis = Vector3.Cross(Vector3.UnitY, to);
-                    float omega = (float)System.Math.Acos(Vector3.Dot(Vector3.UnitY, to));
-                    Matrix4 rotation = Matrix4.CreateFromAxisAngle(axis, omega);
-
-                    Matrix4 transform1 = rotation * Matrix4.CreateTranslation(position1);
-                    Matrix4 transform2 = rotation * Matrix4.CreateTranslation(position2);
-
-                    CapsuleShader.SetMatrix4x4("transform1", ref transform1);
-                    CapsuleShader.SetMatrix4x4("transform2", ref transform2);
-                    CapsuleShader.SetFloat("size", coll.Size);
-                    coll.Draw(CapsuleShader, camera);
+                    Capsule.Render(coll.Size, coll.Pos, coll.Pos2, boneTransform, mvp, color);
                 }
             }
 
@@ -353,34 +321,6 @@ namespace CrossMod.Nodes
                     return ulong.Parse(word);
                 }
             }
-        }
-
-        private List<Vector4> GenerateSphere4(List<Vector3> sphere)
-        {
-            var sphere4 = new List<Vector4>();
-
-            foreach (var v in sphere)
-            {
-                sphere4.Add(new Vector4(v, 0));
-            }
-
-            return sphere4;
-        }
-
-        private List<Vector4> GenerateCapsule(List<Vector3> sphere)
-        {
-            var capsule = new List<Vector4>();
-
-            foreach (var v in sphere)
-            {
-                Vector4 value = new Vector4();
-                value.Xyz = v;
-                if (value.Y > 0)
-                    value.W = 1;
-                capsule.Add(value);
-            }
-
-            return capsule;
         }
     }
 }
