@@ -211,10 +211,10 @@ namespace CrossMod.Nodes
                     switch (type)
                     {
                         case CmdType.frame:
-                            Parent.WaitUntil = float.Parse(args[0]);
+                            Parent.WaitUntil = IntParse(args[0]);
                             break;
                         case CmdType.wait:
-                            Parent.WaitUntil = Parent.ACMDFrame + float.Parse(args[0]);
+                            Parent.WaitUntil = Parent.ACMDFrame + IntParse(args[0]);
                             break;
                         case CmdType.attack:
                             {
