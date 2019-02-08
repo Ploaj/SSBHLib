@@ -21,6 +21,7 @@ namespace CrossMod.GUI
             protected set
             {
                 //animationTrack.Maximum = value;
+                _FrameCount = value;
                 totalFrame.Maximum = value;
                 currentFrame_UpDown.Maximum = value;
                 totalFrame.Value = value;
