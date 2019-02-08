@@ -155,14 +155,12 @@ namespace CrossMod.GUI
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             // Loop back to the beginning at the end.
-            if (Frame >= FrameCount/* && FrameCount > 0*/)
-            {
-                Frame = 0;
-            }
+            float nextFrame = Frame + MotionRate;
+
+            if (nextFrame > FrameCount)
+                currentFrame_UpDown.Value = 0;
             else
-            {
-                Frame += MotionRate;
-            }
+                currentFrame_UpDown.Value = (decimal)nextFrame;
         }
 
         //private void animationTrack_ValueChanged(object sender, EventArgs e)
