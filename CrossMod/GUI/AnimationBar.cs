@@ -27,18 +27,7 @@ namespace CrossMod.GUI
                 totalFrame.Value = value;
             }
         }
-
-        //public int Frame
-        //{
-        //    get => animationTrack.Value;
-        //    set
-        //    {
-        //        animationTrack.Value = value;
-        //        _ExactFrame = value;
-        //    }
-        //}
-
-        //Comes with floating point precision so we can use frame speed modifiers
+        
         public float Frame { get; set; }
 
         public float MotionRate
@@ -162,13 +151,6 @@ namespace CrossMod.GUI
             else
                 currentFrame_UpDown.Value = (decimal)nextFrame;
         }
-
-        //private void animationTrack_ValueChanged(object sender, EventArgs e)
-        //{
-        //    currentFrame_UpDown.Value = Frame;
-        //    UpdateAnimation();
-        //    UpdateScript();
-        //}
 
         private void currentFrame_ValueChanged(object sender, EventArgs e)
         {

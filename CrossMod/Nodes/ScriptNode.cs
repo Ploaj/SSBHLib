@@ -71,13 +71,16 @@ namespace CrossMod.Nodes
             List<Collision> collisions = new List<Collision>();
             collisions.AddRange(Attacks);
             collisions.AddRange(Grabs);
+            
+            GL.Disable(EnableCap.DepthTest);
+
             for (int i = 0; i < collisions.Count; i++)
             {
                 Collision coll = collisions[i];
                 if (!coll.Enabled)
                     continue;
 
-                Vector4 color = new Vector4(Collision.IDColors[i % 8], 0.7f);
+                Vector4 color = new Vector4(Collision.IDColors[i % 8], 0.5f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
                 
@@ -115,6 +118,8 @@ namespace CrossMod.Nodes
                     coll.Draw(CapsuleShader, camera);
                 }
             }
+
+            GL.Enable(EnableCap.DepthTest);
         }
 
         private bool IsSphere(Collision coll)
