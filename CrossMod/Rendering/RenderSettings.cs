@@ -63,6 +63,8 @@ namespace CrossMod.Rendering
         [EditInfo("Render Bones", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderBones { get; set; } = false;
 
+        [EditInfo("Model Scale", ValueEnums.ValueType.Float, "Misc")]
+        public float ModelScale { get; set; } = 1f;
 
         // TODO: Add to GUI.
         public OpenTK.Vector4 BoneColor { get; set; } = new OpenTK.Vector4(1);
