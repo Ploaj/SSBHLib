@@ -77,9 +77,6 @@ namespace CrossMod.Rendering
                     {
                         var key = a.Transform.GetKey(Frame);
                         b.AnimationTransform = key.Value;
-                        //It's probably OK to do this
-                        if (b.ParentID == -1)
-                            b.AnimationTransform *= Matrix4.CreateScale(scale);
                         // work around
                         /*if (key.AbsoluteScale != 1)
                         {
@@ -95,6 +92,9 @@ namespace CrossMod.Rendering
                         break;
                     }
                 }
+                //It's probably OK to do this
+                if (b.ParentID == -1)
+                    b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
 
