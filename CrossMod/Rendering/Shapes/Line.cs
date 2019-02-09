@@ -6,36 +6,44 @@ using SFGraphics.GLObjects.Shaders;
 using SFShapes;
 using System.Collections.Generic;
 
+
 namespace CrossMod.Rendering.Shapes
 {
-    public class Sphere : GenericMesh<Vector3>
+    public class Line : GenericMesh<Vector3>
     {
-        private static List<Vector3> UnitSphere;
+        private static List<Vector3> UnitLine;
         private static Shader Shader;
-        
-        static Sphere()
+
+        static Line()
         {
-            UnitSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
-            Shader = ShaderContainer.GetShader("Sphere");
+            UnitLine = new List<Vector3>()
+            {
+                Vector3.Zero,
+                Vector3.UnitZ
+            };
+            Shader = ShaderContainer.GetShader("Line");
         }
 
-        public Sphere() : base(UnitSphere, PrimitiveType.TriangleStrip) { }
+        public Line() : base(UnitLine, PrimitiveType.Lines) { }
 
         public override List<VertexAttribute> GetVertexAttributes()
         {
-            return new List<VertexAttribute>()
+            return new List<VertexAttribute>
             {
                 new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float)
             };
         }
 
-        public void Render(float size, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
+        public void Render(float radians, float length, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
             Shader.UseProgram();
 
-            Shader.SetFloat("size", size);
+            Matrix4 rotation = Matrix4.CreateFromAxisAngle(-Vector3.UnitX, radians);
+
+            Shader.SetFloat("size", length);
             Shader.SetVector3("offset", offset);
             Shader.SetMatrix4x4("bone", ref bone);
+            Shader.SetMatrix4x4("rotation", ref rotation);
             Shader.SetMatrix4x4("mvp", ref mvp);
             Shader.SetVector4("color", color);
 

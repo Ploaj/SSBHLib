@@ -9,8 +9,8 @@ namespace CrossMod.Rendering
 {
     public class Attack : Collision
     {
-        float Damage { get; set; }
-        int Angle { get; set; }
+        public float Damage { get; set; }
+        public int Angle { get; set; }
 
         public Attack(ulong bone, float damage, int angle, float size, Vector3 pos) : base(bone, size, pos)
         {

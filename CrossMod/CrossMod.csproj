@@ -125,6 +125,7 @@
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
+    <Compile Include="Rendering\Shapes\Line.cs" />
     <Compile Include="Rendering\Shapes\Capsule.cs" />
     <Compile Include="Rendering\Shapes\Sphere.cs" />
     <Compile Include="Tools\CrossMath.cs" />
@@ -413,6 +414,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Gamma.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Line.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\NormalMap.frag">

@@ -5,7 +5,6 @@ using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
 using SFShapes;
 using System.Collections.Generic;
-using System.IO;
 
 namespace CrossMod.Rendering.Shapes
 {
@@ -27,10 +26,7 @@ namespace CrossMod.Rendering.Shapes
                 capsule.Add(value);
             }
             UnitCapsule = capsule;
-
-            Shader = new Shader();
-            Shader.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
-            Shader.LoadShader(File.ReadAllText("Shaders/Capsule.vert"), ShaderType.VertexShader);
+            Shader = ShaderContainer.GetShader("Capsule");
         }
 
         public Capsule() : base (UnitCapsule, PrimitiveType.TriangleStrip) { }
@@ -43,7 +39,7 @@ namespace CrossMod.Rendering.Shapes
             };
         }
 
-        public void Render(float size, Vector3 offset, Vector3 offset2, Matrix4 boneTransform, Matrix4 mvp, Vector4 color)
+        public void Render(float size, Vector3 offset, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
             Shader.UseProgram();
 
@@ -51,8 +47,8 @@ namespace CrossMod.Rendering.Shapes
             Shader.SetMatrix4x4("mvp", ref mvp);
             Shader.SetVector4("color", color);
 
-            Vector3 position1 = Vector3.TransformPosition(offset, boneTransform);
-            Vector3 position2 = Vector3.TransformPosition(offset2, boneTransform);
+            Vector3 position1 = Vector3.TransformPosition(offset, bone);
+            Vector3 position2 = Vector3.TransformPosition(offset2, bone);
             Vector3 to = position2 - position1;
             to.NormalizeFast();
 

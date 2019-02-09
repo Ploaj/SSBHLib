@@ -36,6 +36,15 @@ namespace CrossMod.Rendering
             
             Shader textureShader = CreateTextureShader();
             shaderByName.Add("RTexture", textureShader);
+
+            Shader sphere = CreateSphereShader();
+            shaderByName.Add("Sphere", sphere);
+
+            Shader capsule = CreateCapsuleShader();
+            shaderByName.Add("Capsule", capsule);
+
+            Shader line = CreateLineShader();
+            shaderByName.Add("Line", line);
         }
 
         private static Shader CreateTextureShader()
@@ -82,6 +91,30 @@ namespace CrossMod.Rendering
             rModel.LoadShader(File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
             rModel.LoadShader(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader);
             return rModel;
+        }
+
+        private static Shader CreateSphereShader()
+        {
+            Shader sphere = new Shader();
+            sphere.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
+            sphere.LoadShader(File.ReadAllText("Shaders/Sphere.vert"), ShaderType.VertexShader);
+            return sphere;
+        }
+
+        private static Shader CreateCapsuleShader()
+        {
+            Shader capsule = new Shader();
+            capsule.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
+            capsule.LoadShader(File.ReadAllText("Shaders/Capsule.vert"), ShaderType.VertexShader);
+            return capsule;
+        }
+
+        private static Shader CreateLineShader()
+        {
+            Shader line = new Shader();
+            line.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
+            line.LoadShader(File.ReadAllText("Shaders/Line.vert"), ShaderType.VertexShader);
+            return line;
         }
     }
 }

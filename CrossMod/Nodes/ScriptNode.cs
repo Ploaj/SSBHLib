@@ -23,6 +23,7 @@ namespace CrossMod.Nodes
 
         private Sphere Sphere { get; set; }
         private Capsule Capsule { get; set; }
+        private Line Line { get; set; }
         
         public SKEL_Node SkelNode { set
             {
@@ -49,6 +50,7 @@ namespace CrossMod.Nodes
 
             Sphere = new Sphere();
             Capsule = new Capsule();
+            Line = new Line();
         }
 
         public void Update(float frame)
@@ -73,17 +75,29 @@ namespace CrossMod.Nodes
                 if (!coll.Enabled)
                     continue;
                 
-                Vector4 color = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
+                Vector4 collColor = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
+                Vector4 angleColor = new Vector4(1, 1, 1, 1);
 
-                Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]).ClearScale();
+                Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]);
+                Matrix4 boneNoScale = boneTransform.ClearScale();
                 
                 if (IsSphere(coll))
                 {
-                    Sphere.Render(coll.Size, coll.Pos, boneTransform, mvp, color);
+                    Sphere.Render(coll.Size, coll.Pos, boneNoScale, mvp, collColor);
                 }
                 else if (coll.ShapeType == Collision.Shape.capsule)
                 {
-                    Capsule.Render(coll.Size, coll.Pos, coll.Pos2, boneTransform, mvp, color);
+                    Capsule.Render(coll.Size, coll.Pos, coll.Pos2, boneNoScale, mvp, collColor);
+                }
+                //angle marker
+                if (coll is Attack)
+                {
+                    int angle = (coll as Attack).Angle;
+                    if (angle < 361)
+                    {
+                        float radian = angle * (float)Math.PI / 180f;
+                        Line.Render(radian, coll.Size, coll.Pos, boneNoScale.ClearRotation(), mvp, angleColor);
+                    }
                 }
             }
 
