@@ -12,7 +12,9 @@ uniform float size;
 
 void main()
 {
-    vec4 position = bone * rotation * vec4(point.xyz * size, 1);
+    vec4 startpoint = bone * vec4(offset, 1);
 
-    gl_Position = mvp * vec4(position.xyz + offset, 1);
+    vec4 endpoint = rotation * vec4(point.xyz * size, 1);
+
+    gl_Position = mvp * vec4(startpoint.xyz + endpoint.xyz, 1);
 }

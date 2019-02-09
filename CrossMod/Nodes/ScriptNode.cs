@@ -76,7 +76,6 @@ namespace CrossMod.Nodes
                     continue;
                 
                 Vector4 collColor = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
-                Vector4 angleColor = new Vector4(1, 1, 1, 1);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]);
                 Matrix4 boneNoScale = boneTransform.ClearScale();
@@ -93,10 +92,26 @@ namespace CrossMod.Nodes
                 if (coll is Attack)
                 {
                     int angle = (coll as Attack).Angle;
+                    Vector4 angleColor = new Vector4(1, 1, 1, 1);
+                    GL.LineWidth(2f);
+
                     if (angle < 361)
                     {
                         float radian = angle * (float)Math.PI / 180f;
-                        Line.Render(radian, coll.Size, coll.Pos, boneNoScale.ClearRotation(), mvp, angleColor);
+                        Line.Render(radian, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
+                    }
+                    else if (angle == 361)
+                    {
+                        float radian = (float)Math.PI / 2f;
+                        for (int j = 0; j < 4; j++)
+                            Line.Render(radian * j, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
+                    }
+                    else
+                    {
+                        float radian = (float)Math.PI / 2f;
+                        float add = (float)Math.PI / 4f;
+                        for (int j = 0; j < 4; j++)
+                            Line.Render(radian * j + add, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                 }
             }
