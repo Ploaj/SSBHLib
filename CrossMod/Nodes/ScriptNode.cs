@@ -89,9 +89,9 @@ namespace CrossMod.Nodes
                     Capsule.Render(coll.Size, coll.Pos, coll.Pos2, boneNoScale, mvp, collColor);
                 }
                 //angle marker
-                if (coll is Attack)
+                if (coll is Attack attack)
                 {
-                    int angle = (coll as Attack).Angle;
+                    int angle = attack.Angle;
                     Vector4 angleColor = new Vector4(1, 1, 1, 1);
                     GL.LineWidth(2f);
 
@@ -104,14 +104,14 @@ namespace CrossMod.Nodes
                     {
                         float radian = (float)Math.PI / 2f;
                         for (int j = 0; j < 4; j++)
-                            Line.Render(radian * j, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
+                            Line.Render(radian * j, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                     else
                     {
                         float radian = (float)Math.PI / 2f;
                         float add = (float)Math.PI / 4f;
                         for (int j = 0; j < 4; j++)
-                            Line.Render(radian * j + add, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
+                            Line.Render(radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                 }
             }
