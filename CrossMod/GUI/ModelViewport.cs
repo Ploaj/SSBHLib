@@ -216,6 +216,7 @@ namespace CrossMod.GUI
             {
                 renderableNode.Render(camera);
             }
+            ParamNodeContainer.Render(camera);
             if (ScriptNode != null)
             {
                 ScriptNode.Render(camera);
@@ -285,7 +286,6 @@ namespace CrossMod.GUI
 
         private void glViewport_Load(object sender, EventArgs e)
         {
-            ShaderContainer.SetUpShaders();
             glViewport.RenderFrame();
         }
 

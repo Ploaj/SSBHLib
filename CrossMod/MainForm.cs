@@ -97,6 +97,8 @@ namespace CrossMod
                     Skel = node as SKEL_Node;
                 }
             }
+            if (Skel == null)
+                return;
             foreach (FileNode node in mainNode.Nodes)
             {
                 if (node is ScriptNode scriptNode)
@@ -107,6 +109,7 @@ namespace CrossMod
                     break;
                 }
             }
+            ParamNodeContainer.SkelNode = Skel;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -133,7 +136,7 @@ namespace CrossMod
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Force the shaders to be generated again.
-            Rendering.ShaderContainer.SetUpShaders();
+            Rendering.ShaderContainer.LoadShaders();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)

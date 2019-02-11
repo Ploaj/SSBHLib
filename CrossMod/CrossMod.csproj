@@ -47,6 +47,10 @@
       <HintPath>lib\OpenTK.GLControl.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="paracobNET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\paracobNET.dll</HintPath>
+    </Reference>
     <Reference Include="SELib">
       <HintPath>..\..\..\Libraries\SELib\SELib.dll</HintPath>
       <Private>False</Private>
@@ -116,6 +120,8 @@
     <Compile Include="Nodes\IExportableTextureNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Nodes\ParamNode.cs" />
+    <Compile Include="Nodes\ParamNodeContainer.cs" />
     <Compile Include="Nodes\ScriptNode.cs" />
     <Compile Include="Nodes\SHAN_Node.cs" />
     <Compile Include="Rendering\Collision.cs" />
@@ -499,6 +505,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Lib\OpenTK.GLControl.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\paracobNET.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Lib\SELib.dll">
