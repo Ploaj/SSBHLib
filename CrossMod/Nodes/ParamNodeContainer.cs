@@ -14,6 +14,7 @@ namespace CrossMod.Nodes
     {
         public static Dictionary<string, ParamFile> ParamDict { get; set; }
         public static Collision[] HitData { get; set; }
+        public static CliffHangShape[] CliffHangData { get; set; }
 
         public static SKEL_Node SkelNode
         {
@@ -31,12 +32,15 @@ namespace CrossMod.Nodes
 
         private static Capsule capsule;
         private static Sphere sphere;
+        private static Polygon quad;
 
         static ParamNodeContainer()
         {
             ParamDict = new Dictionary<string, ParamFile>();
             BoneIDs = new Dictionary<ulong, int>();
             HitData = new Collision[0];
+            CliffHangData = new CliffHangShape[0];
+
             capsule = new Capsule();
             sphere = new Sphere();
         }
@@ -46,7 +50,6 @@ namespace CrossMod.Nodes
             string name = Path.GetFileNameWithoutExtension(node.AbsolutePath);
             if (!ParamDict.ContainsKey(name))
             {
-                
                 ParamDict.Add(name, node.Param);
                 HandleParam(name, node.Param);
             }
@@ -79,6 +82,24 @@ namespace CrossMod.Nodes
                             (float)(str.Nodes["offset2_y"] as ParamValue).Value,
                             (float)(str.Nodes["offset2_z"] as ParamValue).Value));
                 }
+
+                array = file.Root.Nodes["cliff_hang_data"] as ParamArray;
+                CliffHangData = new CliffHangShape[array.Nodes.Length];
+                for (int i = 0; i < CliffHangData.Length; i++)
+                {
+                    ParamStruct str = array.Nodes[i] as ParamStruct;
+                    CliffHangData[i] = new CliffHangShape()
+                    {
+                        p1 = new Vector3(
+                            (float)(str.Nodes["p1_x"] as ParamValue).Value,
+                            (float)(str.Nodes["p1_y"] as ParamValue).Value,
+                            0),
+                        p2 = new Vector3(
+                            (float)(str.Nodes["p2_x"] as ParamValue).Value,
+                            (float)(str.Nodes["p2_y"] as ParamValue).Value,
+                            0),
+                    };
+                }
             }
         }
 
@@ -98,7 +119,32 @@ namespace CrossMod.Nodes
                     else
                         sphere.Render(hit.Size, hit.Pos, bone, camera.MvpMatrix, color);
                 }
+                GL.Enable(EnableCap.DepthTest);
             }
+
+            Vector3 transN_Translate = Skel.GetAnimationSingleBindsTransform(0).ExtractTranslation();
+            int cliffHangID = RenderSettings.Instance.CliffHangID;
+            if (cliffHangID >= 0 && cliffHangID < CliffHangData.Length)
+            {
+                GL.Disable(EnableCap.DepthTest);
+
+                Vector3 p1 = CliffHangData[cliffHangID].p1;
+                Vector3 p2 = CliffHangData[cliffHangID].p2;
+                Vector3 v1 = new Vector3(0, p1.Y, p1.X);
+                Vector3 v2 = new Vector3(0, p1.Y, p2.X);
+                Vector3 v3 = new Vector3(0, p2.Y, p2.X);
+                Vector3 v4 = new Vector3(0, p2.Y, p1.X);
+                quad = new Polygon(new List<Vector3>() { v1, v2, v3, v4 });
+                quad.Render(transN_Translate, camera.MvpMatrix, new Vector4(1, 0, 0, 0.5f));
+
+                GL.Enable(EnableCap.DepthTest);
+            }
+        }
+
+        public struct CliffHangShape
+        {
+            public Vector3 p1;
+            public Vector3 p2;
         }
     }
 }

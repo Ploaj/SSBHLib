@@ -133,6 +133,7 @@
     <Compile Include="Rendering\ShaderContainer.cs" />
     <Compile Include="Rendering\Shapes\Line.cs" />
     <Compile Include="Rendering\Shapes\Capsule.cs" />
+    <Compile Include="Rendering\Shapes\Polygon.cs" />
     <Compile Include="Rendering\Shapes\Sphere.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
@@ -532,6 +533,9 @@
     <Content Include="Lib\SFShapes.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Shaders\Polygon.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\ico_unknown.png" />
     <None Include="Resources\ico_texture.png" />
     <None Include="Resources\ico_skeleton.png" />

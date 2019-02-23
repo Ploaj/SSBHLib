@@ -66,6 +66,9 @@ namespace CrossMod.Rendering
         [EditInfo("Render Hit Collisions (Experimental)", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderHitCollisions { get; set; } = false;
 
+        [EditInfo("Cliff Hang ID", ValueEnums.ValueType.Int, "Misc")]
+        public int CliffHangID { get; set; } = -1;
+
         [EditInfo("Model Scale", ValueEnums.ValueType.Float, "Misc")]
         public float ModelScale { get; set; } = 1f;
 

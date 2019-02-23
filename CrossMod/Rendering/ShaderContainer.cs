@@ -52,6 +52,9 @@ namespace CrossMod.Rendering
 
             Shader line = CreateLineShader();
             shaderByName.Add("Line", line);
+
+            Shader polygon = CreatePolygonShader();
+            shaderByName.Add("Polygon", polygon);
         }
 
         private static Shader CreateTextureShader()
@@ -122,6 +125,14 @@ namespace CrossMod.Rendering
             line.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
             line.LoadShader(File.ReadAllText("Shaders/Line.vert"), ShaderType.VertexShader);
             return line;
+        }
+
+        private static Shader CreatePolygonShader()
+        {
+            Shader poly = new Shader();
+            poly.LoadShader(File.ReadAllText("Shaders/SolidColor.frag"), ShaderType.FragmentShader);
+            poly.LoadShader(File.ReadAllText("Shaders/Polygon.vert"), ShaderType.VertexShader);
+            return poly;
         }
     }
 }
