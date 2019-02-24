@@ -27,11 +27,11 @@ namespace CrossMod.Rendering.Shapes
             };
         }
 
-        public void Render(Vector3 boneTranslate, Matrix4 mvp, Vector4 color)
+        public void Render(Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
             Shader.UseProgram();
             
-            Shader.SetVector3("bone", boneTranslate);
+            Shader.SetMatrix4x4("bone", ref bone);
             Shader.SetMatrix4x4("mvp", ref mvp);
             Shader.SetVector4("color", color);
 

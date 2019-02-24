@@ -3,11 +3,11 @@
 in vec4 point;
 
 uniform mat4 mvp;
-uniform vec3 bone;
+uniform mat4 bone;
 
 void main()
 {
-    vec3 translated = point.xyz + bone;
+    vec4 transformed = bone * vec4(point.xyz, 1);
 
-    gl_Position = mvp * vec4(translated, 1);
+    gl_Position = mvp * vec4(transformed.xyz, 1);
 }

@@ -122,7 +122,7 @@ namespace CrossMod.Nodes
                 GL.Enable(EnableCap.DepthTest);
             }
 
-            Vector3 transN_Translate = Skel.GetAnimationSingleBindsTransform(0).ExtractTranslation();
+            Matrix4 transN = Skel.GetAnimationSingleBindsTransform(0).ClearRotation().ClearScale();
             int cliffHangID = RenderSettings.Instance.CliffHangID;
             if (cliffHangID >= 0 && cliffHangID < CliffHangData.Length)
             {
@@ -135,7 +135,7 @@ namespace CrossMod.Nodes
                 Vector3 v3 = new Vector3(0, p2.Y, p2.X);
                 Vector3 v4 = new Vector3(0, p2.Y, p1.X);
                 quad = new Polygon(new List<Vector3>() { v1, v2, v3, v4 });
-                quad.Render(transN_Translate, camera.MvpMatrix, new Vector4(1, 0, 0, 0.5f));
+                quad.Render(transN, camera.MvpMatrix, new Vector4(1, 0, 0, 0.5f));
 
                 GL.Enable(EnableCap.DepthTest);
             }
