@@ -90,6 +90,7 @@ namespace CrossMod.Rendering
             new Vector3(0f, 1f, 0.8431f),
             new Vector3(0.7843f, 0f, 1f),
             new Vector3(0.3765f, 0.2863f, 0.5294f),
+            new Vector3(0.6f, 0.6f, 0.6f),
         };
 
         public static Vector3 DefaultColor = new Vector3(1, 1, 1);
