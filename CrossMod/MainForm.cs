@@ -282,6 +282,7 @@ namespace CrossMod
         private void ClearWorkspace()
         {
             fileTree.Nodes.Clear();
+            ParamNodeContainer.Unload();
             modelViewport.ClearFiles();
             HideControl();
             GC.Collect();

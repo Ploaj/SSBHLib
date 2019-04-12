@@ -55,6 +55,11 @@ namespace CrossMod.Nodes
             }
         }
 
+        public static void Unload()
+        {
+            ParamDict.Clear();
+        }
+
         public static ParamFile GetFile(string name)
         {
             if (!string.IsNullOrEmpty(name) && ParamDict.ContainsKey(name))
@@ -66,11 +71,11 @@ namespace CrossMod.Nodes
         {
             if (name == "vl")
             {
-                ParamArray array = file.Root.Nodes["hit_data"] as ParamArray;
-                HitData = new Collision[array.Nodes.Length];
+                ParamList list = file.Root.Nodes["hit_data"] as ParamList;
+                HitData = new Collision[list.Nodes.Count];
                 for (int i = 0; i < HitData.Length; i++)
                 {
-                    ParamStruct str = array.Nodes[i] as ParamStruct;
+                    ParamStruct str = list.Nodes[i] as ParamStruct;
                     HitData[i] = new Collision((ulong)(str.Nodes["node_id"] as ParamValue).Value,
                         (float)(str.Nodes["size"] as ParamValue).Value,
                         new OpenTK.Vector3(
@@ -83,11 +88,11 @@ namespace CrossMod.Nodes
                             (float)(str.Nodes["offset2_z"] as ParamValue).Value));
                 }
 
-                array = file.Root.Nodes["cliff_hang_data"] as ParamArray;
-                CliffHangData = new CliffHangShape[array.Nodes.Length];
+                list = file.Root.Nodes["cliff_hang_data"] as ParamList;
+                CliffHangData = new CliffHangShape[list.Nodes.Count];
                 for (int i = 0; i < CliffHangData.Length; i++)
                 {
-                    ParamStruct str = array.Nodes[i] as ParamStruct;
+                    ParamStruct str = list.Nodes[i] as ParamStruct;
                     CliffHangData[i] = new CliffHangShape()
                     {
                         p1 = new Vector3(
@@ -114,6 +119,8 @@ namespace CrossMod.Nodes
                 {
                     Matrix4 bone = Skel.GetAnimationSingleBindsTransform(BoneIDs[hit.Bone]);
                     Vector4 color = new Vector4(1, 1, 1, 0.3f);
+                    //if (BoneIDs[hit.Bone] == 0)//special purpose HitData attached to trans or top
+                    //    color = new Vector4(1, 0.3f, 0.3f, 0.3f);
                     if (hit.Pos != hit.Pos2)
                         capsule.Render(hit.Size, hit.Pos, hit.Pos2, bone, camera.MvpMatrix, color);
                     else
@@ -128,14 +135,27 @@ namespace CrossMod.Nodes
             {
                 GL.Disable(EnableCap.DepthTest);
 
-                Vector3 p1 = CliffHangData[cliffHangID].p1;
-                Vector3 p2 = CliffHangData[cliffHangID].p2;
-                Vector3 v1 = new Vector3(0, p1.Y, p1.X);
-                Vector3 v2 = new Vector3(0, p1.Y, p2.X);
-                Vector3 v3 = new Vector3(0, p2.Y, p2.X);
-                Vector3 v4 = new Vector3(0, p2.Y, p1.X);
+                CliffHangShape shape = CliffHangData[cliffHangID];
+                Vector3 v1;
+                Vector3 v2;
+                Vector3 v3;
+                Vector3 v4;
+                if ((shape.p1.X - shape.p2.X) * (shape.p1.Y - shape.p2.Y) > 0)
+                {
+                    v1 = new Vector3(0, shape.p1.Y, shape.p1.X);
+                    v2 = new Vector3(0, shape.p1.Y, shape.p2.X);
+                    v3 = new Vector3(0, shape.p2.Y, shape.p2.X);
+                    v4 = new Vector3(0, shape.p2.Y, shape.p1.X);
+                }
+                else
+                {
+                    v1 = new Vector3(0, shape.p1.Y, shape.p1.X);
+                    v2 = new Vector3(0, shape.p2.Y, shape.p1.X);
+                    v3 = new Vector3(0, shape.p2.Y, shape.p2.X);
+                    v4 = new Vector3(0, shape.p1.Y, shape.p2.X);
+                }
                 quad = new Polygon(new List<Vector3>() { v1, v2, v3, v4 });
-                quad.Render(transN, camera.MvpMatrix, new Vector4(1, 0, 0, 0.5f));
+                quad.Render(transN, camera.MvpMatrix, new Vector4(Collision.IDColors[cliffHangID % 9], 1f));
 
                 GL.Enable(EnableCap.DepthTest);
             }
