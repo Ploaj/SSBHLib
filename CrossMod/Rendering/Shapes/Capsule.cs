@@ -4,6 +4,7 @@ using SFGenericModel;
 using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
 using SFShapes;
+using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Shapes
@@ -39,28 +40,22 @@ namespace CrossMod.Rendering.Shapes
             };
         }
 
-        public void Render(float size, Vector3 offset, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
+        public void Render(float size, Vector3 offset1, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
             Shader.UseProgram();
 
+            var dir = Vector3.Normalize(offset2 - offset1);
+            var axis = Vector3.Cross(Vector3.UnitY, dir);
+            var angle = (float)Math.Acos(Vector3.Dot(Vector3.UnitY, dir));
+            var orientation = Matrix4.CreateFromAxisAngle(axis, angle);
+
             Shader.SetFloat("size", size);
+            Shader.SetMatrix4x4("orientation", ref orientation);
+            Shader.SetVector3("offset1", offset1);
+            Shader.SetVector3("offset2", offset2);
+            Shader.SetMatrix4x4("bone", ref bone);
             Shader.SetMatrix4x4("mvp", ref mvp);
             Shader.SetVector4("color", color);
-
-            Vector3 position1 = Vector3.TransformPosition(offset, bone);
-            Vector3 position2 = Vector3.TransformPosition(offset2, bone);
-            Vector3 to = position2 - position1;
-            to.NormalizeFast();
-
-            Vector3 axis = Vector3.Cross(Vector3.UnitY, to);
-            float omega = (float)System.Math.Acos(Vector3.Dot(Vector3.UnitY, to));
-            Matrix4 rotation = Matrix4.CreateFromAxisAngle(axis, omega);
-
-            Matrix4 transform1 = rotation * Matrix4.CreateTranslation(position1);
-            Matrix4 transform2 = rotation * Matrix4.CreateTranslation(position2);
-
-            Shader.SetMatrix4x4("transform1", ref transform1);
-            Shader.SetMatrix4x4("transform2", ref transform2);
 
             Draw(Shader, null);
         }

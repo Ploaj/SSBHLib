@@ -3,24 +3,27 @@
 in vec4 point;
 
 uniform mat4 mvp;
+uniform mat4 bone;
 
-uniform mat4 transform1;
-uniform mat4 transform2;
+uniform vec3 offset1;
+uniform vec3 offset2;
+
+uniform mat4 orientation;
 
 uniform float size;
 
 void main()
 {
-	vec3 position = point.xyz * size;
+	vec4 position;
 
 	if(point.w == 1)
 	{
-		position = (transform2 * vec4(position, 1)).xyz;
+		position = bone * vec4((orientation * point).xyz * size + offset2, 1);
 	}
 	else
 	{
-		position = (transform1 * vec4(position, 1)).xyz;
+		position = bone * vec4((orientation * point).xyz * size + offset1, 1);
 	}
 
-    gl_Position = mvp * vec4(position, 1);
+    gl_Position = mvp * vec4(position.xyz, 1);
 }
