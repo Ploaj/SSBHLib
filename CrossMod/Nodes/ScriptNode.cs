@@ -78,7 +78,9 @@ namespace CrossMod.Nodes
                 Vector4 collColor = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]);
-                Matrix4 boneNoScale = boneTransform.ClearScale();
+                Matrix4 boneNoScale =
+                    Matrix4.CreateFromQuaternion(boneTransform.ExtractRotation())
+                    * Matrix4.CreateTranslation(boneTransform.ExtractTranslation());
                 
                 if (IsSphere(coll))
                 {
