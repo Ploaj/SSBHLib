@@ -375,13 +375,12 @@ namespace SSBHLib.Tools
                 case UltimateVertexAttribute.Tangent0:
                     return 3;
                 case UltimateVertexAttribute.map1:
-                    return 4;
                 case UltimateVertexAttribute.uvSet:
                 case UltimateVertexAttribute.uvSet1:
                 case UltimateVertexAttribute.uvSet2:
                 case UltimateVertexAttribute.bake1:
+                    return 4;
                 case UltimateVertexAttribute.colorSet1:
-                    return 5;
                 case UltimateVertexAttribute.colorSet2:
                 case UltimateVertexAttribute.colorSet2_1:
                 case UltimateVertexAttribute.colorSet2_2:
@@ -391,6 +390,7 @@ namespace SSBHLib.Tools
                 case UltimateVertexAttribute.colorSet5:
                 case UltimateVertexAttribute.colorSet6:
                 case UltimateVertexAttribute.colorSet7:
+                    return 5;
                 default:
                     return -1;
             }
