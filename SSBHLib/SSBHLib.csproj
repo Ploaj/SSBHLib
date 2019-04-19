@@ -76,6 +76,7 @@
     <Compile Include="Tools\AnimTrackTransform.cs" />
     <Compile Include="Tools\Enums.cs" />
     <Compile Include="Tools\SSBHAnimTrackDecoder.cs" />
+    <Compile Include="Tools\SSBHAnimTrackEncoder.cs" />
     <Compile Include="Tools\SSBHMeshMaker.cs" />
     <Compile Include="Tools\SSBHRiggingAccessor.cs" />
     <Compile Include="Tools\SSBHRiggingCompiler.cs" />

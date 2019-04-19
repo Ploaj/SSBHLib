@@ -265,7 +265,7 @@ namespace SSBHLib.Tools
                     SX = XSCA,
                     SY = YSCA,
                     SZ = ZSCA,
-                    AbsoluteScale = 0
+                    CompensateScale = 0
                 };
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
@@ -302,7 +302,7 @@ namespace SSBHLib.Tools
                         //Scale Isotropic
                         if(itemIndex == 0)
                         {
-                            transform.AbsoluteScale = frameValue;
+                            transform.CompensateScale = frameValue;
                         }
                     }
                     if ((header.Flags & 0x3) == 0x1)
@@ -385,7 +385,7 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    AbsoluteScale = 0
+                    CompensateScale = 0
                 };
                 reader.ReadInt32(); // ????
 
