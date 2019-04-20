@@ -152,7 +152,7 @@ namespace CrossMod.Rendering
         private void SetSamplerInformation(Material material, MatlAttribute a)
         {
             // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = (MatlAttribute.MtalSampler)a.DataObject;
+            var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
@@ -206,7 +206,7 @@ namespace CrossMod.Rendering
         private void SetTextureParameter(Material meshMaterial, MatlAttribute a)
         {
             // Don't make texture names case sensitive.
-            var text = ((MatlAttribute.MtalString)a.DataObject).Text.ToLower();
+            var text = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();
 
             // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))

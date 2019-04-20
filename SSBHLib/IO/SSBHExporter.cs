@@ -85,12 +85,15 @@ namespace SSBHLib.IO
                     continue;
 
                 // I guess?
-                if (obj is Array)
+                if (obj is Array
+                    || (obj is MaterialEntry &&
+                        ((MaterialEntry)obj).Object is Formats.Materials.MatlAttribute.MatlString)
+                    )
                     Pad(0x8);
 
                 // not sure if 4 or 8
                 if (obj is string)
-                    Pad(0x4); 
+                    Pad(0x4);
 
                 if (objectOffset.ContainsValue(obj))
                 {
@@ -179,8 +182,9 @@ namespace SSBHLib.IO
                 {
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
-                    objectOffset.Add((uint)Position, dataObject);
-                    objectQueue.AddLast(dataObject);
+                    var matentry = new MaterialEntry(dataObject);
+                    objectOffset.Add((uint)Position, matentry);
+                    objectQueue.AddLast(matentry);
                     Write((long)0);
                 }
                 else
@@ -197,12 +201,17 @@ namespace SSBHLib.IO
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
-            if (value is Formats.Materials.MatlAttribute.MtalString)
+            if (value is MaterialEntry)
+            {
+                WriteProperty(((MaterialEntry)value).Object);
+                if(((MaterialEntry)value).Object is float)
+                Pad(0x8);
+            } else
+            if (value is Formats.Materials.MatlAttribute.MatlString)
             {
                 // special write function for matl string
-                Pad(0x8);
                 Write((long)8);
-                value = ((Formats.Materials.MatlAttribute.MtalString)value).Text;
+                value = ((Formats.Materials.MatlAttribute.MatlString)value).Text;
                 Write(((string)value).ToCharArray());
                 Write((byte)0);
                 Pad(0x4);
@@ -249,6 +258,16 @@ namespace SSBHLib.IO
             while (BaseStream.Position % toSize != 0)
             {
                 Write(paddingValue);
+            }
+        }
+
+        public class MaterialEntry
+        {
+            public object Object;
+
+            public MaterialEntry(object ob)
+            {
+                Object = ob;
             }
         }
     }
