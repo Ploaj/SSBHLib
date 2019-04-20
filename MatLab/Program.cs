@@ -10,40 +10,56 @@ namespace MatLab
     {
         static void Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
                 return;
 
-            string matlPath = args[1];
+            string matlPath = args[0];
+            string path = GetFullPathWithoutExtension(matlPath);
 
-            string code = args[0];
-
-            ISSBH_File file;
-            SSBH.TryParseSSBHFile(matlPath, out file);
-
-            MATL matlFile = (MATL)file;
-            SSBH.TrySaveSSBHFile("original.numatb", matlFile);
-
-            material_library library = MATLtoLibrary(matlFile);
-
-            System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(library.GetType());
-            using (TextWriter writer = new StringWriter())
+            XmlSerializer x = new XmlSerializer(typeof(material_library));
+            switch (Path.GetExtension(matlPath))
             {
-                x.Serialize(writer, library);
-                string serial = writer.ToString();
+                case ".numatb":
 
-                using (TextReader reader = new StringReader(serial))
-                {
-                    var result = (material_library)x.Deserialize(reader);
+                    Console.WriteLine($"Converting {Path.GetExtension(matlPath)} to .xml...");
+                    ISSBH_File file;
+                    if (SSBH.TryParseSSBHFile(matlPath, out file))
+                    {
+                        MATL matlFile = (MATL)file;
 
-                    MATL newmatl = LibraryToMATL(result);
+                        material_library library = MATLtoLibrary(matlFile);
 
-                    SSBH.TrySaveSSBHFile("test.numatb", newmatl);
+                        using (TextWriter writer = new StringWriter())
+                        {
+                            x.Serialize(writer, library);
+                            string serial = writer.ToString();
+                            File.WriteAllText(path + "_out.xml", serial);
+                        }
+                    }
+                    else
+                        Console.WriteLine("Error reading matl file");
 
-                    Console.WriteLine(result.material.Length);
-                }
+                    break;
+                case ".xml":
+                    Console.WriteLine($"Converting {Path.GetExtension(matlPath)} to .numatb");
+                    using (TextReader reader = new StringReader(File.ReadAllText(matlPath)))
+                    {
+                        var result = (material_library)x.Deserialize(reader);
+
+                        MATL newmatl = LibraryToMATL(result);
+
+                        SSBH.TrySaveSSBHFile(path + "_out.numatb", newmatl);
+                    }
+                    break;
             }
-            Console.WriteLine("Saved");
+            
+            Console.WriteLine("Done, press enter to exit");
             Console.ReadLine();
+        }
+
+        public static String GetFullPathWithoutExtension(String path)
+        {
+            return Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
         }
 
         public static MATL LibraryToMATL(material_library library)
