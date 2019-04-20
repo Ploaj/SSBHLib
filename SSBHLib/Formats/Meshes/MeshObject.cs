@@ -43,6 +43,8 @@ namespace SSBHLib.Formats.Meshes
         
         public int Unk11 { get; set; } // usually 0 long with above?
 
+        public float UnkBounding0 { get; set; }
+
         public float BoundingSphereX { get; set; }
         public float BoundingSphereY { get; set; }
         public float BoundingSphereZ { get; set; }
@@ -55,9 +57,24 @@ namespace SSBHLib.Formats.Meshes
         public float MaxBoundingBoxX { get; set; }
         public float MaxBoundingBoxY { get; set; }
         public float MaxBoundingBoxZ { get; set; }
+        
+        public float OBBCenterX { get; set; }
+        public float OBBCenterY { get; set; }
+        public float OBBCenterZ { get; set; }
 
-        [ParseTag(InLine = true)]
-        public float[] UnknownFloats { get; set; } = new float[16]; // Possibly a matrix
+        public float M11 { get; set; }
+        public float M12 { get; set; }
+        public float M13 { get; set; }
+        public float M21 { get; set; }
+        public float M22 { get; set; }
+        public float M23 { get; set; }
+        public float M31 { get; set; }
+        public float M32 { get; set; }
+        public float M33 { get; set; }
+
+        public float OBBSizeX { get; set; }
+        public float OBBSizeY { get; set; }
+        public float OBBSizeZ { get; set; }
 
         public MeshAttribute[] Attributes { get; set; }
     }

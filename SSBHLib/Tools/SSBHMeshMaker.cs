@@ -19,6 +19,9 @@ namespace SSBHLib.Tools
             public SSBHVertexAttribute BoundingSphere;
             public SSBHVertexAttribute BBMin;
             public SSBHVertexAttribute BBMax;
+            public SSBHVertexAttribute OBBCenter;
+            public SSBHVertexAttribute OBBSize;
+            public float[] OBBMatrix3x3;
             public Dictionary<UltimateVertexAttribute, float[]> VertexData = new Dictionary<UltimateVertexAttribute, float[]>();
             public List<uint> Indices = new List<uint>();
             public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
@@ -32,7 +35,7 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="name">The name of the Mesh Object</param>
         /// <param name="indices">The vertex indices as triangles</param>
-        public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "")
+        public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "", bool generateBounding = false)
         {
             CurrentMesh = new TempMesh
             {
@@ -44,6 +47,21 @@ namespace SSBHLib.Tools
 
             meshes.Add(CurrentMesh);
             AddAttributeToMeshObject(UltimateVertexAttribute.Position0, positions);
+
+            if (generateBounding)
+            {
+                //TODO: sphere generation
+                SSBHVertexAttribute min, max;
+                BoundingBoxGenerator.GenerateAABB(positions, out max, out min);
+                SetAABoundingBox(min, max);
+                SetOrientedBoundingBox(
+                    new SSBHVertexAttribute((max.X + min.X / 2), (max.Y + min.Y / 2), (max.Y + min.Y / 2)),
+                    new SSBHVertexAttribute((max.X - min.X), (max.Y - min.Y), (max.Z - min.Z)),
+                    new float[] {
+                        1, 0, 0,
+                        0, 1, 0,
+                        0, 0, 1});
+            }
         }
 
         /// <summary>
@@ -60,6 +78,37 @@ namespace SSBHLib.Tools
                 Z = z,
                 W = r
             };
+        }
+
+        /// <summary>
+        /// Sets the axis aligned bounding box for the current Mesh
+        /// </summary>
+        /// <param name="Min"></param>
+        /// <param name="Max"></param>
+        public void SetAABoundingBox(SSBHVertexAttribute Min, SSBHVertexAttribute Max)
+        {
+            if (CurrentMesh == null)
+                return;
+            CurrentMesh.BBMax = Max;
+            CurrentMesh.BBMin = Min;
+        }
+
+        /// <summary>
+        /// Sets the oriented bounding box for the current Mesh
+        /// </summary>
+        /// <param name="Min"></param>
+        /// <param name="Max"></param>
+        public void SetOrientedBoundingBox(SSBHVertexAttribute center, SSBHVertexAttribute size, float[] matrix3x3)
+        {
+            if (CurrentMesh == null)
+                return;
+            if (matrix3x3 == null)
+                return;
+            if (matrix3x3.Length != 9)
+                throw new IndexOutOfRangeException("Matrix must contain 9 entries in row major order");
+            CurrentMesh.OBBCenter = center;
+            CurrentMesh.OBBSize = size;
+            CurrentMesh.OBBMatrix3x3 = matrix3x3;
         }
 
         /// <summary>
@@ -138,6 +187,32 @@ namespace SSBHLib.Tools
                 mo.BoundingSphereY = tempmesh.BoundingSphere.Y;
                 mo.BoundingSphereZ = tempmesh.BoundingSphere.Z;
                 mo.BoundingSphereRadius = tempmesh.BoundingSphere.W;
+
+                mo.MaxBoundingBoxX = tempmesh.BBMax.X;
+                mo.MaxBoundingBoxY = tempmesh.BBMax.Y;
+                mo.MaxBoundingBoxZ = tempmesh.BBMax.Z;
+                mo.MinBoundingBoxX = tempmesh.BBMin.X;
+                mo.MinBoundingBoxY = tempmesh.BBMin.Y;
+                mo.MinBoundingBoxZ = tempmesh.BBMin.Z;
+
+                mo.OBBCenterX = tempmesh.OBBCenter.X;
+                mo.OBBCenterY = tempmesh.OBBCenter.Y;
+                mo.OBBCenterZ = tempmesh.OBBCenter.Z;
+
+                mo.OBBSizeX = tempmesh.OBBSize.X;
+                mo.OBBSizeY = tempmesh.OBBSize.Y;
+                mo.OBBSizeZ = tempmesh.OBBSize.Z;
+
+                mo.M11 = tempmesh.OBBMatrix3x3[0];
+                mo.M12 = tempmesh.OBBMatrix3x3[1];
+                mo.M13 = tempmesh.OBBMatrix3x3[2];
+                mo.M21 = tempmesh.OBBMatrix3x3[3];
+                mo.M22 = tempmesh.OBBMatrix3x3[4];
+                mo.M23 = tempmesh.OBBMatrix3x3[5];
+                mo.M31 = tempmesh.OBBMatrix3x3[6];
+                mo.M32 = tempmesh.OBBMatrix3x3[7];
+                mo.M33 = tempmesh.OBBMatrix3x3[8];
+
 
                 // Create Rigging
                 RiggingGroups.Add(SSBHRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
