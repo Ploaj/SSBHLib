@@ -178,11 +178,11 @@ namespace CrossMod.Rendering
                     Matrix4 parenttransform = Bones[b.ParentID].GetAnimationTransform(this);
                     boneShader.SetMatrix4x4("parent", ref parenttransform);
                 }
-                bonePrism.Draw(boneShader, null);
+                bonePrism.Draw(boneShader);
 
                 // leaf node
                 boneShader.SetInt("hasParent", 0); 
-                bonePrism.Draw(boneShader, null);
+                bonePrism.Draw(boneShader);
             }
 
         }

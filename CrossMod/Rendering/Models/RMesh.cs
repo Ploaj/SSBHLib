@@ -44,7 +44,7 @@ namespace CrossMod.Rendering.Models
             GL.Enable(EnableCap.PrimitiveRestart);
             GL.PrimitiveRestartIndex(0xFFFFFFFF);
 
-            RenderMesh?.Draw(shader, camera);
+            RenderMesh?.Draw(shader);
         }
 
         private void SetTextureUniforms(Shader shader)

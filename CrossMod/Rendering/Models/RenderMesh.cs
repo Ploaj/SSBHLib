@@ -6,6 +6,8 @@ namespace CrossMod.Rendering.Models
 {
     public class RenderMesh : GenericMesh<CustomVertex>
     {
+        private SFGenericModel.RenderState.RenderSettings renderSettings = new SFGenericModel.RenderState.RenderSettings();
+
         public RenderMesh(List<CustomVertex> vertices, List<uint> indices) : base(vertices, indices, PrimitiveType.Triangles)
         {
 

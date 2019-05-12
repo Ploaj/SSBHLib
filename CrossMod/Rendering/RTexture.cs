@@ -27,7 +27,7 @@ namespace CrossMod.Rendering
             // The colors need to be converted back to sRGB gamma.
             shader.SetBoolToInt("isSrgb", IsSrgb);
 
-            triangle.Draw(shader, null);
+            triangle.Draw(shader);
         }
     }
 }
