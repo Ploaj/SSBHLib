@@ -59,7 +59,7 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)
     vec4 emissionColor = texture(emiMap, uvLayer1).rgba;
 
     vec2 uvLayer2 = TransformUv(uv2, transform2);
-    vec4 emission2Color = texture(emi2Map, uvLayer2).rgba;
+    vec4 emission2Color = texture(emi2Map, uvLayer1).rgba;
 
     emissionColor.rgb = Blend(emissionColor, emission2Color);
     return emissionColor;
