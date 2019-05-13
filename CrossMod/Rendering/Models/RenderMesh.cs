@@ -16,6 +16,7 @@ namespace CrossMod.Rendering.Models
         public void SetRenderState(Material material)
         {
             renderSettings.alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, material.BlendSrc, material.BlendDst, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
+            SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(renderSettings);
         }
     }
 }

@@ -150,6 +150,8 @@ namespace CrossMod.Rendering
             // Enables/disables specular occlusion.
             AddBool("paramE9", genericMaterial, 0xE9, true);
 
+            AddBool("paramEA", genericMaterial, 0xEA, true);
+
             // Controls anisotropic specular.
             AddFloat("paramCA", genericMaterial, 0xCA, 0.0f);
 
