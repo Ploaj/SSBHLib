@@ -199,10 +199,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddBoolToInt("hasInkNorMap", HasInkNorMap);
 
             genericMaterial.AddTexture("emiMap", emi);
-            if (HasEmi2)
-                genericMaterial.AddTexture("emi2Map", emi2);
-            else
-                genericMaterial.AddTexture("emi2Map", emi);
+            genericMaterial.AddTexture("emi2Map", emi2);
 
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);

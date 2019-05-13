@@ -227,7 +227,6 @@ vec3 EmissionTerm(vec4 emissionColor)
     return emissionColor.rgb * param9B.rgb;
 }
 
-
 float GetF0(float ior)
 {
     return pow((1 - ior) / (1 + ior), 2);
@@ -337,6 +336,8 @@ void main()
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
         fragColor.rgb *= colorSet1.rgb;
 
+    // fragColor.rgb *= paramA0.rgb;
+
     if (renderWireframe == 1)
     {
         vec3 edgeColor = vec3(1);
@@ -361,10 +362,10 @@ void main()
         discard;
 
     // TODO: Transparency seems to use some sort of stipple pattern.
-    int x = int(mod(gl_FragCoord.x - 0.5, 4));
-    int y = int(mod(gl_FragCoord.y - 0.5, 4));
-    if ((fragColor.a < (thresholdMatrix16[x][y])))
-        discard;
+    // int x = int(mod(gl_FragCoord.x - 0.5, 4));
+    // int y = int(mod(gl_FragCoord.y - 0.5, 4));
+    // if ((fragColor.a < (thresholdMatrix16[x][y])))
+    //     discard;
 
     // TODO: How does this work?
     if (hasInkNorMap == 1 && transitionBlend < 1)
