@@ -57,11 +57,17 @@ uniform int renderVertexColor;
 uniform int renderNormalMaps;
 
 uniform vec4 paramA6;
+
 uniform vec4 paramA3;
+uniform vec4 param145;
+
 uniform vec4 paramA5;
 uniform vec4 paramA0;
 uniform vec4 param98;
 uniform vec4 param9B;
+
+uniform int hasParam151;
+uniform vec4 param151;
 
 // UV transforms.
 uniform vec4 param146;
@@ -91,7 +97,8 @@ uniform vec3 V;
 
 out vec4 fragColor;
 
-const float directLightIntensity = 1.25;
+const float directLightIntensity = 1.00;
+const float iblIntensity = 1.00;
 
 // Matrices for ordered dithering
 // https://en.wikipedia.org/wiki/Ordered_dithering
@@ -203,14 +210,18 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
+    // TODO: param145?
     if (paramCA != 0)
         specularTerm += kSpecular * GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
-        specularTerm += kSpecular * Ggx(N, V, roughness) * directLightIntensity;
+        specularTerm += kSpecular * pow(Ggx(N, V, roughness), param145.x) * directLightIntensity;
 
     // Cavity Map used for specular occlusion.
     if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
+
+    // TODO: Specular color?
+    specularTerm *= paramA0.rgb;
 
     return specularTerm;
 }
@@ -219,7 +230,7 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
 {
     // TODO: How does this work?
     float rimLight = (1 - max(dot(N, V), 0));
-    return paramA6.rgb * pow(rimLight, 3) * specularIbl * 0.5;
+    return pow(rimLight, 3) * specularIbl;// * 0.5;// * paramA6.rgb;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -263,6 +274,8 @@ void main()
     // Probably some sort of override for PRM color.
     if (hasParam156 == 1)
         prmColor = param156;
+    // if (hasParam151 == 1)
+    //     prmColor.bga = param151.bga;
 
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
@@ -295,7 +308,6 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    float iblIntensity = 2.0;
     vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * iblIntensity;
     int maxLod = 10;
     vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * iblIntensity;
@@ -304,7 +316,8 @@ void main()
 
     float f0Dialectric = GetF0(paramC8 + 1);
     vec3 f0Final = mix(prmColor.aaa * f0Dialectric, albedoColor.rgb, metalness);
-    vec3 kSpecular = FresnelSchlickRoughness(max(dot(newNormal, V), 0.0), f0Final, roughness);
+    float nDotV = max(dot(newNormal, V), 0.0);
+    vec3 kSpecular = FresnelSchlickRoughness(nDotV, f0Final, roughness);
 
     // Only use one component to prevent discoloration of diffuse.
     vec3 kDiffuse = (1 - kSpecular.rrr);
@@ -331,12 +344,13 @@ void main()
     vec3 emissionTerm = EmissionTerm(emissionColor);
     fragColor.rgb += emissionTerm * renderEmission;
 
+    // TODO: Fake SSS?
+    fragColor.rgb += paramA3.rgb * metalness;
+
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
         fragColor.rgb *= colorSet1.rgb;
-
-    // fragColor.rgb *= paramA0.rgb;
 
     if (renderWireframe == 1)
     {

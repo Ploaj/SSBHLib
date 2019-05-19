@@ -134,6 +134,7 @@ namespace CrossMod.Rendering
 
             // Some sort of skin subsurface color?
             AddVec4(genericMaterial, 0xA3, new Vector4(0));
+            AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
 
             // Mario Galaxy rim light?
             AddVec4(genericMaterial, 0xA0, new Vector4(1));
