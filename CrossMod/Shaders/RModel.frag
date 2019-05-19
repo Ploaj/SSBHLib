@@ -174,7 +174,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness)
 {
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
@@ -184,7 +184,14 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     // Direct lighting.
     diffuseLight += LambertShading(N, V) * directLightIntensity;
 
-    vec3 diffuseTerm = kDiffuse * albedoColor.rgb * diffuseLight;
+    vec3 diffuseTerm = kDiffuse * albedoColor.rgb;
+
+    // Some sort of fake SSS color.
+    // TODO: The SSS color may be part of a separate render pass
+    // and not take into account diffuse lighting.
+    diffuseTerm += paramA3.rgb * metalness;
+
+    diffuseTerm *= diffuseLight;
 
     // Color multiplier param.
     diffuseTerm *= paramA5.rgb;
@@ -210,11 +217,16 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
-    // TODO: param145?
+    float specularBrdf = 0;
     if (paramCA != 0)
-        specularTerm += kSpecular * GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
+        specularBrdf = GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
-        specularTerm += kSpecular * pow(Ggx(N, V, roughness), param145.x) * directLightIntensity;
+        specularBrdf = pow(Ggx(N, V, roughness), param145.x) * directLightIntensity;
+
+    // TODO: Some sort of fake SSS.
+    specularBrdf = pow(specularBrdf, param145.x);
+
+    specularTerm += kSpecular * vec3(specularBrdf);
 
     // Cavity Map used for specular occlusion.
     if (paramE9 == 1)
@@ -230,7 +242,7 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
 {
     // TODO: How does this work?
     float rimLight = (1 - max(dot(N, V), 0));
-    return pow(rimLight, 3) * specularIbl;// * 0.5;// * paramA6.rgb;
+    return pow(rimLight, 3) * specularIbl * paramA6.rgb;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -327,7 +339,7 @@ void main()
     kDiffuse *= (1 - metalness);
 
     // Render passes.
-    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse);
+    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
     vec3 rimTerm = RimLightingTerm(newNormal, V, specularIbl);
@@ -343,10 +355,6 @@ void main()
     // Emission
     vec3 emissionTerm = EmissionTerm(emissionColor);
     fragColor.rgb += emissionTerm * renderEmission;
-
-    // TODO: Fake SSS?
-    fragColor.rgb += paramA3.rgb * metalness;
-
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
