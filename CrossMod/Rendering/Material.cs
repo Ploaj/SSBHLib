@@ -127,13 +127,13 @@ namespace CrossMod.Rendering
         private void AddMaterialParams(GenericMaterial genericMaterial)
         {
             // Set specific parameters and use a default value if not present.
-            AddVec4(genericMaterial, RenderSettings.Instance.ParamId, new Vector4(0));
+            AddVec4(genericMaterial, RenderSettings.Instance.ParamId, new Vector4(0), true);
 
             // Assume no edge lighting if not present.
             AddVec4(genericMaterial, 0xA6, new Vector4(0));
 
             // Some sort of skin subsurface color?
-            AddVec4(genericMaterial, 0xA3, new Vector4(1));
+            AddVec4(genericMaterial, 0xA3, new Vector4(0));
 
             // Mario Galaxy rim light?
             AddVec4(genericMaterial, 0xA0, new Vector4(1));
@@ -263,10 +263,13 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void AddVec4(GenericMaterial genericMaterial, long paramId, Vector4 defaultValue)
+        private void AddVec4(GenericMaterial genericMaterial, long paramId, Vector4 defaultValue, bool isDebug = false)
         {
             // Convert parameters into colors for easier visualization.
             var name = $"param{paramId.ToString("X")}";
+            if (isDebug)
+                name = "vec4Param";
+
             if (MaterialAnimation.ContainsKey(paramId))
             {
                 var value = MaterialAnimation[paramId];
