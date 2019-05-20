@@ -129,8 +129,8 @@ namespace CrossMod.Rendering
             // Set specific parameters and use a default value if not present.
             AddVec4(genericMaterial, RenderSettings.Instance.ParamId, new Vector4(0), true);
 
-            // Assume no edge lighting if not present.
-            AddVec4(genericMaterial, 0xA6, new Vector4(0));
+            // Assume no edge tint if not present.
+            AddVec4(genericMaterial, 0xA6, new Vector4(1));
 
             // Some sort of skin subsurface color?
             AddVec4(genericMaterial, 0xA3, new Vector4(0));

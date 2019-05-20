@@ -176,6 +176,13 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transfor
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness)
 {
+    vec3 diffuseTerm = kDiffuse * albedoColor.rgb;
+
+    // Some sort of fake SSS color.
+    // TODO: The SSS color may be part of a separate render pass
+    // and not take into account diffuse lighting.
+    diffuseTerm += paramA3.rgb * metalness;
+
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
     diffuseLight += diffuseIbl;
@@ -183,13 +190,6 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
 
     // Direct lighting.
     diffuseLight += LambertShading(N, V) * directLightIntensity;
-
-    vec3 diffuseTerm = kDiffuse * albedoColor.rgb;
-
-    // Some sort of fake SSS color.
-    // TODO: The SSS color may be part of a separate render pass
-    // and not take into account diffuse lighting.
-    diffuseTerm += paramA3.rgb * metalness;
 
     diffuseTerm *= diffuseLight;
 
@@ -200,6 +200,13 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
         diffuseTerm = param153.rgb + param154.rgb;
 
     return diffuseTerm;
+}
+
+vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
+{
+    // TODO: How does this work?
+    float facingRatio = (1 - max(dot(N, V), 0));
+    return mix(vec3(1), paramA6.rgb, pow(facingRatio, 2));
 }
 
 vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
@@ -235,14 +242,10 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     // TODO: Specular color?
     specularTerm *= paramA0.rgb;
 
-    return specularTerm;
-}
+    vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
+    specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
 
-vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
-{
-    // TODO: How does this work?
-    float rimLight = (1 - max(dot(N, V), 0));
-    return pow(rimLight, 3) * specularIbl * paramA6.rgb;
+    return specularTerm;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -341,9 +344,6 @@ void main()
     // Render passes.
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness);
     fragColor.rgb += diffuseTerm * renderDiffuse;
-
-    vec3 rimTerm = RimLightingTerm(newNormal, V, specularIbl);
-    fragColor.rgb += rimTerm * renderRimLighting;
 
     vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a);
     fragColor.rgb += specularTerm * renderSpecular;
