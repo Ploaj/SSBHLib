@@ -48,6 +48,9 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Rim Lighting", ValueEnums.ValueType.Bool, "Lighting")]
         public bool EnableRimLighting { get; set; } = true;
 
+        [EditInfo("Enable Experimental", ValueEnums.ValueType.Bool, "Lighting")]
+        public bool EnableExperimental { get; set; } = true;
+
         [EditInfo("Render Normal Maps", ValueEnums.ValueType.Bool, "Materials")]
         public bool RenderNormalMaps { get; set; } = true;
 

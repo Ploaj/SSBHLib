@@ -84,6 +84,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
             currentShader.SetBoolToInt("renderEmission", RenderSettings.Instance.EnableEmission);
             currentShader.SetBoolToInt("renderRimLighting", RenderSettings.Instance.EnableRimLighting);
+            currentShader.SetBoolToInt("renderExperimental", RenderSettings.Instance.EnableExperimental);
 
             currentShader.SetBoolToInt("renderNormalMaps", RenderSettings.Instance.RenderNormalMaps);
             currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);

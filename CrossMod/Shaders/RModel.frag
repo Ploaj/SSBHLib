@@ -51,6 +51,7 @@ uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderEmission;
 uniform int renderRimLighting;
+uniform int renderExperimental;
 
 uniform int renderWireframe;
 uniform int renderVertexColor;
@@ -181,7 +182,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     // Some sort of fake SSS color.
     // TODO: The SSS color may be part of a separate render pass
     // and not take into account diffuse lighting.
-    diffuseTerm += paramA3.rgb * metalness;
+    diffuseTerm += paramA3.rgb * metalness * renderExperimental;
 
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
@@ -231,7 +232,8 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
         specularBrdf = pow(Ggx(N, V, roughness), param145.x) * directLightIntensity;
 
     // TODO: Some sort of fake SSS.
-    specularBrdf = pow(specularBrdf, param145.x);
+    if (renderExperimental == 1)
+        specularBrdf = pow(specularBrdf, param145.x);
 
     specularTerm += kSpecular * vec3(specularBrdf);
 
