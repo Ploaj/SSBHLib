@@ -38,6 +38,8 @@ namespace SSBHLib.IO
         private static readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
+        private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
+
         public SSBHParser(Stream Stream) : base(Stream)
         {
         }
@@ -75,11 +77,10 @@ namespace SSBHLib.IO
                 {
                     if (attr.Magic.Equals(Magic))
                     {
-                        MethodInfo method = typeof(SSBHParser).GetMethod("Parse");
+                        MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
+                        parseMethod = parseMethod.MakeGenericMethod(type);
 
-                        method = method.MakeGenericMethod(type);
-
-                        File = (ISSBH_File)method.Invoke(this, null);
+                        File = (ISSBH_File)parseMethod.Invoke(this, null);
                         return true;
                     }
                 }
@@ -182,21 +183,23 @@ namespace SSBHLib.IO
                     
                     long temp = Position;
 
-                    Array y1 = Array.CreateInstance(prop.PropertyType.GetElementType(), Size);
+                    var propElementType = prop.PropertyType.GetElementType();
+                    Array y1 = Array.CreateInstance(propElementType, Size);
 
                     Seek(Offset);
                     for (int i = 0; i < Size; i++)
                     {
-                        object Obj = ReadProperty(prop.PropertyType.GetElementType());
-                        if (Obj == null)
+                        object obj = ReadProperty(propElementType);
+                        if (obj == null)
                         {
-                            MethodInfo method = typeof(SSBHParser).GetMethod("Parse");
+                            if (!genericParseMethodByType.ContainsKey(propElementType))
+                            {
+                                AddParseMethod(prop, propElementType);
+                            }
 
-                            method = method.MakeGenericMethod(prop.PropertyType.GetElementType());
-
-                            Obj = method.Invoke(this, null);
+                            obj = genericParseMethodByType[propElementType].Invoke(this, null);
                         }
-                        y1.SetValue(Obj, i);
+                        y1.SetValue(obj, i);
                     }
 
                     prop.SetValue(tObject, y1);
@@ -217,12 +220,18 @@ namespace SSBHLib.IO
             return tObject;
         }
 
+        private static void AddParseMethod(PropertyInfo prop, Type propElementType)
+        {
+            MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
+            parseMethod = parseMethod.MakeGenericMethod(prop.PropertyType.GetElementType());
+            genericParseMethodByType.Add(propElementType, parseMethod);
+        }
+
         public object ReadProperty(Type t)
         {
-            if (t == typeof(SSBHOffset))
-                return new SSBHOffset(Position + ReadInt64());
-            else if (t.IsEnum)
-                return Enum.ToObject(t, ReadUInt64());
+            // Check for enums last to improve performance.
+            if (t == typeof(uint))
+                return ReadUInt32();
             else if (t == typeof(byte))
                 return ReadByte();
             else if (t == typeof(char))
@@ -233,14 +242,16 @@ namespace SSBHLib.IO
                 return ReadUInt16();
             else if (t == typeof(int))
                 return ReadInt32();
-            else if (t == typeof(uint))
-                return ReadUInt32();
             else if (t == typeof(long))
                 return ReadInt64();
             else if (t == typeof(ulong))
                 return ReadUInt64();
             else if (t == typeof(float))
                 return ReadSingle();
+            else if (t == typeof(SSBHOffset))
+                return new SSBHOffset(Position + ReadInt64());
+            else if (t.IsEnum)
+                return Enum.ToObject(t, ReadUInt64());
             else
                 return null;
         }
