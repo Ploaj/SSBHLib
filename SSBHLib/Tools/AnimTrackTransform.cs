@@ -18,7 +18,7 @@
         public float SY;
         public float SZ;
 
-        public float AbsoluteScale;
+        public float CompensateScale;
 
         public override string ToString()
         {

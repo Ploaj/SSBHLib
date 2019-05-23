@@ -51,7 +51,7 @@ namespace CrossMod.Rendering
         {
             return new List<VertexAttribute>()
             {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float),
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false),
             };
         }
     }

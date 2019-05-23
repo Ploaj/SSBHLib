@@ -121,7 +121,7 @@ namespace CrossMod.Nodes
                             {
                                 Frame = i,
                                 Value = GetMatrix((AnimTrackTransform)Transform[i]),
-                                AbsoluteScale = t.AbsoluteScale
+                                AbsoluteScale = t.CompensateScale
                             });
                         }
                     }

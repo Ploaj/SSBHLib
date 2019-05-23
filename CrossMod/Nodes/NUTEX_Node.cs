@@ -229,6 +229,10 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
+            // TODO: Some texture files are 0 bytes.
+            if (Mipmaps.Count == 0)
+                return null;
+
             // Don't initialize more than once.
             // We'll assume the context isn't destroyed.
             if (renderableTexture == null)

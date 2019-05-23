@@ -5,6 +5,8 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using SSBHLib.Formats.Animation;
+using SSBHLib.Tools;
 
 namespace HBSSTester
 {
@@ -72,10 +74,71 @@ namespace HBSSTester
             w.Close();*/
 
             ISSBH_File File;
+            if (SSBH.TryParseSSBHFile(Directory.GetCurrentDirectory() + "//" + args[0], out File))
+            {
+                if (File is ANIM anim)
+                {
+                    var decoder = new SSBHAnimTrackDecoder(anim);
+
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "  ",
+                        NewLineChars = "\r\n",
+                        NewLineHandling = NewLineHandling.Replace
+                    };
+
+                    string FileName = Directory.GetCurrentDirectory() + "//" + Path.GetDirectoryName(args[0]) + "\\" + Path.GetFileNameWithoutExtension(args[0]) + ".xml";
+
+                    XmlWriter o = XmlWriter.Create(new FileStream(FileName, FileMode.Create), settings);
+                    o.WriteStartDocument();
+
+                    o.WriteStartElement("NamcoAnimation");
+                    
+                    foreach (var an in anim.Animations)
+                    {
+                        o.WriteStartElement("Animation");
+                        o.WriteAttributeString("Type", an.Type.ToString());
+                        foreach (var node in an.Nodes)
+                        {
+                            o.WriteStartElement("Node");
+                            o.WriteAttributeString("Name", node.Name);
+                            foreach (var track in node.Tracks)
+                            {
+                                o.WriteStartElement("Track");
+                                o.WriteAttributeString("Name", track.Name);
+                                o.WriteAttributeString("FrameCount", track.FrameCount.ToString());
+                                //o.WriteAttributeString("Flags", track.Flags.ToString("X"));
+
+                                var values = decoder.ReadTrack(track);
+
+                                if(values != null && values.Length > 0)
+                                o.WriteAttributeString("Type", values[0].GetType().Name);
+
+                                for (int i = 0; i < values.Length; i++)
+                                {
+                                    o.WriteStartElement("Key");
+                                    o.WriteAttributeString("Frame", (i+1).ToString());
+                                    o.WriteString(values[i].ToString());
+                                    o.WriteEndElement();
+                                }
+                                o.WriteEndElement();
+                            }
+                            o.WriteEndElement();
+                        }
+                        o.WriteEndElement();
+                    }
+
+                    o.WriteEndElement();
+                    o.Close();
+                }
+            }
+
+            /*ISSBH_File File;
             if(SSBH.TryParseSSBHFile("", out File))
             {
                 ExportFileAsXML("Test.xml", File);
-            }
+            }*/
             //Console.ReadLine();
         }
 

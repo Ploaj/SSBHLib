@@ -25,7 +25,7 @@ namespace CrossMod.Rendering
         {
             return new List<VertexAttribute>()
             {
-                new VertexFloatAttribute("position", ValueCount.Three, VertexAttribPointerType.Float),
+                new VertexFloatAttribute("position", ValueCount.Three, VertexAttribPointerType.Float, false),
             };
         }
     }

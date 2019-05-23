@@ -127,59 +127,62 @@ namespace CrossMod.Rendering
         private void AddMaterialParams(GenericMaterial genericMaterial)
         {
             // Set specific parameters and use a default value if not present.
-            AddVec4("vec4Param", genericMaterial, RenderSettings.Instance.ParamId, new Vector4(0));
+            AddVec4(genericMaterial, RenderSettings.Instance.ParamId, new Vector4(0), true);
 
-            // Assume no edge lighting if not present.
-            AddVec4("paramA6", genericMaterial, 0xA6, new Vector4(0));
+            // Assume no edge tint if not present.
+            AddVec4(genericMaterial, 0xA6, new Vector4(1));
 
             // Some sort of skin subsurface color?
-            AddVec4("paramA3", genericMaterial, 0xA3, new Vector4(1));
+            AddVec4(genericMaterial, 0xA3, new Vector4(0));
+            AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
 
             // Mario Galaxy rim light?
-            AddVec4("paramA0", genericMaterial, 0xA0, new Vector4(1));
+            AddVec4(genericMaterial, 0xA0, new Vector4(1));
 
             // Diffuse color multiplier?
-            AddVec4("paramA5", genericMaterial, 0xA5, new Vector4(1));
+            AddVec4(genericMaterial, 0xA5, new Vector4(1));
 
             // Sprite sheet UV parameters.
-            AddVec4("paramAA", genericMaterial, 0xAA, new Vector4(1));
+            AddVec4(genericMaterial, 0xAA, new Vector4(1));
 
-            AddVec4("param156", genericMaterial, 0x156, new Vector4(0));
+            AddVec4(genericMaterial, 0x156, new Vector4(0));
             genericMaterial.AddBoolToInt("hasParam156", vec4ByParamId.ContainsKey(0x156));
 
             // Enables/disables specular occlusion.
-            AddBool("paramE9", genericMaterial, 0xE9, true);
+            AddBool(genericMaterial, 0xE9, true);
+
+            AddBool(genericMaterial, 0xEA, true);
 
             // Controls anisotropic specular.
-            AddFloat("paramCA", genericMaterial, 0xCA, 0.0f);
+            AddFloat(genericMaterial, 0xCA, 0.0f);
 
             // Controls specular IOR.
-            AddFloat("paramC8", genericMaterial, 0xC8, 0.0f);
+            AddFloat(genericMaterial, 0xC8, 0.0f);
 
             // Some sort of sprite sheet scale toggle.
-            AddBool("paramF1", genericMaterial, 0xF1, true);
+            AddBool(genericMaterial, 0xF1, true);
 
             // Enables/disables UV scrolling animations.
-            AddBool("paramEE", genericMaterial, 0xEE, false);
-            AddBool("paramED", genericMaterial, 0xED, false);
+            AddBool(genericMaterial, 0xEE, false);
+            AddBool(genericMaterial, 0xED, false);
 
             // Alpha offset.
-            AddVec4("param98", genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
+            AddVec4(genericMaterial, 0x98, new Vector4(0, 0, 0, 0));
 
             // UV transforms.
-            AddVec4("param146", genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
-            AddVec4("param147", genericMaterial, 0x147, new Vector4(1, 1, 0, 0));
+            AddVec4(genericMaterial, 0x146, new Vector4(1, 1, 0, 0));
+            AddVec4(genericMaterial, 0x147, new Vector4(1, 1, 0, 0));
 
             // UV transform for emissive map layer 1.
-            AddVec4("param9E", genericMaterial, 0x9E, new Vector4(1, 1, 0, 0));
+            AddVec4(genericMaterial, 0x9E, new Vector4(1, 1, 0, 0));
 
             // Wii Fit trainer stage color.
             genericMaterial.AddBoolToInt("hasParam153", vec4ByParamId.ContainsKey(0x153));
-            AddVec4("param153", genericMaterial, 0x153, new Vector4(0, 0, 0, 0));
-            AddVec4("param154", genericMaterial, 0x154, new Vector4(0, 0, 0, 0));
+            AddVec4(genericMaterial, 0x153, new Vector4(0, 0, 0, 0));
+            AddVec4(genericMaterial, 0x154, new Vector4(0, 0, 0, 0));
 
             // Some sort of emission color.
-            AddVec4("param9B", genericMaterial, 0x9B, new Vector4(1));
+            AddVec4(genericMaterial, 0x9B, new Vector4(1));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
@@ -197,10 +200,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddBoolToInt("hasInkNorMap", HasInkNorMap);
 
             genericMaterial.AddTexture("emiMap", emi);
-            if (HasEmi2)
-                genericMaterial.AddTexture("emi2Map", emi2);
-            else
-                genericMaterial.AddTexture("emi2Map", emi);
+            genericMaterial.AddTexture("emi2Map", emi2);
 
             genericMaterial.AddTexture("bakeLitMap", bakeLit);
             genericMaterial.AddTexture("gaoMap", gao);
@@ -222,7 +222,6 @@ namespace CrossMod.Rendering
             var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
             var hasEmiMaps = HasEmi || HasEmi2;
             genericMaterial.AddBoolToInt("emissionOverride", hasEmiMaps && !hasDiffuseMaps);
-
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
@@ -237,8 +236,9 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 
-        private void AddBool(string name, GenericMaterial genericMaterial, long paramId, bool defaultValue)
+        private void AddBool(GenericMaterial genericMaterial, long paramId, bool defaultValue)
         {
+            var name = $"param{paramId.ToString("X")}";
             if (boolByParamId.ContainsKey(paramId))
             {
                 var value = boolByParamId[paramId];
@@ -250,8 +250,9 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void AddFloat(string name, GenericMaterial genericMaterial, long paramId, float defaultValue)
+        private void AddFloat(GenericMaterial genericMaterial, long paramId, float defaultValue)
         {
+            var name = $"param{paramId.ToString("X")}";
             if (floatByParamId.ContainsKey(paramId))
             {
                 var value = floatByParamId[paramId];
@@ -263,11 +264,13 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void AddVec4(string name, GenericMaterial genericMaterial, long paramId, Vector4 defaultValue)
+        private void AddVec4(GenericMaterial genericMaterial, long paramId, Vector4 defaultValue, bool isDebug = false)
         {
             // Convert parameters into colors for easier visualization.
+            var name = $"param{paramId.ToString("X")}";
+            if (isDebug)
+                name = "vec4Param";
 
-            // I can't do this generically because the shader names won't match the attribute names.... too messy
             if (MaterialAnimation.ContainsKey(paramId))
             {
                 var value = MaterialAnimation[paramId];
