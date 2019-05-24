@@ -144,6 +144,8 @@ namespace CrossMod.Nodes
                 Vector3 v2;
                 Vector3 v3;
                 Vector3 v4;
+                //this makes sure the rectangle is always front facing
+                //I had trouble using OpenGL's culling mode, I don't know why
                 if ((shape.p1.X - shape.p2.X) * (shape.p1.Y - shape.p2.Y) > 0)
                 {
                     v1 = new Vector3(0, shape.p1.Y, shape.p1.X);

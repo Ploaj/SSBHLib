@@ -114,6 +114,17 @@ namespace CrossMod.Nodes
                         float add = (float)Math.PI / 4f;
                         for (int j = 0; j < 4; j++)
                             Line.Render(radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
+
+                        //set_vec_target_pos uses a second position to pull opponents toward
+                        //this is represented by a line drawn between hitbox center and that
+                        if (angle == 368)
+                        {
+                            var otherBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
+                            var otherBoneNoScale =
+                                Matrix4.CreateFromQuaternion(otherBone.ExtractRotation())
+                                * Matrix4.CreateTranslation(otherBone.ExtractTranslation());
+                            Line.Render(coll.Pos, boneNoScale, attack.VecTargetPos_pos, otherBoneNoScale, mvp, angleColor);
+                        }
                     }
                 }
             }
@@ -163,6 +174,9 @@ namespace CrossMod.Nodes
 
         public void Start()
         {
+            if (CurrentAnimationName == null)
+                return;
+
             for (int i = 0; i < Attacks.Length; i++)
                 Attacks[i] = Attack.Default();
             for (int i = 0; i < Grabs.Length; i++)
@@ -320,6 +334,14 @@ namespace CrossMod.Nodes
                         case CmdType.ft_motion_rate:
                             Parent.Observer.MotionRate = 1f / float.Parse(args[0]);
                             break;
+                        case CmdType.set_vec_target_pos:
+                            Parent.Observer.Attacks[IntParse(args[0])].SetVecTargetPos(
+                                UlongParse(args[1]),
+                                new Vector3(
+                                    float.Parse(args[2]),
+                                    float.Parse(args[3]),
+                                    float.Parse(args[4])));
+                            break;
                     }
                 }
 
@@ -335,7 +357,8 @@ namespace CrossMod.Nodes
                     catch_capsule,
                     catch_clear,
                     catch_clear_all,
-                    ft_motion_rate
+                    ft_motion_rate,
+                    set_vec_target_pos
                 }
 
                 private int IntParse(string word)

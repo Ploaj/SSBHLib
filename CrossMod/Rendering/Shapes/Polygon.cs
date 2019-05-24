@@ -23,7 +23,7 @@ namespace CrossMod.Rendering.Shapes
         {
             return new List<VertexAttribute>()
             {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float)
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
             };
         }
 
@@ -35,7 +35,7 @@ namespace CrossMod.Rendering.Shapes
             Shader.SetMatrix4x4("mvp", ref mvp);
             Shader.SetVector4("color", color);
 
-            Draw(Shader, null);
+            Draw(Shader);
         }
     }
 }

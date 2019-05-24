@@ -3,18 +3,26 @@
 in vec4 point;
 
 uniform mat4 mvp;
-uniform mat4 rotation;
-uniform mat4 bone;
 
-uniform vec3 offset;
+uniform mat4 bone1;
+uniform vec3 offset1;
+uniform vec3 world_offset1;
 
-uniform float size;
+uniform mat4 bone2;
+uniform vec3 offset2;
+uniform vec3 world_offset2;
 
 void main()
 {
-    vec4 startpoint = bone * vec4(offset, 1);
-
-    vec4 endpoint = rotation * vec4(point.xyz * size, 1);
-
-    gl_Position = mvp * vec4(startpoint.xyz + endpoint.xyz, 1);
+	//hack
+    if (point.z == 0)
+	{
+		vec4 transformed = bone1 * vec4(offset1, 1);
+		gl_Position = mvp * vec4(transformed.xyz + world_offset1, 1);
+	}
+	else
+	{
+		vec4 transformed = bone2 * vec4(offset2, 1);
+		gl_Position = mvp * vec4(transformed.xyz + world_offset2, 1);
+	}
 }
