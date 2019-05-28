@@ -40,8 +40,11 @@ namespace SSBHLib.IO
 
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
 
+        private static Dictionary<Type, List<Action<ISSBH_File, Type>>> Setter = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
+
         public SSBHParser(Stream Stream) : base(Stream)
         {
+
         }
 
         public void Seek(long Position)

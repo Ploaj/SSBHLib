@@ -395,6 +395,8 @@ namespace SSBHLib.Tools
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
                 // TODO: What type is this
+                var floats = new float[24]; // number unknown
+                return new AnimTrackTexture(floats);
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Float))
@@ -403,6 +405,7 @@ namespace SSBHLib.Tools
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
             {
                 //TODO: What type is this
+                return reader.ReadByte();
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
@@ -431,7 +434,10 @@ namespace SSBHLib.Tools
             if (t == v1) return bv;
             
             float mu = (t - v0) / (v1 - v0);
-            return ((av * (1 - mu)) + (bv * mu));
+            float value = ((av * (1 - mu)) + (bv * mu));
+            if (float.IsNaN(value))
+                return 0;
+            return value;
         }
     }
 }
