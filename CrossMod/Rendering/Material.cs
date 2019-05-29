@@ -133,8 +133,16 @@ namespace CrossMod.Rendering
             AddVec4(genericMaterial, 0xA6, new Vector4(1));
 
             // Some sort of skin subsurface color?
-            AddVec4(genericMaterial, 0xA3, new Vector4(0));
-            AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
+            if (RenderSettings.Instance.TransitionEffect == RenderSettings.TransitionMode.Ditto)
+            {
+                AddVec4(genericMaterial, 0xA3, new Vector4(0.1962484f, 0.1721312f, 0.295082f, 1f));
+                AddVec4(genericMaterial, 0x145, new Vector4(0.23f, 1.5f, 1f, 1f));
+            }
+            else
+            {
+                AddVec4(genericMaterial, 0xA3, new Vector4(0));
+                AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
+            }
 
             // Mario Galaxy rim light?
             AddVec4(genericMaterial, 0xA0, new Vector4(1));
