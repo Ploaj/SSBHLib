@@ -41,22 +41,26 @@ namespace CrossMod.Rendering
         private static Shader CreateTextureShader()
         {
             Shader textureShader = new Shader();
-            textureShader.LoadShader(File.ReadAllText("Shaders/Texture.frag"), ShaderType.FragmentShader);
-            textureShader.LoadShader(File.ReadAllText("Shaders/Texture.vert"), ShaderType.VertexShader);
-            textureShader.LoadShader(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
+            textureShader.LoadShaders(
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/Texture.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/Texture.vert"), ShaderType.VertexShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader, "")
+            );
             return textureShader;
         }
 
         private static Shader CreateRModelDebugShader()
         {
             Shader rModelDebug = new Shader();
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/RModelDebug.frag"), ShaderType.FragmentShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
-            rModelDebug.LoadShader(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader);
+            rModelDebug.LoadShaders(
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModelDebug.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/WireFrame.frag"), ShaderType.FragmentShader, ""), 
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader, "")
+            );
             return rModelDebug;
         }
 
@@ -74,13 +78,15 @@ namespace CrossMod.Rendering
         private static Shader CreateRModelShader()
         {
             Shader rModel = new Shader();
-            rModel.LoadShader(File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/Wireframe.frag"), ShaderType.FragmentShader);
-            rModel.LoadShader(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader);
+            rModel.LoadShaders(
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModel.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModel.geom"), ShaderType.GeometryShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/NormalMap.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/RModel.vert"), ShaderType.VertexShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/Gamma.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/WireFrame.frag"), ShaderType.FragmentShader, ""),
+                new System.Tuple<string, ShaderType, string>(File.ReadAllText("Shaders/TextureLayers.frag"), ShaderType.FragmentShader, "")
+            );
             return rModel;
         }
     }

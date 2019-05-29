@@ -233,28 +233,28 @@ namespace SSBHLib.IO
         public object ReadProperty(Type t)
         {
             // Check for enums last to improve performance.
-            if (t == typeof(uint))
-                return ReadUInt32();
-            else if (t == typeof(byte))
+            if (t == typeof(byte))
                 return ReadByte();
-            else if (t == typeof(char))
-                return ReadChar();
-            else if (t == typeof(short))
-                return ReadInt16();
-            else if (t == typeof(ushort))
-                return ReadUInt16();
-            else if (t == typeof(int))
-                return ReadInt32();
+            else if (t == typeof(uint))
+                return ReadUInt32();
             else if (t == typeof(long))
                 return ReadInt64();
-            else if (t == typeof(ulong))
-                return ReadUInt64();
-            else if (t == typeof(float))
-                return ReadSingle();
             else if (t == typeof(SSBHOffset))
                 return new SSBHOffset(Position + ReadInt64());
+            else if (t == typeof(float))
+                return ReadSingle();
+            else if (t == typeof(int))
+                return ReadInt32();
+            else if (t == typeof(ushort))
+                return ReadUInt16();
+            else if (t == typeof(short))
+                return ReadInt16();
+            else if (t == typeof(ulong))
+                return ReadUInt64();
             else if (t.IsEnum)
                 return Enum.ToObject(t, ReadUInt64());
+            else if (t == typeof(char))
+                return ReadChar();
             else
                 return null;
         }
