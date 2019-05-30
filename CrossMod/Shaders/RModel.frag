@@ -88,6 +88,8 @@ uniform int paramEA;
 uniform float paramC8;
 uniform float paramCA;
 
+uniform float paramD3;
+
 uniform float transitionFactor;
 uniform int transitionEffect;
 
@@ -241,9 +243,6 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
 
-    // TODO: Specular color?
-    specularTerm *= paramA0.rgb;
-
     vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
     specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
 
@@ -252,7 +251,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb * param9B.rgb;
+    return emissionColor.rgb * param9B.rgb * paramA0.rgb;
 }
 
 float GetF0(float ior)
@@ -281,6 +280,9 @@ void main()
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
     vec3 R = reflect(V, newNormal);
+
+    float iorRatio = 1.0 / (1.0 + paramD3);
+    vec3 refractionVector = refract(V, normalize(newNormal), iorRatio);
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
@@ -328,6 +330,7 @@ void main()
     vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * iblIntensity;
     int maxLod = 10;
     vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * iblIntensity;
+    vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rrr * iblIntensity;
 
     fragColor = vec4(0, 0, 0, 1);
 
@@ -362,6 +365,10 @@ void main()
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
         fragColor.rgb *= colorSet1.rgb;
 
+    // TODO: Experimental refraction.
+    if (paramD3 > 0.0)
+        fragColor.rgb += refractionIbl * renderExperimental;
+
     if (renderWireframe == 1)
     {
         vec3 edgeColor = vec3(1);
@@ -380,6 +387,7 @@ void main()
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
+
 
     // Alpha testing.
     if ((fragColor.a + param98.x) < 0.1)

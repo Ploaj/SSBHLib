@@ -167,6 +167,9 @@ namespace CrossMod.Rendering
             // Controls specular IOR.
             AddFloat(genericMaterial, 0xC8, 0.0f);
 
+            // TODO: Refraction?
+            AddFloat(genericMaterial, 0xD3, 0.0f);
+
             // Some sort of sprite sheet scale toggle.
             AddBool(genericMaterial, 0xF1, true);
 
