@@ -170,6 +170,9 @@ namespace CrossMod.Rendering
             // TODO: Refraction?
             AddFloat(genericMaterial, 0xD3, 0.0f);
 
+            // TODO: du dv intensity?
+            AddFloat(genericMaterial, 0xC4, 0.0f);
+
             // Some sort of sprite sheet scale toggle.
             AddBool(genericMaterial, 0xF1, true);
 
