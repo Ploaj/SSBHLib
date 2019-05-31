@@ -100,8 +100,8 @@ uniform vec3 V;
 
 out vec4 fragColor;
 
-const float directLightIntensity = 1.00;
-const float iblIntensity = 1.00;
+const float directLightIntensity = 0.00;
+const float iblIntensity = 1.0;
 
 // Matrices for ordered dithering
 // https://en.wikipedia.org/wiki/Ordered_dithering
@@ -314,12 +314,12 @@ void main()
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.25, 1, 0.3), prmColor, transitionBlend);
+            prmColor = mix(vec4(1, 0.20, 1, 0.3), prmColor, transitionBlend);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(0.35), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.25, 1, 0.3), prmColor, transitionBlend);
+            prmColor = mix(vec4(1, 0.20, 1, 0.3), prmColor, transitionBlend);
             break;
     }
 
@@ -328,7 +328,7 @@ void main()
 
     // Image based lighting.
     vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * iblIntensity;
-    int maxLod = 10;
+    int maxLod = 6;
     vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rrr * iblIntensity;
 
@@ -375,8 +375,6 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
-
-    // fragColor.rgb = vec3(paramD3);
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);

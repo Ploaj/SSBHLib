@@ -82,14 +82,14 @@ namespace CrossMod.Rendering.Resources
             AddCubeMipmaps(surfaceData, "z+");
             AddCubeMipmaps(surfaceData, "z-");
 
-            var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.Byte);
+            var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float);
             specularPbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
         }
 
         private static void AddCubeMipmaps(List<List<byte[]>> surfaceData, string surface)
         {
             var mipmaps = new List<byte[]>();
-            for (int mip = 0; mip < 6; mip++)
+            for (int mip = 0; mip < 7; mip++)
             {
                 var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/spec {surface} {mip}.bin");
                 mipmaps.Add(mipData);
