@@ -376,6 +376,8 @@ void main()
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
 
+    // fragColor.rgb = vec3(paramD3);
+
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);
 
@@ -383,14 +385,18 @@ void main()
     fragColor.a = albedoColor.a;
     fragColor.a *= emissionColor.a;
 
-
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
 
+    // TODO: Meshes with refraction have some sort of angle fade.
+    float f0Refract = GetF0(paramD3 + 1.0);
+    vec3 transmissionAlpha = FresnelSchlickRoughness(nDotV, vec3(f0Refract), roughness);
+    if (paramD3 > 0 && renderExperimental == 1)
+        fragColor.a = transmissionAlpha.x;
 
     // Alpha testing.
-    if ((fragColor.a + param98.x) < 0.1)
+    if ((fragColor.a + param98.x) < 0.01)
         discard;
 
     // TODO: Transparency seems to use some sort of stipple pattern.

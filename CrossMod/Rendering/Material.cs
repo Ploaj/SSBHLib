@@ -16,6 +16,7 @@ namespace CrossMod.Rendering
 
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
+        public bool HasAlphaBlending { get; set; } = false;
 
         public Texture col = null;
         public bool HasCol { get; set; } = false;
