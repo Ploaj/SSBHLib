@@ -2,6 +2,7 @@
 using SFGraphics.GLObjects.Textures;
 using System.Collections.Generic;
 using System.Drawing;
+using SFGraphics.GLObjects.Textures.TextureFormats;
 
 namespace CrossMod.Rendering.Resources
 {
@@ -73,17 +74,27 @@ namespace CrossMod.Rendering.Resources
         {
             specularPbr = new TextureCubeMap();
             var surfaceData = new List<List<byte[]>>();
-            for (int surface = 0; surface < 6; surface++)
+
+            AddCubeMipmaps(surfaceData, "x+");
+            AddCubeMipmaps(surfaceData, "x-");
+            AddCubeMipmaps(surfaceData, "y+");
+            AddCubeMipmaps(surfaceData, "y-");
+            AddCubeMipmaps(surfaceData, "z+");
+            AddCubeMipmaps(surfaceData, "z-");
+
+            var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.Byte);
+            specularPbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
+        }
+
+        private static void AddCubeMipmaps(List<List<byte[]>> surfaceData, string surface)
+        {
+            var mipmaps = new List<byte[]>();
+            for (int mip = 0; mip < 6; mip++)
             {
-                var mipmaps = new List<byte[]>();
-                for (int mip = 0; mip < 10; mip++)
-                {
-                    var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/specularSdr{surface}{mip}.bin");
-                    mipmaps.Add(mipData);
-                }
-                surfaceData.Add(mipmaps);
+                var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/spec {surface} {mip}.bin");
+                mipmaps.Add(mipData);
             }
-            specularPbr.LoadImageData(512, InternalFormat.CompressedRgbaS3tcDxt1Ext, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
+            surfaceData.Add(mipmaps);
         }
     }
 }
