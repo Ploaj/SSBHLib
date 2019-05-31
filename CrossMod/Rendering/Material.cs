@@ -97,12 +97,6 @@ namespace CrossMod.Rendering
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
             // TODO: Convert from quaternion values in light.nuanimb.
-            Matrix4 lightRotMatrix = Matrix4.CreateFromAxisAngle(Vector3.UnitX, 0.801f) 
-                * Matrix4.CreateFromAxisAngle(Vector3.UnitY, -0.393f)
-                 * Matrix4.CreateFromAxisAngle(Vector3.UnitZ, -1.926f);
-            var direction = Vector3.TransformVector(new Vector3(0f, 0f, 1f), lightRotMatrix).Normalized();
-
-            //genericMaterial.AddVector3("chrLightDir", direction);
             AddQuaternion("chrLightDir", genericMaterial, -0.453154f, -0.365998f, -0.211309f, 0.784886f);
 
             return genericMaterial;

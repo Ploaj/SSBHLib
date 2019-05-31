@@ -441,6 +441,8 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
+            var valuesByName = new Dictionary<string, HashSet<string>>();
+
             foreach (var file in Directory.EnumerateFiles(folderPath, "*nuanmb", SearchOption.AllDirectories))
             {
                 if (!file.Contains("render") || !file.Contains("light"))
@@ -449,8 +451,18 @@ namespace CrossMod
                 var node = new NUANIM_Node(file);
                 node.Open();
 
-                string condensedName = GetCondensedPathName(folderPath, file);
-                File.WriteAllText($"{condensedName}.txt", node.GetLightInformation());
+                node.UpdateUniqueLightValues(valuesByName);
+            }
+
+            foreach (var pair in valuesByName)
+            {
+                var output = new System.Text.StringBuilder();
+                foreach (var value in pair.Value)
+                {
+                    output.AppendLine(value);
+                }
+
+                File.WriteAllText($"{pair.Key} unique values.txt", output.ToString());
             }
         }
     }

@@ -4,6 +4,7 @@ using SSBHLib.Tools;
 using OpenTK;
 using SSBHLib.Formats.Animation;
 using CrossMod.IO;
+using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
@@ -36,10 +37,20 @@ namespace CrossMod.Nodes
             var output = new System.Text.StringBuilder();
             foreach (AnimGroup animGroup in animation.Animations)
             {
-                AddLightValues(output, decoder, animGroup);
+                AddLightSetInfo(output, decoder, animGroup);
             }
 
             return output.ToString();
+        }
+
+        public void UpdateUniqueLightValues(Dictionary<string, HashSet<string>> valuesByName)
+        {
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+
+            foreach (AnimGroup animGroup in animation.Animations)
+            {
+                AddLightValues(valuesByName, decoder, animGroup);
+            }
         }
 
         public IRenderable GetRenderableNode()
@@ -163,7 +174,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void AddLightValues(System.Text.StringBuilder output, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void AddLightSetInfo(System.Text.StringBuilder output, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
@@ -171,12 +182,33 @@ namespace CrossMod.Nodes
 
                 foreach (AnimTrack track in animNode.Tracks)
                 {
-                    object[] Transform = decoder.ReadTrack(track);
+                    object[] values = decoder.ReadTrack(track);
 
                     output.AppendLine($"\t{track.Name}");
-                    foreach (var value in Transform)
+                    foreach (var value in values)
                     {
                         output.AppendLine($"\t\t{value}");
+                    }
+                }
+            }
+        }
+
+        private static void AddLightValues(Dictionary<string, HashSet<string>> valuesByName, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            // Store all unique values for each parameter.
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    if (!valuesByName.ContainsKey(track.Name))
+                        valuesByName[track.Name] = new HashSet<string>();
+
+                    object[] values = decoder.ReadTrack(track);
+
+                    foreach (var value in values)
+                    {
+                        if (!valuesByName[track.Name].Contains(value.ToString()))
+                            valuesByName[track.Name].Add(value.ToString());
                     }
                 }
             }
