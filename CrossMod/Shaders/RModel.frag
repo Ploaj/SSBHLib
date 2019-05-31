@@ -100,8 +100,8 @@ uniform vec3 V;
 
 out vec4 fragColor;
 
-const float directLightIntensity = 0.00;
-const float iblIntensity = 1.0;
+uniform float directLightIntensity;
+uniform float iblIntensity;
 
 // Matrices for ordered dithering
 // https://en.wikipedia.org/wiki/Ordered_dithering
@@ -192,7 +192,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     diffuseLight += texture(bakeLitMap, bake1).rgb;
 
     // Direct lighting.
-    diffuseLight += LambertShading(N, V) * directLightIntensity;
+    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity;
 
     diffuseTerm *= diffuseLight;
 
@@ -212,8 +212,10 @@ vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
     return mix(vec3(1), paramA6.rgb, pow(facingRatio, 2));
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower)
 {
+    vec3 halfAngle = normalize(chrLightDir + V);
+
     // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
     vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularTerm = vec3(0);
@@ -229,13 +231,14 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     // The two BRDFs look very different so don't just use anisotropic for everything.
     float specularBrdf = 0;
     if (paramCA != 0)
-        specularBrdf = GgxAnisotropic(N, V, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
+        specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
-        specularBrdf = pow(Ggx(N, V, roughness), param145.x) * directLightIntensity;
+        specularBrdf = pow(Ggx(N, halfAngle, roughness), param145.x) * directLightIntensity;
 
-    // TODO: Some sort of fake SSS.
+    // Some sort of fake SSS.
+    // TODO: Does this affect the whole pass?
     if (renderExperimental == 1)
-        specularBrdf = pow(specularBrdf, param145.x);
+        specularBrdf = pow(specularBrdf, specPower);
 
     specularTerm += kSpecular * vec3(specularBrdf);
 
@@ -245,6 +248,8 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
     specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
+
+
 
     return specularTerm;
 }
@@ -297,6 +302,7 @@ void main()
 
     // Defined separately so it can be disabled for material transitions.
     vec3 sssColor = paramA3.rgb;
+    float specPower = param145.x;
 
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
@@ -307,25 +313,29 @@ void main()
             // Ditto
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
-            sssColor = vec3(0.1962484, 0.1721312, 0.295082);
+            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), paramA3.rgb, transitionBlend);
+            specPower = mix(1.0, param145.x, transitionBlend);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
-            sssColor = vec3(0);
+            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
+            specPower = mix(1.0, param145.x, transitionBlend);
             break;
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
-            sssColor = vec3(0);
+            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
+            specPower = mix(1.0, param145.x, transitionBlend);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(0.35), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
-            sssColor = vec3(0);
+            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
+            specPower = mix(1.0, param145.x, transitionBlend);
             break;
     }
 
@@ -356,7 +366,7 @@ void main()
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
-    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a);
+    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower);
     fragColor.rgb += specularTerm * renderSpecular;
 
     // Ambient Occlusion

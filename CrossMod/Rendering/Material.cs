@@ -102,7 +102,8 @@ namespace CrossMod.Rendering
                  * Matrix4.CreateFromAxisAngle(Vector3.UnitZ, -1.926f);
             var direction = Vector3.TransformVector(new Vector3(0f, 0f, 1f), lightRotMatrix).Normalized();
 
-            genericMaterial.AddVector3("chrLightDir", direction);
+            //genericMaterial.AddVector3("chrLightDir", direction);
+            AddQuaternion("chrLightDir", genericMaterial, -0.453154f, -0.365998f, -0.211309f, 0.784886f);
 
             return genericMaterial;
         }
@@ -113,7 +114,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddVector3(name, lightDirection);
         }
 
-        private static Vector3 GetLightDirectionFromQuaternion(float w, float x, float y, float z)
+        private static Vector3 GetLightDirectionFromQuaternion(float x, float y, float z, float w)
         {
             var quaternion = new Quaternion(x, y, z, w);
             var matrix = Matrix4.CreateFromQuaternion(quaternion);

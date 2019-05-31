@@ -81,6 +81,9 @@ namespace CrossMod.Rendering.Models
             currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
             currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
 
+            currentShader.SetFloat("directLightIntensity", RenderSettings.Instance.DirectLightIntensity);
+            currentShader.SetFloat("iblIntensity", RenderSettings.Instance.IblIntensity);
+
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.EnableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
             currentShader.SetBoolToInt("renderEmission", RenderSettings.Instance.EnableEmission);
