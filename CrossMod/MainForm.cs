@@ -434,5 +434,24 @@ namespace CrossMod
                 node.OpenNodes();
             }
         }
+
+        private void printLightValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*nuanmb", SearchOption.AllDirectories))
+            {
+                if (!file.Contains("render") || !file.Contains("light"))
+                    continue;
+
+                var node = new NUANIM_Node(file);
+                node.Open();
+
+                string condensedName = GetCondensedPathName(folderPath, file);
+                File.WriteAllText($"{condensedName}.txt", node.GetLightInformation());
+            }
+        }
     }
 }

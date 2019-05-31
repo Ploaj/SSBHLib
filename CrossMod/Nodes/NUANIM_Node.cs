@@ -29,6 +29,19 @@ namespace CrossMod.Nodes
             }
         }
 
+        public string GetLightInformation()
+        {
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+
+            var output = new System.Text.StringBuilder();
+            foreach (AnimGroup animGroup in animation.Animations)
+            {
+                AddLightValues(output, decoder, animGroup);
+            }
+
+            return output.ToString();
+        }
+
         public IRenderable GetRenderableNode()
         {
             if (animation == null)
@@ -96,8 +109,6 @@ namespace CrossMod.Nodes
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
-                //System.Diagnostics.Debug.WriteLine(animNode.Name);
-
                 RTransformAnimation tfrmAnim = new RTransformAnimation()
                 {
                     Name = animNode.Name
@@ -105,12 +116,6 @@ namespace CrossMod.Nodes
                 foreach (AnimTrack track in animNode.Tracks)
                 {
                     object[] Transform = decoder.ReadTrack(track);
-
-                    //System.Diagnostics.Debug.WriteLine($"\t{track.Name}");
-                    //foreach (var value in Transform)
-                    //{
-                    //    System.Diagnostics.Debug.WriteLine($"\t\t{value}");
-                    //}
 
                     if (track.Name.Equals("Transform"))
                     {
@@ -155,6 +160,25 @@ namespace CrossMod.Nodes
                     }
                 }
                 renderAnimation.VisibilityNodes.Add(visAnim);
+            }
+        }
+
+        private static void AddLightValues(System.Text.StringBuilder output, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                output.AppendLine(animNode.Name);
+
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    object[] Transform = decoder.ReadTrack(track);
+
+                    output.AppendLine($"\t{track.Name}");
+                    foreach (var value in Transform)
+                    {
+                        output.AppendLine($"\t\t{value}");
+                    }
+                }
             }
         }
 

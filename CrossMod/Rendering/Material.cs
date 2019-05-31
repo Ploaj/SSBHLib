@@ -96,12 +96,18 @@ namespace CrossMod.Rendering
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
-            AddQuaternion("chrLightDir", genericMaterial, 1, 0, 0, 0);
+            // TODO: Convert from quaternion values in light.nuanimb.
+            Matrix4 lightRotMatrix = Matrix4.CreateFromAxisAngle(Vector3.UnitX, 0.801f) 
+                * Matrix4.CreateFromAxisAngle(Vector3.UnitY, -0.393f)
+                 * Matrix4.CreateFromAxisAngle(Vector3.UnitZ, -1.926f);
+            var direction = Vector3.TransformVector(new Vector3(0f, 0f, 1f), lightRotMatrix).Normalized();
+
+            genericMaterial.AddVector3("chrLightDir", direction);
 
             return genericMaterial;
         }
 
-        private static void AddQuaternion(string name, GenericMaterial genericMaterial, float w, float x, float y, float z)
+        private static void AddQuaternion(string name, GenericMaterial genericMaterial, float x, float y, float z, float w)
         {
             var lightDirection = GetLightDirectionFromQuaternion(x, y, z, w);
             genericMaterial.AddVector3(name, lightDirection);
@@ -111,7 +117,6 @@ namespace CrossMod.Rendering
         {
             var quaternion = new Quaternion(x, y, z, w);
             var matrix = Matrix4.CreateFromQuaternion(quaternion);
-
             var lightDirection = Vector4.Transform(new Vector4(0, 0, 1, 0), matrix);
             return lightDirection.Normalized().Xyz;
         }

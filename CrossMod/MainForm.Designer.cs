@@ -43,6 +43,7 @@ namespace CrossMod
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.printLightValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -106,14 +107,14 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 
@@ -122,7 +123,8 @@ namespace CrossMod
             this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.batchRenderModelsToolStripMenuItem,
             this.printMaterialValuesToolStripMenuItem,
-            this.printAttributesToolStripMenuItem});
+            this.printAttributesToolStripMenuItem,
+            this.printLightValuesToolStripMenuItem});
             this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
             this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.experimentalToolStripMenuItem.Text = "Experimental";
@@ -191,6 +193,13 @@ namespace CrossMod
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
             // 
+            // printLightValuesToolStripMenuItem
+            // 
+            this.printLightValuesToolStripMenuItem.Name = "printLightValuesToolStripMenuItem";
+            this.printLightValuesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.printLightValuesToolStripMenuItem.Text = "Print Light Values";
+            this.printLightValuesToolStripMenuItem.Click += new System.EventHandler(this.printLightValuesToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -229,6 +238,7 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem printMaterialValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printAttributesToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ToolStripMenuItem printLightValuesToolStripMenuItem;
     }
 }
 
