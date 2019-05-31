@@ -136,7 +136,6 @@ namespace CrossMod.Rendering
             // Some sort of skin subsurface color?
             if (RenderSettings.Instance.TransitionEffect == RenderSettings.TransitionMode.Ditto)
             {
-                AddVec4(genericMaterial, 0xA3, new Vector4(0.1962484f, 0.1721312f, 0.295082f, 1f));
                 AddVec4(genericMaterial, 0x145, new Vector4(0.23f, 1.5f, 1f, 1f));
             }
             else

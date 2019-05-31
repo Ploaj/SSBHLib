@@ -177,14 +177,14 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness, vec3 sssColor)
 {
     vec3 diffuseTerm = kDiffuse * albedoColor.rgb;
 
     // Some sort of fake SSS color.
     // TODO: The SSS color may be part of a separate render pass
     // and not take into account diffuse lighting.
-    diffuseTerm += paramA3.rgb * metalness * renderExperimental * albedoColor.rgb;
+    diffuseTerm += sssColor * metalness * renderExperimental * albedoColor.rgb;
 
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
@@ -261,7 +261,8 @@ float GetF0(float ior)
 
 float GetTransitionBlend(float blendMap, float transitionFactor)
 {
-    if (blendMap <= (1 - transitionFactor))
+    // Add a slight offset to prevent black speckles.
+    if (blendMap <= (1 - transitionFactor + 0.01))
         return 1.0;
     else
         return 0.0;
@@ -293,8 +294,9 @@ void main()
     // Probably some sort of override for PRM color.
     if (hasParam156 == 1)
         prmColor = param156;
-    // if (hasParam151 == 1)
-    //     prmColor.bga = param151.bga;
+
+    // Defined separately so it can be disabled for material transitions.
+    vec3 sssColor = paramA3.rgb;
 
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
@@ -305,21 +307,25 @@ void main()
             // Ditto
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
+            sssColor = vec3(0.1962484, 0.1721312, 0.295082);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
+            sssColor = vec3(0);
             break;
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.20, 1, 0.3), prmColor, transitionBlend);
+            prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
+            sssColor = vec3(0);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(0.35), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.20, 1, 0.3), prmColor, transitionBlend);
+            prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
+            sssColor = vec3(0);
             break;
     }
 
@@ -327,10 +333,10 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rrr * iblIntensity;
+    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rgb * iblIntensity;
     int maxLod = 6;
-    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rrr * iblIntensity;
-    vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rrr * iblIntensity;
+    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * iblIntensity;
+    vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
     fragColor = vec4(0, 0, 0, 1);
 
@@ -347,7 +353,7 @@ void main()
     kDiffuse *= (1 - metalness);
 
     // Render passes.
-    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness);
+    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
     vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a);
