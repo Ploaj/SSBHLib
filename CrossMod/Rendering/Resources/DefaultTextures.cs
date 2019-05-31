@@ -58,16 +58,27 @@ namespace CrossMod.Rendering.Resources
             diffusePbr = new TextureCubeMap();
 
             var surfaceData = new List<List<byte[]>>();
-            for (int surface = 0; surface < 6; surface++)
-            {
-                var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/diffuseSdr{surface}{0}.bin");
-                surfaceData.Add(new List<byte[]>() { mipData });
-            }
-            diffusePbr.LoadImageData(128, InternalFormat.CompressedRgbaS3tcDxt1Ext, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
+
+            AddIrrFace(surfaceData, "x+");
+            AddIrrFace(surfaceData, "x-");
+            AddIrrFace(surfaceData, "y+");
+            AddIrrFace(surfaceData, "y-");
+            AddIrrFace(surfaceData, "z+");
+            AddIrrFace(surfaceData, "z-");
+
+
+            var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float);
+            diffusePbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
 
             // Don't Use mipmaps.
             diffusePbr.MagFilter = TextureMagFilter.Linear;
             diffusePbr.MinFilter = TextureMinFilter.Linear;
+        }
+
+        private static void AddIrrFace(List<List<byte[]>> surfaceData, string surface)
+        {
+            var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/irr {surface}.bin");
+            surfaceData.Add(new List<byte[]>() { mipData });
         }
 
         private void LoadSpecularPbr()

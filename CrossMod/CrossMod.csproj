@@ -188,22 +188,22 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="DefaultTextures\diffuseSdr00.bin">
+    <None Include="DefaultTextures\irr x+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\diffuseSdr10.bin">
+    <None Include="DefaultTextures\irr x-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\diffuseSdr20.bin">
+    <None Include="DefaultTextures\irr y+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\diffuseSdr30.bin">
+    <None Include="DefaultTextures\irr y-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\diffuseSdr40.bin">
+    <None Include="DefaultTextures\irr z+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\diffuseSdr50.bin">
+    <None Include="DefaultTextures\irr z-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="DefaultTextures\spec x+ 0.bin">
