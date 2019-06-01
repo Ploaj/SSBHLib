@@ -98,11 +98,12 @@ namespace CrossMod
             if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
                 ShowModelViewport();
-                modelViewport.RenderableNode = renderableNode;
+                modelViewport.UpdateRenderableNode(renderableNode);
             }
-            else
+            else if (fileTree.SelectedNode is NUANIM_Node animation)
             {
-                modelViewport.Clear();
+                ShowModelViewport();
+                modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
             }
 
             modelViewport.RenderFrame();

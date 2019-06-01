@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nuanmb")]
-    public class NUANIM_Node : FileNode, IRenderableNode, IExportableAnimationNode
+    public class NUANIM_Node : FileNode, IExportableAnimationNode
     {
         private ANIM animation;
 
