@@ -50,7 +50,6 @@ namespace CrossMod
         public void HideControl()
         {
             contentBox.Controls.Clear();
-            modelViewport.Clear();
         }
 
         public void ShowModelViewport()
@@ -98,7 +97,8 @@ namespace CrossMod
             if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
                 ShowModelViewport();
-                modelViewport.UpdateRenderableNode(renderableNode);
+                var node = (FileNode)fileTree.SelectedNode;
+                modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
             }
             else if (fileTree.SelectedNode is NUANIM_Node animation)
             {

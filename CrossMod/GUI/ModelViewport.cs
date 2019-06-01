@@ -15,7 +15,10 @@ namespace CrossMod.GUI
     public partial class ModelViewport : UserControl
     {
         private AnimationBar animationBar;
-        private IRenderable renderableNode;
+
+        // This isn't a dictionary to preserve render order.
+        private HashSet<string> renderableNodeNames = new HashSet<string>();
+        private List<IRenderable> renderableNodes = new List<IRenderable>();
 
         private Camera camera = new Camera() { FarClipPlane = 500000 };
         private Vector2 mousePosition = new Vector2();
@@ -37,23 +40,28 @@ namespace CrossMod.GUI
             AddAnimationBar();
         }
 
-        public void UpdateRenderableNode(IRenderableNode value)
+        public void AddRenderableNode(string name, IRenderableNode value)
         {
-            ClearDisplay();
+            ClearBonesAndMeshList();
 
             if (value == null)
-            {
-                renderableNode = null;
                 return;
+
+            var newNode = value.GetRenderableNode();
+
+            // Prevent duplicates. Paths should be unique.
+            if (!renderableNodeNames.Contains(name))
+            {
+                renderableNodes.Add(newNode);
+                renderableNodeNames.Add(name);
             }
 
-            renderableNode = value.GetRenderableNode();
-
-            if (renderableNode is RSkeleton skeleton)
+            // Duplicate nodes should still update the mesh list.
+            if (newNode is RSkeleton skeleton)
             {
                 DisplaySkeleton(skeleton);
             }
-            else if (renderableNode is IRenderableModel renderableModel)
+            else if (newNode is IRenderableModel renderableModel)
             {
                 DisplayMeshes(renderableModel.GetModel());
                 DisplaySkeleton(renderableModel.GetSkeleton());
@@ -61,7 +69,7 @@ namespace CrossMod.GUI
 
             if (value is NUMDL_Node)
             {
-                var rnumdl = (RNUMDL)renderableNode;
+                var rnumdl = (RNUMDL)newNode;
                 FrameSelection(rnumdl.Model);
             }
         }
@@ -80,7 +88,9 @@ namespace CrossMod.GUI
         {
             animationBar.Model = null;
             animationBar.Skeleton = null;
-            renderableNode = null;
+
+            renderableNodes.Clear();
+            renderableNodeNames.Clear();
 
             GC.WaitForPendingFinalizers();
             GLObjectManager.DeleteUnusedGLObjects();
@@ -163,7 +173,7 @@ namespace CrossMod.GUI
             }
         }
 
-        private void ClearDisplay()
+        private void ClearBonesAndMeshList()
         {
             boneTree.Nodes.Clear();
             meshList.Items.Clear();
@@ -184,10 +194,8 @@ namespace CrossMod.GUI
         {
             SetUpViewport();
 
-            if (renderableNode != null)
-            {
-                renderableNode.Render(camera);
-            }
+            foreach (var node in renderableNodes)
+                node.Render(camera);
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
@@ -244,11 +252,6 @@ namespace CrossMod.GUI
 
             mousePosition = newMousePosition;
             mouseScrollWheel = newMouseScrollWheel;
-        }
-
-        public void Clear()
-        {
-            renderableNode = null;
         }
 
         private void glViewport_Load(object sender, EventArgs e)
