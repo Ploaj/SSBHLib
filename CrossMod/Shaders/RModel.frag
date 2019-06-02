@@ -189,10 +189,10 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
     diffuseLight += diffuseIbl;
-    diffuseLight += texture(bakeLitMap, bake1).rgb;
+    diffuseLight += texture(bakeLitMap, bake1).rgb * 2;
 
     // Direct lighting.
-    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity;
+    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity * texture(bakeLitMap, bake1).a;
 
     diffuseTerm *= diffuseLight;
 
