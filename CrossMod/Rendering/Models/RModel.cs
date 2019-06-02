@@ -70,7 +70,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            currentShader.SetVector3("V", Camera.ViewVector);
+            currentShader.SetVector3("cameraPos", Camera.Position);
         }
 
         private static void SetUniforms(Shader currentShader)

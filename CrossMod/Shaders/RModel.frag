@@ -96,7 +96,7 @@ uniform int transitionEffect;
 uniform vec3 chrLightDir;
 
 uniform mat4 mvp;
-uniform vec3 V;
+uniform vec3 cameraPos;
 
 out vec4 fragColor;
 
@@ -285,6 +285,7 @@ void main()
     if (renderNormalMaps == 1)
         newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
 
+    vec3 V = normalize(position - cameraPos);
     vec3 R = reflect(V, newNormal);
 
     float iorRatio = 1.0 / (1.0 + paramD3);
