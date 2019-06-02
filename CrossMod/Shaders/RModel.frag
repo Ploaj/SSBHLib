@@ -155,10 +155,6 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
-    // Square input roughness to look correct.
-    roughX *= roughX;
-    roughY *= roughY;
-
     float roughX2 = roughX * roughX;
     float roughY2 = roughY * roughY;
 
@@ -189,16 +185,18 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     // Baked ambient lighting.
     vec3 diffuseLight = vec3(0);
     diffuseLight += diffuseIbl;
-    diffuseLight += texture(bakeLitMap, bake1).rgb * 2;
+    vec4 bakedLitColor = texture(bakeLitMap, bake1);
+    diffuseLight += bakedLitColor.rgb * 2;
 
     // Direct lighting.
-    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity * texture(bakeLitMap, bake1).a;
+    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity * bakedLitColor.a;
 
     diffuseTerm *= diffuseLight;
 
     // Color multiplier param.
     diffuseTerm *= paramA5.rgb;
 
+    // TODO: Wiifit stage model color.
     if (hasParam153 == 1)
         diffuseTerm = param153.rgb + param154.rgb;
 
@@ -249,8 +247,6 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
     specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
 
-
-
     return specularTerm;
 }
 
@@ -279,7 +275,7 @@ void main()
 
     vec4 norColor = texture(norMap, map1).xyzw;
     if (hasInkNorMap == 1)
-        norColor.rgb = texture(inkNorMap, map1).rga;
+        norColor.xyz = texture(inkNorMap, map1).rga;
 
     vec3 newNormal = N;
     if (renderNormalMaps == 1)
@@ -333,8 +329,8 @@ void main()
             break;
         case 3:
             // Metal
-            albedoColor.rgb = mix(vec3(0.35), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
+            albedoColor.rgb = mix(vec3(1), albedoColor.rgb, transitionBlend);
+            prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
             sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
             specPower = mix(1.0, param145.x, transitionBlend);
             break;
@@ -344,7 +340,7 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rgb * iblIntensity;
+    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rgb; // TODO: what is the intensity?
     int maxLod = 6;
     vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
@@ -354,14 +350,9 @@ void main()
     float f0Dialectric = GetF0(paramC8 + 1);
     vec3 f0Final = mix(prmColor.aaa * f0Dialectric, albedoColor.rgb, metalness);
     float nDotV = max(dot(newNormal, V), 0.0);
+
     vec3 kSpecular = FresnelSchlickRoughness(nDotV, f0Final, roughness);
-
-    // Only use one component to prevent discoloration of diffuse.
-    vec3 kDiffuse = (1 - kSpecular.rrr);
-
-    // Metals have no diffuse component.
-    // This includes most skin materials.
-    kDiffuse *= (1 - metalness);
+    vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     // Render passes.
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
@@ -375,8 +366,7 @@ void main()
     fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
-    vec3 emissionTerm = EmissionTerm(emissionColor);
-    fragColor.rgb += emissionTerm * renderEmission;
+    fragColor.rgb += EmissionTerm(emissionColor) * renderEmission;
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
