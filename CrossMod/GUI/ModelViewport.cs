@@ -19,6 +19,7 @@ namespace CrossMod.GUI
         // This isn't a dictionary to preserve render order.
         private HashSet<string> renderableNodeNames = new HashSet<string>();
         private List<IRenderable> renderableNodes = new List<IRenderable>();
+        private IRenderable renderTexture = null;
 
         private Camera camera = new Camera() { FarClipPlane = 500000 };
         private Vector2 mousePosition = new Vector2();
@@ -38,6 +39,12 @@ namespace CrossMod.GUI
             InitializeComponent();
             CreateRenderFrameEvents();
             AddAnimationBar();
+        }
+
+        public void UpdateTexture(NUTEX_Node texture)
+        {
+            var node = texture?.GetRenderableNode();
+            renderTexture = node;
         }
 
         public void AddRenderableNode(string name, IRenderableNode value)
@@ -196,6 +203,8 @@ namespace CrossMod.GUI
 
             foreach (var node in renderableNodes)
                 node.Render(camera);
+
+            renderTexture?.Render(camera);
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();

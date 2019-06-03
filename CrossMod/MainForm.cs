@@ -94,16 +94,24 @@ namespace CrossMod
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (fileTree.SelectedNode is IRenderableNode renderableNode)
+            // This condition needs to be first.
+            if (fileTree.SelectedNode is NUTEX_Node texture)
+            {
+                ShowModelViewport();
+                modelViewport.UpdateTexture(texture);
+            }
+            else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
                 ShowModelViewport();
                 var node = (FileNode)fileTree.SelectedNode;
                 modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
+                modelViewport.UpdateTexture(null);
             }
             else if (fileTree.SelectedNode is NUANIM_Node animation)
             {
                 ShowModelViewport();
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
+                modelViewport.UpdateTexture(null);
             }
 
             modelViewport.RenderFrame();
