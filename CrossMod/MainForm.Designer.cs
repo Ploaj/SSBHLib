@@ -40,10 +40,10 @@ namespace CrossMod
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printLightValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.printLightValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -107,14 +107,14 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 
@@ -149,6 +149,13 @@ namespace CrossMod
             this.printAttributesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.printAttributesToolStripMenuItem.Text = "Print Attributes";
             this.printAttributesToolStripMenuItem.Click += new System.EventHandler(this.printAttributesToolStripMenuItem_Click);
+            // 
+            // printLightValuesToolStripMenuItem
+            // 
+            this.printLightValuesToolStripMenuItem.Name = "printLightValuesToolStripMenuItem";
+            this.printLightValuesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.printLightValuesToolStripMenuItem.Text = "Print Light Values";
+            this.printLightValuesToolStripMenuItem.Click += new System.EventHandler(this.printLightValuesToolStripMenuItem_Click);
             // 
             // fileTree
             // 
@@ -192,13 +199,6 @@ namespace CrossMod
             this.splitContainer1.Size = new System.Drawing.Size(848, 538);
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // printLightValuesToolStripMenuItem
-            // 
-            this.printLightValuesToolStripMenuItem.Name = "printLightValuesToolStripMenuItem";
-            this.printLightValuesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.printLightValuesToolStripMenuItem.Text = "Print Light Values";
-            this.printLightValuesToolStripMenuItem.Click += new System.EventHandler(this.printLightValuesToolStripMenuItem_Click);
             // 
             // MainForm
             // 
