@@ -69,6 +69,7 @@ void main()
     geomMap1 = map1;
     if (paramF1 == 1)
         geomMap1 /= paramAA.xy;
+
     geomUvSet = uvSet;
     geomUvSet1 = uvSet1;
 
