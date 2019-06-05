@@ -261,9 +261,8 @@ namespace CrossMod.Nodes
                     }
                     else
                     {
-                        // TODO: Uncompressed mipmaps.
                         var format = new TextureFormatUncompressed((PixelInternalFormat)internalFormatByNuTexFormat[Format], pixelFormatByNuTexFormat[Format], PixelType.UnsignedByte);
-                        sfTex.LoadImageData(Width, Height, Mipmaps[0], format);
+                        sfTex.LoadImageData(Width, Height, Mipmaps, format);
                     }
 
                     renderableTexture.renderTexture = sfTex;

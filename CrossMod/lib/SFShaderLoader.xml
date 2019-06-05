@@ -42,8 +42,9 @@
             Creates the compiled program binary for the shader specified by <paramref name="shaderName"/>.
             </summary>
             <param name="shaderName">The unique name used when the shader was added</param>
-            <param name="shaderBinary">The compiled shader binary</param>
+            <param name="programBinary">The compiled shader program binary</param>
             <param name="binaryFormat">The platform specific shader binary format</param>
+            <returns><c>true</c> if the binary was created successfully</returns>
             <exception cref="T:System.ArgumentException"><paramref name="shaderName"/> is not a valid shader.</exception>
         </member>
     </members>
