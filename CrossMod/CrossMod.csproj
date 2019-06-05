@@ -71,6 +71,9 @@
       <HintPath>lib\SFGraphics.Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SFShaderLoader">
+      <HintPath>lib\SFShaderLoader.dll</HintPath>
+    </Reference>
     <Reference Include="SFShapes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFShapes.dll</HintPath>
