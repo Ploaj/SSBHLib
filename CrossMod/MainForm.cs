@@ -120,7 +120,7 @@ namespace CrossMod
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Force the shaders to be generated again.
-            Rendering.ShaderContainer.SetUpShaders();
+            Rendering.ShaderContainer.ReloadShaders();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)
