@@ -8,26 +8,6 @@ using System.Runtime.InteropServices;
 
 namespace SSBHLib.IO
 {
-    public struct SSBHOffset
-    {
-        public long Value { get ; }
-
-        public SSBHOffset(long value)
-        {
-            Value = value;
-        }
-
-        public static implicit operator SSBHOffset(long s)
-        {
-            return new SSBHOffset(s);
-        }
-
-        public static implicit operator long(SSBHOffset p)
-        {
-            return p.Value;
-        }
-    }
-
     public class SSBHParser : BinaryReader
     {
         public long Position => BaseStream.Position;
@@ -40,7 +20,7 @@ namespace SSBHLib.IO
 
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
 
-        private static Dictionary<Type, List<Action<ISSBH_File, Type>>> Setter = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
+        private static readonly Dictionary<Type, List<Action<ISSBH_File, Type>>> issbhSetters = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
@@ -59,18 +39,18 @@ namespace SSBHLib.IO
             return b;
         }
 
-        public bool TryParse(out ISSBH_File File)
+        public bool TryParse(out ISSBH_File file)
         {
-            File = null;
+            file = null;
             if (FileSize < 4)
                 return false;
             
-            string Magic = new string(ReadChars(4));
+            string Mmagic = new string(ReadChars(4));
             Seek(Position - 4);
-            if (Magic.Equals("HBSS"))
+            if (Mmagic.Equals("HBSS"))
             {
                 Seek(0x10);
-                Magic = new string(ReadChars(4));
+                Mmagic = new string(ReadChars(4));
                 Seek(0x10);
             }
 
@@ -78,12 +58,12 @@ namespace SSBHLib.IO
             {
                 if (type.GetCustomAttributes(typeof(SSBHFileAttribute), true).FirstOrDefault() is SSBHFileAttribute attr)
                 {
-                    if (attr.Magic.Equals(Magic))
+                    if (attr.Magic.Equals(Mmagic))
                     {
                         MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
                         parseMethod = parseMethod.MakeGenericMethod(type);
 
-                        File = (ISSBH_File)parseMethod.Invoke(this, null);
+                        file = (ISSBH_File)parseMethod.Invoke(this, null);
                         return true;
                     }
                 }

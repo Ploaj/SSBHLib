@@ -18,13 +18,12 @@ namespace SSBHLib.Tools
         /// <param name="MESHFilePath"></param>
         public SSBHRiggingAccessor(string MESHFilePath)
         {
-            ISSBH_File File;
-            if (SSBH.TryParseSSBHFile(MESHFilePath, out File))
+            if (SSBH.TryParseSSBHFile(MESHFilePath, out ISSBH_File file))
             {
-                if (File == null)
+                if (file == null)
                     throw new FileNotFoundException("File was null");
 
-                if (File is MESH mesh)
+                if (file is MESH mesh)
                     meshFile = mesh;
                 else
                     throw new FormatException("Given file was not a MESH file");

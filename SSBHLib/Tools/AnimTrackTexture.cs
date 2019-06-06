@@ -6,16 +6,16 @@ namespace SSBHLib.Tools
     /// </summary>
     public class AnimTrackTexture
     {
-        public float[] Floats;
+        public float[] Floats { get; }
 
         public AnimTrackTexture(float[] floats)
         {
-            this.Floats = floats;
+            Floats = floats;
         }
 
         public override string ToString()
         {
-            return "{" + String.Join(",", Floats) + "}";
+            return "{" + string.Join(",", Floats) + "}";
         }
     }
 }

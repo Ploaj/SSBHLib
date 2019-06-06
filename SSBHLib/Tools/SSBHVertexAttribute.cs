@@ -8,20 +8,12 @@
     {
         public float X, Y, Z, W;
 
-        public SSBHVertexAttribute(float X, float Y, float Z)
+        public SSBHVertexAttribute(float x, float y, float z, float w = 0)
         {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
-            W = 0;
-        }
-
-        public SSBHVertexAttribute(float X, float Y, float Z, float W)
-        {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
-            this.W = W;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
 
         public override string ToString()

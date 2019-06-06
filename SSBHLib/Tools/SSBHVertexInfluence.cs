@@ -8,14 +8,16 @@
         /// <summary>
         /// Index of vertex in the MESH vertex array
         /// </summary>
-        public ushort VertexIndex;
+        public ushort VertexIndex { get; set; }
+
         /// <summary>
         /// Name of the bone that influences this vertex
         /// </summary>
-        public string BoneName;
+        public string BoneName { get; set; }
+
         /// <summary>
         /// Weight of the bone influence
         /// </summary>
-        public float Weight;
+        public float Weight { get; set; }
     }
 }

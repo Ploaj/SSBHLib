@@ -42,29 +42,29 @@ namespace SSBHLib.Formats.Materials
             { typeof(MatlVector4), ParamDataType.Vector4},
             };
 
-        public override void PostProcess(SSBHParser R)
+        public override void PostProcess(SSBHParser parser)
         {
-            R.Seek(OffsetToData);
+            parser.Seek(OffsetToData);
 
             if (DataType == MatlEnums.ParamDataType.Float)
-                DataObject = R.ReadSingle();
+                DataObject = parser.ReadSingle();
             else if (DataType == MatlEnums.ParamDataType.Boolean)
-                DataObject = R.ReadUInt32() == 1;
+                DataObject = parser.ReadUInt32() == 1;
             else if (DataType == MatlEnums.ParamDataType.Vector4)
-                DataObject = R.Parse<MatlVector4>();
+                DataObject = parser.Parse<MatlVector4>();
             else if (DataType == MatlEnums.ParamDataType.String)
-                DataObject = R.Parse<MatlString>();
+                DataObject = parser.Parse<MatlString>();
             else if (DataType == MatlEnums.ParamDataType.Sampler)
-                DataObject = R.Parse<MatlSampler>();
+                DataObject = parser.Parse<MatlSampler>();
             else if (DataType == MatlEnums.ParamDataType.UvTransform)
-                DataObject = R.Parse<MatlUVTransform>();
+                DataObject = parser.Parse<MatlUVTransform>();
             else if (DataType == MatlEnums.ParamDataType.BlendState)
-                DataObject = R.Parse<MatlBlendState>();
+                DataObject = parser.Parse<MatlBlendState>();
             else if (DataType == MatlEnums.ParamDataType.RasterizerState)
-                DataObject = R.Parse<MatlRasterizerState>();
+                DataObject = parser.Parse<MatlRasterizerState>();
         }
 
-        private static string GetPropertyValues(System.Type type, object obj)
+        private static string GetPropertyValues(Type type, object obj)
         {
             string result = "(";
             foreach (var property in type.GetProperties())
