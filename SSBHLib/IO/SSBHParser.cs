@@ -89,11 +89,6 @@ namespace SSBHLib.IO
             while (b != 0)
             {
                 stringValue.Append((char)b);
-                if (Position >= FileSize)
-                {
-                    Seek(temp);
-                    return stringValue.ToString();
-                }
                 b = ReadByte();
             }
             
