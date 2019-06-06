@@ -76,30 +76,30 @@ namespace SSBHLib.IO
         {
             long temp = Position;
 
-            string stringValue = "";
+            var stringValue = new System.Text.StringBuilder();
 
             Seek(offset);
             if (Position >= FileSize)
             {
                 Seek(temp);
-                return stringValue;
+                return "";
             }
 
             byte b = ReadByte();
             while (b != 0)
             {
-                stringValue += (char)b;
+                stringValue.Append((char)b);
                 if (Position >= FileSize)
                 {
                     Seek(temp);
-                    return stringValue;
+                    return stringValue.ToString();
                 }
                 b = ReadByte();
             }
             
             Seek(temp);
 
-            return stringValue;
+            return stringValue.ToString();
         }
 
         public T Parse<T>() where T : ISSBH_File
