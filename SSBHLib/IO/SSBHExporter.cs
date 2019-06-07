@@ -57,28 +57,6 @@ namespace SSBHLib.IO
                 {
                     if (tag.Ignore)
                         return true;
-                    if (!tag.IF.Equals(""))
-                    {
-                        string[] args = tag.IF.Split('>');
-                        PropertyInfo checkprop = null;
-                        foreach (PropertyInfo pi in file.GetType().GetProperties())
-                        {
-                            if (pi.Name.Equals(args[0]))
-                            {
-                                checkprop = pi;
-                                break;
-                            }
-                        }
-                        skip = true;
-                        if (checkprop != null)
-                        {
-                            if ((ushort)checkprop.GetValue(file) > int.Parse(args[1]))
-                            {
-                                skip = false;
-                                break;
-                            }
-                        }
-                    }
                 }
             }
             return skip;

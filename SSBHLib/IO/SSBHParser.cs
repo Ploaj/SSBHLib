@@ -248,32 +248,8 @@ namespace SSBHLib.IO
             {
                 if (attribute is ParseTag tag)
                 {
-                    System.Diagnostics.Debug.WriteLine(tag.IF);
                     if (tag.Ignore)
                         shouldSkip = true;
-
-                    if (!tag.IF.Equals(""))
-                    {
-                        string[] args = tag.IF.Split('>');
-                        PropertyInfo checkprop = null;
-                        foreach (PropertyInfo pi in tObject.GetType().GetProperties())
-                        {
-                            if (pi.Name.Equals(args[0]))
-                            {
-                                checkprop = pi;
-                                break;
-                            }
-                        }
-                        shouldSkip = true;
-                        if (checkprop != null)
-                        {
-                            if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
-                            {
-                                shouldSkip = false;
-                                break;
-                            }
-                        }
-                    }
                 }
             }
 
