@@ -22,7 +22,7 @@ namespace SSBHLib.IO
         private static readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
-        private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
+        private static readonly Dictionary<Type, MethodInfo> genericParseMethodInfoByType = new Dictionary<Type, MethodInfo>();
 
         private static readonly Dictionary<Type, List<Action<ISSBH_File, Type>>> issbhSetters = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
 
@@ -147,9 +147,9 @@ namespace SSBHLib.IO
 
             ParseObjectProperties(tObject);
 
-            long tempp = Position;
+            long temp = Position;
             tObject.PostProcess(this);
-            Seek(tempp);
+            Seek(temp);
 
             return tObject;
         }
@@ -176,6 +176,8 @@ namespace SSBHLib.IO
             }
         }
 
+        public static Dictionary<Type, long> countByType = new Dictionary<Type, long>();
+
         private void SetArray<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
         {
             bool inline = prop.GetValue(tObject) != null;
@@ -185,9 +187,32 @@ namespace SSBHLib.IO
             long temp = Position;
 
             var propElementType = prop.PropertyType.GetElementType();
-            Array y1 = Array.CreateInstance(propElementType, size);
 
             Seek(offset);
+
+            // Check for the most frequent types first before using reflection.
+            if (propElementType == typeof(byte))
+                SetArrayPropertyByte(tObject, prop, size);
+            else if (propElementType == typeof(AnimTrack))
+                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, size);
+            else if (propElementType == typeof(AnimNode))
+                SetArrayPropertyIssbh<AnimNode>(tObject, prop, size);
+            else if (propElementType == typeof(AnimGroup))
+                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, size);
+            else if (propElementType == typeof(MatlAttribute))
+                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, size);
+            else if (propElementType == typeof(SKEL_Matrix))
+                SetArrayPropertyIssbh<SKEL_Matrix>(tObject, prop, size);
+            else
+                SetArrayPropertyGeneric(tObject, prop, size, propElementType);
+
+            if (!inline)
+                Seek(temp);
+        }
+
+        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : ISSBH_File
+        {
+            Array array = Array.CreateInstance(propElementType, size);
             for (int i = 0; i < size; i++)
             {
                 // Check for primitive types first.
@@ -203,19 +228,34 @@ namespace SSBHLib.IO
                     else
                     {
                         // Only use reflection for types only known at runtime.
-                        if (!genericParseMethodByType.ContainsKey(propElementType))
+                        if (!genericParseMethodInfoByType.ContainsKey(propElementType))
                             AddParseMethod(prop, propElementType);
 
-                        obj = genericParseMethodByType[propElementType].Invoke(this, null);
+                        obj = genericParseMethodInfoByType[propElementType].Invoke(this, null);
                     }
                 }
-                y1.SetValue(obj, i);
+                array.SetValue(obj, i);
             }
 
-            prop.SetValue(tObject, y1);
+            prop.SetValue(tObject, array);
+        }
 
-            if (!inline)
-                Seek(temp);
+        private void SetArrayPropertyByte(object targetObject, PropertyInfo prop, long size)
+        {
+            var array = new byte[size];
+            for (int i = 0; i < size; i++)
+                array[i] = ReadByte();
+
+            prop.SetValue(targetObject, array);
+        }
+
+        private void SetArrayPropertyIssbh<T>(object targetObject, PropertyInfo prop, long size) where T : ISSBH_File
+        {
+            var array = new T[size];
+            for (int i = 0; i < size; i++)
+                array[i] = Parse<T>();
+
+            prop.SetValue(targetObject, array);
         }
 
         private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : ISSBH_File
@@ -260,7 +300,7 @@ namespace SSBHLib.IO
         {
             MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
             parseMethod = parseMethod.MakeGenericMethod(prop.PropertyType.GetElementType());
-            genericParseMethodByType.Add(propElementType, parseMethod);
+            genericParseMethodInfoByType.Add(propElementType, parseMethod);
         }
 
         public object ReadProperty(Type t)
