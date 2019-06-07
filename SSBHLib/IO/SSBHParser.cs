@@ -1,4 +1,7 @@
 ﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Materials;
+using SSBHLib.Formats.Meshes;
+using SSBHLib.Formats.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +24,41 @@ namespace SSBHLib.IO
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
 
         private static readonly Dictionary<Type, List<Action<ISSBH_File, Type>>> issbhSetters = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
+
+        // Avoid reflection invoke overhead for known file magics.
+        private static readonly Dictionary<string, Func<SSBHParser, ISSBH_File>> parseMethodByMagic = new Dictionary<string, Func<SSBHParser, ISSBH_File>>()
+        {
+            { "BPLH", (parser) => parser.Parse<HLPB>() },
+            { "DPRN", (parser) => parser.Parse<NRPD>() },
+            { "RDHS", (parser) => parser.Parse<SHDR>() },
+            { "LEKS", (parser) => parser.Parse<SKEL>() },
+            { "LDOM", (parser) => parser.Parse<MODL>() },
+            { "HSEM", (parser) => parser.Parse<MESH>() },
+            { "LTAM", (parser) => parser.Parse<MATL>() },
+            { "MINA", (parser) => parser.Parse<ANIM>() }
+        };
+
+        // Avoid reflection invoke overhead for known types.
+        private static readonly Dictionary<Type, Func<SSBHParser, ISSBH_File>> parseMethodByType = new Dictionary<Type, Func<SSBHParser, ISSBH_File>>()
+        {
+            { typeof(AnimGroup), (parser) => parser.Parse<AnimGroup>() },
+            { typeof(AnimNode), (parser) => parser.Parse<AnimNode>() },
+            { typeof(AnimTrack), (parser) => parser.Parse<AnimTrack>() },
+            { typeof(MatlEntry), (parser) => parser.Parse<MatlEntry>() },
+            { typeof(MatlAttribute), (parser) => parser.Parse<MatlAttribute>() },
+            { typeof(MODL_MaterialName), (parser) => parser.Parse<MODL_MaterialName>() },
+            { typeof(MODL_Entry), (parser) => parser.Parse<MODL_Entry>() },
+            { typeof(MeshObject), (parser) => parser.Parse<MeshObject>() },
+            { typeof(MeshAttribute), (parser) => parser.Parse<MeshAttribute>() },
+            { typeof(MeshAttributeString), (parser) => parser.Parse<MeshAttributeString>() },
+            { typeof(MeshBuffer), (parser) => parser.Parse<MeshBuffer>() },
+            { typeof(MeshRiggingGroup), (parser) => parser.Parse<MeshRiggingGroup>() },
+            { typeof(MeshBoneBuffer), (parser) => parser.Parse<MeshBoneBuffer>() },
+            { typeof(SKEL_BoneEntry), (parser) => parser.Parse<SKEL_BoneEntry>() },
+            { typeof(SKEL_Matrix), (parser) => parser.Parse<SKEL_Matrix>() }
+        };
+
+        public static readonly HashSet<string> test = new HashSet<string>();
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
@@ -45,20 +83,27 @@ namespace SSBHLib.IO
             if (FileSize < 4)
                 return false;
             
-            string Mmagic = new string(ReadChars(4));
+            string fileMagic = new string(ReadChars(4));
             Seek(Position - 4);
-            if (Mmagic.Equals("HBSS"))
+            if (fileMagic.Equals("HBSS"))
             {
                 Seek(0x10);
-                Mmagic = new string(ReadChars(4));
+                fileMagic = new string(ReadChars(4));
                 Seek(0x10);
             }
 
+            if (parseMethodByMagic.ContainsKey(fileMagic))
+            {
+                file = parseMethodByMagic[fileMagic](this);
+                return true;
+            }
+
+            // The type is not known, so do a very slow check to find it.
             foreach (var type in issbhTypes)
             {
                 if (type.GetCustomAttributes(typeof(SSBHFileAttribute), true).FirstOrDefault() is SSBHFileAttribute attr)
                 {
-                    if (attr.Magic.Equals(Mmagic))
+                    if (attr.Magic.Equals(fileMagic))
                     {
                         MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
                         parseMethod = parseMethod.MakeGenericMethod(type);
@@ -167,15 +212,24 @@ namespace SSBHLib.IO
                     Seek(Offset);
                     for (int i = 0; i < Size; i++)
                     {
+                        // Check for primitive types first.
+                        // If the type is not primitive, check for an SSBH type.
                         object obj = ReadProperty(propElementType);
+
                         if (obj == null)
                         {
-                            if (!genericParseMethodByType.ContainsKey(propElementType))
+                            if (parseMethodByType.ContainsKey(propElementType))
                             {
-                                AddParseMethod(prop, propElementType);
+                                obj = parseMethodByType[propElementType](this);
                             }
+                            else
+                            {
+                                // Only use reflection for types only known at runtime.
+                                if (!genericParseMethodByType.ContainsKey(propElementType))
+                                    AddParseMethod(prop, propElementType);
 
-                            obj = genericParseMethodByType[propElementType].Invoke(this, null);
+                                obj = genericParseMethodByType[propElementType].Invoke(this, null);
+                            }
                         }
                         y1.SetValue(obj, i);
                     }
@@ -200,6 +254,7 @@ namespace SSBHLib.IO
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)
         {
+            test.Add($"{{ typeof({propElementType}), (parser) => parser.Parse<{propElementType}>() }},");
             MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
             parseMethod = parseMethod.MakeGenericMethod(prop.PropertyType.GetElementType());
             genericParseMethodByType.Add(propElementType, parseMethod);
