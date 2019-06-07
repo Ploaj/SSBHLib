@@ -1,4 +1,4 @@
-﻿namespace SSBHLib.Formats
+﻿namespace SSBHLib.Formats.Rendering
 {
     public class NrpdFrameBufferContainer : ISSBH_File
     {

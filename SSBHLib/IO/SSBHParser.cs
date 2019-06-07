@@ -1,7 +1,8 @@
 ﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Animation;
 using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
-using SSBHLib.Formats.Animation;
+using SSBHLib.Formats.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;

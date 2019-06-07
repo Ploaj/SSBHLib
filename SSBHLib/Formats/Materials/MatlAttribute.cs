@@ -40,7 +40,7 @@ namespace SSBHLib.Formats.Materials
             { typeof(MatlString), ParamDataType.String},
             { typeof(MatlUVTransform), ParamDataType.UvTransform},
             { typeof(MatlVector4), ParamDataType.Vector4},
-            };
+        };
 
         public override void PostProcess(SSBHParser parser)
         {

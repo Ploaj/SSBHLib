@@ -1,4 +1,4 @@
-﻿namespace SSBHLib.Formats
+﻿namespace SSBHLib.Formats.Rendering
 {
     [SSBHFileAttribute("RDHS")]
     public class SHDR : ISSBH_File

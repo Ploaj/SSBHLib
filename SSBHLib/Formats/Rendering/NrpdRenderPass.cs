@@ -1,4 +1,4 @@
-﻿namespace SSBHLib.Formats
+﻿namespace SSBHLib.Formats.Rendering
 {
     public class NrpdRenderPass : ISSBH_File
     {
