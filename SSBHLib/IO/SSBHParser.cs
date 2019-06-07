@@ -58,8 +58,6 @@ namespace SSBHLib.IO
             { typeof(SKEL_Matrix), (parser) => parser.Parse<SKEL_Matrix>() }
         };
 
-        public static readonly HashSet<string> test = new HashSet<string>();
-
         public SSBHParser(Stream Stream) : base(Stream)
         {
 
@@ -254,7 +252,6 @@ namespace SSBHLib.IO
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)
         {
-            test.Add($"{{ typeof({propElementType}), (parser) => parser.Parse<{propElementType}>() }},");
             MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
             parseMethod = parseMethod.MakeGenericMethod(prop.PropertyType.GetElementType());
             genericParseMethodByType.Add(propElementType, parseMethod);

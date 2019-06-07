@@ -78,13 +78,6 @@ namespace CrossMod.Nodes
                 (node as FileNode)?.Open();
             }
 
-            var test = SSBHLib.IO.SSBHParser.test;
-            var output = new System.Text.StringBuilder();
-            foreach (var value in test)
-            {
-                output.AppendLine(value);
-            }
-            File.WriteAllText("out.txt", output.ToString());
             isNestedOpened = true;
         }
 
