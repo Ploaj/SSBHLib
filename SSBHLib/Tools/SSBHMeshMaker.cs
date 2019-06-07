@@ -221,7 +221,7 @@ namespace SSBHLib.Tools
                 mesh.Objects[meshIndex++] = mo;
 
                 mo.ParentBoneName = tempmesh.ParentBone;
-                if (tempmesh.ParentBone == null || tempmesh.ParentBone.Equals(""))
+                if (tempmesh.Influences.Count > 0 && (tempmesh.ParentBone == null || tempmesh.ParentBone.Equals("")))
                     mo.HasRigging = 1;
                 
                 int Stride1 = 0;

@@ -191,8 +191,7 @@ namespace SSBHLib.Tools
                     int valueBitCount = (int)item.Count;
                     if (valueBitCount == 0)
                         continue;
-
-                    // TODO: What is this?
+                    
                     int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
                     for (int k = 0; k < valueBitCount; k++)
@@ -394,9 +393,14 @@ namespace SSBHLib.Tools
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
-                // TODO: What type is this
-                var floats = new float[24]; // number unknown
-                return new AnimTrackTexture(floats);
+                return new AnimTrackTexture()
+                {
+                    UnkFloat1 = reader.ReadSingle(),
+                    UnkFloat2 = reader.ReadSingle(),
+                    UnkFloat3 = reader.ReadSingle(),
+                    UnkFloat4 = reader.ReadSingle(),
+                    Unknown = reader.ReadInt32()
+                };
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Float))
@@ -404,8 +408,7 @@ namespace SSBHLib.Tools
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
             {
-                //TODO: What type is this
-                return reader.ReadByte();
+                return reader.ReadInt32();
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))

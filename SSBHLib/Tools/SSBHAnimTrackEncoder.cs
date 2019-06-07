@@ -21,8 +21,29 @@ namespace SSBHLib.Tools
 
         private ANIM animFile = new ANIM();
 
-        private float Epsilon = 0.00001f;
-        
+        private static float DefaultEpsilon = 0.000002f; //0.0000012f;
+        private float Epsilon = DefaultEpsilon;
+
+        public bool CompressVector4 { get; set; } = false;
+
+        /// <summary>
+        /// Sets the margin of error for compression
+        /// default is 0.000002 smash ultimate seems to be closer to 0.0000012
+        /// smaller value means smaller filesize but less accuracy
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetCompressionLevel(float value)
+        {
+            Epsilon = value;
+        }
+
+        /// <summary>
+        /// Adds a track to be encoded
+        /// </summary>
+        /// <param name="NodeName">target material/texture/mesh name</param>
+        /// <param name="TrackName">Usually "Transform" or "Visibility" matches <see cref="ANIM_TYPE"/></param>
+        /// <param name="Type"><see cref="ANIM_TYPE"/></param>
+        /// <param name="Values">Supported types AnimTrackTransform, AnimTrackTexture, AnimTrackCustomVector4, bool, float, int</param>
         public void AddTrack(string NodeName, string TrackName, ANIM_TYPE Type, IList<object> Values)
         {
             AnimNode node = GetNode(Type, NodeName);
@@ -41,22 +62,26 @@ namespace SSBHLib.Tools
             trackToValues.Add(track, Values);
         }
 
+        /// <summary>
+        /// Generates and saves the new ANIM file
+        /// </summary>
+        /// <param name="fname"></param>
         public void Save(string fname)
         {
             // Prep Anim File
-            animFile.Name = fname;
+            animFile.Name = Path.GetFileName(fname);
             animFile.Animations = groups.ToArray();
 
             // Create Buffer
             MemoryStream buffer = new MemoryStream();
-
+            
             using (BinaryWriter w = new BinaryWriter(buffer))
             {
                 foreach (var animation in animFile.Animations)
                 {
                     foreach(var node in animation.Nodes)
                     {
-                        foreach(var track in node.Tracks)
+                        foreach(var track in node.Tracks) // TODO: these nodes need to be in ordinal order
                         {
                             var values = trackToValues[track];
 
@@ -97,13 +122,37 @@ namespace SSBHLib.Tools
                 }
             }
 
-            animFile.Buffer = buffer.GetBuffer();
+            animFile.Buffer = buffer.ToArray();
             buffer.Close();
             buffer.Dispose();
 
             SSBH.TrySaveSSBHFile(fname, animFile);
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private AnimGroup GetGroup(ANIM_TYPE type)
+        {
+            foreach (var g in groups)
+            {
+                if (g.Type == type)
+                    return g;
+            }
+            AnimGroup group = new AnimGroup();
+            group.Type = type;
+            group.Nodes = new AnimNode[0];
+            groups.Add(group);
+            return group;
+        }
 
+        /// <summary>
+        /// Returns the track flag for object type
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         private int GetTrackTypeFlag(object o)
         {
             if (o is AnimTrackTransform transform)
@@ -131,7 +180,7 @@ namespace SSBHLib.Tools
                 return (int)ANIM_TRACKFLAGS.Float;
             }
             else
-            if (o is byte by)
+            if (o is int)
             {
                 return (int)ANIM_TRACKFLAGS.PatternIndex;
             }
@@ -172,14 +221,27 @@ namespace SSBHLib.Tools
                 CompressTransformTracks(w, values);
                 return true;
             }
+            if (values[0] is AnimTrackCustomVector4 && CompressVector4)
+            {
+                CompressVectorTrack(w, values);
+                return true;
+            }
+            if (values[0] is bool)
+            {
+                CompressBooleanTrack(w, values);
+                return true;
+            }
 
             // not compressed
-            foreach(var v in values)
+            foreach (var v in values)
                 WriteDirect(w, v);
 
             return false;
         }
 
+        /// <summary>
+        /// Special helper class for quantanizing the track values
+        /// </summary>
         private class Quantanizer
         {
             public float Min = float.MaxValue;
@@ -288,6 +350,10 @@ namespace SSBHLib.Tools
                 return value;
             }
         }
+
+        /// <summary>
+        /// Special class for writing bits
+        /// </summary>
         private class BitWriter
         {
             private int currentByte = 0;
@@ -320,6 +386,96 @@ namespace SSBHLib.Tools
             }
         }
 
+        /// <summary>
+        /// Compresses and writes booleans to writer
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="values"></param>
+        private void CompressBooleanTrack(BinaryWriter w, IList<object> values)
+        {
+            // Compressed Header
+            w.Write((short)0x04);
+            w.Write((short)0);
+            w.Write((short)0x20); // default values offset
+            w.Write((short)1); // bits per entry
+            w.Write(0x21); // compressed data start
+            w.Write(values.Count); // frame count
+
+            w.Write(0); // all 0s for booleans
+            w.Write(0);
+            w.Write(0);
+            w.Write(0);
+
+            BitWriter bitWriter = new BitWriter();
+            foreach (bool b in values)
+                bitWriter.WriteBits(b ? 1 : 0, 1);
+            w.Write(bitWriter.GetBytes());
+        }
+
+        /// <summary>
+        /// Compressed vector track and writes it to writer
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="values"></param>
+        private void CompressVectorTrack(BinaryWriter w, IList<object> values)
+        {
+            // Process
+            short Flags = 0;
+            short BitsPerEntry = 0;
+
+            Quantanizer v1 = new Quantanizer();
+            Quantanizer v2 = new Quantanizer();
+            Quantanizer v3 = new Quantanizer();
+            Quantanizer v4 = new Quantanizer();
+
+            foreach(AnimTrackCustomVector4 vec in values)
+            {
+                v1.Add(vec.X);
+                v2.Add(vec.Y);
+                v3.Add(vec.Z);
+                v4.Add(vec.W);
+            }
+
+            BitsPerEntry = (short)(v1.GetBitCount(Epsilon) + v2.GetBitCount(Epsilon) + v3.GetBitCount(Epsilon) + v4.GetBitCount(Epsilon));
+
+            //TODO: this is bugged
+            // Write Compressed Header
+            w.Write((short)0x04);
+            w.Write(Flags);
+            w.Write((short)(0x10 + 0x10 * 4)); // default values offset
+            w.Write(BitsPerEntry);
+            w.Write(0x10 + 0x10 * 4 + sizeof(float) * 4); // compressed data start
+            w.Write(values.Count); // frame count
+
+            // table
+            w.Write(v1.Min); w.Write(v1.Max); w.Write(v1.GetBitCount(Epsilon));
+            w.Write(v2.Min); w.Write(v2.Max); w.Write(v2.GetBitCount(Epsilon));
+            w.Write(v3.Min); w.Write(v3.Max); w.Write(v3.GetBitCount(Epsilon));
+            w.Write(v4.Min); w.Write(v4.Max); w.Write(v4.GetBitCount(Epsilon));
+
+            // default values
+            w.Write(((AnimTrackCustomVector4)values[0]).X);
+            w.Write(((AnimTrackCustomVector4)values[0]).Y);
+            w.Write(((AnimTrackCustomVector4)values[0]).Z);
+            w.Write(((AnimTrackCustomVector4)values[0]).W);
+
+            // compressed data
+            BitWriter bitWriter = new BitWriter();
+            foreach (AnimTrackCustomVector4 vec in values)
+            {
+                bitWriter.WriteBits(v1.GetQuantanizedValue(vec.X), v1.GetBitCount(Epsilon));
+                bitWriter.WriteBits(v2.GetQuantanizedValue(vec.Y), v2.GetBitCount(Epsilon));
+                bitWriter.WriteBits(v3.GetQuantanizedValue(vec.Z), v3.GetBitCount(Epsilon));
+                bitWriter.WriteBits(v4.GetQuantanizedValue(vec.W), v4.GetBitCount(Epsilon));
+            }
+            w.Write(bitWriter.GetBytes());
+        }
+
+        /// <summary>
+        /// Compresses <see cref="AnimTrackTransform" track and writes to writer/>
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="values"></param>
         private void CompressTransformTracks(BinaryWriter w, IList<object> values)
         {
             Quantanizer SX = new Quantanizer();
@@ -443,6 +599,11 @@ namespace SSBHLib.Tools
             w.Write(writer.GetBytes());
         }
 
+        /// <summary>
+        /// Writes the object type directly with no compression
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="o"></param>
         private void WriteDirect(BinaryWriter w, object o)
         {
             if (o is AnimTrackTransform transform)
@@ -470,8 +631,11 @@ namespace SSBHLib.Tools
             else
             if (o is AnimTrackTexture tex)
             {
-                foreach(var f in tex.Floats)
-                    w.Write(f);
+                w.Write(tex.UnkFloat1);
+                w.Write(tex.UnkFloat2);
+                w.Write(tex.UnkFloat3);
+                w.Write(tex.UnkFloat4);
+                w.Write(tex.Unknown);
             }
             else
             if (o is bool b)
@@ -484,14 +648,20 @@ namespace SSBHLib.Tools
                 w.Write(f);
             }
             else
-            if (o is byte by)
+            if (o is int i)
             {
-                w.Write(by);
+                w.Write(i);
             }
             else
                 throw new NotSupportedException($"{o.GetType()} is not a supported track object");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="NodeName"></param>
+        /// <returns></returns>
         private AnimNode GetNode(ANIM_TYPE Type, string NodeName)
         {
             AnimGroup group = GetGroup(Type);
@@ -516,20 +686,6 @@ namespace SSBHLib.Tools
             group.Nodes = nodes;
 
             return newnode;
-        }
-
-        private AnimGroup GetGroup(ANIM_TYPE type)
-        {
-            foreach(var g in groups)
-            {
-                if (g.Type == type)
-                    return g;
-            }
-            AnimGroup group = new AnimGroup();
-            group.Type = type;
-            group.Nodes = new AnimNode[0];
-            groups.Add(group);
-            return group;
         }
     }
 }

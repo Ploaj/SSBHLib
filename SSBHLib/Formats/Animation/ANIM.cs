@@ -7,7 +7,7 @@
 
         public ushort VersionMajor { get; set; } = 0x0002;
         
-        public ushort VersionMinor { get; set; } = 0x0001;
+        public ushort VersionMinor { get; set; } = 0x0000;
         
         public float FrameCount { get; set; }
 
