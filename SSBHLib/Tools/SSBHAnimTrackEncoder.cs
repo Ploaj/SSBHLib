@@ -43,7 +43,7 @@ namespace SSBHLib.Tools
         /// <param name="TrackName">Usually "Transform" or "Visibility" matches <see cref="ANIM_TYPE"/></param>
         /// <param name="Type"><see cref="ANIM_TYPE"/></param>
         /// <param name="Values">Supported types AnimTrackTransform, AnimTrackTexture, AnimTrackCustomVector4, bool, float, int</param>
-        public void AddTrack(string NodeName, string TrackName, ANIM_TYPE Type, IList<object> Values)
+        public void AddTrack(string nodeName, string trackName, ANIM_TYPE type, IList<object> values)
         {
             AnimNode node = GetNode(type, nodeName);
 
@@ -652,7 +652,7 @@ namespace SSBHLib.Tools
         /// <param name="Type"></param>
         /// <param name="NodeName"></param>
         /// <returns></returns>
-        private AnimNode GetNode(ANIM_TYPE Type, string NodeName)
+        private AnimNode GetNode(ANIM_TYPE type, string nodeName)
         {
             AnimGroup group = GetGroup(type);
 
