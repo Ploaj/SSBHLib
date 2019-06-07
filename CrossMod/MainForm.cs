@@ -50,7 +50,6 @@ namespace CrossMod
         public void HideControl()
         {
             contentBox.Controls.Clear();
-            modelViewport.Clear();
         }
 
         public void ShowModelViewport()
@@ -95,14 +94,24 @@ namespace CrossMod
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (fileTree.SelectedNode is IRenderableNode renderableNode)
+            // This condition needs to be first.
+            if (fileTree.SelectedNode is NUTEX_Node texture)
             {
                 ShowModelViewport();
-                modelViewport.RenderableNode = renderableNode;
+                modelViewport.UpdateTexture(texture);
             }
-            else
+            else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                modelViewport.Clear();
+                ShowModelViewport();
+                var node = (FileNode)fileTree.SelectedNode;
+                modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
+                modelViewport.UpdateTexture(null);
+            }
+            else if (fileTree.SelectedNode is NUANIM_Node animation)
+            {
+                ShowModelViewport();
+                modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
+                modelViewport.UpdateTexture(null);
             }
 
             modelViewport.RenderFrame();
@@ -111,7 +120,7 @@ namespace CrossMod
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Force the shaders to be generated again.
-            Rendering.ShaderContainer.SetUpShaders();
+            Rendering.ShaderContainer.ReloadShaders();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -380,38 +389,42 @@ namespace CrossMod
             if (string.IsNullOrEmpty(folderPath))
                 return;
 
-            var name = "colorSet5";
+            var meshesByAttribute = new Dictionary<string, List<string>>();
 
-            var values = new HashSet<string>();
-
-            var outputText = new System.Text.StringBuilder();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
             {
                 var node = new NUMSHB_Node(file);
                 node.Open();
 
-                AddValue(folderPath, name, values, outputText, file, node);
+                UpdateMeshAttributes(folderPath, meshesByAttribute, file, node);
             }
 
-            File.WriteAllText("attributeOut.txt", outputText.ToString());
+            foreach (var pair in meshesByAttribute)
+            {
+                var outputText = new System.Text.StringBuilder();
+                foreach (var value in pair.Value)
+                {
+                    outputText.AppendLine(value);
+                }
+
+                File.WriteAllText($"{pair.Key} Meshes.txt", outputText.ToString());
+            }
         }
 
-        private static void AddValue(string folderPath, string name, System.Collections.Generic.HashSet<string> values, System.Text.StringBuilder outputText, string file, NUMSHB_Node node)
+        private static void UpdateMeshAttributes(string folderPath, Dictionary<string, List<string>> meshesByAttribute, string file, NUMSHB_Node node)
         {
             foreach (var meshObject in node.mesh.Objects)
             {
                 foreach (var attribute in meshObject.Attributes)
                 {
-                    if (attribute.Name == name)
+                    if (!meshesByAttribute.ContainsKey(attribute.Name))
+                        meshesByAttribute.Add(attribute.Name, new List<string>());
+
+                    var text = $"{meshObject.Name} {file.Replace(folderPath, "")}";
+                    if (!meshesByAttribute[attribute.Name].Contains(text))
                     {
-                        var text = $"{meshObject.Name} {file.Replace(folderPath, "")}";
-                        if (!values.Contains(text))
-                        {
-                            outputText.AppendLine(text);
-                            values.Add(text);
-                            return;
-                        }
+                        meshesByAttribute[attribute.Name].Add(text);
                     }
                 }
             }
@@ -432,6 +445,37 @@ namespace CrossMod
             if (e.Node is DirectoryNode node)
             {
                 node.OpenNodes();
+            }
+        }
+
+        private void printLightValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            var valuesByName = new Dictionary<string, HashSet<string>>();
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*nuanmb", SearchOption.AllDirectories))
+            {
+                if (!file.Contains("render") || !file.Contains("light"))
+                    continue;
+
+                var node = new NUANIM_Node(file);
+                node.Open();
+
+                node.UpdateUniqueLightValues(valuesByName);
+            }
+
+            foreach (var pair in valuesByName)
+            {
+                var output = new System.Text.StringBuilder();
+                foreach (var value in pair.Value)
+                {
+                    output.AppendLine(value);
+                }
+
+                File.WriteAllText($"{pair.Key} unique values.txt", output.ToString());
             }
         }
     }

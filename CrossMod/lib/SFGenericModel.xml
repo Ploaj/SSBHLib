@@ -532,6 +532,16 @@
             The swizzling and texture coordinate display is controlled per texture.
             </summary>
         </member>
+        <member name="P:SFGenericModel.ShaderGenerators.TextureShaderGenerator.MvpMatrixName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.TextureShaderGenerator.SphereMatrixName">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:SFGenericModel.ShaderGenerators.TextureShaderGenerator.CreateShader(System.Collections.Generic.List{SFGenericModel.ShaderGenerators.TextureRenderInfo},System.Collections.Generic.ICollection{SFGenericModel.VertexAttributes.VertexAttribute},System.String@,System.String@)">
             <summary>
             Generates a shader for rendering each of the specified textures individually.
@@ -548,6 +558,26 @@
             <summary>
             Contains methods for automatically generating a debug shader for
             viewing vertex attributes. 
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.MvpMatrixName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.SphereMatrixName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.ResultName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.AttribIndexName">
+            <summary>
+            
             </summary>
         </member>
         <member name="M:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.CreateShader(System.Collections.Generic.List{SFGenericModel.VertexAttributes.VertexAttribute},System.String@,System.String@)">

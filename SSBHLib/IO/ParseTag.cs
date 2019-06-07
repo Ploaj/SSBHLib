@@ -8,11 +8,11 @@ namespace SSBHLib.IO
         public bool InLine;
         public bool Ignore;
 
-        public ParseTag(string IF = "", bool InLine = false, bool Ignore = false)
+        public ParseTag(string IF = "", bool inLine = false, bool ignore = false)
         {
             this.IF = IF;
-            this.Ignore = Ignore;
-            this.InLine = InLine;
+            Ignore = ignore;
+            InLine = inLine;
         }
     }
 }

@@ -110,7 +110,7 @@ namespace CrossMod.Nodes
                 fileNode = new FileNode(file);
 
             // Change style of unrenderable nodes
-            if (!(fileNode is IRenderableNode))
+            if (!(fileNode is IRenderableNode) && !(fileNode is IExportableAnimationNode))
             {
                 fileNode.ForeColor = Color.Gray;
             }

@@ -27,7 +27,7 @@ namespace SSBHLib.Tools
             public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
         }
 
-        private TempMesh CurrentMesh;
+        private TempMesh currentMesh;
         private List<TempMesh> meshes = new List<TempMesh>();
 
         /// <summary>
@@ -37,22 +37,21 @@ namespace SSBHLib.Tools
         /// <param name="indices">The vertex indices as triangles</param>
         public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "", bool generateBounding = false)
         {
-            CurrentMesh = new TempMesh
+            currentMesh = new TempMesh
             {
                 Name = name,
                 ParentBone = parentBoneName
             };
-            CurrentMesh.Indices.AddRange(indices);
-            CurrentMesh.VertexCount = positions.Length;
+            currentMesh.Indices.AddRange(indices);
+            currentMesh.VertexCount = positions.Length;
 
-            meshes.Add(CurrentMesh);
+            meshes.Add(currentMesh);
             AddAttributeToMeshObject(UltimateVertexAttribute.Position0, positions);
 
             if (generateBounding)
             {
                 //TODO: sphere generation
-                SSBHVertexAttribute min, max;
-                BoundingBoxGenerator.GenerateAABB(positions, out max, out min);
+                BoundingBoxGenerator.GenerateAABB(positions, out SSBHVertexAttribute max, out SSBHVertexAttribute min);
                 SetAABoundingBox(min, max);
                 SetOrientedBoundingBox(
                     new SSBHVertexAttribute((max.X + min.X / 2), (max.Y + min.Y / 2), (max.Y + min.Y / 2)),
@@ -69,9 +68,9 @@ namespace SSBHLib.Tools
         /// </summary>
         public void SetBoundingSphere(float x, float y, float z, float r)
         {
-            if (CurrentMesh == null)
+            if (currentMesh == null)
                 return;
-            CurrentMesh.BoundingSphere = new SSBHVertexAttribute()
+            currentMesh.BoundingSphere = new SSBHVertexAttribute()
             {
                 X = x,
                 Y = y,
@@ -83,32 +82,33 @@ namespace SSBHLib.Tools
         /// <summary>
         /// Sets the axis aligned bounding box for the current Mesh
         /// </summary>
-        /// <param name="Min"></param>
-        /// <param name="Max"></param>
-        public void SetAABoundingBox(SSBHVertexAttribute Min, SSBHVertexAttribute Max)
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        public void SetAABoundingBox(SSBHVertexAttribute min, SSBHVertexAttribute max)
         {
-            if (CurrentMesh == null)
+            if (currentMesh == null)
                 return;
-            CurrentMesh.BBMax = Max;
-            CurrentMesh.BBMin = Min;
+            currentMesh.BBMax = max;
+            currentMesh.BBMin = min;
         }
 
         /// <summary>
         /// Sets the oriented bounding box for the current Mesh
         /// </summary>
-        /// <param name="Min"></param>
-        /// <param name="Max"></param>
+        /// <param name="center"></param>
+        /// <param name="size"></param>
+        /// <param name="matrix3x3"></param>
         public void SetOrientedBoundingBox(SSBHVertexAttribute center, SSBHVertexAttribute size, float[] matrix3x3)
         {
-            if (CurrentMesh == null)
+            if (currentMesh == null)
                 return;
             if (matrix3x3 == null)
                 return;
             if (matrix3x3.Length != 9)
                 throw new IndexOutOfRangeException("Matrix must contain 9 entries in row major order");
-            CurrentMesh.OBBCenter = center;
-            CurrentMesh.OBBSize = size;
-            CurrentMesh.OBBMatrix3x3 = matrix3x3;
+            currentMesh.OBBCenter = center;
+            currentMesh.OBBSize = size;
+            currentMesh.OBBMatrix3x3 = matrix3x3;
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace SSBHLib.Tools
         /// <param name="inputValues"></param>
         public void AddAttributeToMeshObject(UltimateVertexAttribute attribute, SSBHVertexAttribute[] inputValues)
         {
-            if (CurrentMesh == null)
+            if (currentMesh == null)
                 return;
 
             int size = GetAttributeSize(attribute);
@@ -136,7 +136,7 @@ namespace SSBHLib.Tools
                     values[i * size + 3] = inputValues[i].W;
             }
 
-            CurrentMesh.VertexData.Add(attribute, values);
+            currentMesh.VertexData.Add(attribute, values);
         }
 
         /// <summary>
@@ -145,9 +145,9 @@ namespace SSBHLib.Tools
         /// </summary>
         public void AttachRiggingToMeshObject(SSBHVertexInfluence[] influences)
         {
-            if (CurrentMesh == null)
+            if (currentMesh == null)
                 return;
-            CurrentMesh.Influences.AddRange(influences);
+            currentMesh.Influences.AddRange(influences);
         }
 
         /// <summary>

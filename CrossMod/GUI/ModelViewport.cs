@@ -14,66 +14,71 @@ namespace CrossMod.GUI
 {
     public partial class ModelViewport : UserControl
     {
-        public IRenderableNode RenderableNode
+        private AnimationBar animationBar;
+
+        // This isn't a dictionary to preserve render order.
+        private HashSet<string> renderableNodeNames = new HashSet<string>();
+        private List<IRenderable> renderableNodes = new List<IRenderable>();
+        private IRenderable renderTexture = null;
+
+        private Camera camera = new Camera() { FarClipPlane = 500000 };
+        private Vector2 mousePosition = new Vector2();
+        private float mouseScrollWheel = 0;
+
+        public IRenderableAnimation RenderableAnimation
         {
             set
             {
-                ClearDisplay();
-
-                if (value == null)
-                {
-                    renderableNode = null;
-                    animationBar.Animation = null;
-                    return;
-                }
-                
-                if (value.GetRenderableNode() is IRenderableAnimation anim)
-                {
-                    animationBar.Animation = anim;
-                    controlBox.Visible = true;
-                }
-                else
-                {
-                    animationBar.Animation = null;
-                    renderableNode = value.GetRenderableNode();
-                }
-
-                if (renderableNode is RSkeleton skeleton)
-                {
-                    DisplaySkeleton(skeleton);
-                }
-                else if (renderableNode is RModel model)
-                {
-                    DisplayMeshes(model);
-                }
-                else if(renderableNode is IRenderableModel renderableModel)
-                {
-                    DisplayMeshes(renderableModel.GetModel());
-                    DisplaySkeleton(renderableModel.GetSkeleton());
-                }
-
-                if (value is NUMDL_Node node)
-                {
-                    var rnumdl = (RNUMDL)node.GetRenderableNode();
-                    FrameSelection(rnumdl.Model);
-                }
+                animationBar.Animation = value;
+                controlBox.Visible = true;
             }
         }
-        private IRenderable renderableNode;
-
-        public Camera camera = new Camera() { FarClipPlane = 500000 };
-        Vector2 mousePosition = new Vector2();
-        float mouseScrollWheel = 0;
-
-        private AnimationBar animationBar;
 
         public ModelViewport()
         {
             InitializeComponent();
-
             CreateRenderFrameEvents();
-
             AddAnimationBar();
+        }
+
+        public void UpdateTexture(NUTEX_Node texture)
+        {
+            var node = texture?.GetRenderableNode();
+            renderTexture = node;
+        }
+
+        public void AddRenderableNode(string name, IRenderableNode value)
+        {
+            ClearBonesAndMeshList();
+
+            if (value == null)
+                return;
+
+            var newNode = value.GetRenderableNode();
+
+            // Prevent duplicates. Paths should be unique.
+            if (!renderableNodeNames.Contains(name))
+            {
+                renderableNodes.Add(newNode);
+                renderableNodeNames.Add(name);
+            }
+
+            // Duplicate nodes should still update the mesh list.
+            if (newNode is RSkeleton skeleton)
+            {
+                DisplaySkeleton(skeleton);
+            }
+            else if (newNode is IRenderableModel renderableModel)
+            {
+                DisplayMeshes(renderableModel.GetModel());
+                DisplaySkeleton(renderableModel.GetSkeleton());
+            }
+
+            if (value is NUMDL_Node)
+            {
+                var rnumdl = (RNUMDL)newNode;
+                FrameSelection(rnumdl.Model);
+            }
         }
 
         public void FrameSelection(RModel model)
@@ -90,7 +95,9 @@ namespace CrossMod.GUI
         {
             animationBar.Model = null;
             animationBar.Skeleton = null;
-            RenderableNode = null;
+
+            renderableNodes.Clear();
+            renderableNodeNames.Clear();
 
             GC.WaitForPendingFinalizers();
             GLObjectManager.DeleteUnusedGLObjects();
@@ -98,7 +105,7 @@ namespace CrossMod.GUI
 
         public System.Drawing.Bitmap GetScreenshot()
         {
-            return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height);
+            return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
         private void AddAnimationBar()
@@ -115,7 +122,7 @@ namespace CrossMod.GUI
         {
             // HACK: Add proper frame timing.
             Application.Idle += AnimationRenderFrame;
-            glViewport.OnRenderFrame += RenderNode;
+            glViewport.OnRenderFrame += RenderNodes;
         }
 
         /// <summary>
@@ -173,11 +180,10 @@ namespace CrossMod.GUI
             }
         }
 
-        private void ClearDisplay()
+        private void ClearBonesAndMeshList()
         {
             boneTree.Nodes.Clear();
             meshList.Items.Clear();
-            controlBox.Visible = false;
         }
 
         private void AnimationRenderFrame(object sender, EventArgs e)
@@ -191,14 +197,14 @@ namespace CrossMod.GUI
                 glViewport.RenderFrame();
         }
 
-        private void RenderNode(object sender, EventArgs e)
+        private void RenderNodes(object sender, EventArgs e)
         {
             SetUpViewport();
 
-            if (renderableNode != null)
-            {
-                renderableNode.Render(camera);
-            }
+            foreach (var node in renderableNodes)
+                node.Render(camera);
+
+            renderTexture?.Render(camera);
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
@@ -255,11 +261,6 @@ namespace CrossMod.GUI
 
             mousePosition = newMousePosition;
             mouseScrollWheel = newMouseScrollWheel;
-        }
-
-        public void Clear()
-        {
-            RenderableNode = null;
         }
 
         private void glViewport_Load(object sender, EventArgs e)

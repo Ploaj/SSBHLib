@@ -1,7 +1,6 @@
-﻿using System;
+﻿using SSBHLib.Formats.Animation;
+using System;
 using System.Collections.Generic;
-using SSBHLib.Formats.Animation;
-using SSBHLib.IO;
 using System.IO;
 
 namespace SSBHLib.Tools
@@ -11,11 +10,11 @@ namespace SSBHLib.Tools
     /// </summary>
     public class SSBHAnimTrackEncoder
     {
-        public SSBHAnimTrackEncoder(float FrameCount)
+        public SSBHAnimTrackEncoder(float frameCount)
         {
-            animFile.FrameCount = FrameCount;
+            animFile.FrameCount = frameCount;
         }
-        
+
         private List<AnimGroup> groups = new List<AnimGroup>();
         private Dictionary<AnimTrack, IList<object>> trackToValues = new Dictionary<AnimTrack, IList<object>>();
 
@@ -46,20 +45,20 @@ namespace SSBHLib.Tools
         /// <param name="Values">Supported types AnimTrackTransform, AnimTrackTexture, AnimTrackCustomVector4, bool, float, int</param>
         public void AddTrack(string NodeName, string TrackName, ANIM_TYPE Type, IList<object> Values)
         {
-            AnimNode node = GetNode(Type, NodeName);
+            AnimNode node = GetNode(type, nodeName);
 
-            AnimTrack track = new AnimTrack();
-
-            track.FrameCount = (uint)Values.Count;
-
-            track.Name = TrackName;
+            AnimTrack track = new AnimTrack
+            {
+                FrameCount = (uint)values.Count,
+                Name = trackName
+            };
 
             var tracks = node.Tracks;
             Array.Resize(ref tracks, tracks.Length + 1);
             tracks[tracks.Length - 1] = track;
             node.Tracks = tracks;
 
-            trackToValues.Add(track, Values);
+            trackToValues.Add(track, values);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace SSBHLib.Tools
             {
                 foreach (var animation in animFile.Animations)
                 {
-                    foreach(var node in animation.Nodes)
+                    foreach (var node in animation.Nodes)
                     {
                         foreach(var track in node.Tracks) // TODO: these nodes need to be in ordinal order
                         {
@@ -110,7 +109,7 @@ namespace SSBHLib.Tools
                                 else
                                     track.Flags |= (int)ANIM_TRACKFLAGS.Direct;
                             }
-                            
+
                             track.DataSize = (uint)(buffer.Position - track.DataOffset);
 
                             int padding = (int)(0x40 - (w.BaseStream.Position % 0x40));
@@ -159,23 +158,19 @@ namespace SSBHLib.Tools
             {
                 return (int)ANIM_TRACKFLAGS.Transform;
             }
-            else
-            if (o is AnimTrackCustomVector4 vector)
+            else if (o is AnimTrackCustomVector4 vector)
             {
                 return (int)ANIM_TRACKFLAGS.Vector4;
             }
-            else
-            if (o is AnimTrackTexture tex)
+            else if (o is AnimTrackTexture tex)
             {
                 return (int)ANIM_TRACKFLAGS.Texture;
             }
-            else
-            if (o is bool b)
+            else if (o is bool b)
             {
                 return (int)ANIM_TRACKFLAGS.Boolean;
             }
-            else
-            if (o is float f)
+            else if (o is float f)
             {
                 return (int)ANIM_TRACKFLAGS.Float;
             }
@@ -207,16 +202,16 @@ namespace SSBHLib.Tools
             // empty track
             if (values.Count == 0)
                 return false;
-            
+
             // if values count is 1 then just write direct
-            if(values.Count == 1)
+            if (values.Count == 1)
             {
                 WriteDirect(w, values[0]);
                 return false;
             }
 
             // otherwise try to compress and compress if possible
-            if(values[0] is AnimTrackTransform)
+            if (values[0] is AnimTrackTransform)
             {
                 CompressTransformTracks(w, values);
                 return true;
@@ -244,34 +239,33 @@ namespace SSBHLib.Tools
         /// </summary>
         private class Quantanizer
         {
-            public float Min = float.MaxValue;
-            public float Max = float.MinValue;
-            public bool Constant { get
-                {
-                    return Min == Max;
-                } }
+            public float Min { get; private set; } = float.MaxValue;
+            public float Max { get; private set; } = float.MinValue;
+
+            public bool Constant => Min == Max;
+
             public int QuantanizationValue
             {
                 get
                 {
                     int v = 0;
-                    for (int i = 0; i < BitCount; i++)
+                    for (int i = 0; i < bitCount; i++)
                         v |= (1 << i);
                     return v;
                 }
             }
-            private List<float> Values = new List<float>();
+            private List<float> values = new List<float>();
 
             // cache bitcount
-            private float CurrentError = float.MaxValue;
-            private int BitCount;
+            private float currentError = float.MaxValue;
+            private int bitCount;
 
             public void Add(float v)
             {
                 Max = Math.Max(v, Max);
                 Min = Math.Min(v, Min);
-                Values.Add(v);
-                CurrentError = float.MaxValue;
+                values.Add(v);
+                currentError = float.MaxValue;
             }
 
             /// <summary>
@@ -281,10 +275,10 @@ namespace SSBHLib.Tools
             /// <returns></returns>
             public int GetBitCount(float epsilon)
             {
-                if (epsilon == CurrentError)
-                    return BitCount;
+                if (epsilon == currentError)
+                    return bitCount;
 
-                CurrentError = epsilon;
+                currentError = epsilon;
 
                 if (Constant)
                     return 0x10;
@@ -292,7 +286,7 @@ namespace SSBHLib.Tools
                 // try to find an optimal bit length
                 for (var i = 1; i < 31; i++)
                 {
-                    BitCount = i;
+                    bitCount = i;
                     float error = ComputeError(i);
                     if (error < epsilon)
                     {
@@ -300,11 +294,11 @@ namespace SSBHLib.Tools
                     }
                 }
 
-                BitCount = 0;
+                bitCount = 0;
                 return -1;
             }
 
-            
+
             /// <summary>
             /// Returns the maximum error for given bit length
             /// </summary>
@@ -317,7 +311,7 @@ namespace SSBHLib.Tools
                 if (Constant)
                     return epsilon;
 
-                foreach(var v in Values)
+                foreach (var v in values)
                 {
                     epsilon = Math.Max(epsilon, v - DecompressedValue(v));
                 }
@@ -563,9 +557,9 @@ namespace SSBHLib.Tools
             // write compressed values
             BitWriter writer = new BitWriter();
 
-            foreach(AnimTrackTransform transform in values)
+            foreach (AnimTrackTransform transform in values)
             {
-                if(hasScale)
+                if (hasScale)
                 {
                     writer.WriteBits(SX.GetQuantanizedValue(transform.SX), SX.GetBitCount(Epsilon));
                     writer.WriteBits(SY.GetQuantanizedValue(transform.SY), SY.GetBitCount(Epsilon));
@@ -591,7 +585,7 @@ namespace SSBHLib.Tools
                         RX.DecompressedValue(transform.RX) * RX.DecompressedValue(transform.RX) +
                         RY.DecompressedValue(transform.RY) * RY.DecompressedValue(transform.RY) +
                         RZ.DecompressedValue(transform.RZ) * RZ.DecompressedValue(transform.RZ))));
-                    
+
                     writer.WriteBits(Math.Sign((int)transform.RW) != Math.Sign((int)calculateW) ? 1 : 0, 1);
                 }
             }
@@ -620,16 +614,14 @@ namespace SSBHLib.Tools
                 w.Write(transform.Z);
                 w.Write((float)0);
             }
-            else
-            if (o is AnimTrackCustomVector4 vector)
+            else if (o is AnimTrackCustomVector4 vector)
             {
                 w.Write(vector.X);
                 w.Write(vector.Y);
                 w.Write(vector.Z);
                 w.Write(vector.W);
             }
-            else
-            if (o is AnimTrackTexture tex)
+            else if (o is AnimTrackTexture tex)
             {
                 w.Write(tex.UnkFloat1);
                 w.Write(tex.UnkFloat2);
@@ -637,13 +629,11 @@ namespace SSBHLib.Tools
                 w.Write(tex.UnkFloat4);
                 w.Write(tex.Unknown);
             }
-            else
-            if (o is bool b)
+            else if (o is bool b)
             {
                 w.Write(b);
             }
-            else
-            if (o is float f)
+            else if (o is float f)
             {
                 w.Write(f);
             }
@@ -664,21 +654,21 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         private AnimNode GetNode(ANIM_TYPE Type, string NodeName)
         {
-            AnimGroup group = GetGroup(Type);
+            AnimGroup group = GetGroup(type);
 
-            foreach(var node in group.Nodes)
+            foreach (var node in group.Nodes)
             {
-                if (node.Name.Equals(NodeName))
+                if (node.Name.Equals(nodeName))
                 {
                     return node;
                 }
             }
 
-            var newnode = new AnimNode();
-
-            newnode.Name = NodeName;
-
-            newnode.Tracks = new AnimTrack[0];
+            var newnode = new AnimNode
+            {
+                Name = nodeName,
+                Tracks = new AnimTrack[0]
+            };
 
             var nodes = group.Nodes;
             Array.Resize(ref nodes, nodes.Length + 1);

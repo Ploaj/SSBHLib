@@ -1,4 +1,8 @@
 ﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Animation;
+using SSBHLib.Formats.Materials;
+using SSBHLib.Formats.Meshes;
+using SSBHLib.Formats.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,26 +12,6 @@ using System.Runtime.InteropServices;
 
 namespace SSBHLib.IO
 {
-    public struct SSBHOffset
-    {
-        public long Value { get ; }
-
-        public SSBHOffset(long value)
-        {
-            Value = value;
-        }
-
-        public static implicit operator SSBHOffset(long s)
-        {
-            return new SSBHOffset(s);
-        }
-
-        public static implicit operator long(SSBHOffset p)
-        {
-            return p.Value;
-        }
-    }
-
     public class SSBHParser : BinaryReader
     {
         public long Position => BaseStream.Position;
@@ -40,7 +24,40 @@ namespace SSBHLib.IO
 
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodByType = new Dictionary<Type, MethodInfo>();
 
-        private static Dictionary<Type, List<Action<ISSBH_File, Type>>> Setter = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
+        private static readonly Dictionary<Type, List<Action<ISSBH_File, Type>>> issbhSetters = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
+
+        // Avoid reflection invoke overhead for known file magics.
+        private static readonly Dictionary<string, Func<SSBHParser, ISSBH_File>> parseMethodByMagic = new Dictionary<string, Func<SSBHParser, ISSBH_File>>()
+        {
+            { "BPLH", (parser) => parser.Parse<HLPB>() },
+            { "DPRN", (parser) => parser.Parse<NRPD>() },
+            { "RDHS", (parser) => parser.Parse<SHDR>() },
+            { "LEKS", (parser) => parser.Parse<SKEL>() },
+            { "LDOM", (parser) => parser.Parse<MODL>() },
+            { "HSEM", (parser) => parser.Parse<MESH>() },
+            { "LTAM", (parser) => parser.Parse<MATL>() },
+            { "MINA", (parser) => parser.Parse<ANIM>() }
+        };
+
+        // Avoid reflection invoke overhead for known types.
+        private static readonly Dictionary<Type, Func<SSBHParser, ISSBH_File>> parseMethodByType = new Dictionary<Type, Func<SSBHParser, ISSBH_File>>()
+        {
+            { typeof(AnimGroup), (parser) => parser.Parse<AnimGroup>() },
+            { typeof(AnimNode), (parser) => parser.Parse<AnimNode>() },
+            { typeof(AnimTrack), (parser) => parser.Parse<AnimTrack>() },
+            { typeof(MatlEntry), (parser) => parser.Parse<MatlEntry>() },
+            { typeof(MatlAttribute), (parser) => parser.Parse<MatlAttribute>() },
+            { typeof(MODL_MaterialName), (parser) => parser.Parse<MODL_MaterialName>() },
+            { typeof(MODL_Entry), (parser) => parser.Parse<MODL_Entry>() },
+            { typeof(MeshObject), (parser) => parser.Parse<MeshObject>() },
+            { typeof(MeshAttribute), (parser) => parser.Parse<MeshAttribute>() },
+            { typeof(MeshAttributeString), (parser) => parser.Parse<MeshAttributeString>() },
+            { typeof(MeshBuffer), (parser) => parser.Parse<MeshBuffer>() },
+            { typeof(MeshRiggingGroup), (parser) => parser.Parse<MeshRiggingGroup>() },
+            { typeof(MeshBoneBuffer), (parser) => parser.Parse<MeshBoneBuffer>() },
+            { typeof(SKEL_BoneEntry), (parser) => parser.Parse<SKEL_BoneEntry>() },
+            { typeof(SKEL_Matrix), (parser) => parser.Parse<SKEL_Matrix>() }
+        };
 
         public SSBHParser(Stream Stream) : base(Stream)
         {
@@ -59,31 +76,38 @@ namespace SSBHLib.IO
             return b;
         }
 
-        public bool TryParse(out ISSBH_File File)
+        public bool TryParse(out ISSBH_File file)
         {
-            File = null;
+            file = null;
             if (FileSize < 4)
                 return false;
             
-            string Magic = new string(ReadChars(4));
+            string fileMagic = new string(ReadChars(4));
             Seek(Position - 4);
-            if (Magic.Equals("HBSS"))
+            if (fileMagic.Equals("HBSS"))
             {
                 Seek(0x10);
-                Magic = new string(ReadChars(4));
+                fileMagic = new string(ReadChars(4));
                 Seek(0x10);
             }
 
+            if (parseMethodByMagic.ContainsKey(fileMagic))
+            {
+                file = parseMethodByMagic[fileMagic](this);
+                return true;
+            }
+
+            // The type is not known, so do a very slow check to find it.
             foreach (var type in issbhTypes)
             {
                 if (type.GetCustomAttributes(typeof(SSBHFileAttribute), true).FirstOrDefault() is SSBHFileAttribute attr)
                 {
-                    if (attr.Magic.Equals(Magic))
+                    if (attr.Magic.Equals(fileMagic))
                     {
                         MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
                         parseMethod = parseMethod.MakeGenericMethod(type);
 
-                        File = (ISSBH_File)parseMethod.Invoke(this, null);
+                        file = (ISSBH_File)parseMethod.Invoke(this, null);
                         return true;
                     }
                 }
@@ -96,131 +120,164 @@ namespace SSBHLib.IO
         {
             long temp = Position;
 
-            string stringValue = "";
+            var stringValue = new System.Text.StringBuilder();
 
             Seek(offset);
             if (Position >= FileSize)
             {
                 Seek(temp);
-                return stringValue;
+                return "";
             }
 
             byte b = ReadByte();
             while (b != 0)
             {
-                stringValue += (char)b;
-                if (Position >= FileSize)
-                {
-                    Seek(temp);
-                    return stringValue;
-                }
+                stringValue.Append((char)b);
                 b = ReadByte();
             }
             
             Seek(temp);
 
-            return stringValue;
+            return stringValue.ToString();
         }
 
         public T Parse<T>() where T : ISSBH_File
         {
             T tObject = Activator.CreateInstance<T>();
 
-            //Reading Object
-            foreach (var prop in tObject.GetType().GetProperties())
-            {
-                bool skip = false;
-                foreach (var attribute in prop.GetCustomAttributes(true))
-                {
-                    if (attribute is ParseTag tag)
-                    {
-                        if (tag.Ignore)
-                            skip = true;
-
-                        if (!tag.IF.Equals(""))
-                        {
-                            string[] args = tag.IF.Split('>');
-                            PropertyInfo checkprop = null;
-                            foreach (PropertyInfo pi in tObject.GetType().GetProperties())
-                            {
-                                if (pi.Name.Equals(args[0]))
-                                {
-                                    checkprop = pi;
-                                    break;
-                                }
-                            }
-                            skip = true;
-                            if (checkprop != null)
-                            {
-                                if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
-                                {
-                                    skip = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (skip)
-                    continue;
-
-                if (prop.PropertyType == typeof(string))
-                {
-                    long StringOffset = Position + ReadInt64();
-                    prop.SetValue(tObject, ReadString(StringOffset));
-                }
-                else if (prop.PropertyType.IsArray)
-                {
-                    bool Inline = prop.GetValue(tObject) != null;
-                    long Offset = Position;
-                    long Size = 0;
-                    if (!Inline)
-                    {
-                        Offset = Position + ReadInt64();
-                        Size = ReadInt64();
-                    }
-                    else
-                    {
-                        Size = (prop.GetValue(tObject) as Array).Length;
-                    }
-                    
-                    long temp = Position;
-
-                    var propElementType = prop.PropertyType.GetElementType();
-                    Array y1 = Array.CreateInstance(propElementType, Size);
-
-                    Seek(Offset);
-                    for (int i = 0; i < Size; i++)
-                    {
-                        object obj = ReadProperty(propElementType);
-                        if (obj == null)
-                        {
-                            if (!genericParseMethodByType.ContainsKey(propElementType))
-                            {
-                                AddParseMethod(prop, propElementType);
-                            }
-
-                            obj = genericParseMethodByType[propElementType].Invoke(this, null);
-                        }
-                        y1.SetValue(obj, i);
-                    }
-
-                    prop.SetValue(tObject, y1);
-                    
-                    if(!Inline)
-                        Seek(temp);
-                }
-                else
-                {
-                    prop.SetValue(tObject, ReadProperty(prop.PropertyType));
-                }
-            }
+            ParseObjectProperties(tObject);
 
             long tempp = Position;
             tObject.PostProcess(this);
             Seek(tempp);
 
             return tObject;
+        }
+
+        private void ParseObjectProperties<T>(T tObject) where T : ISSBH_File
+        {
+            foreach (var prop in tObject.GetType().GetProperties())
+            {
+                if (ShouldSkipProperty(tObject, prop))
+                    continue;
+
+                if (prop.PropertyType == typeof(string))
+                {
+                    SetString(tObject, prop);
+                }
+                else if (prop.PropertyType.IsArray)
+                {
+                    SetArray(tObject, prop);
+                }
+                else
+                {
+                    prop.SetValue(tObject, ReadProperty(prop.PropertyType));
+                }
+            }
+        }
+
+        private void SetArray<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            bool inline = prop.GetValue(tObject) != null;
+            long offset = GetOffset(inline);
+            long size = GetSize(tObject, prop, inline);
+
+            long temp = Position;
+
+            var propElementType = prop.PropertyType.GetElementType();
+            Array y1 = Array.CreateInstance(propElementType, size);
+
+            Seek(offset);
+            for (int i = 0; i < size; i++)
+            {
+                // Check for primitive types first.
+                // If the type is not primitive, check for an SSBH type.
+                object obj = ReadProperty(propElementType);
+
+                if (obj == null)
+                {
+                    if (parseMethodByType.ContainsKey(propElementType))
+                    {
+                        obj = parseMethodByType[propElementType](this);
+                    }
+                    else
+                    {
+                        // Only use reflection for types only known at runtime.
+                        if (!genericParseMethodByType.ContainsKey(propElementType))
+                            AddParseMethod(prop, propElementType);
+
+                        obj = genericParseMethodByType[propElementType].Invoke(this, null);
+                    }
+                }
+                y1.SetValue(obj, i);
+            }
+
+            prop.SetValue(tObject, y1);
+
+            if (!inline)
+                Seek(temp);
+        }
+
+        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : ISSBH_File
+        {
+            if (!inline)
+                return ReadInt64();
+            else
+                return (prop.GetValue(tObject) as Array).Length;
+        }
+
+        private long GetOffset(bool inline)
+        {
+            if (!inline)
+                return Position + ReadInt64();
+            else
+                return Position;
+        }
+
+        private void SetString<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            long stringOffset = Position + ReadInt64();
+            prop.SetValue(tObject, ReadString(stringOffset));
+        }
+
+        private static bool ShouldSkipProperty<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            bool shouldSkip = false;
+
+            foreach (var attribute in prop.GetCustomAttributes(true))
+            {
+                if (attribute is ParseTag tag)
+                {
+                    System.Diagnostics.Debug.WriteLine(tag.IF);
+                    if (tag.Ignore)
+                        shouldSkip = true;
+
+                    if (!tag.IF.Equals(""))
+                    {
+                        string[] args = tag.IF.Split('>');
+                        PropertyInfo checkprop = null;
+                        foreach (PropertyInfo pi in tObject.GetType().GetProperties())
+                        {
+                            if (pi.Name.Equals(args[0]))
+                            {
+                                checkprop = pi;
+                                break;
+                            }
+                        }
+                        shouldSkip = true;
+                        if (checkprop != null)
+                        {
+                            if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
+                            {
+                                shouldSkip = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return shouldSkip;
         }
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)
@@ -233,28 +290,28 @@ namespace SSBHLib.IO
         public object ReadProperty(Type t)
         {
             // Check for enums last to improve performance.
-            if (t == typeof(uint))
-                return ReadUInt32();
-            else if (t == typeof(byte))
+            if (t == typeof(byte))
                 return ReadByte();
-            else if (t == typeof(char))
-                return ReadChar();
-            else if (t == typeof(short))
-                return ReadInt16();
-            else if (t == typeof(ushort))
-                return ReadUInt16();
-            else if (t == typeof(int))
-                return ReadInt32();
+            else if (t == typeof(uint))
+                return ReadUInt32();
             else if (t == typeof(long))
                 return ReadInt64();
-            else if (t == typeof(ulong))
-                return ReadUInt64();
-            else if (t == typeof(float))
-                return ReadSingle();
             else if (t == typeof(SSBHOffset))
                 return new SSBHOffset(Position + ReadInt64());
+            else if (t == typeof(float))
+                return ReadSingle();
+            else if (t == typeof(int))
+                return ReadInt32();
+            else if (t == typeof(ushort))
+                return ReadUInt16();
+            else if (t == typeof(short))
+                return ReadInt16();
+            else if (t == typeof(ulong))
+                return ReadUInt64();
             else if (t.IsEnum)
                 return Enum.ToObject(t, ReadUInt64());
+            else if (t == typeof(char))
+                return ReadChar();
             else
                 return null;
         }

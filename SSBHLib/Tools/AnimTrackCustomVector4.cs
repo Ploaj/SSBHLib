@@ -5,10 +5,10 @@
     /// </summary>
     public struct AnimTrackCustomVector4
     {
-        public float X;
-        public float Y;
-        public float Z;
-        public float W;
+        public float X { get; }
+        public float Y { get; }
+        public float Z { get; }
+        public float W { get; }
 
         public AnimTrackCustomVector4(float x, float y, float z, float w)
         {

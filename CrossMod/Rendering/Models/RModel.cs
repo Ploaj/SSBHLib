@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.BufferObjects;
@@ -69,7 +70,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            currentShader.SetVector3("V", Camera.ViewVector);
+            currentShader.SetVector3("cameraPos", Camera.Position);
         }
 
         private static void SetUniforms(Shader currentShader)
@@ -79,6 +80,9 @@ namespace CrossMod.Rendering.Models
 
             currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
             currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
+
+            currentShader.SetFloat("directLightIntensity", RenderSettings.Instance.DirectLightIntensity);
+            currentShader.SetFloat("iblIntensity", RenderSettings.Instance.IblIntensity);
 
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.EnableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
@@ -94,7 +98,28 @@ namespace CrossMod.Rendering.Models
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
         {
+            var opaqueZSorted = new List<RMesh>();
+            var transparentZSorted = new List<RMesh>();
+
             foreach (RMesh m in subMeshes)
+            {
+                if (m.Material.HasAlphaBlending)
+                    transparentZSorted.Add(m);
+                else
+                    opaqueZSorted.Add(m);
+            }
+
+            // TODO: Account for bounding sphere center in depth sorting.
+            opaqueZSorted = opaqueZSorted.OrderBy(m => m.BoundingSphere.W).ToList();
+            transparentZSorted = transparentZSorted.OrderBy(m => m.BoundingSphere.W).ToList();
+
+            // Draw transparent meshes last for proper alpha blending.
+            foreach (RMesh m in opaqueZSorted)
+            {
+                m.Draw(currentShader, Camera, Skeleton);
+            }
+
+            foreach (RMesh m in transparentZSorted)
             {
                 m.Draw(currentShader, Camera, Skeleton);
             }

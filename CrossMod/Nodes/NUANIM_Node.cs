@@ -4,11 +4,12 @@ using SSBHLib.Tools;
 using OpenTK;
 using SSBHLib.Formats.Animation;
 using CrossMod.IO;
+using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nuanmb")]
-    public class NUANIM_Node : FileNode, IRenderableNode, IExportableAnimationNode
+    public class NUANIM_Node : FileNode, IExportableAnimationNode
     {
         private ANIM animation;
 
@@ -26,6 +27,29 @@ namespace CrossMod.Nodes
                 {
                     animation = anim;
                 }
+            }
+        }
+
+        public string GetLightInformation()
+        {
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+
+            var output = new System.Text.StringBuilder();
+            foreach (AnimGroup animGroup in animation.Animations)
+            {
+                AddLightSetInfo(output, decoder, animGroup);
+            }
+
+            return output.ToString();
+        }
+
+        public void UpdateUniqueLightValues(Dictionary<string, HashSet<string>> valuesByName)
+        {
+            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+
+            foreach (AnimGroup animGroup in animation.Animations)
+            {
+                AddLightValues(valuesByName, decoder, animGroup);
             }
         }
 
@@ -96,8 +120,6 @@ namespace CrossMod.Nodes
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
-                //System.Diagnostics.Debug.WriteLine(animNode.Name);
-
                 RTransformAnimation tfrmAnim = new RTransformAnimation()
                 {
                     Name = animNode.Name
@@ -105,12 +127,6 @@ namespace CrossMod.Nodes
                 foreach (AnimTrack track in animNode.Tracks)
                 {
                     object[] Transform = decoder.ReadTrack(track);
-
-                    //System.Diagnostics.Debug.WriteLine($"\t{track.Name}");
-                    //foreach (var value in Transform)
-                    //{
-                    //    System.Diagnostics.Debug.WriteLine($"\t\t{value}");
-                    //}
 
                     if (track.Name.Equals("Transform"))
                     {
@@ -155,6 +171,46 @@ namespace CrossMod.Nodes
                     }
                 }
                 renderAnimation.VisibilityNodes.Add(visAnim);
+            }
+        }
+
+        private static void AddLightSetInfo(System.Text.StringBuilder output, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                output.AppendLine(animNode.Name);
+
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    object[] values = decoder.ReadTrack(track);
+
+                    output.AppendLine($"\t{track.Name}");
+                    foreach (var value in values)
+                    {
+                        output.AppendLine($"\t\t{value}");
+                    }
+                }
+            }
+        }
+
+        private static void AddLightValues(Dictionary<string, HashSet<string>> valuesByName, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            // Store all unique values for each parameter.
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    if (!valuesByName.ContainsKey(track.Name))
+                        valuesByName[track.Name] = new HashSet<string>();
+
+                    object[] values = decoder.ReadTrack(track);
+
+                    foreach (var value in values)
+                    {
+                        if (!valuesByName[track.Name].Contains(value.ToString()))
+                            valuesByName[track.Name].Add(value.ToString());
+                    }
+                }
             }
         }
 
