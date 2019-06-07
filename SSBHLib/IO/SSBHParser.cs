@@ -144,110 +144,139 @@ namespace SSBHLib.IO
         {
             T tObject = Activator.CreateInstance<T>();
 
-            //Reading Object
-            foreach (var prop in tObject.GetType().GetProperties())
-            {
-                bool skip = false;
-                foreach (var attribute in prop.GetCustomAttributes(true))
-                {
-                    if (attribute is ParseTag tag)
-                    {
-                        if (tag.Ignore)
-                            skip = true;
-
-                        if (!tag.IF.Equals(""))
-                        {
-                            string[] args = tag.IF.Split('>');
-                            PropertyInfo checkprop = null;
-                            foreach (PropertyInfo pi in tObject.GetType().GetProperties())
-                            {
-                                if (pi.Name.Equals(args[0]))
-                                {
-                                    checkprop = pi;
-                                    break;
-                                }
-                            }
-                            skip = true;
-                            if (checkprop != null)
-                            {
-                                if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
-                                {
-                                    skip = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (skip)
-                    continue;
-
-                if (prop.PropertyType == typeof(string))
-                {
-                    long StringOffset = Position + ReadInt64();
-                    prop.SetValue(tObject, ReadString(StringOffset));
-                }
-                else if (prop.PropertyType.IsArray)
-                {
-                    bool Inline = prop.GetValue(tObject) != null;
-                    long Offset = Position;
-                    long Size = 0;
-                    if (!Inline)
-                    {
-                        Offset = Position + ReadInt64();
-                        Size = ReadInt64();
-                    }
-                    else
-                    {
-                        Size = (prop.GetValue(tObject) as Array).Length;
-                    }
-                    
-                    long temp = Position;
-
-                    var propElementType = prop.PropertyType.GetElementType();
-                    Array y1 = Array.CreateInstance(propElementType, Size);
-
-                    Seek(Offset);
-                    for (int i = 0; i < Size; i++)
-                    {
-                        // Check for primitive types first.
-                        // If the type is not primitive, check for an SSBH type.
-                        object obj = ReadProperty(propElementType);
-
-                        if (obj == null)
-                        {
-                            if (parseMethodByType.ContainsKey(propElementType))
-                            {
-                                obj = parseMethodByType[propElementType](this);
-                            }
-                            else
-                            {
-                                // Only use reflection for types only known at runtime.
-                                if (!genericParseMethodByType.ContainsKey(propElementType))
-                                    AddParseMethod(prop, propElementType);
-
-                                obj = genericParseMethodByType[propElementType].Invoke(this, null);
-                            }
-                        }
-                        y1.SetValue(obj, i);
-                    }
-
-                    prop.SetValue(tObject, y1);
-                    
-                    if(!Inline)
-                        Seek(temp);
-                }
-                else
-                {
-                    prop.SetValue(tObject, ReadProperty(prop.PropertyType));
-                }
-            }
+            ParseObjectProperties(tObject);
 
             long tempp = Position;
             tObject.PostProcess(this);
             Seek(tempp);
 
             return tObject;
+        }
+
+        private void ParseObjectProperties<T>(T tObject) where T : ISSBH_File
+        {
+            foreach (var prop in tObject.GetType().GetProperties())
+            {
+                if (ShouldSkipProperty(tObject, prop))
+                    continue;
+
+                if (prop.PropertyType == typeof(string))
+                {
+                    SetString(tObject, prop);
+                }
+                else if (prop.PropertyType.IsArray)
+                {
+                    SetArray(tObject, prop);
+                }
+                else
+                {
+                    prop.SetValue(tObject, ReadProperty(prop.PropertyType));
+                }
+            }
+        }
+
+        private void SetArray<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            bool inline = prop.GetValue(tObject) != null;
+            long offset = GetOffset(inline);
+            long size = GetSize(tObject, prop, inline);
+
+            long temp = Position;
+
+            var propElementType = prop.PropertyType.GetElementType();
+            Array y1 = Array.CreateInstance(propElementType, size);
+
+            Seek(offset);
+            for (int i = 0; i < size; i++)
+            {
+                // Check for primitive types first.
+                // If the type is not primitive, check for an SSBH type.
+                object obj = ReadProperty(propElementType);
+
+                if (obj == null)
+                {
+                    if (parseMethodByType.ContainsKey(propElementType))
+                    {
+                        obj = parseMethodByType[propElementType](this);
+                    }
+                    else
+                    {
+                        // Only use reflection for types only known at runtime.
+                        if (!genericParseMethodByType.ContainsKey(propElementType))
+                            AddParseMethod(prop, propElementType);
+
+                        obj = genericParseMethodByType[propElementType].Invoke(this, null);
+                    }
+                }
+                y1.SetValue(obj, i);
+            }
+
+            prop.SetValue(tObject, y1);
+
+            if (!inline)
+                Seek(temp);
+        }
+
+        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : ISSBH_File
+        {
+            if (!inline)
+                return ReadInt64();
+            else
+                return (prop.GetValue(tObject) as Array).Length;
+        }
+
+        private long GetOffset(bool inline)
+        {
+            if (!inline)
+                return Position + ReadInt64();
+            else
+                return Position;
+        }
+
+        private void SetString<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            long stringOffset = Position + ReadInt64();
+            prop.SetValue(tObject, ReadString(stringOffset));
+        }
+
+        private static bool ShouldSkipProperty<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        {
+            bool shouldSkip = false;
+
+            foreach (var attribute in prop.GetCustomAttributes(true))
+            {
+                if (attribute is ParseTag tag)
+                {
+                    System.Diagnostics.Debug.WriteLine(tag.IF);
+                    if (tag.Ignore)
+                        shouldSkip = true;
+
+                    if (!tag.IF.Equals(""))
+                    {
+                        string[] args = tag.IF.Split('>');
+                        PropertyInfo checkprop = null;
+                        foreach (PropertyInfo pi in tObject.GetType().GetProperties())
+                        {
+                            if (pi.Name.Equals(args[0]))
+                            {
+                                checkprop = pi;
+                                break;
+                            }
+                        }
+                        shouldSkip = true;
+                        if (checkprop != null)
+                        {
+                            if ((ushort)checkprop.GetValue(tObject) > int.Parse(args[1]))
+                            {
+                                shouldSkip = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return shouldSkip;
         }
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)
