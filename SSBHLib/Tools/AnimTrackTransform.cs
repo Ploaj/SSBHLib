@@ -22,7 +22,7 @@
 
         public override string ToString()
         {
-            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}))";
+            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}), CompensateScale: {CompensateScale})";
         }
     }
 }

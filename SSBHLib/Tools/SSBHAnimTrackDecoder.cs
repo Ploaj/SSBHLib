@@ -247,7 +247,7 @@ namespace SSBHLib.Tools
             float XPOS = parser.ReadSingle();
             float YPOS = parser.ReadSingle();
             float ZPOS = parser.ReadSingle();
-            float WPOS = parser.ReadInt32(); // ????
+            float CSCA = parser.ReadSingle();
 
             parser.Seek(dataOffset + header.CompressedDataOffset);
             for(int frame = 0; frame < header.FrameCount; frame++)
@@ -264,7 +264,7 @@ namespace SSBHLib.Tools
                     SX = XSCA,
                     SY = YSCA,
                     SZ = ZSCA,
-                    CompensateScale = 0
+                    CompensateScale = CSCA
                 };
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
@@ -298,7 +298,7 @@ namespace SSBHLib.Tools
                     
                     if ((header.Flags & 0x3) == 0x3)
                     {
-                        //Scale Isotropic
+                        //Scale Compensate
                         if(itemIndex == 0)
                         {
                             transform.CompensateScale = frameValue;
@@ -384,9 +384,8 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    CompensateScale = 0
+                    CompensateScale = reader.ReadInt32()
                 };
-                reader.ReadInt32(); // ????
 
                 return Transform;
             }

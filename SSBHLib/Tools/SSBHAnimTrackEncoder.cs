@@ -275,13 +275,13 @@ namespace SSBHLib.Tools
             /// <returns></returns>
             public int GetBitCount(float epsilon)
             {
+                if (Constant)
+                    return 0x10;
+
                 if (epsilon == currentError)
                     return bitCount;
 
                 currentError = epsilon;
-
-                if (Constant)
-                    return 0x10;
 
                 // try to find an optimal bit length
                 for (var i = 1; i < 31; i++)
@@ -497,27 +497,28 @@ namespace SSBHLib.Tools
             }
 
             short Flags = 0;
-            short BitsPerEntry = 0;
+            ushort BitsPerEntry = 0;
 
             bool hasScale = (!SX.Constant || !SY.Constant || !SZ.Constant);
             bool hasRotation = (!RX.Constant || !RY.Constant || !RZ.Constant);
             bool hasPosition = (!X.Constant || !Y.Constant || !Z.Constant);
 
+
             if (!hasScale)
                 Flags |= 0x02;
             else
             {
-                BitsPerEntry += (short)(SX.GetBitCount(Epsilon) + SY.GetBitCount(Epsilon) + SZ.GetBitCount(Epsilon));
+                BitsPerEntry += (ushort)((SX.Constant ? 0 : SX.GetBitCount(Epsilon)) + (SY.Constant ? 0 : SY.GetBitCount(Epsilon)) + (SZ.Constant ? 0 : SZ.GetBitCount(Epsilon)));
                 Flags |= 0x01;
             }
             if (hasRotation)
             {
-                BitsPerEntry += (short)(RX.GetBitCount(Epsilon) + RY.GetBitCount(Epsilon) + RZ.GetBitCount(Epsilon) + 1); // the 1 is for extra w rotation bit
+                BitsPerEntry += (ushort)((RX.Constant ? 0 : RX.GetBitCount(Epsilon)) + (RY.Constant ? 0 : RY.GetBitCount(Epsilon)) + (RZ.Constant ? 0 : RZ.GetBitCount(Epsilon)) + 1); // the 1 is for extra w rotation bit
                 Flags |= 0x04;
             }
             if (hasPosition)
             {
-                BitsPerEntry += (short)(X.GetBitCount(Epsilon) + Y.GetBitCount(Epsilon) + Z.GetBitCount(Epsilon));
+                BitsPerEntry += (ushort)((X.Constant ? 0 : X.GetBitCount(Epsilon)) + (Y.Constant ? 0 : Y.GetBitCount(Epsilon)) + (Z.Constant ? 0 : Z.GetBitCount(Epsilon)));
                 Flags |= 0x08;
             }
 
