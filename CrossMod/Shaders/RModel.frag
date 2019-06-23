@@ -315,7 +315,7 @@ void main()
             break;
         case 1:
             // Ink
-            albedoColor.rgb = mix(vec3(0.75, 0.10, 0), albedoColor.rgb, transitionBlend);
+            albedoColor.rgb = mix(vec3(0.758027, 0.115859, 0.04), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
             sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
             specPower = mix(1.0, param145.x, transitionBlend);
