@@ -87,8 +87,7 @@ namespace CrossMod.GUI
                 return;
 
             // Bounding spheres will help account for the vastly different model sizes.
-            var sphere = model.BoundingSphere;
-            camera.FrameBoundingSphere(sphere.Xyz, sphere.W, 5);
+            camera.FrameBoundingSphere(model.BoundingSphere, 5);
         }
 
         public void ClearFiles()
