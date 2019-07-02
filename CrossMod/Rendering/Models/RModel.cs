@@ -98,28 +98,26 @@ namespace CrossMod.Rendering.Models
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
         {
-            var opaqueZSorted = new List<RMesh>();
-            var transparentZSorted = new List<RMesh>();
+            var opaque = new List<RMesh>();
+            var transparentDepthSorted = new List<RMesh>();
 
             foreach (RMesh m in subMeshes)
             {
                 if (m.Material.HasAlphaBlending)
-                    transparentZSorted.Add(m);
+                    transparentDepthSorted.Add(m);
                 else
-                    opaqueZSorted.Add(m);
+                    opaque.Add(m);
             }
 
-            // TODO: Account for bounding sphere center in depth sorting.
-            opaqueZSorted = opaqueZSorted.OrderBy(m => m.BoundingSphere.W).ToList();
-            transparentZSorted = transparentZSorted.OrderBy(m => m.BoundingSphere.W).ToList();
+            transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.Position - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
-            // Draw transparent meshes last for proper alpha blending.
-            foreach (RMesh m in opaqueZSorted)
+            foreach (RMesh m in opaque)
             {
                 m.Draw(currentShader, Camera, Skeleton);
             }
 
-            foreach (RMesh m in transparentZSorted)
+            // Draw transparent meshes last for proper alpha blending.
+            foreach (RMesh m in transparentDepthSorted)
             {
                 m.Draw(currentShader, Camera, Skeleton);
             }
