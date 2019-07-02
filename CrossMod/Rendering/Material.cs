@@ -18,6 +18,8 @@ namespace CrossMod.Rendering
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
         public bool HasAlphaBlending { get; set; } = false;
 
+        public bool UseStippleBlend { get; set; } = false;
+
         public Texture col = null;
         public bool HasCol { get; set; } = false;
 
@@ -92,6 +94,8 @@ namespace CrossMod.Rendering
 
             AddTextures(genericMaterial);
             AddMaterialParams(genericMaterial);
+
+            genericMaterial.AddBoolToInt("useStippleBlend", UseStippleBlend);
 
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);

@@ -103,6 +103,8 @@ out vec4 fragColor;
 uniform float directLightIntensity;
 uniform float iblIntensity;
 
+uniform int useStippleBlend;
+
 // Matrices for ordered dithering
 // https://en.wikipedia.org/wiki/Ordered_dithering
 mat4 thresholdMatrix16 = mat4(
@@ -110,6 +112,16 @@ mat4 thresholdMatrix16 = mat4(
 12.0 / 16.0,  4.0 / 16.0, 14.0 / 16.0,  6.0 / 16.0,
 3.0 / 16.0, 11.0 / 16.0,  1.0 / 16.0, 9.0 / 16.0,
 15.0 / 16.0,  7.0 / 16.0, 13.0 / 16.0,  5.0 / 16.0);
+
+float[] thresholdMatrix64 = float[64](
+    0, 48, 12, 60, 3, 51, 15, 63,
+    32, 16, 44, 28, 35, 19, 47, 31,
+    8, 56, 4, 52, 11, 59, 7, 55,
+    40, 24, 36, 20, 43, 27, 39, 23,
+    2, 50, 14, 62, 1, 49, 13, 61,
+    34, 18, 46, 30, 33, 17, 45, 29,
+    10, 58, 6, 54, 9, 57, 5, 53,
+    42, 26, 38, 22, 41, 25, 37, 21);
 
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
@@ -404,11 +416,11 @@ void main()
     if ((fragColor.a + param98.x) < 0.01)
         discard;
 
-    // TODO: Transparency seems to use some sort of stipple pattern.
-    // int x = int(mod(gl_FragCoord.x - 0.5, 4));
-    // int y = int(mod(gl_FragCoord.y - 0.5, 4));
-    // if ((fragColor.a < (thresholdMatrix16[x][y])))
-    //     discard;
+    // TODO: What is the stipple pattern?
+    int x = int(mod(gl_FragCoord.x - 0.5, 4));
+    int y = int(mod(gl_FragCoord.y - 0.5, 4));
+    if (useStippleBlend == 1 && (fragColor.a < (thresholdMatrix64[x * 8 + y] / 64.0)))
+        discard;
 
     // TODO: How does this work?
     if (hasInkNorMap == 1 && transitionBlend < 1)
