@@ -107,6 +107,11 @@ namespace CrossMod.GUI
             return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
+        public void Close()
+        {
+            glViewport.Dispose();
+        }
+
         private void AddAnimationBar()
         {
             animationBar = new AnimationBar
@@ -119,9 +124,8 @@ namespace CrossMod.GUI
 
         private void CreateRenderFrameEvents()
         {
-            // HACK: Add proper frame timing.
-            Application.Idle += AnimationRenderFrame;
             glViewport.OnRenderFrame += RenderNodes;
+            glViewport.ResumeRendering();
         }
 
         /// <summary>

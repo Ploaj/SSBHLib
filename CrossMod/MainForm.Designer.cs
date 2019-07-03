@@ -126,7 +126,7 @@ namespace CrossMod
             this.printAttributesToolStripMenuItem,
             this.printLightValuesToolStripMenuItem});
             this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
-            this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
+            this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
             this.experimentalToolStripMenuItem.Text = "Experimental";
             // 
             // batchRenderModelsToolStripMenuItem
@@ -210,6 +210,7 @@ namespace CrossMod
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "CrossMod";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);

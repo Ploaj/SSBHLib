@@ -478,5 +478,10 @@ namespace CrossMod
                 File.WriteAllText($"{pair.Key} unique values.txt", output.ToString());
             }
         }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            modelViewport.Close();
+        }
     }
 }
