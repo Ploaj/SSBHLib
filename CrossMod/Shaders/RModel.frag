@@ -104,33 +104,7 @@ uniform float directLightIntensity;
 uniform float iblIntensity;
 
 uniform int useStippleBlend;
-
-// Matrices for ordered dithering
-// https://en.wikipedia.org/wiki/Ordered_dithering
-mat4 thresholdMatrix16 = mat4(
-0.0 / 16.0,  8.0 / 16.0,  2.0 / 16.0, 10.0 / 16.0,
-12.0 / 16.0,  4.0 / 16.0, 14.0 / 16.0,  6.0 / 16.0,
-3.0 / 16.0, 11.0 / 16.0,  1.0 / 16.0, 9.0 / 16.0,
-15.0 / 16.0,  7.0 / 16.0, 13.0 / 16.0,  5.0 / 16.0);
-
-// https://community.khronos.org/t/screen-door-transparency/621/5
-float[] thresholdMatrix256 = float[256](
-    192, 11,183,125, 26,145, 44,244,  8,168,139, 38,174, 27,141, 43,
-    115,211,150, 68,194, 88,177,131, 61,222, 87,238, 74,224,100,235,
-     59, 33, 96,239, 51,232, 16,210,117, 32,187,  1,157,121, 14,165,
-    248,128,217,  2,163,105,154, 81,247,149, 97,205, 52,182,209, 84,
-     20,172, 80,140,202, 41,185, 55, 24,197, 65,129,252, 35, 70,147,
-    201, 63,189, 28, 90,254,116,219,137,107,231, 17,144,119,228,109,
-     46,245,103,229,134, 13, 67,162,  6,170, 47,178, 76,193,  4,167,
-    133,  9,159, 54,175,124,225, 93,242, 79,214, 99,241, 56,221, 92,
-    186,218, 78,208, 37,196, 25,188, 42,142, 29,158, 21,130,156, 40,
-    102, 31,148,111,234, 85,151,120,207,113,255, 86,184,212, 69,236,
-    176, 73,253,  0,138, 58,249, 71, 10,173, 62,200, 50,114, 12,123,
-     23,204,118,191, 91,181, 19,164,216,101,233,  3,135,169,246,152,
-    223, 60,143, 48,240, 34,220, 82,132, 36,146,106,227, 30, 95, 49,
-     83,166, 18,199, 98,155,122, 53,237,179, 57,190, 77,195,127,180,
-    230,108,215, 64,171,  5,206,161, 22, 94,251, 15,153, 45,243,  7,
-     72,136, 39,250,104,226, 75,112,198,126, 66,213,110,203, 89,160);
+uniform sampler2D stipplePattern;
 
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
@@ -428,7 +402,8 @@ void main()
     // TODO: What is the stipple pattern?
     int x = int(mod(gl_FragCoord.x - 0.5, 16));
     int y = int(mod(gl_FragCoord.y - 0.5, 16));
-    if (useStippleBlend == 1 && (fragColor.a < (thresholdMatrix256[x * 16 + y] / 256.0)))
+    float threshold = texelFetch(stipplePattern, ivec2(x, y), 0).x;
+    if (useStippleBlend == 1 && (fragColor.a < threshold))
         discard;
 
     // TODO: How does this work?

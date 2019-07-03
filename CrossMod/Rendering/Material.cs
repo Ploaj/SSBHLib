@@ -127,6 +127,8 @@ namespace CrossMod.Rendering
             AddImageBasedLightingTextures(genericMaterial);
 
             AddRenderModeTextures(genericMaterial);
+
+            genericMaterial.AddTexture("stipplePattern", defaultTextures.stipplePattern);
         }
 
         private void AddMaterialParams(GenericMaterial genericMaterial)

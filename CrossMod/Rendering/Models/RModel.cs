@@ -38,8 +38,6 @@ namespace CrossMod.Rendering.Models
             SetUniforms(shader);
             SetCameraUniforms(Camera, shader);
 
-            shader.EnableVertexAttributes();
-
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
             boneUniformBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
@@ -50,8 +48,6 @@ namespace CrossMod.Rendering.Models
             boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
 
             DrawMeshes(Camera, Skeleton, shader);
-
-            shader.DisableVertexAttributes();
         }
 
         private static void SetCameraUniforms(Camera Camera, Shader currentShader)

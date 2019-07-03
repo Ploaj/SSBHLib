@@ -189,11 +189,6 @@ namespace CrossMod.GUI
             meshList.Items.Clear();
         }
 
-        private void AnimationRenderFrame(object sender, EventArgs e)
-        {
-            glViewport.RenderFrame();
-        }
-
         public void RenderFrame()
         {
             if (!glViewport.IsDisposed)
@@ -240,23 +235,26 @@ namespace CrossMod.GUI
 
         private void UpdateCamera()
         {
-            Vector2 newMousePosition = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            float newMouseScrollWheel = Mouse.GetState().Wheel;
+            var mouseState = Mouse.GetState();
+            var keyboardState = Keyboard.GetState();
+
+            Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
+            float newMouseScrollWheel = mouseState.Wheel;
 
             if (glViewport.Focused)
             {
-                if (Mouse.GetState().IsButtonDown(MouseButton.Left))
+                if (mouseState.IsButtonDown(MouseButton.Left))
                 {
                     camera.RotationXRadians += ((newMousePosition.Y - mousePosition.Y) / 100f);
                     camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
                 }
-                if (Mouse.GetState().IsButtonDown(MouseButton.Right))
+                if (mouseState.IsButtonDown(MouseButton.Right))
                 {
                     camera.Pan((newMousePosition.X - mousePosition.X), (newMousePosition.Y - mousePosition.Y));
                 }
-                if (Keyboard.GetState().IsKeyDown(Key.W))
+                if (keyboardState.IsKeyDown(Key.W))
                     camera.Zoom(0.5f);
-                if (Keyboard.GetState().IsKeyDown(Key.S))
+                if (keyboardState.IsKeyDown(Key.S))
                     camera.Zoom(-0.5f);
 
                 camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
