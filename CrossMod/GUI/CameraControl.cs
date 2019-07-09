@@ -9,10 +9,10 @@ namespace CrossMod.GUI
     {
         Camera camera;
 
-        public CameraControl(ModelViewport viewport)
+        public CameraControl(Camera camera)
         {
             InitializeComponent();
-            camera = viewport.camera;
+            this.camera = camera;
             posX_tb.Text = camera.Position.X.ToString();
             posY_tb.Text = camera.Position.Y.ToString();
             posZ_tb.Text = camera.Position.Z.ToString();
