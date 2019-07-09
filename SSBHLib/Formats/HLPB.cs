@@ -9,18 +9,77 @@
 
         public ushort VersionMinor { get; set; } // 0x0001
 
-        public long UnkOffset { get; set; }
+        public HLPB_RotateAim[] AimEntries { get; set; }
 
-        public long UnkCount { get; set; }
-
-        public HLPB_Entry[] Entries { get; set; }
+        public HLPB_RotateInterpolation[] InterpolationEntries { get; set; }
 
         public int[] List1 { get; set; }
 
         public int[] List2 { get; set; }
     }
 
-    public class HLPB_Entry : ISSBH_File
+    public class HLPB_RotateAim : ISSBH_File
+    {
+        public string Name { get; set; }
+
+        public string AimBoneName1 { get; set; }
+
+        public string AimBoneName2 { get; set; }
+
+        public string AimType1 { get; set; }
+
+        public string AimType2 { get; set; }
+
+        public string TargetBoneName1 { get; set; }
+
+        public string TargetBoneName2 { get; set; }
+
+        public int Unknown1 { get; set; }
+
+        public int Unknown2 { get; set; }
+
+        public float Unknown3 { get; set; }
+
+        public float Unknown4 { get; set; }
+
+        public float Unknown5 { get; set; }
+
+        public float Unknown6 { get; set; }
+
+        public float Unknown7 { get; set; }
+
+        public float Unknown8 { get; set; }
+
+        public float Unknown9 { get; set; }
+
+        public float Unknown10 { get; set; }
+
+        public float Unknown11 { get; set; }
+
+        public float Unknown12 { get; set; }
+
+        public float Unknown13 { get; set; }
+
+        public float Unknown14 { get; set; }
+
+        public float Unknown15 { get; set; }
+
+        public float Unknown16 { get; set; }
+
+        public float Unknown17 { get; set; }
+
+        public float Unknown18 { get; set; }
+
+        public float Unknown19 { get; set; }
+
+        public float Unknown20 { get; set; }
+
+        public float Unknown21 { get; set; }
+
+        public float Unknown22 { get; set; }
+    }
+
+    public class HLPB_RotateInterpolation : ISSBH_File
     {
         public string Name { get; set; }
 

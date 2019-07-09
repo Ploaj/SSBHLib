@@ -16,6 +16,9 @@ namespace CrossMod.Rendering
 
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
+        public bool HasAlphaBlending { get; set; } = false;
+
+        public bool UseStippleBlend { get; set; } = false;
 
         public Texture col = null;
         public bool HasCol { get; set; } = false;
@@ -92,25 +95,27 @@ namespace CrossMod.Rendering
             AddTextures(genericMaterial);
             AddMaterialParams(genericMaterial);
 
+            genericMaterial.AddBoolToInt("useStippleBlend", UseStippleBlend);
+
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
-            AddQuaternion("chrLightDir", genericMaterial, 1, 0, 0, 0);
+            // TODO: Convert from quaternion values in light.nuanimb.
+            AddQuaternion("chrLightDir", genericMaterial, -0.453154f, -0.365998f, -0.211309f, 0.784886f);
 
             return genericMaterial;
         }
 
-        private static void AddQuaternion(string name, GenericMaterial genericMaterial, float w, float x, float y, float z)
+        private static void AddQuaternion(string name, GenericMaterial genericMaterial, float x, float y, float z, float w)
         {
             var lightDirection = GetLightDirectionFromQuaternion(x, y, z, w);
             genericMaterial.AddVector3(name, lightDirection);
         }
 
-        private static Vector3 GetLightDirectionFromQuaternion(float w, float x, float y, float z)
+        private static Vector3 GetLightDirectionFromQuaternion(float x, float y, float z, float w)
         {
             var quaternion = new Quaternion(x, y, z, w);
             var matrix = Matrix4.CreateFromQuaternion(quaternion);
-
             var lightDirection = Vector4.Transform(new Vector4(0, 0, 1, 0), matrix);
             return lightDirection.Normalized().Xyz;
         }
@@ -122,6 +127,8 @@ namespace CrossMod.Rendering
             AddImageBasedLightingTextures(genericMaterial);
 
             AddRenderModeTextures(genericMaterial);
+
+            genericMaterial.AddTexture("stipplePattern", defaultTextures.stipplePattern);
         }
 
         private void AddMaterialParams(GenericMaterial genericMaterial)
@@ -133,8 +140,15 @@ namespace CrossMod.Rendering
             AddVec4(genericMaterial, 0xA6, new Vector4(1));
 
             // Some sort of skin subsurface color?
-            AddVec4(genericMaterial, 0xA3, new Vector4(0));
-            AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
+            if (RenderSettings.Instance.TransitionEffect == RenderSettings.TransitionMode.Ditto)
+            {
+                AddVec4(genericMaterial, 0x145, new Vector4(0.23f, 1.5f, 1f, 1f));
+            }
+            else
+            {
+                AddVec4(genericMaterial, 0xA3, new Vector4(0));
+                AddVec4(genericMaterial, 0x145, new Vector4(1, 0, 0, 0));
+            }
 
             // Mario Galaxy rim light?
             AddVec4(genericMaterial, 0xA0, new Vector4(1));
@@ -158,6 +172,12 @@ namespace CrossMod.Rendering
 
             // Controls specular IOR.
             AddFloat(genericMaterial, 0xC8, 0.0f);
+
+            // TODO: Refraction?
+            AddFloat(genericMaterial, 0xD3, 0.0f);
+
+            // TODO: du dv intensity?
+            AddFloat(genericMaterial, 0xC4, 0.0f);
 
             // Some sort of sprite sheet scale toggle.
             AddBool(genericMaterial, 0xF1, true);

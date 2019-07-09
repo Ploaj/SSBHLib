@@ -51,6 +51,14 @@ namespace CrossMod.Rendering
         [EditInfo("Enable Experimental", ValueEnums.ValueType.Bool, "Lighting")]
         public bool EnableExperimental { get; set; } = true;
 
+        [EditInfo("Direct Light Intensity", ValueEnums.ValueType.Float, "Lighting")]
+        [TrackBarInfo(0, 3)]
+        public float DirectLightIntensity { get; set; } = 1.0f;
+
+        [EditInfo("IBL Intensity", ValueEnums.ValueType.Float, "Lighting")]
+        [TrackBarInfo(0, 3)]
+        public float IblIntensity { get; set; } = 0.5f;
+
         [EditInfo("Render Normal Maps", ValueEnums.ValueType.Bool, "Materials")]
         public bool RenderNormalMaps { get; set; } = true;
 

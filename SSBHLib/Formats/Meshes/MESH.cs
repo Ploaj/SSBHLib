@@ -53,29 +53,21 @@ namespace SSBHLib.Formats.Meshes
         public float OBBSizeZ { get; set; }
 
         public float UnkBounding0 { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public MeshObject[] Objects { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public int[] BufferSizes { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public long PolygonIndexSize { get; set; } // seems to match index count?
-
-        [ParseTag("VersionMinor>8")]
+        
         public MeshBuffer[] VertexBuffers { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public byte[] PolygonBuffer { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public MeshRiggingGroup[] RiggingBuffers { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public long UnknownOffset { get; set; }
-
-        [ParseTag("VersionMinor>8")]
+        
         public long UnknownSize { get; set; }
     }
 }

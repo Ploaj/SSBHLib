@@ -13,16 +13,16 @@ namespace SSBHLib.Tools
         /// <summary>
         /// Creates a mesh rigging group
         /// </summary>
-        /// <param name="MeshName"></param>
-        /// <param name="MeshIndex"></param>
+        /// <param name="meshName"></param>
+        /// <param name="meshIndex"></param>
         /// <param name="influences"></param>
         /// <returns></returns>
-        public static MeshRiggingGroup CreateRiggingGroup(string MeshName, int MeshIndex, SSBHVertexInfluence[] influences)
+        public static MeshRiggingGroup CreateRiggingGroup(string meshName, int meshIndex, SSBHVertexInfluence[] influences)
         {
             var group = new MeshRiggingGroup
             {
-                Name = MeshName,
-                SubMeshIndex = MeshIndex
+                Name = meshName,
+                SubMeshIndex = meshIndex
             };
 
             Dictionary<string, List<byte>> boneNameToData = new Dictionary<string, List<byte>>();
