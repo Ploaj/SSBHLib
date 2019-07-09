@@ -75,11 +75,11 @@ namespace CrossMod.Nodes
                     ParamStruct str = list.Nodes[i] as ParamStruct;
                     HitData[i] = new Collision((ulong)(str.Nodes["node_id"] as ParamValue).Value,
                         (float)(str.Nodes["size"] as ParamValue).Value,
-                        new OpenTK.Vector3(
+                        new Vector3(
                             (float)(str.Nodes["offset1_x"] as ParamValue).Value,
                             (float)(str.Nodes["offset1_y"] as ParamValue).Value,
                             (float)(str.Nodes["offset1_z"] as ParamValue).Value),
-                        new OpenTK.Vector3(
+                        new Vector3(
                             (float)(str.Nodes["offset2_x"] as ParamValue).Value,
                             (float)(str.Nodes["offset2_y"] as ParamValue).Value,
                             (float)(str.Nodes["offset2_z"] as ParamValue).Value));
