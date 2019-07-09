@@ -29,7 +29,7 @@ namespace CrossMod.Nodes
         public void AddToRenderSkeleton(RSkeleton Skeleton)
         {
             Skeleton.HelperBone.Clear();
-            foreach (HLPB_Entry entry in helperBones.Entries)
+            foreach (HLPB_RotateInterpolation entry in helperBones.InterpolationEntries)
             {
                 Skeleton.HelperBone.Add(new RHelperBone()
                 {

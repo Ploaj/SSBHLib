@@ -1,7 +1,7 @@
 ﻿namespace SSBHLib.Tools
 {
     /// <summary>
-    /// Represents a generic transforms with Translation, Rotation (as quaternion), and Scale
+    /// Represents a generic transforms with translation, rotation (as quaternion), and scale.
     /// </summary>
     public struct AnimTrackTransform
     {
@@ -22,7 +22,7 @@
 
         public override string ToString()
         {
-            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}))";
+            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}), CompensateScale: {CompensateScale})";
         }
     }
 }

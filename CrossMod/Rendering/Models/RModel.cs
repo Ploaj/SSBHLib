@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.BufferObjects;
@@ -37,8 +38,6 @@ namespace CrossMod.Rendering.Models
             SetUniforms(shader);
             SetCameraUniforms(Camera, shader);
 
-            shader.EnableVertexAttributes();
-
             // Bones
             int blockIndex = GL.GetUniformBlockIndex(shader.Id, "Bones");
             boneUniformBuffer.BindBase(BufferRangeTarget.UniformBuffer, blockIndex);
@@ -49,8 +48,6 @@ namespace CrossMod.Rendering.Models
             boneUniformBuffer.SetData(boneBinds, BufferUsageHint.DynamicDraw);
 
             DrawMeshes(Camera, Skeleton, shader);
-
-            shader.DisableVertexAttributes();
         }
 
         private static void SetCameraUniforms(Camera Camera, Shader currentShader)
@@ -69,7 +66,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            currentShader.SetVector3("V", Camera.ViewVector);
+            currentShader.SetVector3("cameraPos", Camera.Position);
         }
 
         private static void SetUniforms(Shader currentShader)
@@ -79,6 +76,9 @@ namespace CrossMod.Rendering.Models
 
             currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
             currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
+
+            currentShader.SetFloat("directLightIntensity", RenderSettings.Instance.DirectLightIntensity);
+            currentShader.SetFloat("iblIntensity", RenderSettings.Instance.IblIntensity);
 
             currentShader.SetBoolToInt("renderDiffuse", RenderSettings.Instance.EnableDiffuse);
             currentShader.SetBoolToInt("renderSpecular", RenderSettings.Instance.EnableSpecular);
@@ -94,7 +94,26 @@ namespace CrossMod.Rendering.Models
 
         private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
         {
+            var opaque = new List<RMesh>();
+            var transparentDepthSorted = new List<RMesh>();
+
             foreach (RMesh m in subMeshes)
+            {
+                if (m.Material.HasAlphaBlending)
+                    transparentDepthSorted.Add(m);
+                else
+                    opaque.Add(m);
+            }
+
+            transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.Position - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
+
+            foreach (RMesh m in opaque)
+            {
+                m.Draw(currentShader, Camera, Skeleton);
+            }
+
+            // Draw transparent meshes last for proper alpha blending.
+            foreach (RMesh m in transparentDepthSorted)
             {
                 m.Draw(currentShader, Camera, Skeleton);
             }

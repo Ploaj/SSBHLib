@@ -201,6 +201,11 @@ namespace CrossMod.Rendering
                 meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.One;
             else if (blendState.BlendFactor2 == 6)
                 meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.OneMinusSrcAlpha;
+
+            meshMaterial.HasAlphaBlending = blendState.BlendFactor1 != 0 || blendState.BlendFactor2 != 0;
+
+            // TODO: Do both need to be set?
+            meshMaterial.UseStippleBlend = blendState.Unk7 == 1 && blendState.Unk8 == 1;
         }
 
         private void SetTextureParameter(Material meshMaterial, MatlAttribute a)

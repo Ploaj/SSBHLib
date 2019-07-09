@@ -191,8 +191,7 @@ namespace SSBHLib.Tools
                     int valueBitCount = (int)item.Count;
                     if (valueBitCount == 0)
                         continue;
-
-                    // TODO: What is this?
+                    
                     int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
                     for (int k = 0; k < valueBitCount; k++)
@@ -248,7 +247,7 @@ namespace SSBHLib.Tools
             float XPOS = parser.ReadSingle();
             float YPOS = parser.ReadSingle();
             float ZPOS = parser.ReadSingle();
-            float WPOS = parser.ReadInt32(); // ????
+            float CSCA = parser.ReadSingle();
 
             parser.Seek(dataOffset + header.CompressedDataOffset);
             for(int frame = 0; frame < header.FrameCount; frame++)
@@ -265,7 +264,7 @@ namespace SSBHLib.Tools
                     SX = XSCA,
                     SY = YSCA,
                     SZ = ZSCA,
-                    CompensateScale = 0
+                    CompensateScale = CSCA
                 };
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
@@ -299,7 +298,7 @@ namespace SSBHLib.Tools
                     
                     if ((header.Flags & 0x3) == 0x3)
                     {
-                        //Scale Isotropic
+                        //Scale Compensate
                         if(itemIndex == 0)
                         {
                             transform.CompensateScale = frameValue;
@@ -385,16 +384,22 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    CompensateScale = 0
+                    CompensateScale = reader.ReadInt32()
                 };
-                reader.ReadInt32(); // ????
 
                 return Transform;
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Texture))
             {
-                // TODO: What type is this
+                return new AnimTrackTexture()
+                {
+                    UnkFloat1 = reader.ReadSingle(),
+                    UnkFloat2 = reader.ReadSingle(),
+                    UnkFloat3 = reader.ReadSingle(),
+                    UnkFloat4 = reader.ReadSingle(),
+                    Unknown = reader.ReadInt32()
+                };
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Float))
@@ -402,7 +407,7 @@ namespace SSBHLib.Tools
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.PatternIndex))
             {
-                //TODO: What type is this
+                return reader.ReadInt32();
             }
 
             if (CheckFlag(flags, 0x00FF, ANIM_TRACKFLAGS.Boolean))
@@ -431,7 +436,10 @@ namespace SSBHLib.Tools
             if (t == v1) return bv;
             
             float mu = (t - v0) / (v1 - v0);
-            return ((av * (1 - mu)) + (bv * mu));
+            float value = ((av * (1 - mu)) + (bv * mu));
+            if (float.IsNaN(value))
+                return 0;
+            return value;
         }
     }
 }

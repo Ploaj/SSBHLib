@@ -35,7 +35,7 @@ namespace MatLab
 
         private static void DeserializeXml(string inputPath, string outputPath, XmlSerializer serializer)
         {
-            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath + "_out.numatb"}...");
+            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}_out.numatb...");
             using (TextReader reader = new StringReader(File.ReadAllText(inputPath)))
             {
                 var result = (MaterialLibrary)serializer.Deserialize(reader);
@@ -48,7 +48,7 @@ namespace MatLab
 
         private static void SerializeMatl(string inputPath, string outputPath, XmlSerializer serializer)
         {
-            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath + "_out.xml"}...");
+            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}_out.xml...");
             if (SSBH.TryParseSSBHFile(inputPath, out ISSBH_File file))
             {
                 MATL matlFile = (MATL)file;
@@ -95,7 +95,7 @@ namespace MatLab
                     {
                         ParamID = library.material[i].param[j].name,
 
-                        DataObject = library.material[i].param[j].Value
+                        DataObject = library.material[i].param[j].value
                     };
                 }
 
@@ -126,7 +126,7 @@ namespace MatLab
                 {
                     MatlXmlAttribute attrib = new MatlXmlAttribute();
                     attrib.name = attr.ParamID;
-                    attrib.Value = attr.DataObject;
+                    attrib.value = attr.DataObject;
                     mat.param[attribIndex++] = attrib;
                 }
 

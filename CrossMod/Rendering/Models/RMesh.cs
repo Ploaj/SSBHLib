@@ -22,6 +22,8 @@ namespace CrossMod.Rendering.Models
 
         public bool Visible { get; set; } = true;
 
+        private SFGenericModel.Materials.GenericMaterial genericMaterial = null;
+
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
         {
             if (!Visible)
@@ -37,7 +39,7 @@ namespace CrossMod.Rendering.Models
 
             if (Material != null)
             {
-                SetTextureUniforms(shader);
+                SetMaterialUniforms(shader);
                 SetRenderState();
             }
 
@@ -47,13 +49,14 @@ namespace CrossMod.Rendering.Models
             RenderMesh?.Draw(shader);
         }
 
-        private void SetTextureUniforms(Shader shader)
+        private void SetMaterialUniforms(Shader shader)
         {
             // TODO: Rework default texture creation.
             if (defaultTextures == null)
                 defaultTextures = new Resources.DefaultTextures();
 
-            var genericMaterial = Material.CreateGenericMaterial(Material);
+            if (genericMaterial == null)
+                genericMaterial = Material.CreateGenericMaterial(Material);
             genericMaterial.SetShaderUniforms(shader);
         }
 

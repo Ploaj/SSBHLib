@@ -8,6 +8,16 @@ namespace SSBHLib.IO
 {
     public class SSBHExporter : BinaryWriter
     {
+        private class MaterialEntry
+        {
+            public object Object;
+
+            public MaterialEntry(object ob)
+            {
+                Object = ob;
+            }
+        }
+
         public long Position => BaseStream.Position; 
         public long FileSize => BaseStream.Length;
 
@@ -47,28 +57,6 @@ namespace SSBHLib.IO
                 {
                     if (tag.Ignore)
                         return true;
-                    if (!tag.IF.Equals(""))
-                    {
-                        string[] args = tag.IF.Split('>');
-                        PropertyInfo checkprop = null;
-                        foreach (PropertyInfo pi in file.GetType().GetProperties())
-                        {
-                            if (pi.Name.Equals(args[0]))
-                            {
-                                checkprop = pi;
-                                break;
-                            }
-                        }
-                        skip = true;
-                        if (checkprop != null)
-                        {
-                            if ((ushort)checkprop.GetValue(file) > int.Parse(args[1]))
-                            {
-                                skip = false;
-                                break;
-                            }
-                        }
-                    }
                 }
             }
             return skip;
@@ -85,10 +73,7 @@ namespace SSBHLib.IO
                     continue;
 
                 // I guess?
-                if (obj is Array
-                    || (obj is MaterialEntry &&
-                        ((MaterialEntry)obj).Object is Formats.Materials.MatlAttribute.MatlString)
-                    )
+                if (obj is Array || (obj is MaterialEntry &&((MaterialEntry)obj).Object is Formats.Materials.MatlAttribute.MatlString))
                     Pad(0x8);
 
                 // not sure if 4 or 8
@@ -206,8 +191,8 @@ namespace SSBHLib.IO
                 WriteProperty(((MaterialEntry)value).Object);
                 if(((MaterialEntry)value).Object is float)
                 Pad(0x8);
-            } else
-            if (value is Formats.Materials.MatlAttribute.MatlString)
+            }
+            else if (value is Formats.Materials.MatlAttribute.MatlString)
             {
                 // special write function for matl string
                 Write((long)8);
@@ -258,16 +243,6 @@ namespace SSBHLib.IO
             while (BaseStream.Position % toSize != 0)
             {
                 Write(paddingValue);
-            }
-        }
-
-        public class MaterialEntry
-        {
-            public object Object;
-
-            public MaterialEntry(object ob)
-            {
-                Object = ob;
             }
         }
     }

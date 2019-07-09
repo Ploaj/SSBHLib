@@ -19,6 +19,6 @@ namespace MatLab
         [XmlElement("UVtransform", typeof(MatlAttribute.MatlUVTransform))]
         [XmlElement("float", typeof(float))]
         [XmlElement("bool", typeof(bool))]
-        public object Value;
+        public object value;
     }
 }
