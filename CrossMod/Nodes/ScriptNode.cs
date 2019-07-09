@@ -21,9 +21,9 @@ namespace CrossMod.Nodes
         public Catch[] Grabs { get; set; }
         public float MotionRate { get; set; } = 1f;
 
-        private Sphere Sphere { get; set; }
-        private Capsule Capsule { get; set; }
-        private Line Line { get; set; }
+        private static Sphere Sphere { get; set; }
+        private static  Capsule Capsule { get; set; }
+        private static Line Line { get; set; }
         
         public SKEL_Node SkelNode { set
             {
@@ -47,10 +47,6 @@ namespace CrossMod.Nodes
             for (int i = 0; i < Grabs.Length; i++)
                 Grabs[i] = Catch.Default();
             ReadScriptFile();
-
-            Sphere = new Sphere();
-            Capsule = new Capsule();
-            Line = new Line();
         }
 
         public void Update(float frame)
@@ -61,6 +57,15 @@ namespace CrossMod.Nodes
 
         public void Render(Camera camera)
         {
+            if (Sphere == null)
+                Sphere = new Sphere();
+
+            if (Capsule == null)
+                Capsule = new Capsule();
+
+            if (Line == null)
+                Line = new Line();
+
             Matrix4 mvp = camera.MvpMatrix;
 
             List<Collision> collisions = new List<Collision>();
