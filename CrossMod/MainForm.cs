@@ -20,6 +20,8 @@ namespace CrossMod
 
         private ContextMenu fileTreeContextMenu;
 
+        private CameraControl cameraControl;
+
         public MainForm()
         {
             InitializeComponent();
@@ -30,7 +32,6 @@ namespace CrossMod
             };
 
             fileTreeContextMenu = new ContextMenu();
-
 
             iconList = iconList = new ImageList();
             iconList.ImageSize = new Size(24, 24);
@@ -83,18 +84,41 @@ namespace CrossMod
 
             // Enable rendering of the model if we have directly selected a model file.
             // Nested ones won't render a model
-            foreach (var node in mainNode.Nodes)
+            SKEL_Node Skel = null;
+            foreach (FileNode node in mainNode.Nodes)
             {
-                if ((node as FileNode)?.Text?.EndsWith("numdlb") == true)
+                if (node.Text?.EndsWith("numdlb") == true)
                 {
                     fileTree.SelectedNode = node as FileNode;
                 }
+                else if (Skel == null && node is SKEL_Node)
+                {
+                    Skel = node as SKEL_Node;
+                }
             }
+            if (Skel == null)
+                return;
+            foreach (FileNode node in mainNode.Nodes)
+            {
+                if (node is ScriptNode scriptNode)
+                {
+                    scriptNode.SkelNode = Skel;
+                    modelViewport.ScriptNode = scriptNode;
+                    //only do this once, there should only be one anyway
+                    break;
+                }
+            }
+            ParamNodeContainer.SkelNode = Skel;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            // This condition needs to be first.
+            //oof
+            if (fileTree.SelectedNode.Text.EndsWith("nuanmb") && modelViewport.ScriptNode != null)
+            {
+                modelViewport.ScriptNode.CurrentAnimationName = fileTree.SelectedNode.Text;
+            }
+
             if (fileTree.SelectedNode is NUTEX_Node texture)
             {
                 ShowModelViewport();
@@ -113,7 +137,7 @@ namespace CrossMod
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
                 modelViewport.UpdateTexture(null);
             }
-
+            
             modelViewport.RenderFrame();
         }
 
@@ -175,7 +199,7 @@ namespace CrossMod
 
         private void exportExportableTexture(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", (((MenuItem)sender).Tag).ToString()))
+            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".png"))
@@ -266,6 +290,7 @@ namespace CrossMod
         private void ClearWorkspace()
         {
             fileTree.Nodes.Clear();
+            ParamNodeContainer.Unload();
             modelViewport.ClearFiles();
             HideControl();
             GC.Collect();
@@ -448,6 +473,13 @@ namespace CrossMod
             }
         }
 
+        private void cameraToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cameraControl == null || cameraControl.IsDisposed)
+                cameraControl = modelViewport.GetCameraControl();
+            cameraControl.Focus();
+            cameraControl.Show();
+        }
         private void printLightValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var folderPath = FileTools.TryOpenFolder("Select Source Directory");

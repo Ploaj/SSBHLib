@@ -47,6 +47,10 @@
       <HintPath>lib\OpenTK.GLControl.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="paracobNET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\paracobNET.dll</HintPath>
+    </Reference>
     <Reference Include="SELib">
       <HintPath>..\..\..\Libraries\SELib\SELib.dll</HintPath>
       <Private>False</Private>
@@ -98,6 +102,12 @@
     <Compile Include="GUI\AnimationBar.Designer.cs">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\CameraControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\CameraControl.Designer.cs">
+      <DependentUpon>CameraControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="IO\ColladaSchema.cs" />
     <Compile Include="IO\DAEWriter.cs" />
     <Compile Include="IO\IOAnimation.cs" />
@@ -113,13 +123,21 @@
     <Compile Include="Nodes\IExportableTextureNode.cs" />
     <Compile Include="Nodes\NUANIM_Node.cs" />
     <Compile Include="Nodes\NUHLPB_Node.cs" />
+    <Compile Include="Nodes\ParamNode.cs" />
+    <Compile Include="Nodes\ParamNodeContainer.cs" />
+    <Compile Include="Nodes\ScriptNode.cs" />
     <Compile Include="Nodes\SHAN_Node.cs" />
+    <Compile Include="Rendering\Collision.cs" />
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
     <Compile Include="Rendering\Models\CustomVertex.cs" />
     <Compile Include="Rendering\Models\RenderMesh.cs" />
     <Compile Include="Rendering\PrimBonePrism.cs" />
     <Compile Include="Rendering\RAnimation.cs" />
     <Compile Include="Rendering\ShaderContainer.cs" />
+    <Compile Include="Rendering\Shapes\Line.cs" />
+    <Compile Include="Rendering\Shapes\Capsule.cs" />
+    <Compile Include="Rendering\Shapes\Polygon.cs" />
+    <Compile Include="Rendering\Shapes\Sphere.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">
@@ -168,9 +186,13 @@
     <Compile Include="Rendering\RSkeleton.cs" />
     <Compile Include="Rendering\RTexture.cs" />
     <Compile Include="Rendering\ScreenTriangle.cs" />
+    <Compile Include="Tools\Hash.cs" />
     <Compile Include="Tools\SwitchSwizzler.cs" />
     <EmbeddedResource Include="GUI\AnimationBar.resx">
       <DependentUpon>AnimationBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\CameraControl.resx">
+      <DependentUpon>CameraControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
@@ -344,7 +366,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Shaders\Capsule.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\Gamma.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Line.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\NormalMap.frag">
@@ -373,6 +401,12 @@
     </None>
     <None Include="Shaders\RModelUV.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\SolidColor.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Sphere.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Texture.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -425,6 +459,7 @@
     <Content Include="Lib\OpenTK.GLControl.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\paracobNET.dll" />
     <Content Include="Lib\SELib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -447,6 +482,9 @@
     <Content Include="Lib\SFShapes.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Shaders\Polygon.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\ico_unknown.png" />
     <None Include="Resources\ico_texture.png" />
     <None Include="Resources\ico_skeleton.png" />

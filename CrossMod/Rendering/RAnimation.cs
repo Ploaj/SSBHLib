@@ -66,6 +66,8 @@ namespace CrossMod.Rendering
         {
             if (Skeleton == null) return;
 
+            // Model scale
+            float scale = RenderSettings.Instance.ModelScale;
             // BoneTransform
             foreach(RBone b in Skeleton.Bones)
             {
@@ -90,6 +92,9 @@ namespace CrossMod.Rendering
                         break;
                     }
                 }
+                //It's probably OK to do this
+                if (b.ParentID == -1)
+                    b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
 

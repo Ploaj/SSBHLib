@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using CrossMod.Nodes;
 using System;
 using System.Windows.Forms;
 
@@ -13,29 +14,35 @@ namespace CrossMod.GUI
         private static readonly string playingText = "||";
         private static readonly string stoppedText = ">";
 
+        private int _FrameCount { get; set; }
         public int FrameCount
         {
-            get => animationTrack.Maximum;
+            get => _FrameCount;
             protected set
             {
-                animationTrack.Maximum = value;
+                //animationTrack.Maximum = value;
+                _FrameCount = value;
                 totalFrame.Maximum = value;
-                currentFrame.Maximum = value;
+                currentFrame_UpDown.Maximum = value;
                 totalFrame.Value = value;
             }
         }
+        
+        public float Frame { get; set; }
 
-        public int Frame
+        public float MotionRate
         {
-            get => animationTrack.Value;
-            set
+            get
             {
-                animationTrack.Value = value;
+                if (scriptNode == null)
+                    return 1;
+                return scriptNode.MotionRate;
             }
         }
 
         public RModel Model { get; set; }
         public RSkeleton Skeleton { get; set; }
+        public ScriptNode scriptNode { get; set; }
 
         /// <summary>
         /// Sets the current animation.
@@ -68,9 +75,10 @@ namespace CrossMod.GUI
                     }
                     else
                     {
-                        Frame = 0;
+                        currentFrame_UpDown.Value = 0;
                     }
                 }
+                UpdateScript();
             }
         }
         private IRenderableAnimation animation;
@@ -82,8 +90,9 @@ namespace CrossMod.GUI
         public AnimationBar()
         {
             InitializeComponent();
-            animationTrack.TickFrequency = 1;
+            //animationTrack.TickFrequency = 1;
             SetupTimer();
+            currentFrame_UpDown.Increment = (decimal)MotionRate;
         }
 
         public void Start()
@@ -120,23 +129,34 @@ namespace CrossMod.GUI
             Animation.SetFrameSkeleton(Skeleton, Frame);
         }
 
+        private void UpdateScript()
+        {
+            if (scriptNode == null)
+                return;
+
+            if (Frame == 0)
+                scriptNode.Start();
+            scriptNode.Update(Frame);
+
+            currentFrame_UpDown.Increment = (decimal)MotionRate;
+        }
+
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             // Loop back to the beginning at the end.
-            if(animationTrack.Value == animationTrack.Maximum)
-            {
-                animationTrack.Value = 0;
-            }
+            float nextFrame = Frame + MotionRate;
+
+            if (nextFrame > FrameCount)
+                currentFrame_UpDown.Value = 0;
             else
-            {
-                animationTrack.Value++;
-            }
+                currentFrame_UpDown.Value = (decimal)nextFrame;
         }
 
-        private void animationTrack_ValueChanged(object sender, EventArgs e)
+        private void currentFrame_ValueChanged(object sender, EventArgs e)
         {
-            currentFrame.Value = animationTrack.Value;
+            Frame = (float)currentFrame_UpDown.Value;
             UpdateAnimation();
+            UpdateScript();
         }
 
         private void playButton_Click(object sender, EventArgs e)

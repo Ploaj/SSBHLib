@@ -34,6 +34,12 @@ namespace CrossMod.GUI
             }
         }
 
+        public ScriptNode ScriptNode
+        {
+            get { return animationBar.scriptNode; }
+            set { animationBar.scriptNode = value; }
+        }
+
         public ModelViewport()
         {
             InitializeComponent();
@@ -107,6 +113,11 @@ namespace CrossMod.GUI
             return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
+        public CameraControl GetCameraControl()
+        {
+            return new CameraControl(camera);
+        }
+
         public void Close()
         {
             glViewport.Dispose();
@@ -117,7 +128,7 @@ namespace CrossMod.GUI
             animationBar = new AnimationBar
             {
                 Dock = DockStyle.Fill,
-                AutoSize = true
+                AutoSize = true,
             };
             controlBox.Controls.Add(animationBar);
         }
@@ -138,16 +149,28 @@ namespace CrossMod.GUI
 
             if (model != null)
             {
+                //remove any meshes that aren't on the model
+                foreach (ListViewItem item in meshList.Items)
+                {
+                    RMesh mesh = (RMesh)item.Tag;
+                    if (!model.subMeshes.Contains(mesh))
+                        meshList.Items.Remove(item);
+                }
+                //only add meshes that aren't in the mesh list already
                 foreach (var mesh in model.subMeshes)
                 {
-                    ListViewItem item = new ListViewItem
+                    if (!meshList.Items.ContainsKey(mesh.Name))
                     {
-                        Text = mesh.Name,
-                        Tag = mesh,
-                        Checked = true
-                    };
+                        ListViewItem item = new ListViewItem
+                        {
+                            Name = mesh.Name,
+                            Text = mesh.Name,
+                            Tag = mesh,
+                            Checked = false
+                        };
 
-                    meshList.Items.Add(item);
+                        meshList.Items.Add(item);
+                    }
                 }
             }
         }
@@ -186,7 +209,18 @@ namespace CrossMod.GUI
         private void ClearBonesAndMeshList()
         {
             boneTree.Nodes.Clear();
-            meshList.Items.Clear();
+            //NOTE ; MERGE CONFLICT
+            //meshList.Items.Clear();
+            controlBox.Visible = false;
+        }
+
+        private void AnimationRenderFrame(object sender, EventArgs e)
+        {
+            glViewport.RenderFrame();
+            //NOTE ; MERGE CONFLICT
+            //meshList.Items.Clear();
+
+            //^^ FIGURE OUT IF THIS IS NECESSARY ^^
         }
 
         public void RenderFrame()
@@ -198,11 +232,14 @@ namespace CrossMod.GUI
         private void RenderNodes(object sender, EventArgs e)
         {
             SetUpViewport();
-
+            
             foreach (var node in renderableNodes)
                 node.Render(camera);
 
             renderTexture?.Render(camera);
+
+            ParamNodeContainer.Render(camera);
+            ScriptNode?.Render(camera);
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
@@ -245,12 +282,12 @@ namespace CrossMod.GUI
             {
                 if (mouseState.IsButtonDown(MouseButton.Left))
                 {
-                    camera.RotationXRadians += ((newMousePosition.Y - mousePosition.Y) / 100f);
+                    camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
                     camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
                 }
                 if (mouseState.IsButtonDown(MouseButton.Right))
                 {
-                    camera.Pan((newMousePosition.X - mousePosition.X), (newMousePosition.Y - mousePosition.Y));
+                    camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
                 }
                 if (keyboardState.IsKeyDown(Key.W))
                     camera.Zoom(0.5f);
@@ -266,7 +303,6 @@ namespace CrossMod.GUI
 
         private void glViewport_Load(object sender, EventArgs e)
         {
-            ShaderContainer.SetUpShaders();
             glViewport.RenderFrame();
         }
 
