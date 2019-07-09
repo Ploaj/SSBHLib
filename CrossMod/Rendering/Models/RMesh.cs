@@ -61,9 +61,11 @@ namespace CrossMod.Rendering.Models
             genericMaterial.SetShaderUniforms(shader);
 
             if (uniformBlock == null)
+            {
                 uniformBlock = new SFGenericModel.Materials.UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
+                Material.AddMaterialParams(uniformBlock);
+            }
 
-            Material.AddMaterialParams(uniformBlock);
             uniformBlock.BindBlock(shader, "MaterialParams");
         }
 

@@ -141,15 +141,8 @@ namespace CrossMod.Rendering
             AddVec4(uniformBlock, 0xA6, new Vector4(1));
 
             // Some sort of skin subsurface color?
-            if (RenderSettings.Instance.TransitionEffect == RenderSettings.TransitionMode.Ditto)
-            {
-                AddVec4(uniformBlock, 0x145, new Vector4(0.23f, 1.5f, 1f, 1f));
-            }
-            else
-            {
-                AddVec4(uniformBlock, 0xA3, new Vector4(0));
-                AddVec4(uniformBlock, 0x145, new Vector4(1, 0, 0, 0));
-            }
+            AddVec4(uniformBlock, 0xA3, new Vector4(0));
+            AddVec4(uniformBlock, 0x145, new Vector4(1, 0, 0, 0));
 
             // Mario Galaxy rim light?
             AddVec4(uniformBlock, 0xA0, new Vector4(1));
