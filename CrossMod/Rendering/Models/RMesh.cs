@@ -23,6 +23,7 @@ namespace CrossMod.Rendering.Models
         public bool Visible { get; set; } = true;
 
         private SFGenericModel.Materials.GenericMaterial genericMaterial = null;
+        private SFGenericModel.Materials.UniformBlock uniformBlock = null;
 
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
         {
@@ -58,6 +59,12 @@ namespace CrossMod.Rendering.Models
             if (genericMaterial == null)
                 genericMaterial = Material.CreateGenericMaterial(Material);
             genericMaterial.SetShaderUniforms(shader);
+
+            if (uniformBlock == null)
+                uniformBlock = new SFGenericModel.Materials.UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
+
+            Material.AddMaterialParams(uniformBlock);
+            uniformBlock.BindBlock(shader, "MaterialParams");
         }
 
         private void SetRenderState()

@@ -40,8 +40,6 @@ uniform sampler2D projMap;
 
 uniform sampler2D uvPattern;
 
-uniform vec4 vec4Param;
-
 uniform sampler2D iblLut;
 
 uniform samplerCube diffusePbrCube;
@@ -53,10 +51,32 @@ uniform int renderMode;
 uniform int renderWireframe;
 uniform int renderNormalMaps;
 
-// UV transforms.
-uniform vec4 param146;
-uniform vec4 param147;
-uniform vec4 param9E;
+uniform MaterialParams
+{
+    vec4 paramA6;
+    vec4 paramA3;
+    vec4 param145;
+    vec4 paramA5;
+    vec4 paramA0;
+    vec4 param98;
+    vec4 param9B;
+    vec4 param151;
+    vec4 param146;
+    vec4 param147;
+    vec4 param9E;
+    vec4 param156;
+    vec4 param153;
+    vec4 param154;
+
+    vec4 vec4Param;
+
+    int paramE9;
+    int paramEA;
+    float paramC8;
+    float paramCA;
+
+    float paramD3;
+};
 
 uniform mat4 mvp;
 uniform vec3 cameraPos;
