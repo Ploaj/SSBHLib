@@ -57,6 +57,134 @@
             <param name="indices">The vertex indices</param>
             <param name="primitiveType">Determines how primitives will be constructed from vertex data</param>
         </member>
+        <member name="T:SFGenericModel.Materials.UniformBlock">
+            <summary>
+            Stores a collection of uniforms in a buffer to improve performance and allow sharing uniforms
+            between shader programs.
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.Materials.UniformBlock.BlockBinding">
+            <summary>
+            The binding point index for the uniform block.
+            </summary>
+        </member>
+        <member name="M:SFGenericModel.Materials.UniformBlock.#ctor(SFGraphics.GLObjects.Shaders.Shader,System.String)">
+            <summary>
+            Initializes the uniform buffer based on the layout of <paramref name="uniformBlockName"/> in <paramref name="shader"/>.
+            </summary>
+            <param name="shader">The shader containing the uniform block</param>
+            <param name="uniformBlockName">The name of the uniform block</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.UniformBlock.BindBlock(SFGraphics.GLObjects.Shaders.Shader,System.String)">
+            <summary>
+            Binds the uniform buffer to <see cref="P:SFGenericModel.Materials.UniformBlock.BlockBinding"/> for the appropriate index for <paramref name="shader"/>.
+            </summary>
+            <param name="shader">The shader containing the uniform block</param>
+            <param name="uniformBlockName">The name of the uniform block in <paramref name="shader"/></param>
+        </member>
+        <member name="M:SFGenericModel.Materials.UniformBlock.SetValue``1(System.String,``0)">
+            <summary>
+            Sets the associated buffer data for <paramref name="uniformName"/> to <paramref name="value"/>.
+            </summary>
+            <param name="uniformName">The name of the uniform inside the uniform block</param>
+            <param name="value">The new value for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.UniformBlock.SetValues``1(System.String,``0[])">
+            <summary>
+            Sets the associated buffer data for <paramref name="uniformName"/> to <paramref name="values"/>.
+            </summary>
+            <param name="uniformName">The name of the uniform inside the uniform block</param>
+            <param name="values">The new value for the uniform</param>
+        </member>
+        <member name="T:SFGenericModel.Materials.GenericMaterial">
+            <summary>
+            Used to store uniform data for <see cref="T:SFGenericModel.GenericMesh`1"/>. 
+            Duplicate uniform names are not allowed, regardless of type differences.
+            <para></para><para></para>
+            Custom material data should be converted to a <see cref="T:SFGenericModel.Materials.GenericMaterial"/> to update shader uniforms.
+            Avoid updating shader uniforms directly.
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.Materials.GenericMaterial.InitialTextureUnit">
+            <summary>
+            Each texture uniform will be assigned to a unique index, starting with this value.
+            Defaults to <c>0</c>.
+            </summary>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.#ctor">
+            <summary>
+            Creates an empty generic material.
+            </summary>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.#ctor(System.Int32)">
+            <summary>
+            Creates an empty generic material.
+            </summary>
+            <param name="initialTextureUnit">The starting texture unit for texture uniforms</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddFloat(System.String,System.Single)">
+            <summary>
+            Adds a float uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddInt(System.String,System.Int32)">
+            <summary>
+            Adds an int uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddBoolToInt(System.String,System.Boolean)">
+            <summary>
+            Converts <paramref name="value"/> to an int. <c>1</c> is true. <c>0</c> is <c>false</c>.
+            Adds the resulting int uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector2(System.String,OpenTK.Vector2)">
+            <summary>
+            Adds a vec2 uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector3(System.String,OpenTK.Vector3)">
+            <summary>
+            Adds a vec3 uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector4(System.String,OpenTK.Vector4)">
+            <summary>
+            Adds a vec4 uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddMatrix4(System.String,OpenTK.Matrix4)">
+            <summary>
+            Adds a mat4 uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddTexture(System.String,SFGraphics.GLObjects.Textures.Texture)">
+            <summary>
+            Adds a sampler uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+        </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.SetShaderUniforms(SFGraphics.GLObjects.Shaders.Shader)">
+            <summary>
+            Sets uniform values for all the added uniform values.
+            </summary>
+            <param name="shader">The shader whose uniforms will be set</param>
+        </member>
         <member name="T:SFGenericModel.RenderState.PolygonModeSettings">
             <summary>
             The polygon mode settings set before drawing.
@@ -381,7 +509,7 @@
         <member name="T:SFGenericModel.RenderState.RenderSettings">
             <summary>
             Stores the rendering state used for drawing.
-            The OpenGL state can be set using <see cref="M:SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(SFGenericModel.RenderState.RenderSettings)"/>.
+            The OpenGL state can be set using <see cref="M:SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(SFGenericModel.RenderState.RenderSettings,SFGenericModel.RenderState.RenderSettings)"/>.
             </summary>
         </member>
         <member name="F:SFGenericModel.RenderState.RenderSettings.polygonModeSettings">
@@ -429,15 +557,60 @@
         </member>
         <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(SFGenericModel.RenderState.RenderSettings)">
             <summary>
+            Updates the current OpenGL rendering state. 
+            To improve performance, use <see cref="M:SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(SFGenericModel.RenderState.RenderSettings,SFGenericModel.RenderState.RenderSettings)"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetRenderSettings(SFGenericModel.RenderState.RenderSettings,SFGenericModel.RenderState.RenderSettings)">
+            <summary>
+            Updates the current OpenGL rendering state. 
+            To improve performance, no OpenGL functions are called for identical values for
+            <paramref name="settings"/> and <paramref name="previousSettings"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(SFGenericModel.RenderState.PolygonModeSettings,SFGenericModel.RenderState.PolygonModeSettings)">
+            <summary>
             Updates the current OpenGL rendering state based on <paramref name="settings"/>.
             </summary>
             <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(SFGenericModel.RenderState.FaceCullingSettings,SFGenericModel.RenderState.FaceCullingSettings)">
+            <summary>
+            Updates the current OpenGL rendering state based on <paramref name="settings"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetDepthTesting(SFGenericModel.RenderState.DepthTestSettings,SFGenericModel.RenderState.DepthTestSettings)">
+            <summary>
+            Updates the current OpenGL rendering state based on <paramref name="settings"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(SFGenericModel.RenderState.AlphaBlendSettings,SFGenericModel.RenderState.AlphaBlendSettings)">
+            <summary>
+            Updates the current OpenGL rendering state based on <paramref name="settings"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
         </member>
         <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(SFGenericModel.RenderState.PolygonModeSettings)">
             <summary>
             Updates the current OpenGL rendering state based on <paramref name="settings"/>.
             </summary>
             <param name="settings">The settings used to perform the update</param>
+        </member>
+        <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetAlphaTesting(SFGenericModel.RenderState.AlphaTestSettings,SFGenericModel.RenderState.AlphaTestSettings)">
+            <summary>
+            Updates the current OpenGL rendering state based on <paramref name="settings"/>.
+            </summary>
+            <param name="settings">The settings used to perform the update</param>
+            <param name="previousSettings">The settings used for the previous update</param>
         </member>
         <member name="M:SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(SFGenericModel.RenderState.FaceCullingSettings)">
             <summary>
@@ -572,6 +745,16 @@
             The variable name used for transforming normals to view space.
             </summary>
         </member>
+        <member name="P:SFGenericModel.ShaderGenerators.TextureShaderGenerator.GlslVersionMajor">
+            <summary>
+            The minor shading language version. Ex: 4.20 is major version 4.
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.TextureShaderGenerator.GlslVersionMinor">
+            <summary>
+            The minor shading language version. Ex: 4.20 is minor version 2.
+            </summary>
+        </member>
         <member name="M:SFGenericModel.ShaderGenerators.TextureShaderGenerator.CreateShader``1(System.Collections.Generic.List{SFGenericModel.ShaderGenerators.TextureRenderInfo},System.String@,System.String@)">
             <summary>
             Generates a shader for rendering each of the specified textures individually.
@@ -613,6 +796,16 @@
         <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.AttribIndexName">
             <summary>
             The variable name used for selecting the 0 indexed attribute to render.
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.GlslVersionMajor">
+            <summary>
+            The minor shading language version. Ex: 4.20 is major version 4.
+            </summary>
+        </member>
+        <member name="P:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.GlslVersionMinor">
+            <summary>
+            The minor shading language version. Ex: 4.20 is minor version 2.
             </summary>
         </member>
         <member name="M:SFGenericModel.ShaderGenerators.VertexAttributeShaderGenerator.CreateShader``1(System.String@,System.String@)">
@@ -936,95 +1129,6 @@
             <param name="name">The name of the attribute</param>
             <param name="type">The data type of the attribute</param>
             <param name="valueCount">The number of vector components or 1 for scalars</param>
-        </member>
-        <member name="T:SFGenericModel.Materials.GenericMaterial">
-            <summary>
-            Used to store uniform data for <see cref="T:SFGenericModel.GenericMesh`1"/>. 
-            Duplicate uniform names are not allowed, regardless of type differences.
-            <para></para><para></para>
-            Custom material data should be converted to a <see cref="T:SFGenericModel.Materials.GenericMaterial"/> to update shader uniforms.
-            Avoid updating shader uniforms directly.
-            </summary>
-        </member>
-        <member name="P:SFGenericModel.Materials.GenericMaterial.InitialTextureUnit">
-            <summary>
-            Each texture uniform will be assigned to a unique index, starting with this value.
-            Defaults to <c>0</c>.
-            </summary>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.#ctor">
-            <summary>
-            Creates an empty generic material.
-            </summary>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.#ctor(System.Int32)">
-            <summary>
-            Creates an empty generic material.
-            </summary>
-            <param name="initialTextureUnit">The starting texture unit for texture uniforms</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddFloat(System.String,System.Single)">
-            <summary>
-            Adds a float uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddInt(System.String,System.Int32)">
-            <summary>
-            Adds an int uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddBoolToInt(System.String,System.Boolean)">
-            <summary>
-            Converts <paramref name="value"/> to an int. <c>1</c> is true. <c>0</c> is <c>false</c>.
-            Adds the resulting int uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector2(System.String,OpenTK.Vector2)">
-            <summary>
-            Adds a vec2 uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector3(System.String,OpenTK.Vector3)">
-            <summary>
-            Adds a vec3 uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddVector4(System.String,OpenTK.Vector4)">
-            <summary>
-            Adds a vec4 uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddMatrix4(System.String,OpenTK.Matrix4)">
-            <summary>
-            Adds a mat4 uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.AddTexture(System.String,SFGraphics.GLObjects.Textures.Texture)">
-            <summary>
-            Adds a sampler uniform to the material.
-            </summary>
-            <param name="uniformName">The name of the uniform variable</param>
-            <param name="value">The value to set for the uniform</param>
-        </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.SetShaderUniforms(SFGraphics.GLObjects.Shaders.Shader)">
-            <summary>
-            Sets uniform values for all the added uniform values.
-            </summary>
-            <param name="shader">The shader whose uniforms will be set</param>
         </member>
         <member name="T:SFGenericModel.GenericMesh`1">
             <summary>

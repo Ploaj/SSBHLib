@@ -7,7 +7,8 @@
         <member name="T:SFGraphics.Controls.GLViewport">
             <summary>
             Provides functionality similar to <see cref="T:OpenTK.GameWindow"/> for <see cref="T:OpenTK.GLControl"/>.
-            Rendered frames can be triggered manually or automatically with a separate thread.
+            <para></para><para></para>
+            Frame timing can be handled manually or with a dedicated thread using <see cref="M:SFGraphics.Controls.GLViewport.ResumeRendering"/>.
             </summary>
         </member>
         <member name="F:SFGraphics.Controls.GLViewport.defaultGraphicsMode">
@@ -29,7 +30,8 @@
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
             <summary>
-            The minimum time in milliseconds between frames for the dedicated rendering thread.
+            The minimum time in milliseconds between frames.
+            A value of <c>0</c> unlocks the frame rate but can result in very high CPU usage.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.#ctor">
@@ -49,12 +51,13 @@
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.ResumeRendering">
             <summary>
-            Starts or resumes calling <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/> on the render thread with interval specified by <see cref="P:SFGraphics.Controls.GLViewport.RenderFrameInterval"/>.
+            Starts or resumes frame updates with interval specified by <see cref="P:SFGraphics.Controls.GLViewport.RenderFrameInterval"/>.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.PauseRendering">
             <summary>
-            Pauses frame updates for the render thread. Frames can still be rendered manually with <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/>.
+            Pauses automatic frame updates. 
+            Frames can still be rendered manually with <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/>.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.Dispose">

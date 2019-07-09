@@ -38,7 +38,7 @@ uniform int paramF1;
 uniform Bones
 {
     mat4 transforms[200];
-} bones;
+};
 
 void main()
 {
@@ -53,8 +53,8 @@ void main()
 
         for (int i = 0; i < 4; i++)
         {
-            position += bones.transforms[boneIndices[i]] * vec4(Position0, 1) * boneWeights[i];
-            transformedNormal.xyz += (inverse(transpose(bones.transforms[boneIndices[i]])) * vec4(Normal0, 1) * boneWeights[i]).xyz;
+            position += transforms[boneIndices[i]] * vec4(Position0, 1) * boneWeights[i];
+            transformedNormal.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Normal0, 1) * boneWeights[i]).xyz;
         }
     }
 
