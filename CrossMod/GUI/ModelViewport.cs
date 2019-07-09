@@ -209,18 +209,8 @@ namespace CrossMod.GUI
         private void ClearBonesAndMeshList()
         {
             boneTree.Nodes.Clear();
-            //NOTE ; MERGE CONFLICT
-            //meshList.Items.Clear();
+            meshList.Items.Clear();
             controlBox.Visible = false;
-        }
-
-        private void AnimationRenderFrame(object sender, EventArgs e)
-        {
-            glViewport.RenderFrame();
-            //NOTE ; MERGE CONFLICT
-            //meshList.Items.Clear();
-
-            //^^ FIGURE OUT IF THIS IS NECESSARY ^^
         }
 
         public void RenderFrame()
