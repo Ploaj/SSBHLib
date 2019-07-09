@@ -30,9 +30,9 @@ namespace CrossMod.Nodes
         private static RSkeleton Skel { get; set; }
         private static Dictionary<ulong, int> BoneIDs { get; set; }
 
-        private static Capsule capsule;
-        private static Sphere sphere;
-        private static Polygon quad;
+        private static Capsule capsule = null;
+        private static Sphere sphere = null;
+        private static Polygon quad = null;
 
         static ParamNodeContainer()
         {
@@ -40,9 +40,6 @@ namespace CrossMod.Nodes
             BoneIDs = new Dictionary<ulong, int>();
             HitData = new Collision[0];
             CliffHangData = new CliffHangShape[0];
-
-            capsule = new Capsule();
-            sphere = new Sphere();
         }
 
         public static void AddFile(ParamNode node)
@@ -112,6 +109,13 @@ namespace CrossMod.Nodes
         {
             if (Skel == null)
                 return;
+
+            if (capsule == null)
+                capsule = new Capsule();
+
+            if (sphere == null)
+                sphere = new Sphere();
+
             if (RenderSettings.Instance.RenderHitCollisions)
             {
                 GL.Disable(EnableCap.DepthTest);

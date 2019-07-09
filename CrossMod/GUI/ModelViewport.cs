@@ -303,6 +303,7 @@ namespace CrossMod.GUI
 
         private void glViewport_Load(object sender, EventArgs e)
         {
+            ShaderContainer.SetUpShaders();
             glViewport.RenderFrame();
         }
 
