@@ -45,9 +45,17 @@ namespace CrossMod.Rendering.Shapes
             Shader.UseProgram();
 
             var dir = Vector3.Normalize(offset2 - offset1);
-            var axis = Vector3.Cross(Vector3.UnitY, dir);
-            var angle = (float)Math.Acos(Vector3.Dot(Vector3.UnitY, dir));
-            var orientation = Matrix4.CreateFromAxisAngle(axis, angle);
+            Matrix4 orientation;
+            if (dir.X == 0 && dir.Z == 0)
+            {
+                orientation = new Matrix4(Vector4.UnitX, new Vector4(dir), Vector4.UnitZ, Vector4.UnitW);
+            }
+            else
+            {
+                var axis = Vector3.Cross(Vector3.UnitY, dir);
+                var angle = (float)Math.Acos(Vector3.Dot(Vector3.UnitY, dir));
+                orientation = Matrix4.CreateFromAxisAngle(axis, angle);
+            }
 
             Shader.SetFloat("size", size);
             Shader.SetMatrix4x4("orientation", ref orientation);
