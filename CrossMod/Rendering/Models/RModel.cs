@@ -106,16 +106,32 @@ namespace CrossMod.Rendering.Models
 
             transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.Position - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
+            // Models often share a material, so skip redundant and costly state changes.
+            string previousMaterialName = "";
+
             foreach (RMesh m in opaque)
             {
-                m.Draw(currentShader, Camera, Skeleton);
+                DrawMesh(Camera, Skeleton, currentShader, previousMaterialName, m);
+                previousMaterialName = m.Material.Name;
             }
 
             // Draw transparent meshes last for proper alpha blending.
             foreach (RMesh m in transparentDepthSorted)
             {
-                m.Draw(currentShader, Camera, Skeleton);
+                DrawMesh(Camera, Skeleton, currentShader, previousMaterialName, m);
+                previousMaterialName = m.Material.Name;
             }
+        }
+
+        private static void DrawMesh(Camera Camera, RSkeleton Skeleton, Shader currentShader, string previousMaterialName, RMesh m)
+        {
+            if (m.Material != null && m.Material.Name != previousMaterialName)
+            {
+                m.SetMaterialUniforms(currentShader);
+                m.RenderMesh.SetRenderState(m.Material);
+            }
+
+            m.Draw(currentShader, Camera, Skeleton);
         }
 
         private static Shader GetCurrentShader()

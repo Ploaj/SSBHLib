@@ -38,19 +38,14 @@ namespace CrossMod.Rendering.Models
                 shader.SetMatrix4x4("transform", ref matrix);
             }
 
-            if (Material != null)
-            {
-                SetMaterialUniforms(shader);
-                SetRenderState();
-            }
-
+            // TODO: ???
             GL.Enable(EnableCap.PrimitiveRestart);
             GL.PrimitiveRestartIndex(0xFFFFFFFF);
 
             RenderMesh?.Draw(shader);
         }
 
-        private void SetMaterialUniforms(Shader shader)
+        public void SetMaterialUniforms(Shader shader)
         {
             // TODO: Rework default texture creation.
             if (defaultTextures == null)
@@ -67,11 +62,6 @@ namespace CrossMod.Rendering.Models
             }
 
             uniformBlock.BindBlock(shader, "MaterialParams");
-        }
-
-        private void SetRenderState()
-        {
-            RenderMesh.SetRenderState(Material);
         }
     }
 }
