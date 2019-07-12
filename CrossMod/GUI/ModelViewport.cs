@@ -222,14 +222,19 @@ namespace CrossMod.GUI
         private void RenderNodes(object sender, EventArgs e)
         {
             SetUpViewport();
-            
-            foreach (var node in renderableNodes)
-                node.Render(camera);
 
-            renderTexture?.Render(camera);
+            if (renderTexture != null)
+            {
+                renderTexture.Render(camera);
+            }            
+            else
+            {
+                foreach (var node in renderableNodes)
+                    node.Render(camera);
 
-            ParamNodeContainer.Render(camera);
-            ScriptNode?.Render(camera);
+                ParamNodeContainer.Render(camera);
+                ScriptNode?.Render(camera);
+            }
 
             // Clean up any unused resources.
             GLObjectManager.DeleteUnusedGLObjects();
