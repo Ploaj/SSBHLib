@@ -149,28 +149,18 @@ namespace CrossMod.GUI
 
             if (model != null)
             {
-                //remove any meshes that aren't on the model
-                foreach (ListViewItem item in meshList.Items)
-                {
-                    RMesh mesh = (RMesh)item.Tag;
-                    if (!model.subMeshes.Contains(mesh))
-                        meshList.Items.Remove(item);
-                }
-                //only add meshes that aren't in the mesh list already
+                meshList.Items.Clear();
+
                 foreach (var mesh in model.subMeshes)
                 {
-                    if (!meshList.Items.ContainsKey(mesh.Name))
+                    ListViewItem item = new ListViewItem
                     {
-                        ListViewItem item = new ListViewItem
-                        {
-                            Name = mesh.Name,
-                            Text = mesh.Name,
-                            Tag = mesh,
-                            Checked = false
-                        };
-
-                        meshList.Items.Add(item);
-                    }
+                        Name = mesh.Name,
+                        Text = mesh.Name,
+                        Tag = mesh,
+                        Checked = mesh.Visible
+                    };
+                    meshList.Items.Add(item);
                 }
             }
         }
