@@ -102,7 +102,7 @@ namespace CrossMod.Rendering
                 Name = currentEntry.MaterialLabel
             };
 
-            System.Diagnostics.Debug.WriteLine("Material Attributes:");
+            System.Diagnostics.Debug.WriteLine($"{currentEntry.MaterialName} {currentEntry.MaterialLabel}");
             foreach (MatlAttribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
