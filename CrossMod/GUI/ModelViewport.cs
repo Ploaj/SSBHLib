@@ -111,7 +111,7 @@ namespace CrossMod.GUI
 
         public System.Drawing.Bitmap GetScreenshot()
         {
-            return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
+            return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
         public CameraControl GetCameraControl()
@@ -124,24 +124,38 @@ namespace CrossMod.GUI
             glViewport.Dispose();
         }
 
-        public void RenderAnimationToGif()
+        public async System.Threading.Tasks.Task RenderAnimationToGifAsync()
         {
             // Disable automatic updates so frames can be rendered manually.
             glViewport.PauseRendering();
             animationBar.Stop();
 
-            using (var gif = new AnimatedGif.AnimatedGifCreator("test.gif", 20, 0))
+            var frames = new List<System.Drawing.Bitmap>(animationBar.FrameCount);
+
+            // Rendering can't happen on a separate thread.
+            for (int i = 0; i <= animationBar.FrameCount; i++)
             {
-                for (int i = 0; i <= animationBar.FrameCount; i++)
-                {
-                    animationBar.Frame = i;
-                    glViewport.RenderFrame();
-                    using (var bmp = Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false))
-                        gif.AddFrame(bmp, -1, AnimatedGif.GifQuality.Bit8);
-                }
+                animationBar.Frame = i;
+                glViewport.RenderFrame();
+                frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
             }
 
+            // Continue on separate thread to maintain responsiveness.
             glViewport.ResumeRendering();
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                using (var gif = new AnimatedGif.AnimatedGifCreator("test.gif", 20, 0))
+                {
+                    for (int i = 0; i < frames.Count; i++)
+                        gif.AddFrame(frames[i], -1, AnimatedGif.GifQuality.Bit8);
+                }
+            });
+
+            foreach (var frame in frames)
+            {
+                frame.Dispose();
+            }
         }
 
         private void AddAnimationBar()
