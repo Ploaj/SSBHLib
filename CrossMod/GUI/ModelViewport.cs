@@ -83,17 +83,24 @@ namespace CrossMod.GUI
             if (value is NUMDL_Node)
             {
                 var rnumdl = (RNUMDL)newNode;
-                FrameSelection(rnumdl.Model);
+                FrameSelection();
             }
         }
 
-        public void FrameSelection(RModel model)
+        public void FrameSelection()
         {
-            if (model == null)
-                return;
-
             // Bounding spheres will help account for the vastly different model sizes.
-            camera.FrameBoundingSphere(model.BoundingSphere, 5);
+            var spheres = new List<Vector4>();
+            foreach (var node in renderableNodes)
+            {
+                if (node is RNUMDL rnumdl)
+                {
+                    spheres.Add(rnumdl.Model.BoundingSphere);
+                }
+            }
+
+            var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
+            camera.FrameBoundingSphere(allModelBoundingSphere, 0);
         }
 
         public void ClearFiles()
@@ -263,7 +270,8 @@ namespace CrossMod.GUI
             Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
             float newMouseScrollWheel = mouseState.Wheel;
 
-            if (glViewport.Focused)
+            // Reduce the chance of rotating the viewport while the mouse is on other controls.
+            if (glViewport.Focused && glViewport.ClientRectangle.Contains(PointToClient(MousePosition)))
             {
                 if (mouseState.IsButtonDown(MouseButton.Left))
                 {

@@ -36,6 +36,7 @@ namespace CrossMod
             this.viewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frameSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,7 +45,6 @@ namespace CrossMod
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -109,16 +109,23 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.frameSelectionToolStripMenuItem.Text = "Frame Selection";
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.frameSelectionToolStripMenuItem.Text = "Frame Models";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
+            // 
+            // cameraToolStripMenuItem
+            // 
+            this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
+            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cameraToolStripMenuItem.Text = "Camera";
+            this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
             // experimentalToolStripMenuItem
             // 
@@ -201,13 +208,6 @@ namespace CrossMod
             this.splitContainer1.Size = new System.Drawing.Size(1039, 538);
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // cameraToolStripMenuItem
-            // 
-            this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
-            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cameraToolStripMenuItem.Text = "Camera";
-            this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
             // MainForm
             // 

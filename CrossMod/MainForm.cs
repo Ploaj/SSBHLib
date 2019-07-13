@@ -348,11 +348,7 @@ namespace CrossMod
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (fileTree.SelectedNode is NUMDL_Node node)
-            {
-                var rnumdl = node.GetRenderableNode() as Rendering.RNUMDL;
-                modelViewport.FrameSelection(rnumdl.Model);
-            }
+            modelViewport.FrameSelection();
         }
 
         private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
