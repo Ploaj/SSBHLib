@@ -9,6 +9,7 @@ using OpenTK;
 using OpenTK.Input;
 using CrossMod.Nodes;
 using CrossMod.Rendering.Models;
+using SFGraphics.GLObjects.Framebuffers;
 
 namespace CrossMod.GUI
 {
@@ -121,6 +122,26 @@ namespace CrossMod.GUI
         public void Close()
         {
             glViewport.Dispose();
+        }
+
+        public void RenderAnimationToGif()
+        {
+            // Disable automatic updates so frames can be rendered manually.
+            glViewport.PauseRendering();
+            animationBar.Stop();
+
+            using (var gif = new AnimatedGif.AnimatedGifCreator("test.gif", 20, 0))
+            {
+                for (int i = 0; i <= animationBar.FrameCount; i++)
+                {
+                    animationBar.Frame = i;
+                    glViewport.RenderFrame();
+                    using (var bmp = Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false))
+                        gif.AddFrame(bmp, -1, AnimatedGif.GifQuality.Bit8);
+                }
+            }
+
+            glViewport.ResumeRendering();
         }
 
         private void AddAnimationBar()

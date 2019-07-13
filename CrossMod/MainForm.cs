@@ -298,7 +298,8 @@ namespace CrossMod
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BatchRenderModels();
+            modelViewport.RenderAnimationToGif();
+            //BatchRenderModels();
         }
 
         private void BatchRenderModels()

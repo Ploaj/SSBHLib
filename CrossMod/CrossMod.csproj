@@ -32,6 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AnimatedGif, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\AnimatedGif.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="GenericValueEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\GenericValueEditor.dll</HintPath>
@@ -50,6 +55,7 @@
     <Reference Include="paracobNET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\paracobNET.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SELib">
       <HintPath>..\..\..\Libraries\SELib\SELib.dll</HintPath>
@@ -77,6 +83,7 @@
     </Reference>
     <Reference Include="SFShaderLoader">
       <HintPath>lib\SFShaderLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SFShapes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -449,6 +456,9 @@
     <Content Include="DefaultTextures\UVPattern.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\AnimatedGif.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\GenericValueEditor.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -459,7 +469,9 @@
     <Content Include="Lib\OpenTK.GLControl.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\paracobNET.dll" />
+    <Content Include="Lib\paracobNET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\SELib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -479,6 +491,9 @@
     </Content>
     <Content Include="Lib\SFGraphics.Utils.xml" />
     <Content Include="Lib\SFGraphics.xml" />
+    <Content Include="Lib\SFShaderLoader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\SFShapes.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -498,6 +513,7 @@
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
       <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
       <Name>SSBHLib</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
