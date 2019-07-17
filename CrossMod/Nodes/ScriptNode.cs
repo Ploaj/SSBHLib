@@ -120,8 +120,8 @@ namespace CrossMod.Nodes
                             Line.Render(radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
 
                         //set_vec_target_pos uses a second position to pull opponents toward
-                        //this is represented by a line drawn between hitbox center and that
-                        if (angle == 368)
+                        //this is represented by a line drawn between hitbox center and that point
+                        if (angle == 368 && attack.VecTargetPos_node != 0)
                         {
                             var otherBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
                             var otherBoneNoScale =
@@ -272,7 +272,7 @@ namespace CrossMod.Nodes
                                     float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
-                                    new OpenTK.Vector3(
+                                    new Vector3(
                                         float.Parse(args[5]),
                                         float.Parse(args[6]),
                                         float.Parse(args[7])));
@@ -285,7 +285,7 @@ namespace CrossMod.Nodes
                                     float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
-                                    new OpenTK.Vector3(
+                                    new Vector3(
                                         float.Parse(args[5]),
                                         float.Parse(args[6]),
                                         float.Parse(args[7])),

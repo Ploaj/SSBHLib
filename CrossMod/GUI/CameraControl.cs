@@ -13,9 +13,9 @@ namespace CrossMod.GUI
         {
             InitializeComponent();
             this.camera = camera;
-            posX_tb.Text = camera.Translation.X.ToString();
-            posY_tb.Text = camera.Translation.Y.ToString();
-            posZ_tb.Text = camera.Translation.Z.ToString();
+            transX_tb.Text = camera.Translation.X.ToString();
+            transY_tb.Text = camera.Translation.Y.ToString();
+            transZ_tb.Text = camera.Translation.Z.ToString();
             rotX_tb.Text = camera.RotationXDegrees.ToString();
             rotY_tb.Text = camera.RotationYDegrees.ToString();
         }
@@ -27,12 +27,12 @@ namespace CrossMod.GUI
             float z = camera.Translation.Z;
             float rot_x = camera.RotationXDegrees;
             float rot_y = camera.RotationYDegrees;
-            if (!float.TryParse(posX_tb.Text, out x))
-                posX_tb.Text = x.ToString();
-            if (!float.TryParse(posY_tb.Text, out y))
-                posY_tb.Text = y.ToString();
-            if (!float.TryParse(posZ_tb.Text, out z))
-                posZ_tb.Text = z.ToString();
+            if (!float.TryParse(transX_tb.Text, out x))
+                transX_tb.Text = x.ToString();
+            if (!float.TryParse(transY_tb.Text, out y))
+                transY_tb.Text = y.ToString();
+            if (!float.TryParse(transZ_tb.Text, out z))
+                transZ_tb.Text = z.ToString();
             if (!float.TryParse(rotX_tb.Text, out rot_x))
                 rotX_tb.Text = rot_x.ToString();
             if (!float.TryParse(rotY_tb.Text, out rot_y))

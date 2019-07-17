@@ -32,9 +32,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.posY_tb = new System.Windows.Forms.TextBox();
-            this.posZ_tb = new System.Windows.Forms.TextBox();
-            this.posX_tb = new System.Windows.Forms.TextBox();
+            this.transY_tb = new System.Windows.Forms.TextBox();
+            this.transZ_tb = new System.Windows.Forms.TextBox();
+            this.transX_tb = new System.Windows.Forms.TextBox();
             this.rotX_tb = new System.Windows.Forms.TextBox();
             this.rotY_tb = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -50,9 +50,9 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.posY_tb);
-            this.groupBox1.Controls.Add(this.posZ_tb);
-            this.groupBox1.Controls.Add(this.posX_tb);
+            this.groupBox1.Controls.Add(this.transY_tb);
+            this.groupBox1.Controls.Add(this.transZ_tb);
+            this.groupBox1.Controls.Add(this.transX_tb);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(0, 100);
@@ -60,7 +60,7 @@
             this.groupBox1.Size = new System.Drawing.Size(132, 101);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Position";
+            this.groupBox1.Text = "Translation";
             // 
             // label3
             // 
@@ -89,26 +89,26 @@
             this.label1.TabIndex = 6;
             this.label1.Text = "X";
             // 
-            // posY_tb
+            // transY_tb
             // 
-            this.posY_tb.Location = new System.Drawing.Point(36, 45);
-            this.posY_tb.Name = "posY_tb";
-            this.posY_tb.Size = new System.Drawing.Size(90, 20);
-            this.posY_tb.TabIndex = 1;
+            this.transY_tb.Location = new System.Drawing.Point(36, 45);
+            this.transY_tb.Name = "transY_tb";
+            this.transY_tb.Size = new System.Drawing.Size(90, 20);
+            this.transY_tb.TabIndex = 1;
             // 
-            // posZ_tb
+            // transZ_tb
             // 
-            this.posZ_tb.Location = new System.Drawing.Point(36, 71);
-            this.posZ_tb.Name = "posZ_tb";
-            this.posZ_tb.Size = new System.Drawing.Size(90, 20);
-            this.posZ_tb.TabIndex = 2;
+            this.transZ_tb.Location = new System.Drawing.Point(36, 71);
+            this.transZ_tb.Name = "transZ_tb";
+            this.transZ_tb.Size = new System.Drawing.Size(90, 20);
+            this.transZ_tb.TabIndex = 2;
             // 
-            // posX_tb
+            // transX_tb
             // 
-            this.posX_tb.Location = new System.Drawing.Point(36, 19);
-            this.posX_tb.Name = "posX_tb";
-            this.posX_tb.Size = new System.Drawing.Size(90, 20);
-            this.posX_tb.TabIndex = 0;
+            this.transX_tb.Location = new System.Drawing.Point(36, 19);
+            this.transX_tb.Name = "transX_tb";
+            this.transX_tb.Size = new System.Drawing.Size(90, 20);
+            this.transX_tb.TabIndex = 0;
             // 
             // rotX_tb
             // 
@@ -188,9 +188,9 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox posY_tb;
-        private System.Windows.Forms.TextBox posZ_tb;
-        private System.Windows.Forms.TextBox posX_tb;
+        private System.Windows.Forms.TextBox transY_tb;
+        private System.Windows.Forms.TextBox transZ_tb;
+        private System.Windows.Forms.TextBox transX_tb;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;

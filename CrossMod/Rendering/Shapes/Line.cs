@@ -30,7 +30,7 @@ namespace CrossMod.Rendering.Shapes
         {
             return new List<VertexAttribute>
             {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
+                new VertexFloatAttribute("point", ValueCount.Three, VertexAttribPointerType.Float, false)
             };
         }
 
@@ -40,12 +40,15 @@ namespace CrossMod.Rendering.Shapes
 
             Vector3 endpoint = new Vector3(0, (float)Math.Sin(radians) * length, (float)Math.Cos(radians) * length);
 
+            Shader.SetMatrix4x4("mvp", ref mvp);
+
             Shader.SetMatrix4x4("bone1", ref bone);
-            Shader.SetVector3("offset1", offset);
-            Shader.SetVector3("world_offset1", Vector3.Zero);
             Shader.SetMatrix4x4("bone2", ref bone);
-            Shader.SetVector3("offset2", offset);
-            Shader.SetVector3("world_offset2", endpoint);
+            Shader.SetVector3("trans1", offset);
+            Shader.SetVector3("trans2", offset);
+            Shader.SetVector3("off1", Vector3.Zero);
+            Shader.SetVector3("off2", endpoint);
+
             Shader.SetVector4("color", color);
 
             Draw(Shader);
@@ -55,12 +58,15 @@ namespace CrossMod.Rendering.Shapes
         {
             Shader.UseProgram();
 
+            Shader.SetMatrix4x4("mvp", ref mvp);
+
             Shader.SetMatrix4x4("bone1", ref bone1);
-            Shader.SetVector3("offset1", offset1);
-            Shader.SetVector3("world_offset1", Vector3.Zero);
             Shader.SetMatrix4x4("bone2", ref bone2);
-            Shader.SetVector3("offset2", offset2);
-            Shader.SetVector3("world_offset2", Vector3.Zero);
+            Shader.SetVector3("trans1", offset1);
+            Shader.SetVector3("trans2", offset2);
+            Shader.SetVector3("off1", Vector3.Zero);
+            Shader.SetVector3("off2", Vector3.Zero);
+
             Shader.SetVector4("color", color);
 
             Draw(Shader);
