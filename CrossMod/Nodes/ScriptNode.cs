@@ -112,23 +112,26 @@ namespace CrossMod.Nodes
                         for (int j = 0; j < 4; j++)
                             Line.Render(radian * j, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
                     }
+                    else if (angle == 368)
+                    {
+                        //set_vec_target_pos uses a second position to pull opponents toward
+                        //this is represented by a line drawn between hitbox center and that point
+                        if (attack.VecTargetPos_node != 0)
+                        {
+                            var otherBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
+                            var otherBoneNoScale =
+                                Matrix4.CreateFromQuaternion(otherBone.ExtractRotation())
+                                * Matrix4.CreateTranslation(otherBone.ExtractTranslation());
+                            Line.Render(coll.Pos, boneNoScale, attack.VecTargetPos_pos, otherBoneNoScale, mvp,
+                                new Vector4(1, 1, 1, 0.5f));
+                        }
+                    }
                     else
                     {
                         float radian = (float)Math.PI / 2f;
                         float add = (float)Math.PI / 4f;
                         for (int j = 0; j < 4; j++)
                             Line.Render(radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
-
-                        //set_vec_target_pos uses a second position to pull opponents toward
-                        //this is represented by a line drawn between hitbox center and that point
-                        if (angle == 368 && attack.VecTargetPos_node != 0)
-                        {
-                            var otherBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
-                            var otherBoneNoScale =
-                                Matrix4.CreateFromQuaternion(otherBone.ExtractRotation())
-                                * Matrix4.CreateTranslation(otherBone.ExtractTranslation());
-                            Line.Render(coll.Pos, boneNoScale, attack.VecTargetPos_pos, otherBoneNoScale, mvp, angleColor);
-                        }
                     }
                 }
             }
