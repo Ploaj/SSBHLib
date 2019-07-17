@@ -3,7 +3,6 @@ using OpenTK.Graphics.OpenGL;
 using SFGenericModel;
 using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
-using SFShapes;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Shapes

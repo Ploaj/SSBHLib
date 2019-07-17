@@ -12,6 +12,8 @@ namespace SSBHLib.Tools
         /// Generates a very simple Axis Aligned Bounding Box
         /// </summary>
         /// <param name="points"></param>
+        /// <param name="max"></param>
+        /// <param name="min"></param>
         public static void GenerateAABB(IEnumerable<SSBHVertexAttribute> points, out SSBHVertexAttribute max, out SSBHVertexAttribute min)
         {
             max = new SSBHVertexAttribute(-float.MaxValue, -float.MaxValue, -float.MaxValue);

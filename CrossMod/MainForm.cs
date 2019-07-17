@@ -1,10 +1,8 @@
 ﻿using CrossMod.GUI;
 using CrossMod.Nodes;
 using System;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using CrossMod.IO;
 using System.Collections.Generic;
@@ -84,42 +82,41 @@ namespace CrossMod
 
             // Enable rendering of the model if we have directly selected a model file.
             // Nested ones won't render a model
-            SKEL_Node Skel = null;
+            SkelNode skelNode = null;
             foreach (FileNode node in mainNode.Nodes)
             {
                 if (node.Text?.EndsWith("numdlb") == true)
                 {
                     fileTree.SelectedNode = node as FileNode;
                 }
-                else if (Skel == null && node is SKEL_Node)
+                else if (skelNode == null && node is SkelNode)
                 {
-                    Skel = node as SKEL_Node;
+                    skelNode = node as SkelNode;
                 }
             }
-            if (Skel == null)
+            if (skelNode == null)
                 return;
             foreach (FileNode node in mainNode.Nodes)
             {
                 if (node is ScriptNode scriptNode)
                 {
-                    scriptNode.SkelNode = Skel;
+                    scriptNode.SkelNode = skelNode;
                     modelViewport.ScriptNode = scriptNode;
                     //only do this once, there should only be one anyway
                     break;
                 }
             }
-            ParamNodeContainer.SkelNode = Skel;
+            ParamNodeContainer.SkelNode = skelNode;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            //oof
             if (fileTree.SelectedNode.Text.EndsWith("nuanmb") && modelViewport.ScriptNode != null)
             {
                 modelViewport.ScriptNode.CurrentAnimationName = fileTree.SelectedNode.Text;
             }
 
-            if (fileTree.SelectedNode is NUTEX_Node texture)
+            if (fileTree.SelectedNode is NutexNode texture)
             {
                 ShowModelViewport();
                 modelViewport.UpdateTexture(texture);
@@ -131,7 +128,7 @@ namespace CrossMod
                 modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
                 modelViewport.UpdateTexture(null);
             }
-            else if (fileTree.SelectedNode is NUANIM_Node animation)
+            else if (fileTree.SelectedNode is NuanimNode animation)
             {
                 ShowModelViewport();
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
@@ -170,24 +167,24 @@ namespace CrossMod
                     // gather all options for this node
                     if (node is IExportableTextureNode exportableTextureNode)
                     {
-                        MenuItem ExportPNG = new MenuItem("Export As");
-                        ExportPNG.Click += exportExportableTexture;
-                        ExportPNG.Tag = exportableTextureNode;
-                        fileTreeContextMenu.MenuItems.Add(ExportPNG);
+                        MenuItem exportPng = new MenuItem("Export As");
+                        exportPng.Click += ExportExportableTexture;
+                        exportPng.Tag = exportableTextureNode;
+                        fileTreeContextMenu.MenuItems.Add(exportPng);
                     }
                     if (node is IExportableModelNode exportableNode)
                     {
-                        MenuItem ExportSMD = new MenuItem("Export As");
-                        ExportSMD.Click += exportExportableModelAsSMD;
-                        ExportSMD.Tag = exportableNode;
-                        fileTreeContextMenu.MenuItems.Add(ExportSMD);
+                        MenuItem exportSmd = new MenuItem("Export As");
+                        exportSmd.Click += ExportExportableModelAsSmd;
+                        exportSmd.Tag = exportableNode;
+                        fileTreeContextMenu.MenuItems.Add(exportSmd);
                     }
                     if (node is IExportableAnimationNode exportableAnimNode)
                     {
-                        MenuItem ExportAnim = new MenuItem("Export Anim");
-                        ExportAnim.Click += exportExportableAnimation;
-                        ExportAnim.Tag = exportableAnimNode;
-                        fileTreeContextMenu.MenuItems.Add(ExportAnim);
+                        MenuItem exportAnim = new MenuItem("Export Anim");
+                        exportAnim.Click += ExportExportableAnimation;
+                        exportAnim.Tag = exportableAnimNode;
+                        fileTreeContextMenu.MenuItems.Add(exportAnim);
                     }
 
                     // show if it has at least 1 option
@@ -197,7 +194,7 @@ namespace CrossMod
             }
         }
 
-        private void exportExportableTexture(object sender, EventArgs args)
+        private void ExportExportableTexture(object sender, EventArgs args)
         {
             if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
             {
@@ -209,24 +206,24 @@ namespace CrossMod
             }
         }
 
-        private void exportExportableAnimation(object sender, EventArgs args)
+        private void ExportExportableAnimation(object sender, EventArgs args)
         {
             if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd, *.seanim, *.anim)|*.smd;*.seanim;*.anim"))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".smd") || fileName.EndsWith(".anim"))
                 {
-                    Rendering.RSkeleton SkeletonNode = null;
-                    if (FileTools.TryOpenFile(out string SkeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
+                    Rendering.RSkeleton skeletonNode = null;
+                    if (FileTools.TryOpenFile(out string skeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
                     {
-                        if (SkeletonFileName != null)
+                        if (skeletonFileName != null)
                         {
-                            SKEL_Node node = new SKEL_Node(SkeletonFileName);
+                            SkelNode node = new SkelNode(skeletonFileName);
                             node.Open();
-                            SkeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
+                            skeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
                         }
                     }
-                    if (SkeletonNode == null)
+                    if (skeletonNode == null)
                     {
                         MessageBox.Show("No Skeleton File Selected");
                         return;
@@ -234,15 +231,15 @@ namespace CrossMod
 
                     if (fileName.EndsWith(".anim"))
                     {
-                        bool Ordinal = false;
+                        bool ordinal = false;
                         DialogResult dialogResult = MessageBox.Show("In most cases choose \"No\"", "Use ordinal bone order?", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
-                            Ordinal = true;
-                        IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode, Ordinal);
+                            ordinal = true;
+                        IO_MayaANIM.ExportIOAnimationAsANIM(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), skeletonNode, ordinal);
                     }
 
                     if (fileName.EndsWith(".smd"))
-                        IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), SkeletonNode);
+                        IO_SMD.ExportIOAnimationAsSMD(fileName, ((IExportableAnimationNode)((MenuItem)sender).Tag).GetIOAnimation(), skeletonNode);
                 }
 
                 // other types like SEAnim go here
@@ -253,7 +250,7 @@ namespace CrossMod
             }
         }
 
-        private void exportExportableModelAsSMD(object sender, EventArgs args)
+        private void ExportExportableModelAsSmd(object sender, EventArgs args)
         {
             if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj*.dae*.ply)|*.smd;*.obj;*.dae;*.ply"))
             {
@@ -263,19 +260,19 @@ namespace CrossMod
                     IO_OBJ.ExportIOModelAsOBJ(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
                 if (fileName.EndsWith(".dae"))
                 {
-                    bool Optimize = false;
-                    bool Materials = false;
+                    bool optimize = false;
+                    bool materials = false;
                     DialogResult dialogResult = MessageBox.Show("Smaller filesize but takes longer to export", "Optimize Geometry?", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
-                        Optimize = true;
+                        optimize = true;
                     }
                     dialogResult = MessageBox.Show("Export texture names inside of dae?", "Export Materials?", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
-                        Materials = true;
+                        materials = true;
                     }
-                    IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel(), Optimize, Materials);
+                    IO_DAE.ExportIOModelAsDAE(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel(), optimize, materials);
                 }
                 if (fileName.EndsWith(".ply"))
                     IO_PLY.ExportIOModelAsPLY(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
@@ -369,7 +366,7 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
             {
-                var matl = new MATL_Node(file);
+                var matl = new MatlNode(file);
                 matl.Open();
 
                 foreach (var entry in matl.Material.Entries)
@@ -415,7 +412,7 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
             {
-                var node = new NUMSHB_Node(file);
+                var node = new NumsbhNode(file);
                 node.Open();
 
                 UpdateMeshAttributes(folderPath, meshesByAttribute, file, node);
@@ -433,7 +430,7 @@ namespace CrossMod
             }
         }
 
-        private static void UpdateMeshAttributes(string folderPath, Dictionary<string, List<string>> meshesByAttribute, string file, NUMSHB_Node node)
+        private static void UpdateMeshAttributes(string folderPath, Dictionary<string, List<string>> meshesByAttribute, string file, NumsbhNode node)
         {
             foreach (var meshObject in node.mesh.Objects)
             {
@@ -489,7 +486,7 @@ namespace CrossMod
                 if (!file.Contains("render") || !file.Contains("light"))
                     continue;
 
-                var node = new NUANIM_Node(file);
+                var node = new NuanimNode(file);
                 node.Open();
 
                 node.UpdateUniqueLightValues(valuesByName);

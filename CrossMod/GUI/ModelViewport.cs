@@ -17,13 +17,13 @@ namespace CrossMod.GUI
         private AnimationBar animationBar;
 
         // This isn't a dictionary to preserve render order.
-        private HashSet<string> renderableNodeNames = new HashSet<string>();
-        private List<IRenderable> renderableNodes = new List<IRenderable>();
+        private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
+        private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
         private IRenderable renderTexture = null;
 
-        private Camera camera = new Camera() { FarClipPlane = 500000 };
-        private Vector2 mousePosition = new Vector2();
-        private float mouseScrollWheel = 0;
+        private readonly Camera camera = new Camera() { FarClipPlane = 500000 };
+        private Vector2 mousePosition;
+        private float mouseScrollWheel;
 
         public IRenderableAnimation RenderableAnimation
         {
@@ -36,8 +36,8 @@ namespace CrossMod.GUI
 
         public ScriptNode ScriptNode
         {
-            get { return animationBar.scriptNode; }
-            set { animationBar.scriptNode = value; }
+            get => animationBar.ScriptNode;
+            set => animationBar.ScriptNode = value;
         }
 
         public ModelViewport()
@@ -47,7 +47,7 @@ namespace CrossMod.GUI
             AddAnimationBar();
         }
 
-        public void UpdateTexture(NUTEX_Node texture)
+        public void UpdateTexture(NutexNode texture)
         {
             var node = texture?.GetRenderableNode();
             renderTexture = node;
@@ -80,9 +80,8 @@ namespace CrossMod.GUI
                 DisplaySkeleton(renderableModel.GetSkeleton());
             }
 
-            if (value is NUMDL_Node)
+            if (value is NumdlNode)
             {
-                var rnumdl = (RNUMDL)newNode;
                 FrameSelection();
             }
         }
@@ -93,7 +92,7 @@ namespace CrossMod.GUI
             var spheres = new List<Vector4>();
             foreach (var node in renderableNodes)
             {
-                if (node is RNUMDL rnumdl)
+                if (node is Rnumdl rnumdl)
                 {
                     spheres.Add(rnumdl.Model.BoundingSphere);
                 }

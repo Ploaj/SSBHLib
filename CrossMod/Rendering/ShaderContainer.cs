@@ -10,7 +10,7 @@ namespace CrossMod.Rendering
     /// </summary>
     public static class ShaderContainer
     {
-        private static SFShaderLoader.ShaderLoader shaderLoader = new SFShaderLoader.ShaderLoader();
+        private static readonly SFShaderLoader.ShaderLoader shaderLoader = new SFShaderLoader.ShaderLoader();
 
         public static Shader GetShader(string name)
         {
@@ -62,7 +62,7 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("RTexture",
-                new List<string>() { File.ReadAllText("Shaders/Texture.vert") },
+                new List<string> { File.ReadAllText("Shaders/Texture.vert") },
                 new List<string>()
                 {
                     File.ReadAllText("Shaders/Texture.frag"),
@@ -80,7 +80,7 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("RModelDebug",
-                new List<string>() { File.ReadAllText("Shaders/RModel.vert") },
+                new List<string> { File.ReadAllText("Shaders/RModel.vert") },
                 new List<string>()
                 {
                     File.ReadAllText("Shaders/RModelDebug.frag"),
@@ -89,7 +89,7 @@ namespace CrossMod.Rendering
                     File.ReadAllText("Shaders/WireFrame.frag"),
                     File.ReadAllText("Shaders/TextureLayers.frag")
                 },
-                new List<string>() { File.ReadAllText("Shaders/RModel.geom") }
+                new List<string> { File.ReadAllText("Shaders/RModel.geom") }
             );
             SaveProgramBinary("RModelDebug");
         }
@@ -101,7 +101,7 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("RModelUV",
-                new List<string>() { File.ReadAllText("Shaders/RModelUV.vert") },
+                new List<string> { File.ReadAllText("Shaders/RModelUV.vert") },
                 new List<string>()
                 {
                     File.ReadAllText("Shaders/RModelUV.frag"),
@@ -109,7 +109,7 @@ namespace CrossMod.Rendering
                     File.ReadAllText("Shaders/Gamma.frag"),
                     File.ReadAllText("Shaders/Wireframe.frag"),
                 },
-                new List<string>() { File.ReadAllText("Shaders/RModel.geom") }
+                new List<string> { File.ReadAllText("Shaders/RModel.geom") }
             );
             SaveProgramBinary("RModelUV");
         }
@@ -121,7 +121,7 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("RModel", 
-                new List<string>() { File.ReadAllText("Shaders/RModel.vert") }, 
+                new List<string> { File.ReadAllText("Shaders/RModel.vert") }, 
                 new List<string>()
                 {
                     File.ReadAllText("Shaders/RModel.frag"),
@@ -131,7 +131,7 @@ namespace CrossMod.Rendering
                     File.ReadAllText("Shaders/TextureLayers.frag")
 
                 }, 
-                new List<string>() { File.ReadAllText("Shaders/RModel.geom") }
+                new List<string> { File.ReadAllText("Shaders/RModel.geom") }
             );
             SaveProgramBinary("RModel");
         }
@@ -142,9 +142,9 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("Sphere",
-                new List<string>() { File.ReadAllText("Shaders/Sphere.vert") },
-                new List<string>() { File.ReadAllText("Shaders/SolidColor.frag") },
-                new List<string>() { }
+                new List<string> { File.ReadAllText("Shaders/Sphere.vert") },
+                new List<string> { File.ReadAllText("Shaders/SolidColor.frag") },
+                new List<string>()
             );
             SaveProgramBinary("Sphere");
         }
@@ -155,9 +155,9 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("Capsule",
-                new List<string>() { File.ReadAllText("Shaders/Capsule.vert") },
-                new List<string>() { File.ReadAllText("Shaders/SolidColor.frag") },
-                new List<string>() { }
+                new List<string> { File.ReadAllText("Shaders/Capsule.vert") },
+                new List<string> { File.ReadAllText("Shaders/SolidColor.frag") },
+                new List<string>()
             );
             SaveProgramBinary("Capsule");
         }
@@ -168,9 +168,9 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("Line",
-                new List<string>() { File.ReadAllText("Shaders/Line.vert") },
-                new List<string>() { File.ReadAllText("Shaders/SolidColor.frag") },
-                new List<string>() { }
+                new List<string> { File.ReadAllText("Shaders/Line.vert") },
+                new List<string> { File.ReadAllText("Shaders/SolidColor.frag") },
+                new List<string>()
             );
             SaveProgramBinary("Line");
         }
@@ -181,9 +181,9 @@ namespace CrossMod.Rendering
                 return;
 
             shaderLoader.AddShader("Polygon",
-                new List<string>() { File.ReadAllText("Shaders/Polygon.vert") },
-                new List<string>() { File.ReadAllText("Shaders/SolidColor.frag") },
-                new List<string>() { }
+                new List<string> { File.ReadAllText("Shaders/Polygon.vert") },
+                new List<string> { File.ReadAllText("Shaders/SolidColor.frag") },
+                new List<string>()
             );
             SaveProgramBinary("Polygon");
         }

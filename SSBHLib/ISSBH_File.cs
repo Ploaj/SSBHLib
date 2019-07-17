@@ -16,7 +16,7 @@ namespace SSBHLib
         /// <summary>
         /// This pretty much exists for MATL's only
         /// </summary>
-        /// <param name="Parser"></param>
+        /// <param name="exporter"></param>
         public virtual void PostWrite(SSBHExporter exporter)
         {
 

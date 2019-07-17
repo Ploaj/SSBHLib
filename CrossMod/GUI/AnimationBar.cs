@@ -14,35 +14,35 @@ namespace CrossMod.GUI
         private static readonly string playingText = "||";
         private static readonly string stoppedText = ">";
 
-        private int _FrameCount { get; set; }
         public int FrameCount
         {
-            get => _FrameCount;
+            get => frameCount;
             protected set
             {
                 //animationTrack.Maximum = value;
-                _FrameCount = value;
+                frameCount = value;
                 totalFrame.Maximum = value;
                 currentFrame_UpDown.Maximum = value;
                 totalFrame.Value = value;
             }
         }
-        
+        private int frameCount;
+
         public float Frame { get; set; }
 
         public float MotionRate
         {
             get
             {
-                if (scriptNode == null)
+                if (ScriptNode == null)
                     return 1;
-                return scriptNode.MotionRate;
+                return ScriptNode.MotionRate;
             }
         }
 
         public RModel Model { get; set; }
         public RSkeleton Skeleton { get; set; }
-        public ScriptNode scriptNode { get; set; }
+        public ScriptNode ScriptNode { get; set; }
 
         /// <summary>
         /// Sets the current animation.
@@ -51,10 +51,7 @@ namespace CrossMod.GUI
         /// </summary>
         public IRenderableAnimation Animation
         {
-            get
-            {
-                return animation;
-            }
+            get => animation;
             set
             {
                 if (value == null)
@@ -131,12 +128,12 @@ namespace CrossMod.GUI
 
         private void UpdateScript()
         {
-            if (scriptNode == null)
+            if (ScriptNode == null)
                 return;
 
             if (Frame == 0)
-                scriptNode.Start();
-            scriptNode.Update(Frame);
+                ScriptNode.Start();
+            ScriptNode.Update(Frame);
 
             currentFrame_UpDown.Increment = (decimal)MotionRate;
         }

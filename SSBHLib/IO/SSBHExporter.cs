@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SSBHLib.Formats.Materials;
 
 namespace SSBHLib.IO
 {
@@ -73,7 +74,7 @@ namespace SSBHLib.IO
                     continue;
 
                 // I guess?
-                if (obj is Array || (obj is MaterialEntry &&((MaterialEntry)obj).Object is Formats.Materials.MatlAttribute.MatlString))
+                if (obj is Array || obj is MaterialEntry entry && entry.Object is Formats.Materials.MatlAttribute.MatlString)
                     Pad(0x8);
 
                 // not sure if 4 or 8
@@ -186,17 +187,17 @@ namespace SSBHLib.IO
         public void WriteProperty(object value)
         {
             Type t = value.GetType();
-            if (value is MaterialEntry)
+            if (value is MaterialEntry entry)
             {
-                WriteProperty(((MaterialEntry)value).Object);
-                if(((MaterialEntry)value).Object is float)
-                Pad(0x8);
+                WriteProperty(entry.Object);
+                if (entry.Object is float)
+                    Pad(0x8);
             }
-            else if (value is Formats.Materials.MatlAttribute.MatlString)
+            else if (value is MatlAttribute.MatlString matlString)
             {
                 // special write function for matl string
                 Write((long)8);
-                value = ((Formats.Materials.MatlAttribute.MatlString)value).Text;
+                value = matlString.Text;
                 Write(((string)value).ToCharArray());
                 Write((byte)0);
                 Pad(0x4);

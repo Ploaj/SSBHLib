@@ -1,5 +1,4 @@
-﻿using System;
-namespace CrossMod.IO
+﻿namespace CrossMod.IO
 {
     public enum IOWrapMode
     {

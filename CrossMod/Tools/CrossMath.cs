@@ -12,12 +12,12 @@ namespace CrossMod.Tools
             return v;
         }
 
-        public static Quaternion ToQuaternion(Vector3 EulerAngles)
+        public static Quaternion ToQuaternion(Vector3 eulerAngles)
         {
             // Abbreviations for the various angular functions
-            float yaw = EulerAngles.X;
-            float pitch = EulerAngles.Y;
-            float roll = EulerAngles.Z;
+            float yaw = eulerAngles.X;
+            float pitch = eulerAngles.Y;
+            float roll = eulerAngles.Z;
 
             double cy = Math.Cos(yaw * 0.5);
             double sy = Math.Sin(yaw * 0.5);
@@ -34,12 +34,12 @@ namespace CrossMod.Tools
             return q;
         }
 
-        public static Quaternion ToQuaternion(float RX, float RY, float RZ)
+        public static Quaternion ToQuaternion(float rx, float ry, float rz)
         {
-            return ToQuaternion(new Vector3(RX, RY, RZ));
+            return ToQuaternion(new Vector3(rx, ry, rz));
         }
 
-        public static Vector3 ToEulerAnglesXYZ(Quaternion q)
+        public static Vector3 ToEulerAnglesXyz(Quaternion q)
         {
             Matrix4 mat = Matrix4.CreateFromQuaternion(q);
             float x, y, z;

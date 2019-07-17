@@ -1,7 +1,5 @@
 ﻿using SFGraphics.Cameras;
-using SFGraphics.GLObjects.Shaders;
 using SFGraphics.GLObjects.Textures;
-using System.IO;
 
 namespace CrossMod.Rendering
 {

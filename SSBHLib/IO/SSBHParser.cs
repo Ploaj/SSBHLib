@@ -17,14 +17,12 @@ namespace SSBHLib.IO
         public long Position => BaseStream.Position;
         public long FileSize => BaseStream.Length;
 
-        private int bitPosition = 0;
+        private int bitPosition;
 
         private static readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodInfoByType = new Dictionary<Type, MethodInfo>();
-
-        private static readonly Dictionary<Type, List<Action<ISSBH_File, Type>>> issbhSetters = new Dictionary<Type, List<Action<ISSBH_File, Type>>>();
 
         // Avoid reflection invoke overhead for known file magics.
         private static readonly Dictionary<string, Func<SSBHParser, ISSBH_File>> parseMethodByMagic = new Dictionary<string, Func<SSBHParser, ISSBH_File>>()
@@ -59,14 +57,14 @@ namespace SSBHLib.IO
             { typeof(SKEL_Matrix), (parser) => parser.Parse<SKEL_Matrix>() }
         };
 
-        public SSBHParser(Stream Stream) : base(Stream)
+        public SSBHParser(Stream stream) : base(stream)
         {
 
         }
 
-        public void Seek(long Position)
+        public void Seek(long position)
         {
-            BaseStream.Position = Position;
+            BaseStream.Position = position;
         }
 
         public byte Peek()
@@ -336,12 +334,12 @@ namespace SSBHLib.IO
         {
             byte b = Peek();
             int value = 0;
-            int LE = 0;
+            int le = 0;
             int bitIndex = 0;
             for (int i = 0; i < bitCount; i++)
             {
                 byte bit = (byte)((b & (0x1 << (bitPosition))) >> (bitPosition));
-                value |= (bit << (LE + bitIndex));
+                value |= (bit << (le + bitIndex));
                 bitPosition++;
                 bitIndex++;
                 if (bitPosition >= 8)
@@ -353,12 +351,12 @@ namespace SSBHLib.IO
                 if (bitIndex >= 8)
                 {
                     bitIndex = 0;
-                    if (LE + 8 > bitCount)
+                    if (le + 8 > bitCount)
                     {
-                        LE = bitCount - 1;
+                        le = bitCount - 1;
                     }
                     else
-                        LE += 8;
+                        le += 8;
                 }
             }
             
@@ -367,12 +365,12 @@ namespace SSBHLib.IO
 
         public T[] ByteToType<T>(int Count)
         {
-            T[] Items = new T[Count];
+            T[] items = new T[Count];
 
             for (int i = 0; i < Count; i++)
-                Items[i] = ByteToType<T>();
+                items[i] = ByteToType<T>();
 
-            return Items;
+            return items;
         }
 
         public T ByteToType<T>()

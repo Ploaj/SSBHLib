@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using OpenTK;
 using CrossMod.Rendering;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace CrossMod.IO
 {
@@ -267,7 +266,7 @@ namespace CrossMod.IO
 
                         for(int i = 0; i < KeyFrames.Count; i++)
                         {
-                            Vector3 EulerAngles = Tools.CrossMath.ToEulerAnglesXYZ(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
+                            Vector3 EulerAngles = Tools.CrossMath.ToEulerAnglesXyz(ioAnimNode.GetQuaternionRotation(KeyFrames[i], b.Rotation));
                             rx.keys.Add(new AnimKey()
                             {
                                 input = KeyFrames[i] + 1,

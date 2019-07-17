@@ -9,11 +9,11 @@ using System.Collections.Generic;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nuanmb")]
-    public class NUANIM_Node : FileNode, IExportableAnimationNode
+    public class NuanimNode : FileNode, IExportableAnimationNode
     {
         private ANIM animation;
 
-        public NUANIM_Node(string path): base(path)
+        public NuanimNode(string path): base(path)
         {
             ImageKey = "animation";
             SelectedImageKey = "animation";
@@ -21,9 +21,9 @@ namespace CrossMod.Nodes
         
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File SSBHFile))
+            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
-                if (SSBHFile is ANIM anim)
+                if (ssbhFile is ANIM anim)
                 {
                     animation = anim;
                 }
@@ -95,17 +95,17 @@ namespace CrossMod.Nodes
                         MaterialName = animNode.Name,
                         AttributeName = track.Name
                     };
-                    object[] MaterialAnim = decoder.ReadTrack(track);
+                    object[] materialAnim = decoder.ReadTrack(track);
 
                     // only get vectors for now
-                    if (MaterialAnim == null || MaterialAnim.Length == 0 || MaterialAnim[0] == null || MaterialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
+                    if (materialAnim == null || materialAnim.Length == 0 || materialAnim[0] == null || materialAnim[0].GetType() != typeof(AnimTrackCustomVector4))
                     {
                         continue;
                     }
                     renderAnimation.MaterialNodes.Add(matAnim);
-                    for (int i = 0; i < MaterialAnim.Length; i++)
+                    for (int i = 0; i < materialAnim.Length; i++)
                     {
-                        var vec = (AnimTrackCustomVector4)MaterialAnim[i];
+                        var vec = (AnimTrackCustomVector4)materialAnim[i];
                         matAnim.Keys.Keys.Add(new RKey<Vector4>()
                         {
                             Frame = i,
@@ -126,17 +126,17 @@ namespace CrossMod.Nodes
                 };
                 foreach (AnimTrack track in animNode.Tracks)
                 {
-                    object[] Transform = decoder.ReadTrack(track);
+                    object[] transform = decoder.ReadTrack(track);
 
                     if (track.Name.Equals("Transform"))
                     {
-                        for (int i = 0; i < Transform.Length; i++)
+                        for (int i = 0; i < transform.Length; i++)
                         {
-                            AnimTrackTransform t = (AnimTrackTransform)Transform[i];
+                            AnimTrackTransform t = (AnimTrackTransform)transform[i];
                             tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
                             {
                                 Frame = i,
-                                Value = GetMatrix((AnimTrackTransform)Transform[i]),
+                                Value = GetMatrix((AnimTrackTransform)transform[i]),
                                 AbsoluteScale = t.CompensateScale
                             });
                         }
@@ -158,14 +158,14 @@ namespace CrossMod.Nodes
                 {
                     if (track.Name.Equals("Visibility"))
                     {
-                        object[] Visibility = decoder.ReadTrack(track);
+                        object[] visibility = decoder.ReadTrack(track);
 
-                        for (int i = 0; i < Visibility.Length; i++)
+                        for (int i = 0; i < visibility.Length; i++)
                         {
                             visAnim.Visibility.Keys.Add(new RKey<bool>()
                             {
                                 Frame = i,
-                                Value = (bool)Visibility[i]
+                                Value = (bool)visibility[i]
                             });
                         }
                     }
@@ -214,11 +214,11 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static Matrix4 GetMatrix(AnimTrackTransform Transform)
+        private static Matrix4 GetMatrix(AnimTrackTransform transform)
         {
-            return Matrix4.CreateScale(Transform.SX, Transform.SY, Transform.SZ) *
-                Matrix4.CreateFromQuaternion(new Quaternion(Transform.RX, Transform.RY, Transform.RZ, Transform.RW)) *
-                Matrix4.CreateTranslation(Transform.X, Transform.Y, Transform.Z);
+            return Matrix4.CreateScale(transform.SX, transform.SY, transform.SZ) *
+                Matrix4.CreateFromQuaternion(new Quaternion(transform.RX, transform.RY, transform.RZ, transform.RW)) *
+                Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
         }
 
         public IOAnimation GetIOAnimation()
@@ -243,10 +243,10 @@ namespace CrossMod.Nodes
                         {
                             if (track.Name.Equals("Transform"))
                             {
-                                object[] Transform = decoder.ReadTrack(track);
-                                for (int i = 0; i < Transform.Length; i++)
+                                object[] transform = decoder.ReadTrack(track);
+                                for (int i = 0; i < transform.Length; i++)
                                 {
-                                    AnimTrackTransform t = (AnimTrackTransform)Transform[i];
+                                    AnimTrackTransform t = (AnimTrackTransform)transform[i];
                                     anim.AddKey(animNode.Name, IOTrackType.POSX, i, t.X);
                                     anim.AddKey(animNode.Name, IOTrackType.POSY, i, t.Y);
                                     anim.AddKey(animNode.Name, IOTrackType.POSZ, i, t.Z);

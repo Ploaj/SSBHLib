@@ -1,5 +1,4 @@
-﻿using CrossMod.GUI;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace CrossMod
 {

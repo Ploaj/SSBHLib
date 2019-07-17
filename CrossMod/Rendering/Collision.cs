@@ -1,9 +1,4 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using SFGenericModel;
-using SFGenericModel.VertexAttributes;
-using SFGraphics.GLObjects.Shaders;
-using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {

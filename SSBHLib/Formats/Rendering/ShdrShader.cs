@@ -10,6 +10,7 @@
 
         public byte[] ShaderBinary { get; set; }
 
+        // TODO: Why does this property have a setter?
         public long ShaderFileSize { get { return ShaderBinary.Length; } set { } }
 
         public long Padding1 { get; set; }

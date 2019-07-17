@@ -1,8 +1,6 @@
 ﻿using OpenTK;
 using System.Linq;
-using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
-using SFGraphics.GLObjects.BufferObjects;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 

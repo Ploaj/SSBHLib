@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
-    public class RNUMDL : IRenderableModel
+    public class Rnumdl : IRenderableModel
     {
         public MODL MODL;
 
@@ -71,20 +71,23 @@ namespace CrossMod.Rendering
                 Material meshMaterial = GetMaterial(currentEntry);
                 System.Diagnostics.Debug.WriteLine("");
 
-                int subindex = 0;
+                int subIndex = 0;
                 string prevMesh = "";
-                if(Model != null)
-                foreach (RMesh mesh in Model.subMeshes)
+
+                if (Model != null)
                 {
-                    if (prevMesh.Equals(mesh.Name))
-                        subindex++;
-                    else
-                        subindex = 0;
-                    prevMesh = mesh.Name;
-                    if (subindex == e.SubIndex && mesh.Name.Equals(e.MeshName))
+                    foreach (RMesh mesh in Model.subMeshes)
                     {
-                        mesh.Material = meshMaterial;
-                        break;
+                        if (prevMesh.Equals(mesh.Name))
+                            subIndex++;
+                        else
+                            subIndex = 0;
+                        prevMesh = mesh.Name;
+                        if (subIndex == e.SubIndex && mesh.Name.Equals(e.MeshName))
+                        {
+                            mesh.Material = meshMaterial;
+                            break;
+                        }
                     }
                 }
             }

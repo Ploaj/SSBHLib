@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrossMod.Nodes
 {
@@ -27,7 +25,7 @@ namespace CrossMod.Nodes
         /// </summary>
         /// <param name="path"></param>
         /// <param name="isRoot">Whether this is the topmost parent. Decides whether to display full or partial name.</param>
-        public DirectoryNode(string path, bool isRoot=true) : base(path)
+        public DirectoryNode(string path, bool isRoot = true) : base(path)
         {
             Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
             SelectedImageKey = "folder";
@@ -50,7 +48,7 @@ namespace CrossMod.Nodes
             {
                 if (Directory.Exists(name))
                 {
-                    var dirNode = new DirectoryNode(name, isRoot:false);
+                    var dirNode = new DirectoryNode(name, isRoot: false);
                     this.Nodes.Add(dirNode);
                 }
                 else
@@ -93,13 +91,13 @@ namespace CrossMod.Nodes
 
             FileNode fileNode = null;
 
-            string Extension = Path.GetExtension(file);
+            string extension = Path.GetExtension(file);
 
             foreach (var type in Types)
             {
                 if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
                 {
-                    if (attr.Extension.Equals(Extension))
+                    if (attr.Extension.Equals(extension))
                     {
                         fileNode = (FileNode)Activator.CreateInstance(type, file);
                     }
@@ -114,7 +112,7 @@ namespace CrossMod.Nodes
             {
                 fileNode.ForeColor = Color.Gray;
             }
-            
+
             fileNode.Text = Path.GetFileName(file);
             return fileNode;
         }

@@ -4,11 +4,11 @@ using SSBHLib.Formats.Materials;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numatb")]
-    public class MATL_Node : FileNode
+    public class MatlNode : FileNode
     {
         public MATL Material { get; set; }
         
-        public MATL_Node(string path) : base(path)
+        public MatlNode(string path) : base(path)
         {
             ImageKey = "material";
             SelectedImageKey = "material";

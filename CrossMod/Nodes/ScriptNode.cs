@@ -3,7 +3,6 @@ using CrossMod.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
-using SFGraphics.GLObjects.Shaders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +24,7 @@ namespace CrossMod.Nodes
         private static  Capsule Capsule { get; set; }
         private static Line Line { get; set; }
         
-        public SKEL_Node SkelNode { set
+        public SkelNode SkelNode { set
             {
                 Skel = value.GetRenderableNode() as RSkeleton;
                 BoneIDs.Clear();

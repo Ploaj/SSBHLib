@@ -1,6 +1,5 @@
 ﻿using CrossMod.IO;
 using CrossMod.Rendering;
-using CrossMod.Rendering.Models;
 using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats;
@@ -11,12 +10,12 @@ using System.Collections.Generic;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".numdlb")]
-    public class NUMDL_Node : FileNode, IRenderableNode, IExportableModelNode
+    public class NumdlNode : FileNode, IRenderableNode, IExportableModelNode
     {
         private MODL _model;
         private IRenderable renderableNode = null;
 
-        public NUMDL_Node(string path): base(path)
+        public NumdlNode(string path) : base(path)
         {
             ImageKey = "model";
             SelectedImageKey = "model";
@@ -29,9 +28,9 @@ namespace CrossMod.Nodes
             if (renderableNode == null)
                 renderableNode = CreateRenderableModel();
 
-            if(renderableNode is RNUMDL MDL)
+            if (renderableNode is Rnumdl MDL)
             {
-                if(MDL.Skeleton != null)
+                if (MDL.Skeleton != null)
                 {
                     MDL.Skeleton.Reset();
                 }
@@ -42,20 +41,20 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
-            RNUMDL renderableNode = new RNUMDL
+            Rnumdl renderableNode = new Rnumdl
             {
                 MODL = _model
             };
 
-            NUMSHB_Node modelNode = null;
-            NUHLPB_Node helperNode = null;
+            NumsbhNode modelNode = null;
+            NuhlpbNode helperNode = null;
             foreach (FileNode fileNode in Parent.Nodes)
             {
-                if (fileNode is NUHLPB_Node)
+                if (fileNode is NuhlpbNode node)
                 {
-                    helperNode = (NUHLPB_Node)fileNode;
+                    helperNode = node;
                 }
-                if (fileNode is NUTEX_Node nutexNode)
+                if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
                     // TODO: Why are there empty streams?
@@ -64,26 +63,25 @@ namespace CrossMod.Nodes
                 }
                 if (fileNode.Text.Equals(_model.MeshString))
                 {
-                    modelNode = (NUMSHB_Node)fileNode;
+                    modelNode = (NumsbhNode)fileNode;
                 }
                 if (fileNode.Text.Equals(_model.SkeletonFileName))
                 {
-                    renderableNode.Skeleton = (RSkeleton)((SKEL_Node)fileNode).GetRenderableNode();
+                    renderableNode.Skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
                 }
                 if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-                    renderableNode.Material = ((MATL_Node)fileNode).Material;
+                    renderableNode.Material = ((MatlNode)fileNode).Material;
                 }
             }
 
-            if(modelNode != null)
+            if (modelNode != null)
                 renderableNode.Model = modelNode.GetRenderModel(renderableNode.Skeleton);
             if (renderableNode.Material != null)
                 renderableNode.UpdateMaterial();
             if (renderableNode.Skeleton != null)
             {
-                if (helperNode != null)
-                    helperNode.AddToRenderSkeleton(renderableNode.Skeleton);
+                helperNode?.AddToRenderSkeleton(renderableNode.Skeleton);
                 renderableNode.UpdateBinds();
             }
 
@@ -94,13 +92,13 @@ namespace CrossMod.Nodes
         {
             if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
             {
-                if (ssbhFile is MODL)
+                if (ssbhFile is MODL modl)
                 {
-                    _model = (MODL)ssbhFile;
+                    _model = modl;
                 }
             }
         }
-        
+
         public IOModel GetIOModel()
         {
             IOModel outModel = new IOModel();
@@ -112,50 +110,54 @@ namespace CrossMod.Nodes
             {
                 if (n.Text.Equals(_model.MeshString))
                 {
-                    meshFile = ((NUMSHB_Node)n).mesh;
+                    meshFile = ((NumsbhNode)n).mesh;
                 }
                 if (n.Text.Equals(_model.SkeletonFileName))
                 {
-                    outModel.Skeleton = (RSkeleton)((SKEL_Node)n).GetRenderableNode();
+                    outModel.Skeleton = (RSkeleton)((SkelNode)n).GetRenderableNode();
                 }
                 if (n.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
-                    materialFile = ((MATL_Node)n).Material;
+                    materialFile = ((MatlNode)n).Material;
                 }
             }
 
             Dictionary<string, int> indexByBoneName = new Dictionary<string, int>();
-            if(outModel.Skeleton != null)
+            if (outModel.Skeleton != null)
             {
-                for(int i = 0; i < outModel.Skeleton.Bones.Count; i++)
+                for (int i = 0; i < outModel.Skeleton.Bones.Count; i++)
                 {
                     indexByBoneName.Add(outModel.Skeleton.Bones[i].Name, i);
                 }
             }
 
             Dictionary<string, int> materialNameToIndex = new Dictionary<string, int>();
-            if(materialFile != null)
+            if (materialFile != null)
             {
                 int materialIndex = 0;
-                foreach(var entry in materialFile.Entries)
+                foreach (var entry in materialFile.Entries)
                 {
                     materialNameToIndex.Add(entry.MaterialLabel, materialIndex++);
-                    IOMaterial material = new IOMaterial();
-                    material.Name = entry.MaterialLabel;
+                    IOMaterial material = new IOMaterial
+                    {
+                        Name = entry.MaterialLabel
+                    };
                     outModel.Materials.Add(material);
 
                     foreach (var attr in entry.Attributes)
                     {
-                        if(attr.ParamID == MatlEnums.ParamId.Texture0)
+                        if (attr.ParamID == MatlEnums.ParamId.Texture0)
                         {
-                            IOTexture dif = new IOTexture();
-                            dif.Name = attr.DataObject.ToString();
+                            IOTexture dif = new IOTexture
+                            {
+                                Name = attr.DataObject.ToString()
+                            };
                             material.DiffuseTexture = dif;
                         }
                     }
                 }
             }
-            
+
             if (meshFile != null)
             {
                 SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(meshFile);
@@ -168,13 +170,13 @@ namespace CrossMod.Nodes
                             Name = obj.Name,
                         };
                         outModel.Meshes.Add(outMesh);
-                        
+
                         // get material
-                        if(materialFile != null)
+                        if (materialFile != null)
                         {
-                            foreach(var entry in _model.ModelEntries)
+                            foreach (var entry in _model.ModelEntries)
                             {
-                                if(entry.MeshName.Equals(obj.Name) && entry.SubIndex == obj.SubMeshIndex)
+                                if (entry.MeshName.Equals(obj.Name) && entry.SubIndex == obj.SubMeshIndex)
                                 {
                                     outMesh.MaterialIndex = materialNameToIndex[entry.MaterialName];
                                     break;
@@ -237,11 +239,11 @@ namespace CrossMod.Nodes
                         }
 
                         // Fix SingleBinds
-                        if(outModel.Skeleton != null && !obj.ParentBoneName.Equals(""))
+                        if (outModel.Skeleton != null && !obj.ParentBoneName.Equals(""))
                         {
                             int parentIndex = outModel.Skeleton.GetBoneIndex(obj.ParentBoneName);
-                            if(parentIndex != -1)
-                                for(int i = 0; i < vertices.Length; i++)
+                            if (parentIndex != -1)
+                                for (int i = 0; i < vertices.Length; i++)
                                 {
                                     vertices[i].Position = OpenTK.Vector3.TransformPosition(vertices[i].Position, outModel.Skeleton.Bones[parentIndex].WorldTransform);
                                     vertices[i].Normal = OpenTK.Vector3.TransformNormal(vertices[i].Normal, outModel.Skeleton.Bones[parentIndex].WorldTransform);
@@ -253,8 +255,8 @@ namespace CrossMod.Nodes
 
                         // Apply Rigging
                         SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
-    
-                        foreach(SSBHVertexInfluence influence in influences)
+
+                        foreach (SSBHVertexInfluence influence in influences)
                         {
                             outMesh.HasBoneWeights = true;
 
@@ -268,17 +270,17 @@ namespace CrossMod.Nodes
                                 vertices[influence.VertexIndex].BoneIndices.X = indexByBoneName[influence.BoneName];
                                 vertices[influence.VertexIndex].BoneWeights.X = influence.Weight;
                             }
-                            else if(vertices[influence.VertexIndex].BoneWeights.Y == 0)
+                            else if (vertices[influence.VertexIndex].BoneWeights.Y == 0)
                             {
                                 vertices[influence.VertexIndex].BoneIndices.Y = indexByBoneName[influence.BoneName];
                                 vertices[influence.VertexIndex].BoneWeights.Y = influence.Weight;
                             }
-                            else if(vertices[influence.VertexIndex].BoneWeights.Z == 0)
+                            else if (vertices[influence.VertexIndex].BoneWeights.Z == 0)
                             {
                                 vertices[influence.VertexIndex].BoneIndices.Z = indexByBoneName[influence.BoneName];
                                 vertices[influence.VertexIndex].BoneWeights.Z = influence.Weight;
                             }
-                            else if(vertices[influence.VertexIndex].BoneWeights.W == 0)
+                            else if (vertices[influence.VertexIndex].BoneWeights.W == 0)
                             {
                                 vertices[influence.VertexIndex].BoneIndices.W = indexByBoneName[influence.BoneName];
                                 vertices[influence.VertexIndex].BoneWeights.W = influence.Weight;

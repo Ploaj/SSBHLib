@@ -16,10 +16,7 @@ namespace SSBHLib.Formats.Materials
         // not part of the entry
         [ParseTag(Ignore = true)]
         public object DataObject {
-            get
-            {
-                return _dataObject;
-            }
+            get => _dataObject;
             set
             {
                 _dataObject = value;

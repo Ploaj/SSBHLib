@@ -1,5 +1,3 @@
-using CrossMod.Rendering;
-using System;
 using System.Collections.Generic;
 
 namespace CrossMod.IO

@@ -17,11 +17,11 @@ namespace SSBHLib.Tools
             public string ParentBone;
             public int VertexCount;
             public SSBHVertexAttribute BoundingSphere;
-            public SSBHVertexAttribute BBMin;
-            public SSBHVertexAttribute BBMax;
-            public SSBHVertexAttribute OBBCenter;
-            public SSBHVertexAttribute OBBSize;
-            public float[] OBBMatrix3x3;
+            public SSBHVertexAttribute BbMin;
+            public SSBHVertexAttribute BbMax;
+            public SSBHVertexAttribute ObbCenter;
+            public SSBHVertexAttribute ObbSize;
+            public float[] ObbMatrix3X3;
             public Dictionary<UltimateVertexAttribute, float[]> VertexData = new Dictionary<UltimateVertexAttribute, float[]>();
             public List<uint> Indices = new List<uint>();
             public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
@@ -35,6 +35,9 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="name">The name of the Mesh Object</param>
         /// <param name="indices">The vertex indices as triangles</param>
+        /// <paramref name="positions"/>
+        /// <param name="parentBoneName"></param>
+        /// <param name="generateBounding"></param>
         public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "", bool generateBounding = false)
         {
             currentMesh = new TempMesh
@@ -88,8 +91,8 @@ namespace SSBHLib.Tools
         {
             if (currentMesh == null)
                 return;
-            currentMesh.BBMax = max;
-            currentMesh.BBMin = min;
+            currentMesh.BbMax = max;
+            currentMesh.BbMin = min;
         }
 
         /// <summary>
@@ -97,18 +100,18 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="center"></param>
         /// <param name="size"></param>
-        /// <param name="matrix3x3"></param>
-        public void SetOrientedBoundingBox(SSBHVertexAttribute center, SSBHVertexAttribute size, float[] matrix3x3)
+        /// <param name="matrix3X3"></param>
+        public void SetOrientedBoundingBox(SSBHVertexAttribute center, SSBHVertexAttribute size, float[] matrix3X3)
         {
             if (currentMesh == null)
                 return;
-            if (matrix3x3 == null)
+            if (matrix3X3 == null)
                 return;
-            if (matrix3x3.Length != 9)
+            if (matrix3X3.Length != 9)
                 throw new IndexOutOfRangeException("Matrix must contain 9 entries in row major order");
-            currentMesh.OBBCenter = center;
-            currentMesh.OBBSize = size;
-            currentMesh.OBBMatrix3x3 = matrix3x3;
+            currentMesh.ObbCenter = center;
+            currentMesh.ObbSize = size;
+            currentMesh.ObbMatrix3X3 = matrix3X3;
         }
 
         /// <summary>
@@ -119,6 +122,7 @@ namespace SSBHLib.Tools
         /// <param name="inputValues"></param>
         public void AddAttributeToMeshObject(UltimateVertexAttribute attribute, SSBHVertexAttribute[] inputValues)
         {
+            // TODO: Why must StartMeshObject be called?
             if (currentMesh == null)
                 return;
 
@@ -145,9 +149,7 @@ namespace SSBHLib.Tools
         /// </summary>
         public void AttachRiggingToMeshObject(SSBHVertexInfluence[] influences)
         {
-            if (currentMesh == null)
-                return;
-            currentMesh.Influences.AddRange(influences);
+            currentMesh?.Influences.AddRange(influences);
         }
 
         /// <summary>
@@ -169,53 +171,53 @@ namespace SSBHLib.Tools
             BinaryWriter indexBuffer = new BinaryWriter(new MemoryStream());
             int finalBufferOffset = 0;
             int meshIndex = 0;
-            Dictionary<string, int> MeshGroups = new Dictionary<string, int>();
-            List<MeshRiggingGroup> RiggingGroups = new List<MeshRiggingGroup>();
+            Dictionary<string, int> meshGroups = new Dictionary<string, int>();
+            List<MeshRiggingGroup> riggingGroups = new List<MeshRiggingGroup>();
             foreach (var tempmesh in meshes)
             {
                 MeshObject mo = new MeshObject
                 {
                     Name = tempmesh.Name
                 };
-                if (MeshGroups.ContainsKey(mo.Name))
-                    MeshGroups[mo.Name] += 1;
+                if (meshGroups.ContainsKey(mo.Name))
+                    meshGroups[mo.Name] += 1;
                 else
-                    MeshGroups.Add(mo.Name, 0);
+                    meshGroups.Add(mo.Name, 0);
 
-                mo.SubMeshIndex = MeshGroups[mo.Name];
+                mo.SubMeshIndex = meshGroups[mo.Name];
                 mo.BoundingSphereX = tempmesh.BoundingSphere.X;
                 mo.BoundingSphereY = tempmesh.BoundingSphere.Y;
                 mo.BoundingSphereZ = tempmesh.BoundingSphere.Z;
                 mo.BoundingSphereRadius = tempmesh.BoundingSphere.W;
 
-                mo.MaxBoundingBoxX = tempmesh.BBMax.X;
-                mo.MaxBoundingBoxY = tempmesh.BBMax.Y;
-                mo.MaxBoundingBoxZ = tempmesh.BBMax.Z;
-                mo.MinBoundingBoxX = tempmesh.BBMin.X;
-                mo.MinBoundingBoxY = tempmesh.BBMin.Y;
-                mo.MinBoundingBoxZ = tempmesh.BBMin.Z;
+                mo.MaxBoundingBoxX = tempmesh.BbMax.X;
+                mo.MaxBoundingBoxY = tempmesh.BbMax.Y;
+                mo.MaxBoundingBoxZ = tempmesh.BbMax.Z;
+                mo.MinBoundingBoxX = tempmesh.BbMin.X;
+                mo.MinBoundingBoxY = tempmesh.BbMin.Y;
+                mo.MinBoundingBoxZ = tempmesh.BbMin.Z;
 
-                mo.OBBCenterX = tempmesh.OBBCenter.X;
-                mo.OBBCenterY = tempmesh.OBBCenter.Y;
-                mo.OBBCenterZ = tempmesh.OBBCenter.Z;
+                mo.OBBCenterX = tempmesh.ObbCenter.X;
+                mo.OBBCenterY = tempmesh.ObbCenter.Y;
+                mo.OBBCenterZ = tempmesh.ObbCenter.Z;
 
-                mo.OBBSizeX = tempmesh.OBBSize.X;
-                mo.OBBSizeY = tempmesh.OBBSize.Y;
-                mo.OBBSizeZ = tempmesh.OBBSize.Z;
+                mo.OBBSizeX = tempmesh.ObbSize.X;
+                mo.OBBSizeY = tempmesh.ObbSize.Y;
+                mo.OBBSizeZ = tempmesh.ObbSize.Z;
 
-                mo.M11 = tempmesh.OBBMatrix3x3[0];
-                mo.M12 = tempmesh.OBBMatrix3x3[1];
-                mo.M13 = tempmesh.OBBMatrix3x3[2];
-                mo.M21 = tempmesh.OBBMatrix3x3[3];
-                mo.M22 = tempmesh.OBBMatrix3x3[4];
-                mo.M23 = tempmesh.OBBMatrix3x3[5];
-                mo.M31 = tempmesh.OBBMatrix3x3[6];
-                mo.M32 = tempmesh.OBBMatrix3x3[7];
-                mo.M33 = tempmesh.OBBMatrix3x3[8];
+                mo.M11 = tempmesh.ObbMatrix3X3[0];
+                mo.M12 = tempmesh.ObbMatrix3X3[1];
+                mo.M13 = tempmesh.ObbMatrix3X3[2];
+                mo.M21 = tempmesh.ObbMatrix3X3[3];
+                mo.M22 = tempmesh.ObbMatrix3X3[4];
+                mo.M23 = tempmesh.ObbMatrix3X3[5];
+                mo.M31 = tempmesh.ObbMatrix3X3[6];
+                mo.M32 = tempmesh.ObbMatrix3X3[7];
+                mo.M33 = tempmesh.ObbMatrix3X3[8];
 
 
                 // Create Rigging
-                RiggingGroups.Add(SSBHRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
+                riggingGroups.Add(SSBHRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
 
                 // set object
                 mesh.Objects[meshIndex++] = mo;
@@ -223,9 +225,9 @@ namespace SSBHLib.Tools
                 mo.ParentBoneName = tempmesh.ParentBone;
                 if (tempmesh.Influences.Count > 0 && (tempmesh.ParentBone == null || tempmesh.ParentBone.Equals("")))
                     mo.HasRigging = 1;
-                
-                int Stride1 = 0;
-                int Stride2 = 0;
+
+                int stride1 = 0;
+                int stride2 = 0;
 
                 mo.VertexOffset = (int)vertexBuffer1.BaseStream.Length;
                 mo.VertexOffset2 = (int)vertexBuffer2.BaseStream.Length;
@@ -242,37 +244,37 @@ namespace SSBHLib.Tools
                         Index = GetAttributeIndex(keypair.Key),
                         BufferIndex = GetBufferIndex(keypair.Key),
                         DataType = GetAttributeDataType(keypair.Key),
-                        BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? Stride1 : Stride2,
+                        BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? stride1 : stride2,
                         AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToString() } }
                     };
                     mo.Attributes[attributeIndex++] = attr;
 
                     if (GetBufferIndex(keypair.Key) == 0)
-                        Stride1 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
+                        stride1 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
                     else
-                        Stride2 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
+                        stride2 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
                 }
 
                 // now that strides are known...
-                long Buffer1Start = vertexBuffer1.BaseStream.Length;
-                long Buffer2Start = vertexBuffer2.BaseStream.Length;
-                vertexBuffer1.Write(new byte[Stride1 * tempmesh.VertexCount]);
-                vertexBuffer2.Write(new byte[Stride2 * tempmesh.VertexCount]);
+                long buffer1Start = vertexBuffer1.BaseStream.Length;
+                long buffer2Start = vertexBuffer2.BaseStream.Length;
+                vertexBuffer1.Write(new byte[stride1 * tempmesh.VertexCount]);
+                vertexBuffer2.Write(new byte[stride2 * tempmesh.VertexCount]);
                 attributeIndex = 0;
                 foreach (var keypair in tempmesh.VertexData)
                 {
                     var attr = mo.Attributes[attributeIndex++];
-                    float[] Data = keypair.Value;
+                    float[] data = keypair.Value;
                     var buffer = attr.BufferIndex == 0 ? vertexBuffer1 : vertexBuffer2;
-                    int bufferOffset = (int)(attr.BufferIndex == 0 ? Buffer1Start : Buffer2Start);
-                    int stride = (attr.BufferIndex == 0 ? Stride1 : Stride2);
+                    int bufferOffset = (int)(attr.BufferIndex == 0 ? buffer1Start : buffer2Start);
+                    int stride = (attr.BufferIndex == 0 ? stride1 : stride2);
                     int size = GetAttributeSize(keypair.Key);
                     for (int vertexIndex = 0; vertexIndex < tempmesh.VertexCount; vertexIndex++)
                     {
                         buffer.Seek(bufferOffset + stride * vertexIndex + attr.BufferOffset, SeekOrigin.Begin);
-                        for(int j = 0; j < size; j++)
+                        for (int j = 0; j < size; j++)
                         {
-                            WriteType(buffer, attr.DataType, Data[vertexIndex * size + j]);
+                            WriteType(buffer, attr.DataType, data[vertexIndex * size + j]);
                         }
                     }
                     // seek to end just to make sure
@@ -280,19 +282,20 @@ namespace SSBHLib.Tools
                 }
 
                 mo.FinalBufferOffset = finalBufferOffset;
-                finalBufferOffset += (4 + Stride1) * tempmesh.VertexCount;
+                finalBufferOffset += (4 + stride1) * tempmesh.VertexCount;
                 mo.VertexCount = tempmesh.VertexCount;
                 mo.IndexCount = tempmesh.Indices.Count;
-                mo.Stride = Stride1;
-                mo.Stride2 = Stride2;
-                
+                mo.Stride = stride1;
+                mo.Stride2 = stride2;
+
                 // write index buffer
-                if(tempmesh.VertexCount > ushort.MaxValue)
+                if (tempmesh.VertexCount > ushort.MaxValue)
                 {
                     mo.DrawElementType = 1;
                     foreach (var i in tempmesh.Indices)
                         indexBuffer.Write(i);
-                }else
+                }
+                else
                 {
                     foreach (var i in tempmesh.Indices)
                         indexBuffer.Write((ushort)i);
@@ -300,18 +303,18 @@ namespace SSBHLib.Tools
             }
 
             mesh.PolygonIndexSize = indexBuffer.BaseStream.Length;
-            mesh.BufferSizes = new int[] { (int)vertexBuffer1.BaseStream.Length, (int)vertexBuffer2.BaseStream.Length, 0, 0};
+            mesh.BufferSizes = new int[] { (int)vertexBuffer1.BaseStream.Length, (int)vertexBuffer2.BaseStream.Length, 0, 0 };
             mesh.PolygonBuffer = ((MemoryStream)indexBuffer.BaseStream).ToArray();
             Console.WriteLine(mesh.PolygonBuffer.Length + " " + indexBuffer.BaseStream.Length);
             mesh.VertexBuffers = new MeshBuffer[]
             {
-                new MeshBuffer(){ Buffer = ((MemoryStream)vertexBuffer1.BaseStream).ToArray() },
-                new MeshBuffer(){ Buffer = ((MemoryStream)vertexBuffer2.BaseStream).ToArray() },
-                new MeshBuffer(){ Buffer = new byte[0] },
-                new MeshBuffer(){ Buffer = new byte[0] }
+                new MeshBuffer { Buffer = ((MemoryStream)vertexBuffer1.BaseStream).ToArray() },
+                new MeshBuffer { Buffer = ((MemoryStream)vertexBuffer2.BaseStream).ToArray() },
+                new MeshBuffer { Buffer = new byte[0] },
+                new MeshBuffer { Buffer = new byte[0] }
             };
 
-            mesh.RiggingBuffers = RiggingGroups.ToArray().OrderBy(o => o.Name, StringComparer.Ordinal).ToArray();
+            mesh.RiggingBuffers = riggingGroups.ToArray().OrderBy(o => o.Name, StringComparer.Ordinal).ToArray();
 
             vertexBuffer1.Close();
             vertexBuffer2.Close();
@@ -324,11 +327,17 @@ namespace SSBHLib.Tools
         {
             switch (type)
             {
-                case 0: writer.Write(value); break;
-                case 2: writer.Write((byte)value); break;
-                case 5: writer.Write((ushort)FromFloat(value)); break;
-                case 8: writer.Write((ushort)FromFloat(value)); break;
-                default:
+                case 0:
+                    writer.Write(value);
+                    break;
+                case 2:
+                    writer.Write((byte)value);
+                    break;
+                case 5:
+                    writer.Write((ushort)FromFloat(value));
+                    break;
+                case 8:
+                    writer.Write((ushort)FromFloat(value));
                     break;
             }
         }
@@ -378,7 +387,7 @@ namespace SSBHLib.Tools
             }
         }
 
-        private string GetAttributeName(UltimateVertexAttribute attribute)
+        private static string GetAttributeName(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
@@ -389,7 +398,7 @@ namespace SSBHLib.Tools
             }
         }
 
-        private int GetAttributeDataSize(UltimateVertexAttribute attribute)
+        private static int GetAttributeDataSize(UltimateVertexAttribute attribute)
         {
             // TODO: Use enum?
             switch (GetAttributeDataType(attribute))
@@ -407,7 +416,7 @@ namespace SSBHLib.Tools
             }
         }
 
-        private int GetAttributeDataType(UltimateVertexAttribute attribute)
+        private static int GetAttributeDataType(UltimateVertexAttribute attribute)
         {
             // TODO: Use enum?
             switch (attribute)
@@ -439,7 +448,7 @@ namespace SSBHLib.Tools
             }
         }
 
-        private int GetAttributeIndex(UltimateVertexAttribute attribute)
+        private static int GetAttributeIndex(UltimateVertexAttribute attribute)
         {
             switch (attribute)
             {
@@ -476,20 +485,20 @@ namespace SSBHLib.Tools
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        private static int FromFloat(float fval)
+        private static int FromFloat(float floatValue)
         {
-            int fbits = SingleToInt32Bits(fval);
-            int sign = fbits >> 16 & 0x8000;          // sign only
-            int val = (fbits & 0x7fffffff) + 0x1000; // rounded value
+            int floatBits = SingleToInt32Bits(floatValue);
+            int sign = floatBits >> 16 & 0x8000;          // sign only
+            int val = (floatBits & 0x7fffffff) + 0x1000; // rounded value
 
             if (val >= 0x47800000)               // might be or become NaN/Inf
             {                                     // avoid Inf due to rounding
-                if ((fbits & 0x7fffffff) >= 0x47800000)
+                if ((floatBits & 0x7fffffff) >= 0x47800000)
                 {                                 // is or must become NaN/Inf
                     if (val < 0x7f800000)        // was value but too large
                         return sign | 0x7c00;     // make it +/-Inf
                     return sign | 0x7c00 |        // remains +/-Inf or NaN
-                        (fbits & 0x007fffff) >> 13; // keep NaN (and Inf) bits
+                        (floatBits & 0x007fffff) >> 13; // keep NaN (and Inf) bits
                 }
                 return sign | 0x7bff;             // unrounded not quite Inf
             }
@@ -497,8 +506,8 @@ namespace SSBHLib.Tools
                 return sign | val - 0x38000000 >> 13; // exp - 127 + 15
             if (val < 0x33000000)                // too small for subnormal
                 return sign;                      // becomes +/-0
-            val = (fbits & 0x7fffffff) >> 23;  // tmp exp for subnormal calc
-            return sign | ((fbits & 0x7fffff | 0x800000) // add subnormal bit
+            val = (floatBits & 0x7fffffff) >> 23;  // tmp exp for subnormal calc
+            return sign | ((floatBits & 0x7fffff | 0x800000) // add subnormal bit
                 + (0x800000 >> val - 102)     // round depending on cut off
                 >> 126 - val);   // div by 2^(1-(exp-127+15)) and >> 13 | exp=0
         }

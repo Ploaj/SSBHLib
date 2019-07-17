@@ -5,11 +5,11 @@ using CrossMod.Rendering;
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nuhlpb")]
-    public class NUHLPB_Node : FileNode
+    public class NuhlpbNode : FileNode
     {
         public HLPB helperBones;
 
-        public NUHLPB_Node(string path): base(path)
+        public NuhlpbNode(string path): base(path)
         {
             ImageKey = "skeleton";
             SelectedImageKey = "skeleton";

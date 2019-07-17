@@ -466,7 +466,7 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Compresses <see cref="AnimTrackTransform" track and writes to writer/>
+        /// Compresses <see cref="AnimTrackTransform"></see> track and writes to writer
         /// </summary>
         /// <param name="w"></param>
         /// <param name="values"></param>
