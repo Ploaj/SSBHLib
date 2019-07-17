@@ -63,7 +63,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            currentShader.SetVector3("cameraPos", Camera.Position);
+            currentShader.SetVector3("cameraPos", Camera.TransformedPosition);
         }
 
         private static void SetUniforms(Shader currentShader)
@@ -102,7 +102,7 @@ namespace CrossMod.Rendering.Models
                     opaque.Add(m);
             }
 
-            transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.Position - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
+            transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
             // Models often share a material, so skip redundant and costly state changes.
             string previousMaterialName = "";
