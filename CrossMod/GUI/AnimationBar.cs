@@ -112,7 +112,14 @@ namespace CrossMod.GUI
             };
             animationPlayer.Tick += new EventHandler(animationTimer_Tick);
         }
-        
+
+        public void Clear()
+        {
+            Model = null;
+            Skeleton = null;
+            animation = null;
+        }
+
         /**
          * Updates the held animation object to hold the current state.
          * This includes the model, skeleton, and current frame.

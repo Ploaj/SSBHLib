@@ -104,8 +104,7 @@ namespace CrossMod.GUI
 
         public void ClearFiles()
         {
-            animationBar.Model = null;
-            animationBar.Skeleton = null;
+            animationBar.Clear();
 
             renderableNodes.Clear();
             renderableNodeNames.Clear();
