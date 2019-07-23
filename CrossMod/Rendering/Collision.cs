@@ -8,6 +8,7 @@ namespace CrossMod.Rendering
         public int Angle { get; set; }
         public ulong VecTargetPos_node { get; set; }
         public Vector3 VecTargetPos_pos { get; set; }
+        public float VecTargetPos_frames { get; set; }
 
         public Attack(ulong bone, float damage, int angle, float size, Vector3 pos) : base(bone, size, pos)
         {
@@ -27,10 +28,11 @@ namespace CrossMod.Rendering
             return def;
         }
 
-        public void SetVecTargetPos(ulong node, Vector3 pos)
+        public void SetVecTargetPos(ulong node, Vector2 pos, float frames)
         {
             VecTargetPos_node = node;
-            VecTargetPos_pos = pos;
+            VecTargetPos_pos = new Vector3(pos);
+            VecTargetPos_frames = frames;
         }
     }
 

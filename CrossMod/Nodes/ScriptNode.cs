@@ -118,12 +118,16 @@ namespace CrossMod.Nodes
                         //this is represented by a line drawn between hitbox center and that point
                         if (attack.VecTargetPos_node != 0)
                         {
-                            var otherBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
-                            var otherBoneNoScale =
-                                Matrix4.CreateFromQuaternion(otherBone.ExtractRotation())
-                                * Matrix4.CreateTranslation(otherBone.ExtractTranslation());
-                            Line.Render(coll.Pos, boneNoScale, attack.VecTargetPos_pos, otherBoneNoScale, mvp,
-                                new Vector4(1, 1, 1, 0.5f));
+                            var attackVecBone = Skel.GetAnimationSingleBindsTransform(BoneIDs[attack.VecTargetPos_node]);
+                            var attackVecBoneNoScale =
+                                Matrix4.CreateFromQuaternion(attackVecBone.ExtractRotation())
+                                * Matrix4.CreateTranslation(attackVecBone.ExtractTranslation());
+                            Line.Render(
+                                boneNoScale, attackVecBoneNoScale,
+                                coll.Pos, Vector3.Zero,
+                                Vector3.Zero, new Vector3(attack.VecTargetPos_pos.Z, attack.VecTargetPos_pos.Y, 0),
+                                mvp, angleColor
+                            );
                         }
                     }
                     else
@@ -344,10 +348,11 @@ namespace CrossMod.Nodes
                         case CmdType.set_vec_target_pos:
                             Parent.Observer.Attacks[IntParse(args[0])].SetVecTargetPos(
                                 UlongParse(args[1]),
-                                new Vector3(
+                                new Vector2(
                                     float.Parse(args[2]),
-                                    float.Parse(args[3]),
-                                    float.Parse(args[4])));
+                                    float.Parse(args[3])
+                                    ),
+                                float.Parse(args[4]));
                             break;
                     }
                 }
