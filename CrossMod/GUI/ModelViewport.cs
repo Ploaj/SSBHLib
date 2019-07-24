@@ -129,7 +129,7 @@ namespace CrossMod.GUI
             glViewport.Dispose();
         }
 
-        public async System.Threading.Tasks.Task RenderAnimationToGifAsync()
+        public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath)
         {
             // Disable automatic updates so frames can be rendered manually.
             glViewport.PauseRendering();
@@ -150,7 +150,7 @@ namespace CrossMod.GUI
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                using (var gif = new AnimatedGif.AnimatedGifCreator("test.gif", 20, 0))
+                using (var gif = new AnimatedGif.AnimatedGifCreator(outputPath, 20, 0))
                 {
                     for (int i = 0; i < frames.Count; i++)
                         gif.AddFrame(frames[i], -1, AnimatedGif.GifQuality.Bit8);

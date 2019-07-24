@@ -50,7 +50,8 @@ namespace CrossMod
 
         private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await modelViewport.RenderAnimationToGifAsync();
+            FileTools.TrySaveFile(out string fileName, "GIF|*.gif", "animation");
+            await modelViewport.RenderAnimationToGifAsync(fileName);
         }
 
         public void HideControl()
