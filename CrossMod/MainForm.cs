@@ -44,6 +44,13 @@ namespace CrossMod
             iconList.Images.Add("animation", Properties.Resources.ico_animation);
 
             fileTree.ImageList = iconList;
+
+            exportAnimationToGifToolStripMenuItem.Click += ExportAnimationToGifToolStripMenuItem_Click;
+        }
+
+        private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await modelViewport.RenderAnimationToGifAsync();
         }
 
         public void HideControl()

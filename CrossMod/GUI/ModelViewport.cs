@@ -9,6 +9,7 @@ using OpenTK;
 using OpenTK.Input;
 using CrossMod.Nodes;
 using CrossMod.Rendering.Models;
+using SFGraphics.GLObjects.Framebuffers;
 
 namespace CrossMod.GUI
 {
@@ -115,7 +116,7 @@ namespace CrossMod.GUI
 
         public System.Drawing.Bitmap GetScreenshot()
         {
-            return SFGraphics.GLObjects.Framebuffers.Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
+            return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
         public CameraControl GetCameraControl()
@@ -126,6 +127,40 @@ namespace CrossMod.GUI
         public void Close()
         {
             glViewport.Dispose();
+        }
+
+        public async System.Threading.Tasks.Task RenderAnimationToGifAsync()
+        {
+            // Disable automatic updates so frames can be rendered manually.
+            glViewport.PauseRendering();
+            animationBar.Stop();
+
+            var frames = new List<System.Drawing.Bitmap>(animationBar.FrameCount);
+
+            // Rendering can't happen on a separate thread.
+            for (int i = 0; i <= animationBar.FrameCount; i++)
+            {
+                animationBar.Frame = i;
+                glViewport.RenderFrame();
+                frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
+            }
+
+            // Continue on separate thread to maintain responsiveness.
+            glViewport.ResumeRendering();
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                using (var gif = new AnimatedGif.AnimatedGifCreator("test.gif", 20, 0))
+                {
+                    for (int i = 0; i < frames.Count; i++)
+                        gif.AddFrame(frames[i], -1, AnimatedGif.GifQuality.Bit8);
+                }
+            });
+
+            foreach (var frame in frames)
+            {
+                frame.Dispose();
+            }
         }
 
         private void AddAnimationBar()
