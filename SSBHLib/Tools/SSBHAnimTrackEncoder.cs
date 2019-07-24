@@ -73,14 +73,14 @@ namespace SSBHLib.Tools
 
             // Create Buffer
             MemoryStream buffer = new MemoryStream();
-            
+
             using (BinaryWriter w = new BinaryWriter(buffer))
             {
                 foreach (var animation in animFile.Animations)
                 {
                     foreach (var node in animation.Nodes)
                     {
-                        foreach(var track in node.Tracks) // TODO: these nodes need to be in ordinal order
+                        foreach (var track in node.Tracks) // TODO: these nodes need to be in ordinal order
                         {
                             var values = trackToValues[track];
 
@@ -94,9 +94,9 @@ namespace SSBHLib.Tools
                             if (values.Count == 1)
                             {
                                 if (animation.Type == AnimType.Transform)
-                                    track.Flags |= (int)AnimTrackflags.ConstTransform;
+                                    track.Flags |= (int)AnimTrackFlags.ConstTransform;
                                 else
-                                    track.Flags |= (int)AnimTrackflags.Constant;
+                                    track.Flags |= (int)AnimTrackFlags.Constant;
 
                                 track.FrameCount = 1;
 
@@ -105,9 +105,9 @@ namespace SSBHLib.Tools
                             else
                             {
                                 if (WriteValues(w, (int)track.Flags, values))
-                                    track.Flags |= (int)AnimTrackflags.Compressed;
+                                    track.Flags |= (int)AnimTrackFlags.Compressed;
                                 else
-                                    track.Flags |= (int)AnimTrackflags.Direct;
+                                    track.Flags |= (int)AnimTrackFlags.Direct;
                             }
 
                             track.DataSize = (uint)(buffer.Position - track.DataOffset);
@@ -127,7 +127,7 @@ namespace SSBHLib.Tools
 
             Ssbh.TrySaveSsbhFile(fname, animFile);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -156,28 +156,28 @@ namespace SSBHLib.Tools
         {
             if (o is AnimTrackTransform transform)
             {
-                return (int)AnimTrackflags.Transform;
+                return (int)AnimTrackFlags.Transform;
             }
             else if (o is AnimTrackCustomVector4 vector)
             {
-                return (int)AnimTrackflags.Vector4;
+                return (int)AnimTrackFlags.Vector4;
             }
             else if (o is AnimTrackTexture tex)
             {
-                return (int)AnimTrackflags.Texture;
+                return (int)AnimTrackFlags.Texture;
             }
             else if (o is bool b)
             {
-                return (int)AnimTrackflags.Boolean;
+                return (int)AnimTrackFlags.Boolean;
             }
             else if (o is float f)
             {
-                return (int)AnimTrackflags.Float;
+                return (int)AnimTrackFlags.Float;
             }
             else
             if (o is int)
             {
-                return (int)AnimTrackflags.PatternIndex;
+                return (int)AnimTrackFlags.PatternIndex;
             }
             return 0;
             /*
@@ -422,7 +422,7 @@ namespace SSBHLib.Tools
             Quantanizer v3 = new Quantanizer();
             Quantanizer v4 = new Quantanizer();
 
-            foreach(AnimTrackCustomVector4 vec in values)
+            foreach (AnimTrackCustomVector4 vec in values)
             {
                 v1.Add(vec.X);
                 v2.Add(vec.Y);
@@ -638,8 +638,7 @@ namespace SSBHLib.Tools
             {
                 w.Write(f);
             }
-            else
-            if (o is int i)
+            else if (o is int i)
             {
                 w.Write(i);
             }
@@ -650,8 +649,8 @@ namespace SSBHLib.Tools
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Type"></param>
-        /// <param name="NodeName"></param>
+        /// <param name="type"></param>
+        /// <param name="nodeName"></param>
         /// <returns></returns>
         private AnimNode GetNode(AnimType type, string nodeName)
         {

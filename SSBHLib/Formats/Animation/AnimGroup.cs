@@ -3,7 +3,7 @@
     public enum AnimType
     {
         Transform = 1,
-        Visibilty = 2,
+        Visibility = 2,
         Material = 4,
         Camera = 5
     }

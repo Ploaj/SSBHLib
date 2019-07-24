@@ -16,7 +16,7 @@ namespace SSBHLib
         }
 
         /// <summary>
-        /// Trys to parse an SSBH file from a filepath
+        /// Tries to parse an SSBH file from a filepath
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="hbssFile"></param>
@@ -27,7 +27,7 @@ namespace SSBHLib
         }
         
         /// <summary>
-        /// Trys to parse an SSBH file from a byte array
+        /// Tries to parse an SSBH file from a byte array
         /// </summary>
         /// <param name="fileData"></param>
         /// <param name="hbssFile"></param>

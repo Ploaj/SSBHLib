@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SSBHLib.Formats.Animation
+﻿namespace SSBHLib.Formats.Animation
 {
-    public enum AnimTrackflags
+    public enum AnimTrackFlags
     {
         Transform = 0x0001,
         Texture = 0x0002,

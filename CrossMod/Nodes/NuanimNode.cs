@@ -71,7 +71,7 @@ namespace CrossMod.Nodes
                 {
                     ReadMaterialAnimations(renderAnimation, decoder, animGroup);
                 }
-                else if (animGroup.Type == AnimType.Visibilty)
+                else if (animGroup.Type == AnimType.Visibility)
                 {
                     ReadVisAnimations(renderAnimation, decoder, animGroup);
                 }

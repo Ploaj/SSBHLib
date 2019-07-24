@@ -49,7 +49,7 @@ namespace SSBHLib.Tools
         /// <param name="mask"></param>
         /// <param name="expectedValue"></param>
         /// <returns></returns>
-        private bool CheckFlag(uint flags, uint mask, AnimTrackflags expectedValue)
+        private bool CheckFlag(uint flags, uint mask, AnimTrackFlags expectedValue)
         {
             return (flags & mask) == (uint)expectedValue;
         }
@@ -67,21 +67,21 @@ namespace SSBHLib.Tools
             {
                 parser.Seek(track.DataOffset);
 
-                if (CheckFlag(track.Flags, 0xFF00, AnimTrackflags.Constant))
+                if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.Constant))
                 {
                     output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(track.Flags, 0xFF00, AnimTrackflags.ConstTransform))
+                if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.ConstTransform))
                 {
                     // TODO: investigate more
                     output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(track.Flags, 0xFF00, AnimTrackflags.Direct))
+                if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.Direct))
                 {
                     for(int i = 0; i < track.FrameCount; i++)
                         output.Add(ReadDirect(parser, track.Flags));
                 }
-                if (CheckFlag(track.Flags, 0xFF00, AnimTrackflags.Compressed))
+                if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.Compressed))
                 {
                     output.AddRange(ReadCompressed(parser, track.Flags));
                 }
@@ -103,27 +103,27 @@ namespace SSBHLib.Tools
             uint dataOffset = (uint)reader.BaseStream.Position;
             SsbhAnimCompressedHeader header = reader.ByteToType<SsbhAnimCompressedHeader>();
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Boolean))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Boolean))
             {
                 ReadBooleans(reader, output, dataOffset, header);
             }
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Texture))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Texture))
             {
                 // TODO: What type is this
             }
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Float))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Float))
             {
                 //TODO: What type is this
             }
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.PatternIndex))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.PatternIndex))
             {
                 //TODO: What type is this
             }
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Vector4))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Vector4))
             {
                 ReadVector4(reader, output, dataOffset, header);
             }
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Transform))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Transform))
             {
                 ReadTransform(reader, output, dataOffset, header);
             }
@@ -370,7 +370,7 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         private object ReadDirect(SsbhParser reader, uint flags)
         {
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Transform))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Transform))
             {
                 var transform = new AnimTrackTransform()
                 {
@@ -390,7 +390,7 @@ namespace SSBHLib.Tools
                 return transform;
             }
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Texture))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Texture))
             {
                 return new AnimTrackTexture()
                 {
@@ -402,18 +402,18 @@ namespace SSBHLib.Tools
                 };
             }
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Float))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Float))
                 return reader.ReadSingle();
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.PatternIndex))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.PatternIndex))
             {
                 return reader.ReadInt32();
             }
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Boolean))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Boolean))
                 return reader.ReadByte() == 1;
 
-            if (CheckFlag(flags, 0x00FF, AnimTrackflags.Vector4))
+            if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Vector4))
                 return new AnimTrackCustomVector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
             return null;
