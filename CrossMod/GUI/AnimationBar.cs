@@ -28,7 +28,11 @@ namespace CrossMod.GUI
         }
         private int frameCount;
 
-        public float Frame { get; set; }
+        public float Frame
+        {
+            get => (float)currentFrame_UpDown.Value;
+            set => currentFrame_UpDown.Value = (decimal)value;
+        }
 
         public float MotionRate
         {
@@ -87,7 +91,6 @@ namespace CrossMod.GUI
         public AnimationBar()
         {
             InitializeComponent();
-            //animationTrack.TickFrequency = 1;
             SetupTimer();
             currentFrame_UpDown.Increment = (decimal)MotionRate;
         }
@@ -158,7 +161,6 @@ namespace CrossMod.GUI
 
         private void currentFrame_ValueChanged(object sender, EventArgs e)
         {
-            Frame = (float)currentFrame_UpDown.Value;
             UpdateAnimation();
             UpdateScript();
         }
