@@ -8,22 +8,22 @@ namespace SSBHLib.Tools
     /// <summary>
     /// A tool for extracting rigging information out of a MESH file
     /// </summary>
-    public class SSBHRiggingAccessor
+    public class SsbhRiggingAccessor
     {
-        private readonly MESH meshFile;
+        private readonly Mesh meshFile;
 
         /// <summary>
         /// Creates a rigging accessor from a filepath
         /// </summary>
-        /// <param name="MESHFilePath"></param>
-        public SSBHRiggingAccessor(string MESHFilePath)
+        /// <param name="meshFilePath"></param>
+        public SsbhRiggingAccessor(string meshFilePath)
         {
-            if (SSBH.TryParseSSBHFile(MESHFilePath, out ISSBH_File file))
+            if (Ssbh.TryParseSsbhFile(meshFilePath, out SsbhFile file))
             {
                 if (file == null)
                     throw new FileNotFoundException("File was null");
 
-                if (file is MESH mesh)
+                if (file is Mesh mesh)
                     meshFile = mesh;
                 else
                     throw new FormatException("Given file was not a MESH file");
@@ -34,7 +34,7 @@ namespace SSBHLib.Tools
         /// Creates a rigging accessor from a mesh file
         /// </summary>
         /// <param name="meshFile"></param>
-        public SSBHRiggingAccessor(MESH meshFile)
+        public SsbhRiggingAccessor(Mesh meshFile)
         {
             this.meshFile = meshFile;
         }
@@ -43,12 +43,12 @@ namespace SSBHLib.Tools
         /// Reads all the rigging buffers out of the mesh file
         /// </summary>
         /// <returns>array of tuples containing mesh name, index, and influence array</returns>
-        public Tuple<string, int, SSBHVertexInfluence[]>[] ReadRiggingBuffers()
+        public Tuple<string, int, SsbhVertexInfluence[]>[] ReadRiggingBuffers()
         {
-            List<Tuple<string, int, SSBHVertexInfluence[]>> o = new List<Tuple<string, int, SSBHVertexInfluence[]>>(meshFile.Objects.Length);
+            List<Tuple<string, int, SsbhVertexInfluence[]>> o = new List<Tuple<string, int, SsbhVertexInfluence[]>>(meshFile.Objects.Length);
             foreach (var meshObject in meshFile.Objects)
             {
-                o.Add(new Tuple<string, int, SSBHVertexInfluence[]>(meshObject.Name, (int)meshObject.SubMeshIndex, ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex)));
+                o.Add(new Tuple<string, int, SsbhVertexInfluence[]>(meshObject.Name, (int)meshObject.SubMeshIndex, ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex)));
             }
             return o.ToArray();
         }
@@ -60,32 +60,32 @@ namespace SSBHLib.Tools
         /// <param name="meshName"></param>
         /// <param name="subIndex"></param>
         /// <returns></returns>
-        public SSBHVertexInfluence[] ReadRiggingBuffer(string meshName, int subIndex)
+        public SsbhVertexInfluence[] ReadRiggingBuffer(string meshName, int subIndex)
         {
             MeshRiggingGroup riggingGroup = FindRiggingGroup(meshName, subIndex);
 
             if (riggingGroup == null)
-                return new SSBHVertexInfluence[0];
+                return new SsbhVertexInfluence[0];
 
-            List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
+            List<SsbhVertexInfluence> influences = new List<SsbhVertexInfluence>();
 
             foreach (MeshBoneBuffer boneBuffer in riggingGroup.Buffers)
             {
-                using (BinaryReader R = new BinaryReader(new MemoryStream(boneBuffer.Data)))
+                using (BinaryReader r = new BinaryReader(new MemoryStream(boneBuffer.Data)))
                 {
                     for (int i = 0; i < boneBuffer.Data.Length / 6; i++)
                     {
-                        Influences.Add(new SSBHVertexInfluence()
+                        influences.Add(new SsbhVertexInfluence()
                         {
                             BoneName = boneBuffer.BoneName,
-                            VertexIndex = R.ReadUInt16(),
-                            Weight = R.ReadSingle()
+                            VertexIndex = r.ReadUInt16(),
+                            Weight = r.ReadSingle()
                         });
                     }
                 }
             }
 
-            return Influences.ToArray();
+            return influences.ToArray();
         }
         
         /// <summary>

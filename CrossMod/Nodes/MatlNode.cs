@@ -6,7 +6,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numatb")]
     public class MatlNode : FileNode
     {
-        public MATL Material { get; set; }
+        public Matl Material { get; set; }
         
         public MatlNode(string path) : base(path)
         {
@@ -16,11 +16,11 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
             {
-                if (ssbhFile is MATL)
+                if (ssbhFile is Matl)
                 {
-                    Material = (MATL)ssbhFile;
+                    Material = (Matl)ssbhFile;
                 }
             }
         }

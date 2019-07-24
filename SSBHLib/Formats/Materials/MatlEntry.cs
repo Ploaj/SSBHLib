@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
-    public class MatlEntry : ISSBH_File
+    public class MatlEntry : SsbhFile
     {
         public string MaterialLabel { get; set; }
 

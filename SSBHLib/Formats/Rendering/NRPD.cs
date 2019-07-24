@@ -2,8 +2,8 @@
 {
     //TODO: incomplete documentation
     // Is this even worth looking into?
-    [SSBHFileAttribute("DPRN")]
-    public class NRPD : ISSBH_File
+    [SsbhFile("DPRN")]
+    public class Nrpd : SsbhFile
     {
         public uint Magic { get; set; } = 0x4E525044;
 

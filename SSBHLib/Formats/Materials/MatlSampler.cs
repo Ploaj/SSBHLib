@@ -2,7 +2,7 @@
 {
     public partial class MatlAttribute
     {
-        public class MatlSampler : ISSBH_File
+        public class MatlSampler : SsbhFile
         {
             public int WrapS { get; set; }
             public int WrapT { get; set; }

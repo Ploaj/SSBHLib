@@ -1,12 +1,12 @@
 ﻿namespace SSBHLib.Formats
 {
-    public class SKEL_BoneEntry : ISSBH_File
+    public class SkelBoneEntry : SsbhFile
     {
         public string Name { get; set; }
 
-        public short ID { get; set; }
+        public short Id { get; set; }
 
-        public short ParentID { get; set; }
+        public short ParentId { get; set; }
 
         public int Type { get; set; }
     }

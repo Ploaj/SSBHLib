@@ -9,20 +9,20 @@
         public float Y;
         public float Z;
 
-        public float RX;
-        public float RY;
-        public float RZ;
-        public float RW;
+        public float Rx;
+        public float Ry;
+        public float Rz;
+        public float Rw;
 
-        public float SX;
-        public float SY;
-        public float SZ;
+        public float Sx;
+        public float Sy;
+        public float Sz;
 
         public float CompensateScale;
 
         public override string ToString()
         {
-            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({RX}, {RY}, {RZ}, {RW}), Scale: ({SX}, {SY}, {SZ}), CompensateScale: {CompensateScale})";
+            return $"(Position: ({X}, {Y}, {Z}), Rotation: ({Rx}, {Ry}, {Rz}, {Rw}), Scale: ({Sx}, {Sy}, {Sz}), CompensateScale: {CompensateScale})";
         }
     }
 }

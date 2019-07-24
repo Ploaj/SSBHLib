@@ -11,7 +11,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".nuanmb")]
     public class NuanimNode : FileNode, IExportableAnimationNode
     {
-        private ANIM animation;
+        private Anim animation;
 
         public NuanimNode(string path): base(path)
         {
@@ -21,9 +21,9 @@ namespace CrossMod.Nodes
         
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
             {
-                if (ssbhFile is ANIM anim)
+                if (ssbhFile is Anim anim)
                 {
                     animation = anim;
                 }
@@ -32,7 +32,7 @@ namespace CrossMod.Nodes
 
         public string GetLightInformation()
         {
-            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
 
             var output = new System.Text.StringBuilder();
             foreach (AnimGroup animGroup in animation.Animations)
@@ -45,7 +45,7 @@ namespace CrossMod.Nodes
 
         public void UpdateUniqueLightValues(Dictionary<string, HashSet<string>> valuesByName)
         {
-            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
@@ -63,19 +63,19 @@ namespace CrossMod.Nodes
                 FrameCount = (int)animation.FrameCount
             };
 
-            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
-                if (animGroup.Type == ANIM_TYPE.Material)
+                if (animGroup.Type == AnimType.Material)
                 {
                     ReadMaterialAnimations(renderAnimation, decoder, animGroup);
                 }
-                else if (animGroup.Type == ANIM_TYPE.Visibilty)
+                else if (animGroup.Type == AnimType.Visibilty)
                 {
                     ReadVisAnimations(renderAnimation, decoder, animGroup);
                 }
-                else if (animGroup.Type == ANIM_TYPE.Transform)
+                else if (animGroup.Type == AnimType.Transform)
                 {
                     ReadBoneAnimations(renderAnimation, decoder, animGroup);
                 }
@@ -84,7 +84,7 @@ namespace CrossMod.Nodes
             return renderAnimation;
         }
 
-        private static void ReadMaterialAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void ReadMaterialAnimations(RAnimation renderAnimation, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
@@ -116,7 +116,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void ReadBoneAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void ReadBoneAnimations(RAnimation renderAnimation, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
@@ -146,7 +146,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void ReadVisAnimations(RAnimation renderAnimation, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void ReadVisAnimations(RAnimation renderAnimation, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
@@ -174,7 +174,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void AddLightSetInfo(System.Text.StringBuilder output, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void AddLightSetInfo(System.Text.StringBuilder output, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
@@ -193,7 +193,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void AddLightValues(Dictionary<string, HashSet<string>> valuesByName, SSBHAnimTrackDecoder decoder, AnimGroup animGroup)
+        private static void AddLightValues(Dictionary<string, HashSet<string>> valuesByName, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
         {
             // Store all unique values for each parameter.
             foreach (AnimNode animNode in animGroup.Nodes)
@@ -216,8 +216,8 @@ namespace CrossMod.Nodes
 
         private static Matrix4 GetMatrix(AnimTrackTransform transform)
         {
-            return Matrix4.CreateScale(transform.SX, transform.SY, transform.SZ) *
-                Matrix4.CreateFromQuaternion(new Quaternion(transform.RX, transform.RY, transform.RZ, transform.RW)) *
+            return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) *
+                Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
                 Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
         }
 
@@ -230,12 +230,12 @@ namespace CrossMod.Nodes
                 RotationType = IORotationType.Quaternion
             };
 
-            SSBHAnimTrackDecoder decoder = new SSBHAnimTrackDecoder(animation);
+            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
                 // Bone Animations
-                if (animGroup.Type == ANIM_TYPE.Transform)
+                if (animGroup.Type == AnimType.Transform)
                 {
                     foreach (AnimNode animNode in animGroup.Nodes)
                     {
@@ -250,13 +250,13 @@ namespace CrossMod.Nodes
                                     anim.AddKey(animNode.Name, IOTrackType.POSX, i, t.X);
                                     anim.AddKey(animNode.Name, IOTrackType.POSY, i, t.Y);
                                     anim.AddKey(animNode.Name, IOTrackType.POSZ, i, t.Z);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTX, i, t.RX);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTY, i, t.RY);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTZ, i, t.RZ);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTW, i, t.RW);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAX, i, t.SX);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAY, i, t.SY);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAZ, i, t.SZ);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTX, i, t.Rx);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTY, i, t.Ry);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTZ, i, t.Rz);
+                                    anim.AddKey(animNode.Name, IOTrackType.ROTW, i, t.Rw);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAX, i, t.Sx);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAY, i, t.Sy);
+                                    anim.AddKey(animNode.Name, IOTrackType.SCAZ, i, t.Sz);
                                 }
                             }
                         }

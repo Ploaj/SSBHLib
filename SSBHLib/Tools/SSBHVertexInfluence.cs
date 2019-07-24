@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a rigging influence for a vertex
     /// </summary>
-    public struct SSBHVertexInfluence
+    public struct SsbhVertexInfluence
     {
         /// <summary>
         /// Index of vertex in the MESH vertex array

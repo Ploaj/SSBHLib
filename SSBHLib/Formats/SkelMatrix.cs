@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats
 {
-    public class SKEL_Matrix : ISSBH_File
+    public class SkelMatrix : SsbhFile
     {
         public float M11 { get; set; }
         public float M12 { get; set; }

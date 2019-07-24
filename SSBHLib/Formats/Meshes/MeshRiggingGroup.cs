@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Meshes
 {
-    public class MeshRiggingGroup : ISSBH_File
+    public class MeshRiggingGroup : SsbhFile
     {
         public string Name { get; set; }
         

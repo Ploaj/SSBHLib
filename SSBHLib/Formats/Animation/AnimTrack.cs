@@ -2,7 +2,7 @@
 
 namespace SSBHLib.Formats.Animation
 {
-    public enum ANIM_TRACKFLAGS
+    public enum AnimTrackflags
     {
         Transform = 0x0001,
         Texture = 0x0002,
@@ -17,7 +17,7 @@ namespace SSBHLib.Formats.Animation
         Constant = 0x0500,
     }
 
-    public class AnimTrack : ISSBH_File
+    public class AnimTrack : SsbhFile
     {
         public string Name { get; set; }
 
@@ -25,7 +25,7 @@ namespace SSBHLib.Formats.Animation
 
         public uint FrameCount { get; set; }
 
-        public uint Unk3_0 { get; set; }
+        public uint Unk3 { get; set; }
 
         public uint DataOffset { get; set; }
 

@@ -3,16 +3,16 @@ using System.IO;
 
 namespace SSBHLib
 {
-    public abstract class SSBH
+    public abstract class Ssbh
     {
         /// <summary>
         /// Attempts to save the SSBH supported file to given filepath
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="file"></param>
-        public static void TrySaveSSBHFile(string filePath, ISSBH_File file)
+        public static void TrySaveSsbhFile(string filePath, SsbhFile file)
         {
-            SSBHExporter.WriteSSBHFile(filePath, file, true);
+            SsbhExporter.WriteSsbhFile(filePath, file, true);
         }
 
         /// <summary>
@@ -21,9 +21,9 @@ namespace SSBHLib
         /// <param name="filePath"></param>
         /// <param name="hbssFile"></param>
         /// <returns>true if parsing was successful</returns>
-        public static bool TryParseSSBHFile(string filePath, out ISSBH_File hbssFile)
+        public static bool TryParseSsbhFile(string filePath, out SsbhFile hbssFile)
         {
-            return TryParseSSBHFile(File.ReadAllBytes(filePath), out hbssFile);
+            return TryParseSsbhFile(File.ReadAllBytes(filePath), out hbssFile);
         }
         
         /// <summary>
@@ -32,10 +32,10 @@ namespace SSBHLib
         /// <param name="fileData"></param>
         /// <param name="hbssFile"></param>
         /// <returns>true if parsing was successful</returns>
-        public static bool TryParseSSBHFile(byte[] fileData, out ISSBH_File hbssFile)
+        public static bool TryParseSsbhFile(byte[] fileData, out SsbhFile hbssFile)
         {
             hbssFile = null;
-            using (var parser = new SSBHParser(new MemoryStream(fileData)))
+            using (var parser = new SsbhParser(new MemoryStream(fileData)))
             {
                 return parser.TryParse(out hbssFile);
             }

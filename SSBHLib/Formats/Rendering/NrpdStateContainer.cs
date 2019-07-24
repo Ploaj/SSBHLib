@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    public class NrpdStateContainer : ISSBH_File
+    public class NrpdStateContainer : SsbhFile
     {
         public NrpdSampler StateObject { get; set; } // TODO: not always sampler
 

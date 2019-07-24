@@ -40,18 +40,18 @@ namespace MatLab
             {
                 var result = (MaterialLibrary)serializer.Deserialize(reader);
 
-                MATL newmatl = LibraryToMATL(result);
+                Matl newmatl = LibraryToMATL(result);
 
-                SSBH.TrySaveSSBHFile(outputPath + "_out.numatb", newmatl);
+                Ssbh.TrySaveSsbhFile(outputPath + "_out.numatb", newmatl);
             }
         }
 
         private static void SerializeMatl(string inputPath, string outputPath, XmlSerializer serializer)
         {
             Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}_out.xml...");
-            if (SSBH.TryParseSSBHFile(inputPath, out ISSBH_File file))
+            if (Ssbh.TryParseSsbhFile(inputPath, out SsbhFile file))
             {
-                MATL matlFile = (MATL)file;
+                Matl matlFile = (Matl)file;
 
                 MaterialLibrary library = MATLtoLibrary(matlFile);
 
@@ -73,9 +73,9 @@ namespace MatLab
             return Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
         }
 
-        public static MATL LibraryToMATL(MaterialLibrary library)
+        public static Matl LibraryToMATL(MaterialLibrary library)
         {
-            MATL matl = new MATL
+            Matl matl = new Matl
             {
                 Entries = new MatlEntry[library.material.Length]
             };
@@ -93,7 +93,7 @@ namespace MatLab
                 {
                     entry.Attributes[j] = new MatlAttribute
                     {
-                        ParamID = library.material[i].param[j].name,
+                        ParamId = library.material[i].param[j].name,
 
                         DataObject = library.material[i].param[j].value
                     };
@@ -105,7 +105,7 @@ namespace MatLab
             return matl;
         }
 
-        public static MaterialLibrary MATLtoLibrary(MATL matlFile)
+        public static MaterialLibrary MATLtoLibrary(Matl matlFile)
         {
             MaterialLibrary library = new MaterialLibrary
             {
@@ -125,7 +125,7 @@ namespace MatLab
                 foreach (var attr in entry.Attributes)
                 {
                     MatlXmlAttribute attrib = new MatlXmlAttribute();
-                    attrib.name = attr.ParamID;
+                    attrib.name = attr.ParamId;
                     attrib.value = attr.DataObject;
                     mat.param[attribIndex++] = attrib;
                 }

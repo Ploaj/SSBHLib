@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    public class NrpdSampler : ISSBH_File
+    public class NrpdSampler : SsbhFile
     {
         public string Name { get; set; }
 

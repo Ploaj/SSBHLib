@@ -1,7 +1,7 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    [SSBHFileAttribute("RDHS")]
-    public class SHDR : ISSBH_File
+    [SsbhFile("RDHS")]
+    public class Shdr : SsbhFile
     {
         public uint Magic { get; set; } 
 

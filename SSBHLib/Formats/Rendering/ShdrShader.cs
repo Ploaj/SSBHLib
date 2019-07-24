@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    public class ShdrShader : ISSBH_File
+    public class ShdrShader : SsbhFile
     {
         public string Name { get; set; }
 

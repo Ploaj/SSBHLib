@@ -9,12 +9,12 @@ namespace CrossMod.Rendering
 {
     public class Rnumdl : IRenderableModel
     {
-        public MODL MODL;
+        public Modl MODL;
 
         public Dictionary<string, Texture> sfTextureByName = new Dictionary<string, Texture>();
         public RSkeleton Skeleton;
         public RModel Model;
-        public MATL Material;
+        public Matl Material;
 
         public enum ParamId
         {
@@ -26,7 +26,7 @@ namespace CrossMod.Rendering
             EmiMap2 = 0x6A,
             PrmMap = 0x62,
             SpecularCubeMap = 0x63,
-            DifCubemap = 0x64,
+            DifCubeMap = 0x64,
             BakeLitMap = 0x65,
             DiffuseMap = 0x66,
             DiffuseMap2 = 0x67,
@@ -53,7 +53,7 @@ namespace CrossMod.Rendering
 
         public void UpdateMaterial()
         {
-            foreach (MODL_Entry e in MODL.ModelEntries)
+            foreach (ModlEntry e in MODL.ModelEntries)
             {
                 MatlEntry currentEntry = null;
                 foreach (MatlEntry entry in Material.Entries)
@@ -111,28 +111,28 @@ namespace CrossMod.Rendering
                 if (a.DataObject == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"{a.DataType} {a.ParamID} {a.DataObject}");
+                System.Diagnostics.Debug.WriteLine($"{a.DataType} {a.ParamId} {a.DataObject}");
 
                 switch (a.DataType)
                 {
                     case MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
-                        meshMaterial.floatByParamId[(long)a.ParamID] = 1;
+                        meshMaterial.floatByParamId[(long)a.ParamId] = 1;
                         break;
                     case MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MatlAttribute.MatlVector4)a.DataObject; 
-                        meshMaterial.vec4ByParamId[(long)a.ParamID] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[(long)a.ParamId] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)a.DataObject;
-                        meshMaterial.boolByParamId[(long)a.ParamID] = boolValue;
+                        meshMaterial.boolByParamId[(long)a.ParamId] = boolValue;
                         break;
                     case MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
-                        meshMaterial.floatByParamId[(long)a.ParamID] = floatValue;
+                        meshMaterial.floatByParamId[(long)a.ParamId] = floatValue;
                         break;
                     case MatlEnums.ParamDataType.BlendState:
                         SetBlendState(meshMaterial, a);
@@ -159,7 +159,7 @@ namespace CrossMod.Rendering
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
 
-            switch ((long)a.ParamID)
+            switch ((long)a.ParamId)
             {
                 case (long)ParamId.ColSampler:
                     material.col.TextureWrapS = wrapS;
@@ -219,7 +219,7 @@ namespace CrossMod.Rendering
             // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))
             {
-                switch ((long)a.ParamID)
+                switch ((long)a.ParamId)
                 {
                     case (long)ParamId.ColMap:
                         meshMaterial.HasCol = true;
@@ -238,7 +238,7 @@ namespace CrossMod.Rendering
                     case (long)ParamId.ProjMap:
                         meshMaterial.proj = texture;
                         break;
-                    case (long)ParamId.DifCubemap:
+                    case (long)ParamId.DifCubeMap:
                         meshMaterial.difCube = texture;
                         meshMaterial.HasDifCube = true;
                         break;
@@ -276,7 +276,7 @@ namespace CrossMod.Rendering
             }
 
             // TODO: Cube map reading doesn't work yet, so we need to assign it separately.
-            if ((long)a.ParamID == (long)ParamId.SpecularCubeMap)
+            if ((long)a.ParamId == (long)ParamId.SpecularCubeMap)
                 meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
         }
 

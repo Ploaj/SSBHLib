@@ -4,11 +4,11 @@
     /// Represents a generic vector4 attribute
     /// Not all values will be used for every type
     /// </summary>
-    public struct SSBHVertexAttribute
+    public struct SsbhVertexAttribute
     {
         public float X, Y, Z, W;
 
-        public SSBHVertexAttribute(float x, float y, float z, float w = 0)
+        public SsbhVertexAttribute(float x, float y, float z, float w = 0)
         {
             X = x;
             Y = y;

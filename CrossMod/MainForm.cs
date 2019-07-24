@@ -381,23 +381,23 @@ namespace CrossMod
                 {
                     foreach (var attribute in entry.Attributes)
                     {
-                        string text = $"{attribute.ParamID} {attribute.DataObject} {file.Replace(folderPath, "")}";
+                        string text = $"{attribute.ParamId} {attribute.DataObject} {file.Replace(folderPath, "")}";
 
-                        if (!outputByParamId.ContainsKey(attribute.ParamID))
-                            outputByParamId.Add(attribute.ParamID, new System.Text.StringBuilder());
+                        if (!outputByParamId.ContainsKey(attribute.ParamId))
+                            outputByParamId.Add(attribute.ParamId, new System.Text.StringBuilder());
 
-                        if (!valuesByParamId.ContainsKey(attribute.ParamID))
-                            valuesByParamId.Add(attribute.ParamID, new HashSet<string>());
+                        if (!valuesByParamId.ContainsKey(attribute.ParamId))
+                            valuesByParamId.Add(attribute.ParamId, new HashSet<string>());
 
                         // Don't check duplicates for booleans.
                         if (attribute.DataType == SSBHLib.Formats.Materials.MatlEnums.ParamDataType.Boolean)
                         {
-                            outputByParamId[attribute.ParamID].AppendLine(text);
+                            outputByParamId[attribute.ParamId].AppendLine(text);
                         }
-                        else if (!valuesByParamId.ContainsKey(attribute.ParamID) || !valuesByParamId[attribute.ParamID].Contains(attribute.DataObject.ToString()))
+                        else if (!valuesByParamId.ContainsKey(attribute.ParamId) || !valuesByParamId[attribute.ParamId].Contains(attribute.DataObject.ToString()))
                         {
-                            outputByParamId[attribute.ParamID].AppendLine(text);
-                            valuesByParamId[attribute.ParamID].Add(attribute.DataObject.ToString());
+                            outputByParamId[attribute.ParamId].AppendLine(text);
+                            valuesByParamId[attribute.ParamId].Add(attribute.DataObject.ToString());
                         }
                     }
                 }

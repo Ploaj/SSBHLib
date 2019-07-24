@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    public class NrpdFrameBuffer : ISSBH_File
+    public class NrpdFrameBuffer : SsbhFile
     {
         public string Name { get; set; }
 

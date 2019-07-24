@@ -2,7 +2,7 @@
 {
     public partial class MatlAttribute
     {
-        public class MatlUVTransform : ISSBH_File
+        public class MatlUvTransform : SsbhFile
         {
             public float X { get; set; }
             public float Y { get; set; }

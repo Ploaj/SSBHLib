@@ -2,7 +2,7 @@
 {
     public partial class MatlAttribute
     {
-        public class MatlString : ISSBH_File
+        public class MatlString : SsbhFile
         {
             public string Text { get; set; }
 

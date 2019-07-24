@@ -1,7 +1,7 @@
 ﻿namespace SSBHLib.Formats
 {
-    [SSBHFileAttribute("BPLH")]
-    public class HLPB : ISSBH_File
+    [SsbhFile("BPLH")]
+    public class Hlpb : SsbhFile
     {
         public uint Magic { get; set; }
 
@@ -9,16 +9,16 @@
 
         public ushort VersionMinor { get; set; } // 0x0001
 
-        public HLPB_RotateAim[] AimEntries { get; set; }
+        public HlpbRotateAim[] AimEntries { get; set; }
 
-        public HLPB_RotateInterpolation[] InterpolationEntries { get; set; }
+        public HlpbRotateInterpolation[] InterpolationEntries { get; set; }
 
         public int[] List1 { get; set; }
 
         public int[] List2 { get; set; }
     }
 
-    public class HLPB_RotateAim : ISSBH_File
+    public class HlpbRotateAim : SsbhFile
     {
         public string Name { get; set; }
 
@@ -79,7 +79,7 @@
         public float Unknown22 { get; set; }
     }
 
-    public class HLPB_RotateInterpolation : ISSBH_File
+    public class HlpbRotateInterpolation : SsbhFile
     {
         public string Name { get; set; }
 
@@ -93,9 +93,9 @@
 
         public uint Type { get; set; } // 1 and 2 not sure what for
 
-        public float AoIX { get; set; }
-        public float AoIY { get; set; }
-        public float AoIZ { get; set; }
+        public float AoIx { get; set; }
+        public float AoIy { get; set; }
+        public float AoIz { get; set; }
 
         public float Quat1X { get; set; }
         public float Quat1Y { get; set; }

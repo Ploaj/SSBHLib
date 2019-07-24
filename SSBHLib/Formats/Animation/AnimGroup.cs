@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Animation
 {
-    public enum ANIM_TYPE
+    public enum AnimType
     {
         Transform = 1,
         Visibilty = 2,
@@ -8,14 +8,14 @@
         Camera = 5
     }
 
-    public class AnimGroup : ISSBH_File
+    public class AnimGroup : SsbhFile
     {
-        public ANIM_TYPE Type { get; set; }
+        public AnimType Type { get; set; }
 
         public AnimNode[] Nodes { get; set; }
     }
 
-    public class AnimNode : ISSBH_File
+    public class AnimNode : SsbhFile
     {
         public string Name { get; set; }
 

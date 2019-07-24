@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Rendering
 {
-    public class NrpdRenderPass : ISSBH_File
+    public class NrpdRenderPass : SsbhFile
     {
         public string Name { get; set; }
         public ulong Offset2 { get; set; } // TODO: 

@@ -8,9 +8,9 @@ namespace SSBHLib.Tools
     /// <summary>
     /// Encoder for ANIM track data
     /// </summary>
-    public class SSBHAnimTrackEncoder
+    public class SsbhAnimTrackEncoder
     {
-        public SSBHAnimTrackEncoder(float frameCount)
+        public SsbhAnimTrackEncoder(float frameCount)
         {
             animFile.FrameCount = frameCount;
         }
@@ -18,10 +18,10 @@ namespace SSBHLib.Tools
         private List<AnimGroup> groups = new List<AnimGroup>();
         private Dictionary<AnimTrack, IList<object>> trackToValues = new Dictionary<AnimTrack, IList<object>>();
 
-        private ANIM animFile = new ANIM();
+        private Anim animFile = new Anim();
 
-        private static float DefaultEpsilon = 0.000002f; //0.0000012f;
-        private float Epsilon = DefaultEpsilon;
+        private static float defaultEpsilon = 0.000002f; //0.0000012f;
+        private float epsilon = defaultEpsilon;
 
         public bool CompressVector4 { get; set; } = false;
 
@@ -33,17 +33,17 @@ namespace SSBHLib.Tools
         /// <param name="value"></param>
         public void SetCompressionLevel(float value)
         {
-            Epsilon = value;
+            epsilon = value;
         }
 
         /// <summary>
         /// Adds a track to be encoded
         /// </summary>
         /// <param name="NodeName">target material/texture/mesh name</param>
-        /// <param name="TrackName">Usually "Transform" or "Visibility" matches <see cref="ANIM_TYPE"/></param>
-        /// <param name="Type"><see cref="ANIM_TYPE"/></param>
+        /// <param name="TrackName">Usually "Transform" or "Visibility" matches <see cref="AnimType"/></param>
+        /// <param name="Type"><see cref="AnimType"/></param>
         /// <param name="Values">Supported types AnimTrackTransform, AnimTrackTexture, AnimTrackCustomVector4, bool, float, int</param>
-        public void AddTrack(string nodeName, string trackName, ANIM_TYPE type, IList<object> values)
+        public void AddTrack(string nodeName, string trackName, AnimType type, IList<object> values)
         {
             AnimNode node = GetNode(type, nodeName);
 
@@ -93,10 +93,10 @@ namespace SSBHLib.Tools
 
                             if (values.Count == 1)
                             {
-                                if (animation.Type == ANIM_TYPE.Transform)
-                                    track.Flags |= (int)ANIM_TRACKFLAGS.ConstTransform;
+                                if (animation.Type == AnimType.Transform)
+                                    track.Flags |= (int)AnimTrackflags.ConstTransform;
                                 else
-                                    track.Flags |= (int)ANIM_TRACKFLAGS.Constant;
+                                    track.Flags |= (int)AnimTrackflags.Constant;
 
                                 track.FrameCount = 1;
 
@@ -105,9 +105,9 @@ namespace SSBHLib.Tools
                             else
                             {
                                 if (WriteValues(w, (int)track.Flags, values))
-                                    track.Flags |= (int)ANIM_TRACKFLAGS.Compressed;
+                                    track.Flags |= (int)AnimTrackflags.Compressed;
                                 else
-                                    track.Flags |= (int)ANIM_TRACKFLAGS.Direct;
+                                    track.Flags |= (int)AnimTrackflags.Direct;
                             }
 
                             track.DataSize = (uint)(buffer.Position - track.DataOffset);
@@ -125,7 +125,7 @@ namespace SSBHLib.Tools
             buffer.Close();
             buffer.Dispose();
 
-            SSBH.TrySaveSSBHFile(fname, animFile);
+            Ssbh.TrySaveSsbhFile(fname, animFile);
         }
         
         /// <summary>
@@ -133,7 +133,7 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private AnimGroup GetGroup(ANIM_TYPE type)
+        private AnimGroup GetGroup(AnimType type)
         {
             foreach (var g in groups)
             {
@@ -156,28 +156,28 @@ namespace SSBHLib.Tools
         {
             if (o is AnimTrackTransform transform)
             {
-                return (int)ANIM_TRACKFLAGS.Transform;
+                return (int)AnimTrackflags.Transform;
             }
             else if (o is AnimTrackCustomVector4 vector)
             {
-                return (int)ANIM_TRACKFLAGS.Vector4;
+                return (int)AnimTrackflags.Vector4;
             }
             else if (o is AnimTrackTexture tex)
             {
-                return (int)ANIM_TRACKFLAGS.Texture;
+                return (int)AnimTrackflags.Texture;
             }
             else if (o is bool b)
             {
-                return (int)ANIM_TRACKFLAGS.Boolean;
+                return (int)AnimTrackflags.Boolean;
             }
             else if (o is float f)
             {
-                return (int)ANIM_TRACKFLAGS.Float;
+                return (int)AnimTrackflags.Float;
             }
             else
             if (o is int)
             {
-                return (int)ANIM_TRACKFLAGS.PatternIndex;
+                return (int)AnimTrackflags.PatternIndex;
             }
             return 0;
             /*
@@ -338,7 +338,7 @@ namespace SSBHLib.Tools
             /// <returns></returns>
             public float DecompressedValue(float v)
             {
-                var value = SSBHAnimTrackDecoder.Lerp(Min, Max, 0, 1, GetQuantanizedValue(v) / (float)QuantanizationValue);
+                var value = SsbhAnimTrackDecoder.Lerp(Min, Max, 0, 1, GetQuantanizedValue(v) / (float)QuantanizationValue);
                 if (float.IsNaN(value))
                     return 0;
                 return value;
@@ -414,8 +414,8 @@ namespace SSBHLib.Tools
         private void CompressVectorTrack(BinaryWriter w, IList<object> values)
         {
             // Process
-            short Flags = 0;
-            short BitsPerEntry = 0;
+            short flags = 0;
+            short bitsPerEntry = 0;
 
             Quantanizer v1 = new Quantanizer();
             Quantanizer v2 = new Quantanizer();
@@ -430,22 +430,22 @@ namespace SSBHLib.Tools
                 v4.Add(vec.W);
             }
 
-            BitsPerEntry = (short)(v1.GetBitCount(Epsilon) + v2.GetBitCount(Epsilon) + v3.GetBitCount(Epsilon) + v4.GetBitCount(Epsilon));
+            bitsPerEntry = (short)(v1.GetBitCount(epsilon) + v2.GetBitCount(epsilon) + v3.GetBitCount(epsilon) + v4.GetBitCount(epsilon));
 
             //TODO: this is bugged
             // Write Compressed Header
             w.Write((short)0x04);
-            w.Write(Flags);
+            w.Write(flags);
             w.Write((short)(0x10 + 0x10 * 4)); // default values offset
-            w.Write(BitsPerEntry);
+            w.Write(bitsPerEntry);
             w.Write(0x10 + 0x10 * 4 + sizeof(float) * 4); // compressed data start
             w.Write(values.Count); // frame count
 
             // table
-            w.Write(v1.Min); w.Write(v1.Max); w.Write(v1.GetBitCount(Epsilon));
-            w.Write(v2.Min); w.Write(v2.Max); w.Write(v2.GetBitCount(Epsilon));
-            w.Write(v3.Min); w.Write(v3.Max); w.Write(v3.GetBitCount(Epsilon));
-            w.Write(v4.Min); w.Write(v4.Max); w.Write(v4.GetBitCount(Epsilon));
+            w.Write(v1.Min); w.Write(v1.Max); w.Write(v1.GetBitCount(epsilon));
+            w.Write(v2.Min); w.Write(v2.Max); w.Write(v2.GetBitCount(epsilon));
+            w.Write(v3.Min); w.Write(v3.Max); w.Write(v3.GetBitCount(epsilon));
+            w.Write(v4.Min); w.Write(v4.Max); w.Write(v4.GetBitCount(epsilon));
 
             // default values
             w.Write(((AnimTrackCustomVector4)values[0]).X);
@@ -457,10 +457,10 @@ namespace SSBHLib.Tools
             BitWriter bitWriter = new BitWriter();
             foreach (AnimTrackCustomVector4 vec in values)
             {
-                bitWriter.WriteBits(v1.GetQuantanizedValue(vec.X), v1.GetBitCount(Epsilon));
-                bitWriter.WriteBits(v2.GetQuantanizedValue(vec.Y), v2.GetBitCount(Epsilon));
-                bitWriter.WriteBits(v3.GetQuantanizedValue(vec.Z), v3.GetBitCount(Epsilon));
-                bitWriter.WriteBits(v4.GetQuantanizedValue(vec.W), v4.GetBitCount(Epsilon));
+                bitWriter.WriteBits(v1.GetQuantanizedValue(vec.X), v1.GetBitCount(epsilon));
+                bitWriter.WriteBits(v2.GetQuantanizedValue(vec.Y), v2.GetBitCount(epsilon));
+                bitWriter.WriteBits(v3.GetQuantanizedValue(vec.Z), v3.GetBitCount(epsilon));
+                bitWriter.WriteBits(v4.GetQuantanizedValue(vec.W), v4.GetBitCount(epsilon));
             }
             w.Write(bitWriter.GetBytes());
         }
@@ -472,84 +472,84 @@ namespace SSBHLib.Tools
         /// <param name="values"></param>
         private void CompressTransformTracks(BinaryWriter w, IList<object> values)
         {
-            Quantanizer SX = new Quantanizer();
-            Quantanizer SY = new Quantanizer();
-            Quantanizer SZ = new Quantanizer();
-            Quantanizer RX = new Quantanizer();
-            Quantanizer RY = new Quantanizer();
-            Quantanizer RZ = new Quantanizer();
-            Quantanizer X = new Quantanizer();
-            Quantanizer Y = new Quantanizer();
-            Quantanizer Z = new Quantanizer();
+            Quantanizer sx = new Quantanizer();
+            Quantanizer sy = new Quantanizer();
+            Quantanizer sz = new Quantanizer();
+            Quantanizer rx = new Quantanizer();
+            Quantanizer ry = new Quantanizer();
+            Quantanizer rz = new Quantanizer();
+            Quantanizer x = new Quantanizer();
+            Quantanizer y = new Quantanizer();
+            Quantanizer z = new Quantanizer();
 
             // pre-process
             foreach (AnimTrackTransform transform in values)
             {
-                SX.Add(transform.SX);
-                SY.Add(transform.SY);
-                SZ.Add(transform.SZ);
-                RX.Add(transform.RX);
-                RY.Add(transform.RY);
-                RZ.Add(transform.RZ);
-                X.Add(transform.X);
-                Y.Add(transform.Y);
-                Z.Add(transform.Z);
+                sx.Add(transform.Sx);
+                sy.Add(transform.Sy);
+                sz.Add(transform.Sz);
+                rx.Add(transform.Rx);
+                ry.Add(transform.Ry);
+                rz.Add(transform.Rz);
+                x.Add(transform.X);
+                y.Add(transform.Y);
+                z.Add(transform.Z);
             }
 
-            short Flags = 0;
-            ushort BitsPerEntry = 0;
+            short flags = 0;
+            ushort bitsPerEntry = 0;
 
-            bool hasScale = (!SX.Constant || !SY.Constant || !SZ.Constant);
-            bool hasRotation = (!RX.Constant || !RY.Constant || !RZ.Constant);
-            bool hasPosition = (!X.Constant || !Y.Constant || !Z.Constant);
+            bool hasScale = (!sx.Constant || !sy.Constant || !sz.Constant);
+            bool hasRotation = (!rx.Constant || !ry.Constant || !rz.Constant);
+            bool hasPosition = (!x.Constant || !y.Constant || !z.Constant);
 
 
             if (!hasScale)
-                Flags |= 0x02;
+                flags |= 0x02;
             else
             {
-                BitsPerEntry += (ushort)((SX.Constant ? 0 : SX.GetBitCount(Epsilon)) + (SY.Constant ? 0 : SY.GetBitCount(Epsilon)) + (SZ.Constant ? 0 : SZ.GetBitCount(Epsilon)));
-                Flags |= 0x01;
+                bitsPerEntry += (ushort)((sx.Constant ? 0 : sx.GetBitCount(epsilon)) + (sy.Constant ? 0 : sy.GetBitCount(epsilon)) + (sz.Constant ? 0 : sz.GetBitCount(epsilon)));
+                flags |= 0x01;
             }
             if (hasRotation)
             {
-                BitsPerEntry += (ushort)((RX.Constant ? 0 : RX.GetBitCount(Epsilon)) + (RY.Constant ? 0 : RY.GetBitCount(Epsilon)) + (RZ.Constant ? 0 : RZ.GetBitCount(Epsilon)) + 1); // the 1 is for extra w rotation bit
-                Flags |= 0x04;
+                bitsPerEntry += (ushort)((rx.Constant ? 0 : rx.GetBitCount(epsilon)) + (ry.Constant ? 0 : ry.GetBitCount(epsilon)) + (rz.Constant ? 0 : rz.GetBitCount(epsilon)) + 1); // the 1 is for extra w rotation bit
+                flags |= 0x04;
             }
             if (hasPosition)
             {
-                BitsPerEntry += (ushort)((X.Constant ? 0 : X.GetBitCount(Epsilon)) + (Y.Constant ? 0 : Y.GetBitCount(Epsilon)) + (Z.Constant ? 0 : Z.GetBitCount(Epsilon)));
-                Flags |= 0x08;
+                bitsPerEntry += (ushort)((x.Constant ? 0 : x.GetBitCount(epsilon)) + (y.Constant ? 0 : y.GetBitCount(epsilon)) + (z.Constant ? 0 : z.GetBitCount(epsilon)));
+                flags |= 0x08;
             }
 
             // Compressed Header
             w.Write((short)0x04);
-            w.Write(Flags);
+            w.Write(flags);
             w.Write((short)(0x10 + 0x10 * 9)); // default values offset
-            w.Write(BitsPerEntry);
+            w.Write(bitsPerEntry);
             w.Write(0x10 + 0x10 * 9 + sizeof(float) * 11); // compressed data start
             w.Write(values.Count); // frame count
 
             // write chunks
-            w.Write(SX.Min); w.Write(SX.Max); w.Write((long)SX.GetBitCount(Epsilon));
-            w.Write(SY.Min); w.Write(SY.Max); w.Write((long)SY.GetBitCount(Epsilon));
-            w.Write(SZ.Min); w.Write(SZ.Max); w.Write((long)SZ.GetBitCount(Epsilon));
-            w.Write(RX.Min); w.Write(RX.Max); w.Write((long)RX.GetBitCount(Epsilon));
-            w.Write(RY.Min); w.Write(RY.Max); w.Write((long)RY.GetBitCount(Epsilon));
-            w.Write(RZ.Min); w.Write(RZ.Max); w.Write((long)RZ.GetBitCount(Epsilon));
-            w.Write(X.Min); w.Write(X.Max); w.Write((long)X.GetBitCount(Epsilon));
-            w.Write(Y.Min); w.Write(Y.Max); w.Write((long)Y.GetBitCount(Epsilon));
-            w.Write(Z.Min); w.Write(Z.Max); w.Write((long)Z.GetBitCount(Epsilon));
+            w.Write(sx.Min); w.Write(sx.Max); w.Write((long)sx.GetBitCount(epsilon));
+            w.Write(sy.Min); w.Write(sy.Max); w.Write((long)sy.GetBitCount(epsilon));
+            w.Write(sz.Min); w.Write(sz.Max); w.Write((long)sz.GetBitCount(epsilon));
+            w.Write(rx.Min); w.Write(rx.Max); w.Write((long)rx.GetBitCount(epsilon));
+            w.Write(ry.Min); w.Write(ry.Max); w.Write((long)ry.GetBitCount(epsilon));
+            w.Write(rz.Min); w.Write(rz.Max); w.Write((long)rz.GetBitCount(epsilon));
+            w.Write(x.Min); w.Write(x.Max); w.Write((long)x.GetBitCount(epsilon));
+            w.Write(y.Min); w.Write(y.Max); w.Write((long)y.GetBitCount(epsilon));
+            w.Write(z.Min); w.Write(z.Max); w.Write((long)z.GetBitCount(epsilon));
 
             // write default values
             AnimTrackTransform defaultValue = (AnimTrackTransform)values[0];
-            w.Write(defaultValue.SX);
-            w.Write(defaultValue.SY);
-            w.Write(defaultValue.SZ);
-            w.Write(defaultValue.RX);
-            w.Write(defaultValue.RY);
-            w.Write(defaultValue.RZ);
-            w.Write(defaultValue.RW);
+            w.Write(defaultValue.Sx);
+            w.Write(defaultValue.Sy);
+            w.Write(defaultValue.Sz);
+            w.Write(defaultValue.Rx);
+            w.Write(defaultValue.Ry);
+            w.Write(defaultValue.Rz);
+            w.Write(defaultValue.Rw);
             w.Write(defaultValue.X);
             w.Write(defaultValue.Y);
             w.Write(defaultValue.Z);
@@ -562,32 +562,32 @@ namespace SSBHLib.Tools
             {
                 if (hasScale)
                 {
-                    writer.WriteBits(SX.GetQuantanizedValue(transform.SX), SX.GetBitCount(Epsilon));
-                    writer.WriteBits(SY.GetQuantanizedValue(transform.SY), SY.GetBitCount(Epsilon));
-                    writer.WriteBits(SZ.GetQuantanizedValue(transform.SZ), SZ.GetBitCount(Epsilon));
+                    writer.WriteBits(sx.GetQuantanizedValue(transform.Sx), sx.GetBitCount(epsilon));
+                    writer.WriteBits(sy.GetQuantanizedValue(transform.Sy), sy.GetBitCount(epsilon));
+                    writer.WriteBits(sz.GetQuantanizedValue(transform.Sz), sz.GetBitCount(epsilon));
                 }
                 if (hasRotation)
                 {
-                    writer.WriteBits(RX.GetQuantanizedValue(transform.RX), RX.GetBitCount(Epsilon));
-                    writer.WriteBits(RY.GetQuantanizedValue(transform.RY), RY.GetBitCount(Epsilon));
-                    writer.WriteBits(RZ.GetQuantanizedValue(transform.RZ), RZ.GetBitCount(Epsilon));
+                    writer.WriteBits(rx.GetQuantanizedValue(transform.Rx), rx.GetBitCount(epsilon));
+                    writer.WriteBits(ry.GetQuantanizedValue(transform.Ry), ry.GetBitCount(epsilon));
+                    writer.WriteBits(rz.GetQuantanizedValue(transform.Rz), rz.GetBitCount(epsilon));
                 }
                 if (hasPosition)
                 {
-                    writer.WriteBits(X.GetQuantanizedValue(transform.X), X.GetBitCount(Epsilon));
-                    writer.WriteBits(Y.GetQuantanizedValue(transform.Y), Y.GetBitCount(Epsilon));
-                    writer.WriteBits(Z.GetQuantanizedValue(transform.Z), Z.GetBitCount(Epsilon));
+                    writer.WriteBits(x.GetQuantanizedValue(transform.X), x.GetBitCount(epsilon));
+                    writer.WriteBits(y.GetQuantanizedValue(transform.Y), y.GetBitCount(epsilon));
+                    writer.WriteBits(z.GetQuantanizedValue(transform.Z), z.GetBitCount(epsilon));
                 }
                 if (hasRotation)
                 {
                     // flip w bit
 
                     float calculateW = (float)Math.Sqrt(Math.Abs(1 - (
-                        RX.DecompressedValue(transform.RX) * RX.DecompressedValue(transform.RX) +
-                        RY.DecompressedValue(transform.RY) * RY.DecompressedValue(transform.RY) +
-                        RZ.DecompressedValue(transform.RZ) * RZ.DecompressedValue(transform.RZ))));
+                        rx.DecompressedValue(transform.Rx) * rx.DecompressedValue(transform.Rx) +
+                        ry.DecompressedValue(transform.Ry) * ry.DecompressedValue(transform.Ry) +
+                        rz.DecompressedValue(transform.Rz) * rz.DecompressedValue(transform.Rz))));
 
-                    writer.WriteBits(Math.Sign((int)transform.RW) != Math.Sign((int)calculateW) ? 1 : 0, 1);
+                    writer.WriteBits(Math.Sign((int)transform.Rw) != Math.Sign((int)calculateW) ? 1 : 0, 1);
                 }
             }
 
@@ -603,13 +603,13 @@ namespace SSBHLib.Tools
         {
             if (o is AnimTrackTransform transform)
             {
-                w.Write(transform.SX);
-                w.Write(transform.SY);
-                w.Write(transform.SZ);
-                w.Write(transform.RX);
-                w.Write(transform.RY);
-                w.Write(transform.RZ);
-                w.Write(transform.RW);
+                w.Write(transform.Sx);
+                w.Write(transform.Sy);
+                w.Write(transform.Sz);
+                w.Write(transform.Rx);
+                w.Write(transform.Ry);
+                w.Write(transform.Rz);
+                w.Write(transform.Rw);
                 w.Write(transform.X);
                 w.Write(transform.Y);
                 w.Write(transform.Z);
@@ -653,7 +653,7 @@ namespace SSBHLib.Tools
         /// <param name="Type"></param>
         /// <param name="NodeName"></param>
         /// <returns></returns>
-        private AnimNode GetNode(ANIM_TYPE type, string nodeName)
+        private AnimNode GetNode(AnimType type, string nodeName)
         {
             AnimGroup group = GetGroup(type);
 

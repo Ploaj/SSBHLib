@@ -1,7 +1,7 @@
 ﻿namespace SSBHLib.Formats
 {
-    [SSBHFileAttribute("LEKS")]
-    public class SKEL : ISSBH_File
+    [SsbhFile("LEKS")]
+    public class Skel : SsbhFile
     {
         public uint Magic { get; set; }  = 0x534B454C;
 
@@ -9,14 +9,14 @@
 
         public ushort MinorVersion { get; set; } = 0;
 
-        public SKEL_BoneEntry[] BoneEntries { get; set; }
+        public SkelBoneEntry[] BoneEntries { get; set; }
 
-        public SKEL_Matrix[] WorldTransform { get; set; }
+        public SkelMatrix[] WorldTransform { get; set; }
 
-        public SKEL_Matrix[] InvWorldTransform { get; set; }
+        public SkelMatrix[] InvWorldTransform { get; set; }
 
-        public SKEL_Matrix[] Transform { get; set; }
+        public SkelMatrix[] Transform { get; set; }
 
-        public SKEL_Matrix[] InvTransform { get; set; }
+        public SkelMatrix[] InvTransform { get; set; }
     }
 }

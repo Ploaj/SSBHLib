@@ -5,26 +5,26 @@ using static SSBHLib.Formats.Materials.MatlEnums;
 
 namespace SSBHLib.Formats.Materials
 {
-    public partial class MatlAttribute : ISSBH_File
+    public partial class MatlAttribute : SsbhFile
     {
-        public ParamId ParamID { get; set; }
+        public ParamId ParamId { get; set; }
 
-        public SSBHOffset OffsetToData { get; set; }
+        public SsbhOffset OffsetToData { get; set; }
 
         public ParamDataType DataType { get; set; }
 
         // not part of the entry
         [ParseTag(Ignore = true)]
         public object DataObject {
-            get => _dataObject;
+            get => dataObject;
             set
             {
-                _dataObject = value;
-                DataType = typeToParamType[_dataObject.GetType()];
+                dataObject = value;
+                DataType = typeToParamType[dataObject.GetType()];
             }
         }
         [ParseTag(Ignore = true)]
-        private object _dataObject;
+        private object dataObject;
 
         [ParseTag(Ignore = true)]
         private static Dictionary<Type, MatlEnums.ParamDataType> typeToParamType = new Dictionary<Type, MatlEnums.ParamDataType>()
@@ -35,11 +35,11 @@ namespace SSBHLib.Formats.Materials
             { typeof(MatlRasterizerState), ParamDataType.RasterizerState},
             { typeof(MatlSampler), ParamDataType.Sampler},
             { typeof(MatlString), ParamDataType.String},
-            { typeof(MatlUVTransform), ParamDataType.UvTransform},
+            { typeof(MatlUvTransform), ParamDataType.UvTransform},
             { typeof(MatlVector4), ParamDataType.Vector4},
         };
 
-        public override void PostProcess(SSBHParser parser)
+        public override void PostProcess(SsbhParser parser)
         {
             parser.Seek(OffsetToData);
 
@@ -54,7 +54,7 @@ namespace SSBHLib.Formats.Materials
             else if (DataType == MatlEnums.ParamDataType.Sampler)
                 DataObject = parser.Parse<MatlSampler>();
             else if (DataType == MatlEnums.ParamDataType.UvTransform)
-                DataObject = parser.Parse<MatlUVTransform>();
+                DataObject = parser.Parse<MatlUvTransform>();
             else if (DataType == MatlEnums.ParamDataType.BlendState)
                 DataObject = parser.Parse<MatlBlendState>();
             else if (DataType == MatlEnums.ParamDataType.RasterizerState)

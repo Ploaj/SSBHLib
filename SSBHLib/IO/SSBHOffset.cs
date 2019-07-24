@@ -1,20 +1,20 @@
 ﻿namespace SSBHLib.IO
 {
-    public struct SSBHOffset
+    public struct SsbhOffset
     {
         public long Value { get ; }
 
-        public SSBHOffset(long value)
+        public SsbhOffset(long value)
         {
             Value = value;
         }
 
-        public static implicit operator SSBHOffset(long s)
+        public static implicit operator SsbhOffset(long s)
         {
-            return new SSBHOffset(s);
+            return new SsbhOffset(s);
         }
 
-        public static implicit operator long(SSBHOffset p)
+        public static implicit operator long(SsbhOffset p)
         {
             return p.Value;
         }

@@ -61,7 +61,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numshb")]
     public class NumsbhNode : FileNode
     {
-        public MESH mesh;
+        public Mesh mesh;
         public Adjb ExtendedMesh;
 
         public NumsbhNode(string path) : base(path)
@@ -80,11 +80,11 @@ namespace CrossMod.Nodes
                 ExtendedMesh.Read(adjb);
             }
 
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
             {
-                if (ssbhFile is MESH)
+                if (ssbhFile is Mesh)
                 {
-                    mesh = (MESH)ssbhFile;
+                    mesh = (Mesh)ssbhFile;
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace CrossMod.Nodes
 
         private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject, RMesh rMesh)
         {
-            var vertexAccessor = new SSBHVertexAccessor(mesh);
+            var vertexAccessor = new SsbhVertexAccessor(mesh);
             {
                 var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
 
@@ -136,7 +136,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        private List<CustomVertex> CreateVertices(RSkeleton skeleton, MeshObject meshObject, SSBHVertexAccessor vertexAccessor, uint[] vertexIndices)
+        private List<CustomVertex> CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor, uint[] vertexIndices)
         {
             // Read attribute values.
             var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
@@ -157,7 +157,7 @@ namespace CrossMod.Nodes
             }
             SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(GetVectors3d(positions), GetVectors3d(normals), GetVectors2d(map1Values), intIndices, out Vector3[] newTangents, out Vector3[] bitangents);
 
-            var riggingAccessor = new SSBHRiggingAccessor(mesh);
+            var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
             var indexByBoneName = new Dictionary<string, int>();
 
@@ -213,7 +213,7 @@ namespace CrossMod.Nodes
             return vertices;
         }
 
-        private static List<Vector3> GetVectors3d(SSBHVertexAttribute[] values)
+        private static List<Vector3> GetVectors3d(SsbhVertexAttribute[] values)
         {
             var vectors = new List<Vector3>();
             foreach (var value in values)
@@ -223,7 +223,7 @@ namespace CrossMod.Nodes
             return vectors;
         }
 
-        private static List<Vector2> GetVectors2d(SSBHVertexAttribute[] values)
+        private static List<Vector2> GetVectors2d(SsbhVertexAttribute[] values)
         {
             var vectors = new List<Vector2>();
             foreach (var value in values)
@@ -233,11 +233,11 @@ namespace CrossMod.Nodes
             return vectors;
         }
 
-        private static void GetRiggingData(SSBHVertexAttribute[] positions, SSBHVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
+        private static void GetRiggingData(SsbhVertexAttribute[] positions, SsbhVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
         {
             boneIndices = new IVec4[positions.Length];
             boneWeights = new Vector4[positions.Length];
-            foreach (SSBHVertexInfluence influence in influences)
+            foreach (SsbhVertexInfluence influence in influences)
             {
                 // Some influences refer to bones that don't exist in the skeleton.
                 // _eff bones?
@@ -272,12 +272,12 @@ namespace CrossMod.Nodes
             System.Diagnostics.Debug.WriteLine(meshObject.Name);
             foreach (var attribute in meshObject.Attributes)
             {
-                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4_0} Unk5: {attribute.Unk5_0}");
+                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4} Unk5: {attribute.Unk5}");
             }
             System.Diagnostics.Debug.WriteLine("");
         }
 
-        private static Vector4 GetVector4(SSBHVertexAttribute values)
+        private static Vector4 GetVector4(SsbhVertexAttribute values)
         {
             return new Vector4(values.X, values.Y, values.Z, values.W);
         }

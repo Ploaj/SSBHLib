@@ -7,7 +7,7 @@ using SSBHLib.Formats.Materials;
 
 namespace SSBHLib.IO
 {
-    public class SSBHExporter : BinaryWriter
+    public class SsbhExporter : BinaryWriter
     {
         private class MaterialEntry
         {
@@ -25,14 +25,14 @@ namespace SSBHLib.IO
         private LinkedList<object> objectQueue = new LinkedList<object>();
         private Dictionary<uint, object> objectOffset = new Dictionary<uint, object>();
 
-        public SSBHExporter(Stream stream) : base(stream)
+        public SsbhExporter(Stream stream) : base(stream)
         {
 
         }
 
-        public static void WriteSSBHFile(string fileName, ISSBH_File file, bool writeHeader = true)
+        public static void WriteSsbhFile(string fileName, SsbhFile file, bool writeHeader = true)
         {
-            using (SSBHExporter exporter = new SSBHExporter(new FileStream(fileName, FileMode.Create)))
+            using (SsbhExporter exporter = new SsbhExporter(new FileStream(fileName, FileMode.Create)))
             {
                 // write ssbh header
                 if (writeHeader)
@@ -43,12 +43,12 @@ namespace SSBHLib.IO
                 }
 
                 // write file contents
-                exporter.AddSSBHFile(file);
+                exporter.AddSsbhFile(file);
                 exporter.Pad(4);
             }
         }
 
-        private bool Skip(ISSBH_File file, PropertyInfo prop)
+        private bool Skip(SsbhFile file, PropertyInfo prop)
         {
             object[] attrs = prop.GetCustomAttributes(true);
             bool skip = false;
@@ -63,7 +63,7 @@ namespace SSBHLib.IO
             return skip;
         }
 
-        private void AddSSBHFile(ISSBH_File file)
+        private void AddSsbhFile(SsbhFile file)
         {
             objectQueue.AddFirst(file);
             while (objectQueue.Count > 0)
@@ -86,19 +86,19 @@ namespace SSBHLib.IO
                     long key = objectOffset.FirstOrDefault(x => x.Value == obj).Key;
                     if (key != 0)
                     {
-                        long Temp = Position;
+                        long temp = Position;
                         BaseStream.Position = key;
-                        WriteProperty(Temp - key);
-                        BaseStream.Position = Temp;
+                        WriteProperty(temp - key);
+                        BaseStream.Position = temp;
                         objectOffset.Remove((uint)key);
                     }
                 }
 
-                if (obj is Array Array)
+                if (obj is Array array)
                 {
-                    if (Array.GetType() == typeof(byte[]))
+                    if (array.GetType() == typeof(byte[]))
                     {
-                        foreach (byte o in Array)
+                        foreach (byte o in array)
                         {
                             Write(o);
                         }
@@ -107,7 +107,7 @@ namespace SSBHLib.IO
                     {
                         LinkedList<object> objectQueueTemp = objectQueue;
                         objectQueue = new LinkedList<object>();
-                        foreach (object o in Array)
+                        foreach (object o in array)
                         {
                             WriteProperty(o);
                         }
@@ -122,7 +122,7 @@ namespace SSBHLib.IO
             }
         }
 
-        private void WriteSSBHFile(ISSBH_File file)
+        private void WriteSsbhFile(SsbhFile file)
         {
             foreach (var prop in file.GetType().GetProperties())
             {
@@ -164,7 +164,7 @@ namespace SSBHLib.IO
                         }
                     }
                 }
-                else if (prop.PropertyType == typeof(SSBHOffset)) 
+                else if (prop.PropertyType == typeof(SsbhOffset)) 
                 {
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
@@ -202,9 +202,9 @@ namespace SSBHLib.IO
                 Write((byte)0);
                 Pad(0x4);
             }
-            else if (value is ISSBH_File v)
+            else if (value is SsbhFile v)
             {
-                WriteSSBHFile(v);
+                WriteSsbhFile(v);
                 Pad(0x8);
             }
             else if (t.IsEnum)

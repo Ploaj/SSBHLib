@@ -2,7 +2,7 @@
 {
     public partial class MatlAttribute
     {
-        public class MatlVector4 : ISSBH_File
+        public class MatlVector4 : SsbhFile
         {
             public float X { get; set; }
             public float Y { get; set; }

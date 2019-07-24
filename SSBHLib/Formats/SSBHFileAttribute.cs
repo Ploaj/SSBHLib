@@ -2,11 +2,11 @@
 
 namespace SSBHLib.Formats
 {
-    public class SSBHFileAttribute : Attribute
+    public class SsbhFileAttribute : Attribute
     {
         public string Magic { get; set; }
 
-        public SSBHFileAttribute(string magic)
+        public SsbhFileAttribute(string magic)
         {
             Magic = magic;
         }

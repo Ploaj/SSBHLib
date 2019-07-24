@@ -7,7 +7,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".nuhlpb")]
     public class NuhlpbNode : FileNode
     {
-        public HLPB helperBones;
+        public Hlpb helperBones;
 
         public NuhlpbNode(string path): base(path)
         {
@@ -17,11 +17,11 @@ namespace CrossMod.Nodes
         
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
             {
-                if (ssbhFile is HLPB)
+                if (ssbhFile is Hlpb)
                 {
-                    helperBones = (HLPB)ssbhFile;
+                    helperBones = (Hlpb)ssbhFile;
                 }
             }
         }
@@ -29,7 +29,7 @@ namespace CrossMod.Nodes
         public void AddToRenderSkeleton(RSkeleton Skeleton)
         {
             Skeleton.HelperBone.Clear();
-            foreach (HLPB_RotateInterpolation entry in helperBones.InterpolationEntries)
+            foreach (HlpbRotateInterpolation entry in helperBones.InterpolationEntries)
             {
                 Skeleton.HelperBone.Add(new RHelperBone()
                 {
@@ -40,7 +40,7 @@ namespace CrossMod.Nodes
                     MaxRange = new OpenTK.Vector3(entry.MaxRangeX, entry.MaxRangeY, entry.MaxRangeZ),
                     WatchRotation = new OpenTK.Quaternion(entry.Quat1X, entry.Quat1Y, entry.Quat1Z, entry.Quat1W),
                     HelperTargetRotation = new OpenTK.Quaternion(entry.Quat2X, entry.Quat2Y, entry.Quat2Z, entry.Quat2W),
-                    AOI = new OpenTK.Vector3(entry.AoIX, entry.AoIY, entry.AoIZ)
+                    AOI = new OpenTK.Vector3(entry.AoIx, entry.AoIy, entry.AoIz)
                 });
             }
         }

@@ -73,12 +73,12 @@ namespace HBSSTester
 
             w.Close();*/
 
-            ISSBH_File File;
-            if (SSBH.TryParseSSBHFile(Directory.GetCurrentDirectory() + "//" + args[0], out File))
+            SsbhFile File;
+            if (Ssbh.TryParseSsbhFile(Directory.GetCurrentDirectory() + "//" + args[0], out File))
             {
-                if (File is ANIM anim)
+                if (File is Anim anim)
                 {
-                    var decoder = new SSBHAnimTrackDecoder(anim);
+                    var decoder = new SsbhAnimTrackDecoder(anim);
 
                     XmlWriterSettings settings = new XmlWriterSettings
                     {

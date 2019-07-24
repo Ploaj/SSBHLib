@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace SSBHLib.IO
 {
-    public class SSBHParser : BinaryReader
+    public class SsbhParser : BinaryReader
     {
         public long Position => BaseStream.Position;
         public long FileSize => BaseStream.Length;
@@ -20,44 +20,44 @@ namespace SSBHLib.IO
         private int bitPosition;
 
         private static readonly List<Type> issbhTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies() from assemblyType in domainAssembly.GetTypes()
-                                                            where typeof(ISSBH_File).IsAssignableFrom(assemblyType) select assemblyType).ToList();
+                                                            where typeof(SsbhFile).IsAssignableFrom(assemblyType) select assemblyType).ToList();
 
         private static readonly Dictionary<Type, MethodInfo> genericParseMethodInfoByType = new Dictionary<Type, MethodInfo>();
 
         // Avoid reflection invoke overhead for known file magics.
-        private static readonly Dictionary<string, Func<SSBHParser, ISSBH_File>> parseMethodByMagic = new Dictionary<string, Func<SSBHParser, ISSBH_File>>()
+        private static readonly Dictionary<string, Func<SsbhParser, SsbhFile>> parseMethodByMagic = new Dictionary<string, Func<SsbhParser, SsbhFile>>()
         {
-            { "BPLH", (parser) => parser.Parse<HLPB>() },
-            { "DPRN", (parser) => parser.Parse<NRPD>() },
-            { "RDHS", (parser) => parser.Parse<SHDR>() },
-            { "LEKS", (parser) => parser.Parse<SKEL>() },
-            { "LDOM", (parser) => parser.Parse<MODL>() },
-            { "HSEM", (parser) => parser.Parse<MESH>() },
-            { "LTAM", (parser) => parser.Parse<MATL>() },
-            { "MINA", (parser) => parser.Parse<ANIM>() }
+            { "BPLH", (parser) => parser.Parse<Hlpb>() },
+            { "DPRN", (parser) => parser.Parse<Nrpd>() },
+            { "RDHS", (parser) => parser.Parse<Shdr>() },
+            { "LEKS", (parser) => parser.Parse<Skel>() },
+            { "LDOM", (parser) => parser.Parse<Modl>() },
+            { "HSEM", (parser) => parser.Parse<Mesh>() },
+            { "LTAM", (parser) => parser.Parse<Matl>() },
+            { "MINA", (parser) => parser.Parse<Anim>() }
         };
 
         // Avoid reflection invoke overhead for known types.
-        private static readonly Dictionary<Type, Func<SSBHParser, ISSBH_File>> parseMethodByType = new Dictionary<Type, Func<SSBHParser, ISSBH_File>>()
+        private static readonly Dictionary<Type, Func<SsbhParser, SsbhFile>> parseMethodByType = new Dictionary<Type, Func<SsbhParser, SsbhFile>>()
         {
             { typeof(AnimGroup), (parser) => parser.Parse<AnimGroup>() },
             { typeof(AnimNode), (parser) => parser.Parse<AnimNode>() },
             { typeof(AnimTrack), (parser) => parser.Parse<AnimTrack>() },
             { typeof(MatlEntry), (parser) => parser.Parse<MatlEntry>() },
             { typeof(MatlAttribute), (parser) => parser.Parse<MatlAttribute>() },
-            { typeof(MODL_MaterialName), (parser) => parser.Parse<MODL_MaterialName>() },
-            { typeof(MODL_Entry), (parser) => parser.Parse<MODL_Entry>() },
+            { typeof(ModlMaterialName), (parser) => parser.Parse<ModlMaterialName>() },
+            { typeof(ModlEntry), (parser) => parser.Parse<ModlEntry>() },
             { typeof(MeshObject), (parser) => parser.Parse<MeshObject>() },
             { typeof(MeshAttribute), (parser) => parser.Parse<MeshAttribute>() },
             { typeof(MeshAttributeString), (parser) => parser.Parse<MeshAttributeString>() },
             { typeof(MeshBuffer), (parser) => parser.Parse<MeshBuffer>() },
             { typeof(MeshRiggingGroup), (parser) => parser.Parse<MeshRiggingGroup>() },
             { typeof(MeshBoneBuffer), (parser) => parser.Parse<MeshBoneBuffer>() },
-            { typeof(SKEL_BoneEntry), (parser) => parser.Parse<SKEL_BoneEntry>() },
-            { typeof(SKEL_Matrix), (parser) => parser.Parse<SKEL_Matrix>() }
+            { typeof(SkelBoneEntry), (parser) => parser.Parse<SkelBoneEntry>() },
+            { typeof(SkelMatrix), (parser) => parser.Parse<SkelMatrix>() }
         };
 
-        public SSBHParser(Stream stream) : base(stream)
+        public SsbhParser(Stream stream) : base(stream)
         {
 
         }
@@ -74,7 +74,7 @@ namespace SSBHLib.IO
             return b;
         }
 
-        public bool TryParse(out ISSBH_File file)
+        public bool TryParse(out SsbhFile file)
         {
             file = null;
             if (FileSize < 4)
@@ -98,14 +98,14 @@ namespace SSBHLib.IO
             // The type is not known, so do a very slow check to find it.
             foreach (var type in issbhTypes)
             {
-                if (type.GetCustomAttributes(typeof(SSBHFileAttribute), true).FirstOrDefault() is SSBHFileAttribute attr)
+                if (type.GetCustomAttributes(typeof(SsbhFileAttribute), true).FirstOrDefault() is SsbhFileAttribute attr)
                 {
                     if (attr.Magic.Equals(fileMagic))
                     {
-                        MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
+                        MethodInfo parseMethod = typeof(SsbhParser).GetMethod("Parse");
                         parseMethod = parseMethod.MakeGenericMethod(type);
 
-                        file = (ISSBH_File)parseMethod.Invoke(this, null);
+                        file = (SsbhFile)parseMethod.Invoke(this, null);
                         return true;
                     }
                 }
@@ -139,7 +139,7 @@ namespace SSBHLib.IO
             return stringValue.ToString();
         }
 
-        public T Parse<T>() where T : ISSBH_File
+        public T Parse<T>() where T : SsbhFile
         {
             T tObject = Activator.CreateInstance<T>();
 
@@ -152,7 +152,7 @@ namespace SSBHLib.IO
             return tObject;
         }
 
-        private void ParseObjectProperties<T>(T tObject) where T : ISSBH_File
+        private void ParseObjectProperties<T>(T tObject) where T : SsbhFile
         {
             foreach (var prop in tObject.GetType().GetProperties())
             {
@@ -176,7 +176,7 @@ namespace SSBHLib.IO
 
         public static Dictionary<Type, long> countByType = new Dictionary<Type, long>();
 
-        private void SetArray<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        private void SetArray<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
             bool inline = prop.GetValue(tObject) != null;
             long offset = GetOffset(inline);
@@ -199,8 +199,8 @@ namespace SSBHLib.IO
                 SetArrayPropertyIssbh<AnimGroup>(tObject, prop, size);
             else if (propElementType == typeof(MatlAttribute))
                 SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, size);
-            else if (propElementType == typeof(SKEL_Matrix))
-                SetArrayPropertyIssbh<SKEL_Matrix>(tObject, prop, size);
+            else if (propElementType == typeof(SkelMatrix))
+                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, size);
             else
                 SetArrayPropertyGeneric(tObject, prop, size, propElementType);
 
@@ -208,7 +208,7 @@ namespace SSBHLib.IO
                 Seek(temp);
         }
 
-        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : ISSBH_File
+        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : SsbhFile
         {
             Array array = Array.CreateInstance(propElementType, size);
             for (int i = 0; i < size; i++)
@@ -247,7 +247,7 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, array);
         }
 
-        private void SetArrayPropertyIssbh<T>(object targetObject, PropertyInfo prop, long size) where T : ISSBH_File
+        private void SetArrayPropertyIssbh<T>(object targetObject, PropertyInfo prop, long size) where T : SsbhFile
         {
             var array = new T[size];
             for (int i = 0; i < size; i++)
@@ -256,7 +256,7 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, array);
         }
 
-        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : ISSBH_File
+        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
         {
             if (!inline)
                 return ReadInt64();
@@ -272,13 +272,13 @@ namespace SSBHLib.IO
                 return Position;
         }
 
-        private void SetString<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        private void SetString<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
             long stringOffset = Position + ReadInt64();
             prop.SetValue(tObject, ReadString(stringOffset));
         }
 
-        private static bool ShouldSkipProperty<T>(T tObject, PropertyInfo prop) where T : ISSBH_File
+        private static bool ShouldSkipProperty<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
             bool shouldSkip = false;
 
@@ -296,7 +296,7 @@ namespace SSBHLib.IO
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)
         {
-            MethodInfo parseMethod = typeof(SSBHParser).GetMethod("Parse");
+            MethodInfo parseMethod = typeof(SsbhParser).GetMethod("Parse");
             parseMethod = parseMethod.MakeGenericMethod(prop.PropertyType.GetElementType());
             genericParseMethodInfoByType.Add(propElementType, parseMethod);
         }
@@ -310,8 +310,8 @@ namespace SSBHLib.IO
                 return ReadUInt32();
             else if (t == typeof(long))
                 return ReadInt64();
-            else if (t == typeof(SSBHOffset))
-                return new SSBHOffset(Position + ReadInt64());
+            else if (t == typeof(SsbhOffset))
+                return new SsbhOffset(Position + ReadInt64());
             else if (t == typeof(float))
                 return ReadSingle();
             else if (t == typeof(int))
@@ -363,11 +363,11 @@ namespace SSBHLib.IO
             return value;
         }
 
-        public T[] ByteToType<T>(int Count)
+        public T[] ByteToType<T>(int count)
         {
-            T[] items = new T[Count];
+            T[] items = new T[count];
 
-            for (int i = 0; i < Count; i++)
+            for (int i = 0; i < count; i++)
                 items[i] = ByteToType<T>();
 
             return items;

@@ -8,7 +8,7 @@ namespace SSBHLib.Tools
     /// <summary>
     /// Tools for compiling rigging information into a Mesh Rigging Group
     /// </summary>
-    public class SSBHRiggingCompiler
+    public class SsbhRiggingCompiler
     {
         /// <summary>
         /// Creates a mesh rigging group
@@ -17,7 +17,7 @@ namespace SSBHLib.Tools
         /// <param name="meshIndex"></param>
         /// <param name="influences"></param>
         /// <returns></returns>
-        public static MeshRiggingGroup CreateRiggingGroup(string meshName, int meshIndex, SSBHVertexInfluence[] influences)
+        public static MeshRiggingGroup CreateRiggingGroup(string meshName, int meshIndex, SsbhVertexInfluence[] influences)
         {
             var group = new MeshRiggingGroup
             {
@@ -27,7 +27,7 @@ namespace SSBHLib.Tools
 
             Dictionary<string, List<byte>> boneNameToData = new Dictionary<string, List<byte>>();
             Dictionary<ushort, int> vertexToWeightCount = new Dictionary<ushort, int>();
-            int MaxInfluenceCount = 0;
+            int maxInfluenceCount = 0;
 
             foreach(var influence in influences)
             {
@@ -46,11 +46,11 @@ namespace SSBHLib.Tools
                     vertexToWeightCount.Add(influence.VertexIndex, 0);
                 }
                 vertexToWeightCount[influence.VertexIndex]++;
-                MaxInfluenceCount = Math.Max(MaxInfluenceCount, vertexToWeightCount[influence.VertexIndex]);
+                maxInfluenceCount = Math.Max(maxInfluenceCount, vertexToWeightCount[influence.VertexIndex]);
             }
 
             // create bone groups
-            group.Flags = 0x0100 | MaxInfluenceCount;
+            group.Flags = 0x0100 | maxInfluenceCount;
             List<MeshBoneBuffer> bonebuffers = new List<MeshBoneBuffer>();
             foreach(var pair in boneNameToData)
             {

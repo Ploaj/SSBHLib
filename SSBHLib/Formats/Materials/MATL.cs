@@ -2,8 +2,8 @@
 
 namespace SSBHLib.Formats.Materials
 {
-    [SSBHFileAttribute("LTAM")]
-    public class MATL : ISSBH_File
+    [SsbhFile("LTAM")]
+    public class Matl : SsbhFile
     {
         public uint Magic { get; set; } = 0x4D41544C;
 

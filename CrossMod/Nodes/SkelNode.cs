@@ -8,7 +8,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".nusktb")]
     public class SkelNode : FileNode, IRenderableNode
     {
-        private SKEL skel;
+        private Skel skel;
 
         private RSkeleton skeleton;
 
@@ -20,11 +20,11 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out var SSBHFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out var SSBHFile))
             {
-                if (SSBHFile is SKEL)
+                if (SSBHFile is Skel)
                 {
-                    skel = (SKEL)SSBHFile;
+                    skel = (Skel)SSBHFile;
                 }
             }
         }
@@ -42,8 +42,8 @@ namespace CrossMod.Nodes
                     RBone bone = new RBone
                     {
                         Name = skel.BoneEntries[i].Name,
-                        ID = skel.BoneEntries[i].ID,
-                        ParentID = skel.BoneEntries[i].ParentID,
+                        ID = skel.BoneEntries[i].Id,
+                        ParentID = skel.BoneEntries[i].ParentId,
                         Transform = SkelToTkMatrix(skel.Transform[i]),
                         InvTransform = SkelToTkMatrix(skel.InvTransform[i]),
                         WorldTransform = SkelToTkMatrix(skel.WorldTransform[i]),
@@ -58,7 +58,7 @@ namespace CrossMod.Nodes
             return skeleton;
         }
 
-        private static Matrix4 SkelToTkMatrix(SKEL_Matrix sm)
+        private static Matrix4 SkelToTkMatrix(SkelMatrix sm)
         {
             return new Matrix4(sm.M11, sm.M12, sm.M13, sm.M14,
                 sm.M21, sm.M22, sm.M23, sm.M24,

@@ -12,7 +12,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numdlb")]
     public class NumdlNode : FileNode, IRenderableNode, IExportableModelNode
     {
-        private MODL _model;
+        private Modl _model;
         private IRenderable renderableNode = null;
 
         public NumdlNode(string path) : base(path)
@@ -90,9 +90,9 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (SSBH.TryParseSSBHFile(AbsolutePath, out ISSBH_File ssbhFile))
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
             {
-                if (ssbhFile is MODL modl)
+                if (ssbhFile is Modl modl)
                 {
                     _model = modl;
                 }
@@ -103,8 +103,8 @@ namespace CrossMod.Nodes
         {
             IOModel outModel = new IOModel();
 
-            MESH meshFile = null;
-            MATL materialFile = null;
+            Mesh meshFile = null;
+            Matl materialFile = null;
 
             foreach (FileNode n in Parent.Nodes)
             {
@@ -146,7 +146,7 @@ namespace CrossMod.Nodes
 
                     foreach (var attr in entry.Attributes)
                     {
-                        if (attr.ParamID == MatlEnums.ParamId.Texture0)
+                        if (attr.ParamId == MatlEnums.ParamId.Texture0)
                         {
                             IOTexture dif = new IOTexture
                             {
@@ -160,9 +160,9 @@ namespace CrossMod.Nodes
 
             if (meshFile != null)
             {
-                SSBHVertexAccessor vertexAccessor = new SSBHVertexAccessor(meshFile);
+                SsbhVertexAccessor vertexAccessor = new SsbhVertexAccessor(meshFile);
                 {
-                    SSBHRiggingAccessor riggingAccessor = new SSBHRiggingAccessor(meshFile);
+                    SsbhRiggingAccessor riggingAccessor = new SsbhRiggingAccessor(meshFile);
                     foreach (MeshObject obj in meshFile.Objects)
                     {
                         IOMesh outMesh = new IOMesh()
@@ -190,7 +190,7 @@ namespace CrossMod.Nodes
 
                         foreach (MeshAttribute attr in obj.Attributes)
                         {
-                            SSBHVertexAttribute[] values = vertexAccessor.ReadAttribute(attr.AttributeStrings[0].Name, 0, obj.VertexCount, obj);
+                            SsbhVertexAttribute[] values = vertexAccessor.ReadAttribute(attr.AttributeStrings[0].Name, 0, obj.VertexCount, obj);
 
                             if (attr.AttributeStrings[0].Name.Equals("Position0"))
                             {
@@ -254,9 +254,9 @@ namespace CrossMod.Nodes
                         }
 
                         // Apply Rigging
-                        SSBHVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
+                        SsbhVertexInfluence[] influences = riggingAccessor.ReadRiggingBuffer(obj.Name, (int)obj.SubMeshIndex);
 
-                        foreach (SSBHVertexInfluence influence in influences)
+                        foreach (SsbhVertexInfluence influence in influences)
                         {
                             outMesh.HasBoneWeights = true;
 

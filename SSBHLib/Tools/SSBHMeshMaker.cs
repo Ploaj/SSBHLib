@@ -9,22 +9,22 @@ namespace SSBHLib.Tools
     /// <summary>
     /// Helps generate a MESH file
     /// </summary>
-    public class SSBHMeshMaker
+    public class SsbhMeshMaker
     {
         private class TempMesh
         {
             public string Name;
             public string ParentBone;
             public int VertexCount;
-            public SSBHVertexAttribute BoundingSphere;
-            public SSBHVertexAttribute BbMin;
-            public SSBHVertexAttribute BbMax;
-            public SSBHVertexAttribute ObbCenter;
-            public SSBHVertexAttribute ObbSize;
+            public SsbhVertexAttribute BoundingSphere;
+            public SsbhVertexAttribute BbMin;
+            public SsbhVertexAttribute BbMax;
+            public SsbhVertexAttribute ObbCenter;
+            public SsbhVertexAttribute ObbSize;
             public float[] ObbMatrix3X3;
             public Dictionary<UltimateVertexAttribute, float[]> VertexData = new Dictionary<UltimateVertexAttribute, float[]>();
             public List<uint> Indices = new List<uint>();
-            public List<SSBHVertexInfluence> Influences = new List<SSBHVertexInfluence>();
+            public List<SsbhVertexInfluence> Influences = new List<SsbhVertexInfluence>();
         }
 
         private TempMesh currentMesh;
@@ -38,7 +38,7 @@ namespace SSBHLib.Tools
         /// <paramref name="positions"/>
         /// <param name="parentBoneName"></param>
         /// <param name="generateBounding"></param>
-        public void StartMeshObject(string name, uint[] indices, SSBHVertexAttribute[] positions, string parentBoneName = "", bool generateBounding = false)
+        public void StartMeshObject(string name, uint[] indices, SsbhVertexAttribute[] positions, string parentBoneName = "", bool generateBounding = false)
         {
             currentMesh = new TempMesh
             {
@@ -54,11 +54,11 @@ namespace SSBHLib.Tools
             if (generateBounding)
             {
                 //TODO: sphere generation
-                BoundingBoxGenerator.GenerateAABB(positions, out SSBHVertexAttribute max, out SSBHVertexAttribute min);
-                SetAABoundingBox(min, max);
+                BoundingBoxGenerator.GenerateAabb(positions, out SsbhVertexAttribute max, out SsbhVertexAttribute min);
+                SetAaBoundingBox(min, max);
                 SetOrientedBoundingBox(
-                    new SSBHVertexAttribute((max.X + min.X / 2), (max.Y + min.Y / 2), (max.Y + min.Y / 2)),
-                    new SSBHVertexAttribute((max.X - min.X), (max.Y - min.Y), (max.Z - min.Z)),
+                    new SsbhVertexAttribute((max.X + min.X / 2), (max.Y + min.Y / 2), (max.Y + min.Y / 2)),
+                    new SsbhVertexAttribute((max.X - min.X), (max.Y - min.Y), (max.Z - min.Z)),
                     new float[] {
                         1, 0, 0,
                         0, 1, 0,
@@ -73,7 +73,7 @@ namespace SSBHLib.Tools
         {
             if (currentMesh == null)
                 return;
-            currentMesh.BoundingSphere = new SSBHVertexAttribute()
+            currentMesh.BoundingSphere = new SsbhVertexAttribute()
             {
                 X = x,
                 Y = y,
@@ -87,7 +87,7 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
-        public void SetAABoundingBox(SSBHVertexAttribute min, SSBHVertexAttribute max)
+        public void SetAaBoundingBox(SsbhVertexAttribute min, SsbhVertexAttribute max)
         {
             if (currentMesh == null)
                 return;
@@ -101,7 +101,7 @@ namespace SSBHLib.Tools
         /// <param name="center"></param>
         /// <param name="size"></param>
         /// <param name="matrix3X3"></param>
-        public void SetOrientedBoundingBox(SSBHVertexAttribute center, SSBHVertexAttribute size, float[] matrix3X3)
+        public void SetOrientedBoundingBox(SsbhVertexAttribute center, SsbhVertexAttribute size, float[] matrix3X3)
         {
             if (currentMesh == null)
                 return;
@@ -120,7 +120,7 @@ namespace SSBHLib.Tools
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="inputValues"></param>
-        public void AddAttributeToMeshObject(UltimateVertexAttribute attribute, SSBHVertexAttribute[] inputValues)
+        public void AddAttributeToMeshObject(UltimateVertexAttribute attribute, SsbhVertexAttribute[] inputValues)
         {
             // TODO: Why must StartMeshObject be called?
             if (currentMesh == null)
@@ -147,7 +147,7 @@ namespace SSBHLib.Tools
         /// Attaches rigging information to mesh object
         /// Note: must call StartMeshObject first
         /// </summary>
-        public void AttachRiggingToMeshObject(SSBHVertexInfluence[] influences)
+        public void AttachRiggingToMeshObject(SsbhVertexInfluence[] influences)
         {
             currentMesh?.Influences.AddRange(influences);
         }
@@ -156,9 +156,9 @@ namespace SSBHLib.Tools
         /// Creates and returns a mesh file
         /// </summary>
         /// <returns></returns>
-        public MESH GetMeshFile()
+        public Mesh GetMeshFile()
         {
-            MESH mesh = new MESH
+            Mesh mesh = new Mesh
             {
                 //TODO: bounding box stuff
                 // Rigging
@@ -197,13 +197,13 @@ namespace SSBHLib.Tools
                 mo.MinBoundingBoxY = tempmesh.BbMin.Y;
                 mo.MinBoundingBoxZ = tempmesh.BbMin.Z;
 
-                mo.OBBCenterX = tempmesh.ObbCenter.X;
-                mo.OBBCenterY = tempmesh.ObbCenter.Y;
-                mo.OBBCenterZ = tempmesh.ObbCenter.Z;
+                mo.ObbCenterX = tempmesh.ObbCenter.X;
+                mo.ObbCenterY = tempmesh.ObbCenter.Y;
+                mo.ObbCenterZ = tempmesh.ObbCenter.Z;
 
-                mo.OBBSizeX = tempmesh.ObbSize.X;
-                mo.OBBSizeY = tempmesh.ObbSize.Y;
-                mo.OBBSizeZ = tempmesh.ObbSize.Z;
+                mo.ObbSizeX = tempmesh.ObbSize.X;
+                mo.ObbSizeY = tempmesh.ObbSize.Y;
+                mo.ObbSizeZ = tempmesh.ObbSize.Z;
 
                 mo.M11 = tempmesh.ObbMatrix3X3[0];
                 mo.M12 = tempmesh.ObbMatrix3X3[1];
@@ -217,7 +217,7 @@ namespace SSBHLib.Tools
 
 
                 // Create Rigging
-                riggingGroups.Add(SSBHRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
+                riggingGroups.Add(SsbhRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
 
                 // set object
                 mesh.Objects[meshIndex++] = mo;
@@ -365,22 +365,22 @@ namespace SSBHLib.Tools
                     return 4;
                 case UltimateVertexAttribute.Tangent0:
                     return 4;
-                case UltimateVertexAttribute.map1:
-                case UltimateVertexAttribute.uvSet:
-                case UltimateVertexAttribute.uvSet1:
-                case UltimateVertexAttribute.uvSet2:
-                case UltimateVertexAttribute.bake1:
+                case UltimateVertexAttribute.Map1:
+                case UltimateVertexAttribute.UvSet:
+                case UltimateVertexAttribute.UvSet1:
+                case UltimateVertexAttribute.UvSet2:
+                case UltimateVertexAttribute.Bake1:
                     return 2;
-                case UltimateVertexAttribute.colorSet1:
-                case UltimateVertexAttribute.colorSet2:
-                case UltimateVertexAttribute.colorSet2_1:
-                case UltimateVertexAttribute.colorSet2_2:
-                case UltimateVertexAttribute.colorSet2_3:
-                case UltimateVertexAttribute.colorSet3:
-                case UltimateVertexAttribute.colorSet4:
-                case UltimateVertexAttribute.colorSet5:
-                case UltimateVertexAttribute.colorSet6:
-                case UltimateVertexAttribute.colorSet7:
+                case UltimateVertexAttribute.ColorSet1:
+                case UltimateVertexAttribute.ColorSet2:
+                case UltimateVertexAttribute.ColorSet21:
+                case UltimateVertexAttribute.ColorSet22:
+                case UltimateVertexAttribute.ColorSet23:
+                case UltimateVertexAttribute.ColorSet3:
+                case UltimateVertexAttribute.ColorSet4:
+                case UltimateVertexAttribute.ColorSet5:
+                case UltimateVertexAttribute.ColorSet6:
+                case UltimateVertexAttribute.ColorSet7:
                     return 4;
                 default:
                     return 3;
@@ -426,22 +426,22 @@ namespace SSBHLib.Tools
                 case UltimateVertexAttribute.Normal0:
                 case UltimateVertexAttribute.Tangent0:
                     return 5;
-                case UltimateVertexAttribute.map1:
-                case UltimateVertexAttribute.uvSet:
-                case UltimateVertexAttribute.uvSet1:
-                case UltimateVertexAttribute.uvSet2:
-                case UltimateVertexAttribute.bake1:
+                case UltimateVertexAttribute.Map1:
+                case UltimateVertexAttribute.UvSet:
+                case UltimateVertexAttribute.UvSet1:
+                case UltimateVertexAttribute.UvSet2:
+                case UltimateVertexAttribute.Bake1:
                     return 8;
-                case UltimateVertexAttribute.colorSet1:
-                case UltimateVertexAttribute.colorSet2:
-                case UltimateVertexAttribute.colorSet2_1:
-                case UltimateVertexAttribute.colorSet2_2:
-                case UltimateVertexAttribute.colorSet2_3:
-                case UltimateVertexAttribute.colorSet3:
-                case UltimateVertexAttribute.colorSet4:
-                case UltimateVertexAttribute.colorSet5:
-                case UltimateVertexAttribute.colorSet6:
-                case UltimateVertexAttribute.colorSet7:
+                case UltimateVertexAttribute.ColorSet1:
+                case UltimateVertexAttribute.ColorSet2:
+                case UltimateVertexAttribute.ColorSet21:
+                case UltimateVertexAttribute.ColorSet22:
+                case UltimateVertexAttribute.ColorSet23:
+                case UltimateVertexAttribute.ColorSet3:
+                case UltimateVertexAttribute.ColorSet4:
+                case UltimateVertexAttribute.ColorSet5:
+                case UltimateVertexAttribute.ColorSet6:
+                case UltimateVertexAttribute.ColorSet7:
                     return 2;
                 default:
                     return -1;
@@ -458,22 +458,22 @@ namespace SSBHLib.Tools
                     return 1;
                 case UltimateVertexAttribute.Tangent0:
                     return 3;
-                case UltimateVertexAttribute.map1:
-                case UltimateVertexAttribute.uvSet:
-                case UltimateVertexAttribute.uvSet1:
-                case UltimateVertexAttribute.uvSet2:
-                case UltimateVertexAttribute.bake1:
+                case UltimateVertexAttribute.Map1:
+                case UltimateVertexAttribute.UvSet:
+                case UltimateVertexAttribute.UvSet1:
+                case UltimateVertexAttribute.UvSet2:
+                case UltimateVertexAttribute.Bake1:
                     return 4;
-                case UltimateVertexAttribute.colorSet1:
-                case UltimateVertexAttribute.colorSet2:
-                case UltimateVertexAttribute.colorSet2_1:
-                case UltimateVertexAttribute.colorSet2_2:
-                case UltimateVertexAttribute.colorSet2_3:
-                case UltimateVertexAttribute.colorSet3:
-                case UltimateVertexAttribute.colorSet4:
-                case UltimateVertexAttribute.colorSet5:
-                case UltimateVertexAttribute.colorSet6:
-                case UltimateVertexAttribute.colorSet7:
+                case UltimateVertexAttribute.ColorSet1:
+                case UltimateVertexAttribute.ColorSet2:
+                case UltimateVertexAttribute.ColorSet21:
+                case UltimateVertexAttribute.ColorSet22:
+                case UltimateVertexAttribute.ColorSet23:
+                case UltimateVertexAttribute.ColorSet3:
+                case UltimateVertexAttribute.ColorSet4:
+                case UltimateVertexAttribute.ColorSet5:
+                case UltimateVertexAttribute.ColorSet6:
+                case UltimateVertexAttribute.ColorSet7:
                     return 5;
                 default:
                     return -1;

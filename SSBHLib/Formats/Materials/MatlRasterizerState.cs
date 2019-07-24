@@ -1,12 +1,12 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
-    public enum MATL_FillMode
+    public enum MatlFillMode
     {
         Line,
         Solid
     }
 
-    public enum MATL_CullMode
+    public enum MatlCullMode
     {
         Back,
         Front,
@@ -15,7 +15,7 @@
 
     public partial class MatlAttribute
     {
-        public class MatlRasterizerState : ISSBH_File
+        public class MatlRasterizerState : SsbhFile
         {
             public int FillMode { get; set; }
 

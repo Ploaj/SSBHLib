@@ -14,12 +14,12 @@ namespace SSBHLib.Tools
         /// <param name="points"></param>
         /// <param name="max"></param>
         /// <param name="min"></param>
-        public static void GenerateAABB(IEnumerable<SSBHVertexAttribute> points, out SSBHVertexAttribute max, out SSBHVertexAttribute min)
+        public static void GenerateAabb(IEnumerable<SsbhVertexAttribute> points, out SsbhVertexAttribute max, out SsbhVertexAttribute min)
         {
-            max = new SSBHVertexAttribute(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-            min = new SSBHVertexAttribute(float.MaxValue, float.MaxValue, float.MaxValue);
+            max = new SsbhVertexAttribute(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+            min = new SsbhVertexAttribute(float.MaxValue, float.MaxValue, float.MaxValue);
 
-            foreach (SSBHVertexAttribute p in points)
+            foreach (SsbhVertexAttribute p in points)
             {
                 max.X = Math.Max(max.X, p.X);
                 max.Y = Math.Max(max.Y, p.Y);

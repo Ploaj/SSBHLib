@@ -3,7 +3,7 @@ using SSBHLib.IO;
 
 namespace SSBHLib.Formats.Meshes
 {
-    public class MeshObject : ISSBH_File
+    public class MeshObject : SsbhFile
     {
         public string Name { get; set; }
         
@@ -58,9 +58,9 @@ namespace SSBHLib.Formats.Meshes
         public float MaxBoundingBoxY { get; set; }
         public float MaxBoundingBoxZ { get; set; }
         
-        public float OBBCenterX { get; set; }
-        public float OBBCenterY { get; set; }
-        public float OBBCenterZ { get; set; }
+        public float ObbCenterX { get; set; }
+        public float ObbCenterY { get; set; }
+        public float ObbCenterZ { get; set; }
 
         public float M11 { get; set; }
         public float M12 { get; set; }
@@ -72,9 +72,9 @@ namespace SSBHLib.Formats.Meshes
         public float M32 { get; set; }
         public float M33 { get; set; }
 
-        public float OBBSizeX { get; set; }
-        public float OBBSizeY { get; set; }
-        public float OBBSizeZ { get; set; }
+        public float ObbSizeX { get; set; }
+        public float ObbSizeY { get; set; }
+        public float ObbSizeZ { get; set; }
 
         public MeshAttribute[] Attributes { get; set; }
     }

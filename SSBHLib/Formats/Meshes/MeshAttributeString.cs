@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Meshes
 {
-    public class MeshAttributeString : ISSBH_File
+    public class MeshAttributeString : SsbhFile
     {
         public string Name { get; set; }
     }

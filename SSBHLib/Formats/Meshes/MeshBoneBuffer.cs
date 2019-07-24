@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats.Meshes
 {
-    public class MeshBoneBuffer : ISSBH_File
+    public class MeshBoneBuffer : SsbhFile
     {
         public string BoneName { get; set; }
 

@@ -2,7 +2,7 @@
 {
     public partial class MatlAttribute
     {
-        public class MatlBlendState : ISSBH_File
+        public class MatlBlendState : SsbhFile
         {
             public int Unk1 { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿namespace SSBHLib.Formats.Animation
 {
-    [SSBHFileAttribute("MINA")]
-    public class ANIM : ISSBH_File
+    [SsbhFile("MINA")]
+    public class Anim : SsbhFile
     {
         public uint Magic { get; set; } = 0x414E494D;
 
