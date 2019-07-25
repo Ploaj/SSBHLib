@@ -50,7 +50,6 @@
             this.glViewport.Size = new System.Drawing.Size(435, 306);
             this.glViewport.TabIndex = 0;
             this.glViewport.VSync = false;
-            this.glViewport.Load += new System.EventHandler(this.glViewport_Load);
             this.glViewport.Resize += new System.EventHandler(this.glViewport_Resize);
             // 
             // controlBox

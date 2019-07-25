@@ -10,6 +10,7 @@ using OpenTK.Input;
 using CrossMod.Nodes;
 using CrossMod.Rendering.Models;
 using SFGraphics.GLObjects.Framebuffers;
+using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.GUI
 {
@@ -251,6 +252,10 @@ namespace CrossMod.GUI
 
         private void RenderNodes(object sender, EventArgs e)
         {
+            // Ensure shaders are created before drawing anything.
+            if (!ShaderContainer.HasSetUp)
+                ShaderContainer.SetUpShaders();
+
             SetUpViewport();
 
             if (renderTexture != null)
@@ -325,12 +330,6 @@ namespace CrossMod.GUI
 
             mousePosition = newMousePosition;
             mouseScrollWheel = newMouseScrollWheel;
-        }
-
-        private void glViewport_Load(object sender, EventArgs e)
-        {
-            ShaderContainer.SetUpShaders();
-            glViewport.RenderFrame();
         }
 
         private void glViewport_Resize(object sender, EventArgs e)

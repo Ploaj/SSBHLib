@@ -61,7 +61,7 @@ namespace CrossMod.Rendering.Models
                 Material.AddMaterialParams(uniformBlock);
             }
 
-            uniformBlock.BindBlock(shader, "MaterialParams");
+            uniformBlock.BindBlock(shader);
         }
     }
 }

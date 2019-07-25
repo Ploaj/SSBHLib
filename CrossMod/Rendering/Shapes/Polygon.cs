@@ -9,32 +9,25 @@ namespace CrossMod.Rendering.Shapes
 {
     class Polygon : GenericMesh<Vector3>
     {
-        private static Shader Shader;
-
         static Polygon()
         {
-            Shader = ShaderContainer.GetShader("Polygon");
-        }
-
-        public Polygon(List<Vector3> shape) : base(shape, PrimitiveType.Polygon) { }
-
-        public override List<VertexAttribute> GetVertexAttributes()
-        {
-            return new List<VertexAttribute>()
+            vertexAttributes = new List<VertexAttribute>
             {
                 new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
             };
         }
 
-        public void Render(Matrix4 bone, Matrix4 mvp, Vector4 color)
-        {
-            Shader.UseProgram();
-            
-            Shader.SetMatrix4x4("bone", ref bone);
-            Shader.SetMatrix4x4("mvp", ref mvp);
-            Shader.SetVector4("color", color);
+        public Polygon(List<Vector3> shape) : base(shape, PrimitiveType.Polygon) { }
 
-            Draw(Shader);
+        public void Render(Shader shader, Matrix4 bone, Matrix4 mvp, Vector4 color)
+        {
+            shader.UseProgram();
+
+            shader.SetMatrix4x4("bone", ref bone);
+            shader.SetMatrix4x4("mvp", ref mvp);
+            shader.SetVector4("color", color);
+
+            Draw(shader);
         }
     }
 }

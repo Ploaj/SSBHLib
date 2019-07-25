@@ -8,8 +8,16 @@ namespace CrossMod.Rendering
 {
     public class PrimBonePrism : GenericMesh<Vector4>
     {
+        static PrimBonePrism()
+        {
+            vertexAttributes = new List<VertexAttribute>
+            {
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false),
+            };
+        }
+
         // A prism that is used to indicated bones
-        private static List<Vector4> screenPositions = new List<Vector4>()
+        private static readonly List<Vector4> screenPositions = new List<Vector4>()
         {
             // cube
             new Vector4(0f, 0f, -1f, 0),
@@ -45,14 +53,6 @@ namespace CrossMod.Rendering
         public PrimBonePrism() : base(screenPositions, PrimitiveType.Lines)
         {
 
-        }
-
-        public override List<VertexAttribute> GetVertexAttributes()
-        {
-            return new List<VertexAttribute>()
-            {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false),
-            };
         }
     }
 }

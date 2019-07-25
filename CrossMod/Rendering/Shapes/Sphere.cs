@@ -10,36 +10,30 @@ namespace CrossMod.Rendering.Shapes
 {
     public class Sphere : GenericMesh<Vector3>
     {
-        private static List<Vector3> UnitSphere;
-        private static Shader Shader;
-        
+        private static readonly List<Vector3> UnitSphere;
+
         static Sphere()
         {
+            vertexAttributes = new List<VertexAttribute>
+            {
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
+            };
             UnitSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
-            Shader = ShaderContainer.GetShader("Sphere");
         }
 
         public Sphere() : base(UnitSphere, PrimitiveType.TriangleStrip) { }
 
-        public override List<VertexAttribute> GetVertexAttributes()
+        public void Render(Shader shader, float size, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
-            return new List<VertexAttribute>()
-            {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
-            };
-        }
+            shader.UseProgram();
 
-        public void Render(float size, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
-        {
-            Shader.UseProgram();
+            shader.SetFloat("size", size);
+            shader.SetVector3("offset", offset);
+            shader.SetMatrix4x4("bone", ref bone);
+            shader.SetMatrix4x4("mvp", ref mvp);
+            shader.SetVector4("color", color);
 
-            Shader.SetFloat("size", size);
-            Shader.SetVector3("offset", offset);
-            Shader.SetMatrix4x4("bone", ref bone);
-            Shader.SetMatrix4x4("mvp", ref mvp);
-            Shader.SetVector4("color", color);
-
-            Draw(Shader);
+            Draw(shader);
         }
     }
 }

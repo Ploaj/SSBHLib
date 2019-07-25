@@ -7,6 +7,7 @@ using paracobNET;
 using SFGraphics.Cameras;
 using System.Collections.Generic;
 using System.IO;
+using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Nodes
 {
@@ -116,23 +117,24 @@ namespace CrossMod.Nodes
             if (sphere == null)
                 sphere = new Sphere();
 
+            var capsuleShader = ShaderContainer.GetShader("Capsule");
+            var sphereShader = ShaderContainer.GetShader("Sphere");
+            var polygonShader = ShaderContainer.GetShader("Polygon");
+
+
             if (RenderSettings.Instance.RenderHitCollisions)
             {
                 GL.Disable(EnableCap.DepthTest);
                 foreach (var hit in HitData)
                 {
-                    try
-                    {
-                        Matrix4 bone = Skel.GetAnimationSingleBindsTransform(BoneIDs[hit.Bone]);
-                        Vector4 color = new Vector4(1, 1, 1, 0.3f);
-                        //if (BoneIDs[hit.Bone] == 0)//special purpose HitData attached to trans or top
-                        //    color = new Vector4(1, 0.3f, 0.3f, 0.3f);
-                        if (hit.Pos != hit.Pos2)
-                            capsule.Render(hit.Size, hit.Pos, hit.Pos2, bone, camera.MvpMatrix, color);
-                        else
-                            sphere.Render(hit.Size, hit.Pos, bone, camera.MvpMatrix, color);
-                    }
-                    catch { }
+                    Matrix4 bone = Skel.GetAnimationSingleBindsTransform(BoneIDs[hit.Bone]);
+                    Vector4 color = new Vector4(1, 1, 1, 0.3f);
+                    //if (BoneIDs[hit.Bone] == 0)//special purpose HitData attached to trans or top
+                    //    color = new Vector4(1, 0.3f, 0.3f, 0.3f);
+                    if (hit.Pos != hit.Pos2)
+                        capsule.Render(capsuleShader, hit.Size, hit.Pos, hit.Pos2, bone, camera.MvpMatrix, color);
+                    else
+                        sphere.Render(sphereShader, hit.Size, hit.Pos, bone, camera.MvpMatrix, color);
                 }
                 GL.Enable(EnableCap.DepthTest);
             }
@@ -165,7 +167,7 @@ namespace CrossMod.Nodes
                     v4 = new Vector3(0, shape.p1.Y, shape.p2.X);
                 }
                 quad = new Polygon(new List<Vector3>() { v1, v2, v3, v4 });
-                quad.Render(transN, camera.MvpMatrix, new Vector4(Collision.IDColors[cliffHangID % 9], 1f));
+                quad.Render(polygonShader, transN, camera.MvpMatrix, new Vector4(Collision.IDColors[cliffHangID % 9], 1f));
 
                 GL.Enable(EnableCap.DepthTest);
             }

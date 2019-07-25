@@ -1,4 +1,5 @@
 ﻿using CrossMod.Rendering;
+using CrossMod.Rendering.Shapes;
 using CrossMod.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -6,7 +7,6 @@ using SFGraphics.Cameras;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CrossMod.Rendering.Shapes;
 
 namespace CrossMod.Nodes
 {
@@ -65,6 +65,10 @@ namespace CrossMod.Nodes
             if (Line == null)
                 Line = new Line();
 
+            var sphereShader = ShaderContainer.GetShader("Sphere");
+            var capsuleShader = ShaderContainer.GetShader("Capsule");
+            var lineShader = ShaderContainer.GetShader("Line");
+
             Matrix4 mvp = camera.MvpMatrix;
 
             List<Collision> collisions = new List<Collision>();
@@ -88,11 +92,11 @@ namespace CrossMod.Nodes
                 
                 if (IsSphere(coll))
                 {
-                    Sphere.Render(coll.Size, coll.Pos, boneNoScale, mvp, collColor);
+                    Sphere.Render(sphereShader, coll.Size, coll.Pos, boneNoScale, mvp, collColor);
                 }
                 else if (coll.ShapeType == Collision.Shape.capsule)
                 {
-                    Capsule.Render(coll.Size, coll.Pos, coll.Pos2, boneNoScale, mvp, collColor);
+                    Capsule.Render(capsuleShader, coll.Size, coll.Pos, coll.Pos2, boneNoScale, mvp, collColor);
                 }
                 //angle marker
                 if (coll is Attack attack)
@@ -104,13 +108,13 @@ namespace CrossMod.Nodes
                     if (angle < 361)
                     {
                         float radian = angle * (float)Math.PI / 180f;
-                        Line.Render(radian, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
+                        Line.Render(lineShader, radian, coll.Size, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                     else if (angle == 361)
                     {
                         float radian = (float)Math.PI / 2f;
                         for (int j = 0; j < 4; j++)
-                            Line.Render(radian * j, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
+                            Line.Render(lineShader, radian * j, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                     else if (angle == 368)
                     {
@@ -122,7 +126,7 @@ namespace CrossMod.Nodes
                             var attackVecBoneNoScale =
                                 Matrix4.CreateFromQuaternion(attackVecBone.ExtractRotation())
                                 * Matrix4.CreateTranslation(attackVecBone.ExtractTranslation());
-                            Line.Render(
+                            Line.Render(lineShader,
                                 boneNoScale, attackVecBoneNoScale,
                                 coll.Pos, Vector3.Zero,
                                 Vector3.Zero, new Vector3(attack.VecTargetPos_pos.Z, attack.VecTargetPos_pos.Y, 0),
@@ -135,7 +139,7 @@ namespace CrossMod.Nodes
                         float radian = (float)Math.PI / 2f;
                         float add = (float)Math.PI / 4f;
                         for (int j = 0; j < 4; j++)
-                            Line.Render(radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
+                            Line.Render(lineShader, radian * j + add, coll.Size / 2, coll.Pos, boneNoScale, mvp, angleColor);
                     }
                 }
             }

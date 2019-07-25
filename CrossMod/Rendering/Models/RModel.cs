@@ -37,7 +37,7 @@ namespace CrossMod.Rendering.Models
             SetCameraUniforms(Camera, shader);
 
             // Bones
-            boneUniformBuffer.BindBlock(shader, "Bones");
+            boneUniformBuffer.BindBlock(shader);
             if (Skeleton != null)
             {
                 boneBinds = Skeleton.GetAnimationTransforms();

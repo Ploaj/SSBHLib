@@ -11,11 +11,15 @@ namespace CrossMod.Rendering.Shapes
 {
     public class Capsule : GenericMesh<Vector4>
     {
-        private static List<Vector4> UnitCapsule;
-        private static Shader Shader;
+        private static readonly List<Vector4> unitCapsule;
 
         static Capsule()
         {
+            vertexAttributes = new List<VertexAttribute>
+            {
+                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
+            };
+
             List<Vector3> baseSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
             var capsule = new List<Vector4>();
             foreach (var v in baseSphere)
@@ -26,23 +30,14 @@ namespace CrossMod.Rendering.Shapes
                     value.W = 1;
                 capsule.Add(value);
             }
-            UnitCapsule = capsule;
-            Shader = ShaderContainer.GetShader("Capsule");
+            unitCapsule = capsule;
         }
 
-        public Capsule() : base (UnitCapsule, PrimitiveType.TriangleStrip) { }
+        public Capsule() : base (unitCapsule, PrimitiveType.TriangleStrip) { }
 
-        public override List<VertexAttribute> GetVertexAttributes()
+        public void Render(Shader shader, float size, Vector3 offset1, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {
-            return new List<VertexAttribute>()
-            {
-                new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
-            };
-        }
-
-        public void Render(float size, Vector3 offset1, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
-        {
-            Shader.UseProgram();
+            shader.UseProgram();
 
             var dir = Vector3.Normalize(offset2 - offset1);
             Matrix4 orientation;
@@ -57,15 +52,15 @@ namespace CrossMod.Rendering.Shapes
                 orientation = Matrix4.CreateFromAxisAngle(axis, angle);
             }
 
-            Shader.SetFloat("size", size);
-            Shader.SetMatrix4x4("orientation", ref orientation);
-            Shader.SetVector3("offset1", offset1);
-            Shader.SetVector3("offset2", offset2);
-            Shader.SetMatrix4x4("bone", ref bone);
-            Shader.SetMatrix4x4("mvp", ref mvp);
-            Shader.SetVector4("color", color);
+            shader.SetFloat("size", size);
+            shader.SetMatrix4x4("orientation", ref orientation);
+            shader.SetVector3("offset1", offset1);
+            shader.SetVector3("offset2", offset2);
+            shader.SetMatrix4x4("bone", ref bone);
+            shader.SetMatrix4x4("mvp", ref mvp);
+            shader.SetVector4("color", color);
 
-            Draw(Shader);
+            Draw(shader);
         }
     }
 }
