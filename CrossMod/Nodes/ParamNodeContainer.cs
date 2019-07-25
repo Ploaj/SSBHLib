@@ -5,9 +5,9 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using paracobNET;
 using SFGraphics.Cameras;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Nodes
 {
@@ -127,7 +127,10 @@ namespace CrossMod.Nodes
                 GL.Disable(EnableCap.DepthTest);
                 foreach (var hit in HitData)
                 {
-                    Matrix4 bone = Skel.GetAnimationSingleBindsTransform(BoneIDs[hit.Bone]);
+                    Matrix4 bone;
+                    //some param files refer to bone hashes that don't exist on the skeleton
+                    try { bone = Skel.GetAnimationSingleBindsTransform(BoneIDs[hit.Bone]); }
+                    catch (ArgumentException) { continue; }
                     Vector4 color = new Vector4(1, 1, 1, 0.3f);
                     //if (BoneIDs[hit.Bone] == 0)//special purpose HitData attached to trans or top
                     //    color = new Vector4(1, 0.3f, 0.3f, 0.3f);
