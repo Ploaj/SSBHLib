@@ -3,9 +3,11 @@ using CrossMod.Rendering.Shapes;
 using CrossMod.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using paracobNET;
 using SFGraphics.Cameras;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace CrossMod.Nodes
@@ -279,7 +281,7 @@ namespace CrossMod.Nodes
                         case CmdType.attack:
                             {
                                 Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
-                                    UlongParse(args[1]),
+                                    HashParse(args[1]),
                                     float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
@@ -292,7 +294,7 @@ namespace CrossMod.Nodes
                         case CmdType.attack_capsule:
                             {
                                 Parent.Observer.Attacks[IntParse(args[0])] = new Attack(
-                                    UlongParse(args[1]),
+                                    HashParse(args[1]),
                                     float.Parse(args[2]),
                                     IntParse(args[3]),
                                     float.Parse(args[4]),
@@ -316,7 +318,7 @@ namespace CrossMod.Nodes
                         case CmdType.@catch:
                             {
                                 Parent.Observer.Grabs[int.Parse(args[0])] = new Catch(
-                                    UlongParse(args[1]),
+                                    HashParse(args[1]),
                                     float.Parse(args[2]),
                                     new Vector3(
                                         float.Parse(args[3]),
@@ -327,7 +329,7 @@ namespace CrossMod.Nodes
                         case CmdType.catch_capsule:
                             {
                                 Parent.Observer.Grabs[int.Parse(args[0])] = new Catch(
-                                    UlongParse(args[1]),
+                                    HashParse(args[1]),
                                     float.Parse(args[2]),
                                     new Vector3(
                                         float.Parse(args[3]),
@@ -351,7 +353,7 @@ namespace CrossMod.Nodes
                             break;
                         case CmdType.set_vec_target_pos:
                             Parent.Observer.Attacks[IntParse(args[0])].SetVecTargetPos(
-                                UlongParse(args[1]),
+                                HashParse(args[1]),
                                 new Vector2(
                                     float.Parse(args[2]),
                                     float.Parse(args[3])
@@ -380,15 +382,15 @@ namespace CrossMod.Nodes
                 private int IntParse(string word)
                 {
                     if (word.StartsWith("0x"))
-                        return int.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
+                        return int.Parse(word.Substring(2), NumberStyles.HexNumber);
                     return int.Parse(word);
                 }
 
-                private ulong UlongParse(string word)
+                private ulong HashParse(string word)
                 {
                     if (word.StartsWith("0x"))
-                        return ulong.Parse(word.Substring(2), System.Globalization.NumberStyles.HexNumber);
-                    return ulong.Parse(word);
+                        return ulong.Parse(word.Substring(2), NumberStyles.HexNumber);
+                    return Hash40Util.StringToHash40(word);
                 }
             }
         }
