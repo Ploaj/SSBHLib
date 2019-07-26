@@ -23,7 +23,7 @@ namespace CrossMod.Nodes
         public float MotionRate { get; set; } = 1f;
 
         private static Sphere Sphere { get; set; }
-        private static  Capsule Capsule { get; set; }
+        private static Capsule Capsule { get; set; }
         private static Line Line { get; set; }
         
         public SkelNode SkelNode { set
@@ -78,6 +78,8 @@ namespace CrossMod.Nodes
             collisions.AddRange(Grabs);
             
             GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             for (int i = 0; i < collisions.Count; i++)
             {
@@ -147,6 +149,7 @@ namespace CrossMod.Nodes
             }
 
             GL.Enable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Blend);
         }
 
         private bool IsSphere(Collision coll)

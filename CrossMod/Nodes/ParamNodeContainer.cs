@@ -125,6 +125,8 @@ namespace CrossMod.Nodes
             if (RenderSettings.Instance.RenderHitCollisions)
             {
                 GL.Disable(EnableCap.DepthTest);
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                 foreach (var hit in HitData)
                 {
                     //some param files refer to bone hashes that don't exist on the skeleton
@@ -141,6 +143,7 @@ namespace CrossMod.Nodes
                         sphere.Render(sphereShader, hit.Size, hit.Pos, bone, camera.MvpMatrix, color);
                 }
                 GL.Enable(EnableCap.DepthTest);
+                GL.Disable(EnableCap.Blend);
             }
 
             Matrix4 transN = Skel.GetAnimationSingleBindsTransform(0).ClearRotation().ClearScale();
