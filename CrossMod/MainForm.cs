@@ -51,7 +51,15 @@ namespace CrossMod
         private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FileTools.TrySaveFile(out string fileName, "GIF|*.gif", "animation");
-            await modelViewport.RenderAnimationToGifAsync(fileName);
+
+            var progressViewer = new ProgressViewer { Text = "Processing GIF" };
+            progressViewer.Show();
+            var progress = new Progress<int>(percent =>
+                progressViewer.SetProgress(percent));
+
+            await modelViewport.RenderAnimationToGifAsync(fileName, progress);
+
+            progressViewer.Close();
         }
 
         public void HideControl()
@@ -142,7 +150,7 @@ namespace CrossMod
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
                 modelViewport.UpdateTexture(null);
             }
-            
+
             modelViewport.RenderFrame();
         }
 

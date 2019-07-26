@@ -130,7 +130,7 @@ namespace CrossMod.GUI
             glViewport.Dispose();
         }
 
-        public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath)
+        public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath, IProgress<int> progress)
         {
             // Disable automatic updates so frames can be rendered manually.
             glViewport.PauseRendering();
@@ -144,6 +144,9 @@ namespace CrossMod.GUI
                 animationBar.Frame = i;
                 glViewport.RenderFrame();
                 frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
+
+                var ratio = (double) i / animationBar.FrameCount;
+                progress.Report((int)(ratio * 100));
             }
 
             // Continue on separate thread to maintain responsiveness.

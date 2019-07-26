@@ -115,6 +115,12 @@
     <Compile Include="GUI\CameraControl.Designer.cs">
       <DependentUpon>CameraControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ProgressViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ProgressViewer.Designer.cs">
+      <DependentUpon>ProgressViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="IO\ColladaSchema.cs" />
     <Compile Include="IO\DAEWriter.cs" />
     <Compile Include="IO\IOAnimation.cs" />
@@ -203,6 +209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ProgressViewer.resx">
+      <DependentUpon>ProgressViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\RenderSettingsMenu.resx">
       <DependentUpon>RenderSettingsMenu.cs</DependentUpon>
