@@ -22,7 +22,7 @@ namespace CrossMod.IO
                 o.AppendLine("nodes");
                 foreach (RBone bone in Skeleton.Bones)
                 {
-                    o.AppendLine($"{bone.ID} \"{bone.Name}\" {bone.ParentID}");
+                    o.AppendLine($"{bone.Id} \"{bone.Name}\" {bone.ParentId}");
                 }
                 o.AppendLine("end");
             }
@@ -42,7 +42,7 @@ namespace CrossMod.IO
                             Position = Node.GetPosition(i, Position);
                             Rotation = Tools.CrossMath.ToEulerAngles(Node.GetQuaternionRotation(i, bone.Rotation).Inverted());
                         }
-                        o.AppendLine($"{bone.ID} {Position.X} {Position.Y} {Position.Z} {Rotation.X} {Rotation.Y} {Rotation.Z}");
+                        o.AppendLine($"{bone.Id} {Position.X} {Position.Y} {Position.Z} {Rotation.X} {Rotation.Y} {Rotation.Z}");
                     }
 
                 }
@@ -64,7 +64,7 @@ namespace CrossMod.IO
                 o.AppendLine("nodes");
                 foreach(RBone bone in Model.Skeleton.Bones)
                 {
-                    o.AppendLine($"{bone.ID} \"{bone.Name}\" {bone.ParentID}");
+                    o.AppendLine($"{bone.Id} \"{bone.Name}\" {bone.ParentId}");
                 }
                 o.AppendLine("end");
 
@@ -74,7 +74,7 @@ namespace CrossMod.IO
                 {
                     Vector3 Position = bone.Position;
                     Vector3 Rotation = bone.EulerRotation;
-                    o.AppendLine($"{bone.ID} {Position.X} {Position.Y} {Position.Z} {Rotation.X} {Rotation.Y} {Rotation.Z}");
+                    o.AppendLine($"{bone.Id} {Position.X} {Position.Y} {Position.Z} {Rotation.X} {Rotation.Y} {Rotation.Z}");
                 }
                 o.AppendLine("end");
             }

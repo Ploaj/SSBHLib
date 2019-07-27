@@ -40,7 +40,7 @@ namespace CrossMod.Nodes
                     MaxRange = new OpenTK.Vector3(entry.MaxRangeX, entry.MaxRangeY, entry.MaxRangeZ),
                     WatchRotation = new OpenTK.Quaternion(entry.Quat1X, entry.Quat1Y, entry.Quat1Z, entry.Quat1W),
                     HelperTargetRotation = new OpenTK.Quaternion(entry.Quat2X, entry.Quat2Y, entry.Quat2Z, entry.Quat2W),
-                    AOI = new OpenTK.Vector3(entry.AoIx, entry.AoIy, entry.AoIz)
+                    Aoi = new OpenTK.Vector3(entry.AoIx, entry.AoIy, entry.AoIz)
                 });
             }
         }

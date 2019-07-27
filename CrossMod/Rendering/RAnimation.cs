@@ -93,7 +93,7 @@ namespace CrossMod.Rendering
                     }
                 }
                 //It's probably OK to do this
-                if (b.ParentID == -1)
+                if (b.ParentId == -1)
                     b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }

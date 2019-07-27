@@ -228,15 +228,15 @@ namespace CrossMod.GUI
                     Text = b.Name
                 };
 
-                boneById.Add(b.ID, node);
-                if (b.ParentID == -1)
+                boneById.Add(b.Id, node);
+                if (b.ParentId == -1)
                     boneTree.Nodes.Add(node);
             }
 
             foreach (RBone b in skeleton.Bones)
             {
-                if (b.ParentID != -1)
-                    boneById[b.ParentID].Nodes.Add(boneById[b.ID]);
+                if (b.ParentId != -1)
+                    boneById[b.ParentId].Nodes.Add(boneById[b.Id]);
             }
         }
 

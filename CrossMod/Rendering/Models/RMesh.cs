@@ -32,10 +32,7 @@ namespace CrossMod.Rendering.Models
 
             if (skeleton != null)
             {
-                var matrix = Matrix4.Identity;
-                if (SingleBindIndex >= 0)
-                    matrix = skeleton.GetAnimationSingleBindsTransform(SingleBindIndex);
-                shader.SetMatrix4x4("transform", ref matrix);
+                shader.SetMatrix4x4("transform", skeleton.GetAnimationSingleBindsTransform(SingleBindIndex));
             }
 
             // TODO: ???

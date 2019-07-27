@@ -29,50 +29,50 @@ namespace CrossMod.Rendering
 
         public Matrix4[] GetTransforms()
         {
-            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            Matrix4[] transforms = new Matrix4[Bones.Count];
             for(int i = 0; i < Bones.Count; i++)
             {
-                Transforms[i] = Bones[i].Transform;
+                transforms[i] = Bones[i].Transform;
             }
-            return Transforms;
+            return transforms;
         }
 
         public Matrix4[] GetWorldTransforms()
         {
-            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                Transforms[i] = Bones[i].WorldTransform;
+                transforms[i] = Bones[i].WorldTransform;
             }
-            return Transforms;
+            return transforms;
         }
 
         public Matrix4[] GetInvTransforms()
         {
-            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                Transforms[i] = Bones[i].InvTransform;
+                transforms[i] = Bones[i].InvTransform;
             }
-            return Transforms;
+            return transforms;
         }
 
         public Matrix4[] GetInvWorldTransforms()
         {
-            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                Transforms[i] = Bones[i].InvWorldTransform;
+                transforms[i] = Bones[i].InvWorldTransform;
             }
-            return Transforms;
+            return transforms;
         }
 
         public Matrix4[] GetAnimationTransforms()
         {
-            Matrix4[] Transforms = new Matrix4[Bones.Count];
+            Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                Transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
+                transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
             }
 
             // Process HelperBones
@@ -105,7 +105,7 @@ namespace CrossMod.Rendering
                 Transforms[index] = HelperBone.InvWorldTransform * HelperBone.GetAnimationTransform(this);*/
             }
 
-            return Transforms;
+            return transforms;
         }
 
         public static float Angle(Quaternion a, Quaternion b)
@@ -118,29 +118,32 @@ namespace CrossMod.Rendering
         {
             return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
         }
-        public const float kEpsilon = 0.000001F;
+        public const float KEpsilon = 0.000001F;
         private static bool IsEqualUsingDot(float dot)
         {
             // Returns false in the presence of NaN values.
-            return dot > 1.0f - kEpsilon;
+            return dot > 1.0f - KEpsilon;
         }
 
-        public Matrix4 GetAnimationSingleBindsTransform(int Index)
+        public Matrix4 GetAnimationSingleBindsTransform(int index)
         {
-            return Bones[Index].GetAnimationTransform(this);
+            if (index != -1 && Bones.Count > 0)
+                return Bones[index].GetAnimationTransform(this);
+
+            return Matrix4.Identity;
         }
 
-        public int GetBoneIndex(string BoneName)
+        public int GetBoneIndex(string boneName)
         {
             for(int i = 0; i < Bones.Count; i++)
             {
-                if (Bones[i].Name.Equals(BoneName))
+                if (Bones[i].Name.Equals(boneName))
                     return i;
             }
             return -1;
         }
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
             // Render skeleton on top.
             GL.Disable(EnableCap.DepthTest);
@@ -159,7 +162,7 @@ namespace CrossMod.Rendering
 
             boneShader.SetVector4("boneColor", RenderSettings.Instance.BoneColor);
 
-            Matrix4 mvp = Camera.MvpMatrix;
+            Matrix4 mvp = camera.MvpMatrix;
             boneShader.SetMatrix4x4("mvp", ref mvp);
             boneShader.SetMatrix4x4("rotation", ref prismRotation);
 
@@ -167,10 +170,10 @@ namespace CrossMod.Rendering
             {
                 Matrix4 transform = b.GetAnimationTransform(this);
                 boneShader.SetMatrix4x4("bone", ref transform);
-                boneShader.SetInt("hasParent", b.ParentID != -1 ? 1 : 0);
-                if(b.ParentID != -1)
+                boneShader.SetInt("hasParent", b.ParentId != -1 ? 1 : 0);
+                if(b.ParentId != -1)
                 {
-                    Matrix4 parenttransform = Bones[b.ParentID].GetAnimationTransform(this);
+                    Matrix4 parenttransform = Bones[b.ParentId].GetAnimationTransform(this);
                     boneShader.SetMatrix4x4("parent", ref parenttransform);
                 }
                 bonePrism.Draw(boneShader);
@@ -186,22 +189,22 @@ namespace CrossMod.Rendering
     public class RBone
     {
         public string Name;
-        public int ID;
-        public int ParentID;
+        public int Id;
+        public int ParentId;
 
         public Matrix4 Transform
         {
             get
             {
-                return _transform;
+                return transform;
             }
             set
             {
-                _transform = value;
+                transform = value;
                 AnimationTransform = value;
             }
         }
-        private Matrix4 _transform;
+        private Matrix4 transform;
         public Matrix4 InvTransform;
         public Matrix4 WorldTransform;
         public Matrix4 InvWorldTransform;
@@ -233,11 +236,11 @@ namespace CrossMod.Rendering
             }
         }
 
-        public Matrix4 GetAnimationTransform(RSkeleton Skeleton)
+        public Matrix4 GetAnimationTransform(RSkeleton skeleton)
         {
-            if(ParentID != -1)
+            if(ParentId != -1)
             {
-                return AnimationTransform * Skeleton.Bones[ParentID].GetAnimationTransform(Skeleton);
+                return AnimationTransform * skeleton.Bones[ParentId].GetAnimationTransform(skeleton);
             }
             return AnimationTransform;
         }
@@ -250,7 +253,7 @@ namespace CrossMod.Rendering
         public string ParentBone;
         public string HelperBoneName;
 
-        public Vector3 AOI;
+        public Vector3 Aoi;
         public Quaternion WatchRotation;
         public Quaternion HelperTargetRotation;
         public Vector3 MinRange;
