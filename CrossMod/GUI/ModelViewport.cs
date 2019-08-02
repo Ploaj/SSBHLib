@@ -94,7 +94,7 @@ namespace CrossMod.GUI
             var spheres = new List<Vector4>();
             foreach (var node in renderableNodes)
             {
-                if (node is Rnumdl rnumdl)
+                if (node is Rnumdl rnumdl && rnumdl.Model != null)
                 {
                     spheres.Add(rnumdl.Model.BoundingSphere);
                 }
