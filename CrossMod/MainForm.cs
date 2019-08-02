@@ -150,8 +150,6 @@ namespace CrossMod
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
                 modelViewport.UpdateTexture(null);
             }
-
-            modelViewport.RenderFrame();
         }
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -306,7 +304,6 @@ namespace CrossMod
             ParamNodeContainer.Unload();
             modelViewport.ClearFiles();
             HideControl();
-            GC.Collect();
         }
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -324,17 +321,13 @@ namespace CrossMod
             if (string.IsNullOrEmpty(outputPath))
                 return;
 
+            modelViewport.PauseRendering();
+            ShowModelViewport();
+
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
-                // Just render the first alt costume, which will include models without slot specific variants.
-                //if (!file.Contains("c00"))
-                //    continue;
-
                 string sourceFolder = Directory.GetParent(file).FullName;
-
                 LoadWorkspace(sourceFolder);
-
-                ShowModelViewport();
 
                 modelViewport.RenderFrame();
 
@@ -349,6 +342,8 @@ namespace CrossMod
                 ClearWorkspace();
                 System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
+
+            modelViewport.ResumeRendering();
         }
 
         private static string GetCondensedPathName(string folderPath, string file)

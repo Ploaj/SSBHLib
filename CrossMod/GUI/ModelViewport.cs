@@ -252,6 +252,16 @@ namespace CrossMod.GUI
                 glViewport.RenderFrame();
         }
 
+        public void PauseRendering()
+        {
+            glViewport.PauseRendering();
+        }
+
+        public void ResumeRendering()
+        {
+            glViewport.ResumeRendering();
+        }
+
         private void RenderNodes(object sender, EventArgs e)
         {
             // Ensure shaders are created before drawing anything.
