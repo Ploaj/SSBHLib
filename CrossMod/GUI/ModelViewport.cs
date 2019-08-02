@@ -111,7 +111,6 @@ namespace CrossMod.GUI
             renderableNodes.Clear();
             renderableNodeNames.Clear();
 
-            GC.WaitForPendingFinalizers();
             GLObjectManager.DeleteUnusedGLObjects();
         }
 
@@ -273,9 +272,6 @@ namespace CrossMod.GUI
                 ParamNodeContainer.Render(camera);
                 ScriptNode?.Render(camera);
             }
-
-            // Clean up any unused resources.
-            GLObjectManager.DeleteUnusedGLObjects();
         }
 
         private void SetUpViewport()
