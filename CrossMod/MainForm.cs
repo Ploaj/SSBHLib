@@ -308,7 +308,10 @@ namespace CrossMod
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             BatchRenderModels();
+            stopwatch.Stop();
+            System.Diagnostics.Debug.WriteLine($"Batch render: {stopwatch.ElapsedMilliseconds} ms");
         }
 
         private void BatchRenderModels()
@@ -321,8 +324,9 @@ namespace CrossMod
             if (string.IsNullOrEmpty(outputPath))
                 return;
 
-            modelViewport.PauseRendering();
+            modelViewport.BeginBatchRenderMode();
             ShowModelViewport();
+            fileTree.BeginUpdate();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
@@ -343,7 +347,8 @@ namespace CrossMod
                 System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
 
-            modelViewport.ResumeRendering();
+            fileTree.EndUpdate();
+            modelViewport.EndBatchRenderMode();
         }
 
         private static string GetCondensedPathName(string folderPath, string file)

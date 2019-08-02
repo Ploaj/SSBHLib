@@ -252,14 +252,18 @@ namespace CrossMod.GUI
                 glViewport.RenderFrame();
         }
 
-        public void PauseRendering()
+        public void BeginBatchRenderMode()
         {
             glViewport.PauseRendering();
+            boneTree.Visible = false;
+            meshList.Visible = false;
         }
 
-        public void ResumeRendering()
+        public void EndBatchRenderMode()
         {
             glViewport.ResumeRendering();
+            boneTree.Visible = true;
+            meshList.Visible = true;
         }
 
         private void RenderNodes(object sender, EventArgs e)
