@@ -111,6 +111,9 @@ namespace CrossMod.GUI
             renderableNodes.Clear();
             renderableNodeNames.Clear();
 
+            meshList.Clear();
+            boneTree.Nodes.Clear();
+
             GLObjectManager.DeleteUnusedGLObjects();
         }
 

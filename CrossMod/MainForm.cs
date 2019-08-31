@@ -14,9 +14,12 @@ namespace CrossMod
         public static ImageList iconList;
 
         // Controls
-        private ModelViewport modelViewport;
+        private readonly ModelViewport modelViewport = new ModelViewport
+        {
+            Dock = DockStyle.Fill
+        };
 
-        private ContextMenu fileTreeContextMenu;
+        private readonly ContextMenu fileTreeContextMenu = new ContextMenu();
 
         private CameraControl cameraControl;
 
@@ -24,12 +27,7 @@ namespace CrossMod
         {
             InitializeComponent();
 
-            modelViewport = new ModelViewport
-            {
-                Dock = DockStyle.Fill
-            };
-
-            fileTreeContextMenu = new ContextMenu();
+            ShowModelViewport();
 
             iconList = iconList = new ImageList();
             iconList.ImageSize = new Size(24, 24);
@@ -45,6 +43,7 @@ namespace CrossMod
 
             fileTree.ImageList = iconList;
 
+            // TODO: Move to designer.
             exportAnimationToGifToolStripMenuItem.Click += ExportAnimationToGifToolStripMenuItem_Click;
         }
 
@@ -62,11 +61,6 @@ namespace CrossMod
             progressViewer.Close();
         }
 
-        public void HideControl()
-        {
-            contentBox.Controls.Clear();
-        }
-
         public void ShowModelViewport()
         {
             contentBox.Controls.Clear();
@@ -79,8 +73,6 @@ namespace CrossMod
                 return;
 
             LoadWorkspace(folderPath);
-
-            ShowModelViewport();
         }
 
         /// <summary>
@@ -133,19 +125,16 @@ namespace CrossMod
 
             if (fileTree.SelectedNode is NutexNode texture)
             {
-                ShowModelViewport();
                 modelViewport.UpdateTexture(texture);
             }
             else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                ShowModelViewport();
                 var node = (FileNode)fileTree.SelectedNode;
                 modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
                 modelViewport.UpdateTexture(null);
             }
             else if (fileTree.SelectedNode is NuanimNode animation)
             {
-                ShowModelViewport();
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
                 modelViewport.UpdateTexture(null);
             }
@@ -302,7 +291,6 @@ namespace CrossMod
             fileTree.Nodes.Clear();
             ParamNodeContainer.Unload();
             modelViewport.ClearFiles();
-            HideControl();
         }
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -322,7 +310,6 @@ namespace CrossMod
                 return;
 
             modelViewport.BeginBatchRenderMode();
-            ShowModelViewport();
             fileTree.BeginUpdate();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
