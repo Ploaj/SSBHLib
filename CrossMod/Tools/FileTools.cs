@@ -4,7 +4,7 @@ namespace CrossMod
 {
     public class FileTools
     {
-        public static string TryOpenFolder(string title = "")
+        public static bool TryOpenFolderDialog(out string folderName, string title = "")
         {
             using (var dialog = new FolderSelectDialog())
             {
@@ -13,15 +13,17 @@ namespace CrossMod
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    return dialog.SelectedPath;
+                    folderName = dialog.SelectedPath;
+                    return true;
                 }
 
             }
 
-            return "";
+            folderName = "";
+            return false;
         }
         
-        public static bool TryOpenFile(out string fileName, string filter = "")
+        public static bool TryOpenFileDialog(out string fileName, string filter = "")
         {
             using (var dialog = new OpenFileDialog())
             {
@@ -37,7 +39,7 @@ namespace CrossMod
             return false;
         }
         
-        public static bool TrySaveFile(out string fileName, string filter = "", string defaultFileName = "")
+        public static bool TryOpenSaveFileDialog(out string fileName, string filter = "", string defaultFileName = "")
         {
             using (var dialog = new SaveFileDialog())
             {
