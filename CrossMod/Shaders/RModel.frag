@@ -195,11 +195,12 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     return diffuseTerm;
 }
 
-vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
-{
-    // TODO: How does this work?
+float EdgeTintBlend(vec3 N, vec3 V)
+{   
+    float rimExponent = 3.0; // TODO: ???
     float facingRatio = (1 - max(dot(N, V), 0));
-    return mix(vec3(1), paramA6.rgb, pow(facingRatio, 2));
+    facingRatio = pow(facingRatio, rimExponent) * paramA6.w;
+    return facingRatio;
 }
 
 vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower)
@@ -236,8 +237,8 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     if (paramE9 == 1)
         specularTerm.rgb *= occlusion;
 
-    vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
-    specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
+    if (renderRimLighting == 1)
+        specularTerm = mix(specularTerm, paramA6.rgb, EdgeTintBlend(N, V));
 
     return specularTerm;
 }
