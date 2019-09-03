@@ -1,9 +1,13 @@
-﻿using CrossMod.Rendering.Models;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using CrossMod.Rendering.Models;
+using CrossMod.Rendering.Resources;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
-using System.Collections.Generic;
 
 namespace CrossMod.Rendering
 {
@@ -67,9 +71,9 @@ namespace CrossMod.Rendering
                 if (currentEntry == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine(e.MeshName);
+                Debug.WriteLine(e.MeshName);
                 Material meshMaterial = GetMaterial(currentEntry);
-                System.Diagnostics.Debug.WriteLine("");
+                Debug.WriteLine("");
 
                 int subIndex = 0;
                 string prevMesh = "";
@@ -98,20 +102,20 @@ namespace CrossMod.Rendering
             // HACK: This is pretty gross.
             // I need to rework the entire texture loading system.
             if (RMesh.defaultTextures == null)
-                RMesh.defaultTextures = new Resources.DefaultTextures();
+                RMesh.defaultTextures = new DefaultTextures();
 
             Material meshMaterial = new Material(RMesh.defaultTextures)
             {
                 Name = currentEntry.MaterialLabel
             };
 
-            System.Diagnostics.Debug.WriteLine($"{currentEntry.MaterialName} {currentEntry.MaterialLabel}");
+            Debug.WriteLine($"{currentEntry.MaterialName} {currentEntry.MaterialLabel}");
             foreach (MatlAttribute a in currentEntry.Attributes)
             {
                 if (a.DataObject == null)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"{a.DataType} {a.ParamId} {a.DataObject}");
+                Debug.WriteLine($"{a.DataType} {a.ParamId} {a.DataObject}");
 
                 switch (a.DataType)
                 {
@@ -122,7 +126,7 @@ namespace CrossMod.Rendering
                         break;
                     case MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MatlAttribute.MatlVector4)a.DataObject; 
-                        meshMaterial.vec4ByParamId[(long)a.ParamId] = new OpenTK.Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[(long)a.ParamId] = new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
@@ -158,36 +162,55 @@ namespace CrossMod.Rendering
             var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
             var wrapS = GetWrapMode(samplerStruct.WrapS);
             var wrapT = GetWrapMode(samplerStruct.WrapT);
+            var magFilter = GetMagFilter(samplerStruct.MagFilter);
 
+            Texture textureToSet = null;
             switch ((long)a.ParamId)
             {
                 case (long)ParamId.ColSampler:
-                    material.col.TextureWrapS = wrapS;
-                    material.col.TextureWrapT = wrapT;
+                    textureToSet = material.col;
                     break;
                 case (long)ParamId.NorSampler:
-                    material.nor.TextureWrapS = wrapS;
-                    material.nor.TextureWrapT = wrapT;
+                    textureToSet = material.nor;
                     break;
                 case (long)ParamId.PrmSampler:
-                    material.prm.TextureWrapS = wrapS;
-                    material.prm.TextureWrapT = wrapT;
+                    textureToSet = material.prm;
                     break;
                 case (long)ParamId.EmiSampler:
-                    material.emi.TextureWrapS = wrapS;
-                    material.emi.TextureWrapT = wrapT;
+                    textureToSet = material.emi;
                     break;
+            }
+
+            if (textureToSet != null)
+            {
+                textureToSet.TextureWrapS = wrapS;
+                textureToSet.TextureWrapT = wrapT;
+                textureToSet.MagFilter = magFilter;
             }
         }
 
-        private OpenTK.Graphics.OpenGL.TextureWrapMode GetWrapMode(int wrapMode)
+        private TextureMagFilter GetMagFilter(int magFilter)
+        {
+            if (magFilter == 0)
+                return TextureMagFilter.Nearest;
+            if (magFilter == 1)
+                return TextureMagFilter.Linear;
+
+            return TextureMagFilter.Linear;
+        }
+
+        private TextureWrapMode GetWrapMode(int wrapMode)
         {
             if (wrapMode == 0)
-                return OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat;
-            else if (wrapMode == 2)
-                return OpenTK.Graphics.OpenGL.TextureWrapMode.MirroredRepeat;
-            else
-                return OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge;
+                return TextureWrapMode.Repeat;
+            if (wrapMode == 1)
+                return TextureWrapMode.ClampToEdge;
+            if (wrapMode == 2)
+                return TextureWrapMode.MirroredRepeat;
+            if (wrapMode == 3)
+                return TextureWrapMode.ClampToBorder;
+
+            return TextureWrapMode.ClampToEdge;
         }
         
         private void SetBlendState(Material meshMaterial, MatlAttribute a)
@@ -196,14 +219,14 @@ namespace CrossMod.Rendering
             var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
 
             if (blendState.BlendFactor1 == 1)
-                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+                meshMaterial.BlendSrc = BlendingFactor.One;
             else if (blendState.BlendFactor1 == 6)
-                meshMaterial.BlendSrc = OpenTK.Graphics.OpenGL.BlendingFactor.SrcAlpha;
+                meshMaterial.BlendSrc = BlendingFactor.SrcAlpha;
 
             if (blendState.BlendFactor2 == 1)
-                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.One;
+                meshMaterial.BlendDst = BlendingFactor.One;
             else if (blendState.BlendFactor2 == 6)
-                meshMaterial.BlendDst = OpenTK.Graphics.OpenGL.BlendingFactor.OneMinusSrcAlpha;
+                meshMaterial.BlendDst = BlendingFactor.OneMinusSrcAlpha;
 
             meshMaterial.HasAlphaBlending = blendState.BlendFactor1 != 0 || blendState.BlendFactor2 != 0;
 
