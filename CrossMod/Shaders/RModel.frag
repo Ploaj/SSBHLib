@@ -245,7 +245,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb * param9B.rgb * paramA0.rgb;
+    return emissionColor.rgb * param9B.rgb;
 }
 
 float GetF0(float ior)
@@ -375,6 +375,8 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
+
+    fragColor.rgb *= paramA0.rgb;
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);

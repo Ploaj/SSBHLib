@@ -37,7 +37,7 @@ uniform int paramF1;
 
 uniform Bones
 {
-    mat4 transforms[200];
+    mat4 transforms[248];
 };
 
 void main()
