@@ -115,6 +115,12 @@
     <Compile Include="GUI\CameraControl.Designer.cs">
       <DependentUpon>CameraControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\BGSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\BGSettings.Designer.cs">
+      <DependentUpon>BGSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\ProgressViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +209,9 @@
     <Compile Include="Tools\SwitchSwizzler.cs" />
     <EmbeddedResource Include="GUI\AnimationBar.resx">
       <DependentUpon>AnimationBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\BGSettings.resx">
+      <DependentUpon>BGSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\CameraControl.resx">
       <DependentUpon>CameraControl.cs</DependentUpon>

@@ -507,9 +507,10 @@ namespace CrossMod
             modelViewport.Close();
         }
 
-        private void ExportAnimationToGifToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void BackgroundColorSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var bgSettingsMenu = new BGSettings();
+            bgSettingsMenu.Show();
         }
     }
 }
