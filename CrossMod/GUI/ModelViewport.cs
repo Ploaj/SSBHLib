@@ -26,6 +26,10 @@ namespace CrossMod.GUI
         private readonly Camera camera = new Camera() { FarClipPlane = 500000 };
         private Vector2 mousePosition;
         private float mouseScrollWheel;
+        private static string tb1 = "64";
+        private static string tb2 = "64";
+        private static string tb3 = "64";
+        private static bool renderAlpha = false;
 
         public IRenderableAnimation RenderableAnimation
         {
@@ -119,7 +123,7 @@ namespace CrossMod.GUI
 
         public System.Drawing.Bitmap GetScreenshot()
         {
-            return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
+            return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, renderAlpha);
         }
 
         public CameraControl GetCameraControl()
@@ -145,7 +149,7 @@ namespace CrossMod.GUI
             {
                 animationBar.Frame = i;
                 glViewport.RenderFrame();
-                frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
+                frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, renderAlpha));
 
                 var ratio = (double) i / animationBar.FrameCount;
                 progress.Report((int)(ratio * 100));
@@ -301,7 +305,7 @@ namespace CrossMod.GUI
         private static void ClearViewportBuffers()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
+            GL.ClearColor(float.Parse(tb1) / 255.0f, float.Parse(tb2) / 255.0f, float.Parse(tb3) / 255.0f, 0);
         }
 
         private static void SetRenderState()
@@ -363,6 +367,83 @@ namespace CrossMod.GUI
                 return;
 
             ((RMesh)e.Item.Tag).Visible = e.Item.Checked;
+        }
+
+        private void GlViewport_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BgColorSetter_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(textBox1.Text, "[^0-9]"))
+            {
+                textBox1.Text = textBox1.Text.Remove(textBox1.Text.Length - 1);
+            }
+            if (textBox1.Text == "")
+            {
+                textBox1.Text = "0";
+            }
+            if (Int32.Parse(textBox1.Text) >= 256)
+            {
+                textBox1.Text = "255";
+            }
+            tb1 = textBox1.Text;
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(float.Parse(tb1)/255.0f, float.Parse(tb2) / 255.0f, float.Parse(tb3) / 255.0f, 0);
+        }
+
+        private void TextBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(textBox2.Text, "[^0-9]"))
+            {
+                textBox2.Text = textBox2.Text.Remove(textBox2.Text.Length - 1);
+            }
+            if (textBox2.Text == "")
+            {
+                textBox2.Text = "0";
+            }
+            if (Int32.Parse(textBox2.Text) >= 256)
+            {
+                textBox2.Text = "255";
+            }
+            tb2 = textBox2.Text;
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(float.Parse(tb1) / 255.0f, float.Parse(tb2) / 255.0f, float.Parse(tb3) / 255.0f, 0);
+        }
+
+        private void TextBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(textBox3.Text, "[^0-9]"))
+            {
+                textBox3.Text = textBox3.Text.Remove(textBox3.Text.Length - 1);
+            }
+            if (textBox3.Text == "")
+            {
+                textBox3.Text = "0";
+            }
+            if (Int32.Parse(textBox3.Text) >= 256)
+            {
+                textBox3.Text = "255";
+            }
+            tb3 = textBox3.Text;
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(float.Parse(tb1) / 255.0f, float.Parse(tb2) / 255.0f, float.Parse(tb3) / 255.0f, 0);
+        }
+
+        private void Label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            renderAlpha = checkBox1.Checked;
         }
     }
 }

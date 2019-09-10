@@ -506,5 +506,10 @@ namespace CrossMod
         {
             modelViewport.Close();
         }
+
+        private void ExportAnimationToGifToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
