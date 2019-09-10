@@ -132,11 +132,14 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("stipplePattern", defaultTextures.stipplePattern);
         }
 
-        public void AddMaterialParams(UniformBlock uniformBlock)
+        public void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
             AddVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0), true);
+        }
 
+        public void AddMaterialParams(UniformBlock uniformBlock)
+        {
             // Assume no edge tint if not present.
             AddVec4(uniformBlock, 0xA6, new Vector4(1));
 
