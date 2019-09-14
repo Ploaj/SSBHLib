@@ -24,8 +24,8 @@ uniform sampler2D gaoMap;
 uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-// TODO: Cubemap loading doesn't work yet.
-uniform sampler2D difCubemap;
+uniform int hasDifCubeMap;
+uniform samplerCube difCubeMap;
 
 uniform int hasDiffuse;
 uniform sampler2D difMap;
@@ -119,7 +119,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 void main()
 {
@@ -135,7 +135,7 @@ void main()
 	vec3 R = reflect(V, newNormal);
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, param9E, param146, param147, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
 	vec4 emiColor = GetEmissionColor(map1, uvSet, param9E, param146);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;

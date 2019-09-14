@@ -54,7 +54,7 @@ namespace CrossMod.Rendering
         public Texture inkNor = null;
         public bool HasInkNorMap { get; set; } = false;
 
-        public TextureCubeMap specularIbl = null;
+        public Texture specularCubeMap = null;
 
         public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
         public Dictionary<long, bool> boolByParamId = new Dictionary<long, bool>();
@@ -79,8 +79,8 @@ namespace CrossMod.Rendering
             emi2 = defaultTextures.defaultBlack;
             bakeLit = defaultTextures.defaultBlack;
             gao = defaultTextures.defaultWhite;
-            specularIbl = defaultTextures.blackCube;
-            difCube = defaultTextures.defaultBlack;
+            specularCubeMap = defaultTextures.blackCube;
+            difCube = defaultTextures.blackCube;
             dif = defaultTextures.defaultWhite;
             dif2 = defaultTextures.defaultWhite;
             dif3 = defaultTextures.defaultWhite;
@@ -221,8 +221,8 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("gaoMap", gao);
             genericMaterial.AddTexture("projMap", proj);
 
-            genericMaterial.AddTexture("difCubemap", difCube);
-            genericMaterial.AddBoolToInt("hasDifCubemap", HasDifCube);
+            genericMaterial.AddTexture("difCubeMap", difCube);
+            genericMaterial.AddBoolToInt("hasDifCubeMap", HasDifCube);
 
             genericMaterial.AddTexture("difMap", dif);
             genericMaterial.AddBoolToInt("hasDiffuse", HasDiffuse);
@@ -247,7 +247,7 @@ namespace CrossMod.Rendering
         private void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
-            genericMaterial.AddTexture("specularPbrCube", specularIbl);
+            genericMaterial.AddTexture("specularPbrCube", specularCubeMap);
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 

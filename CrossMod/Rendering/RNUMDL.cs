@@ -239,7 +239,6 @@ namespace CrossMod.Rendering
             // Don't make texture names case sensitive.
             var text = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();
 
-            // Create a temp so we don't make the defaults null.
             if (sfTextureByName.TryGetValue(text, out Texture texture))
             {
                 switch ((long)a.ParamId)
@@ -247,6 +246,9 @@ namespace CrossMod.Rendering
                     case (long)ParamId.ColMap:
                         meshMaterial.HasCol = true;
                         meshMaterial.col = texture;
+                        break;
+                    case (long)ParamId.SpecularCubeMap:
+                        meshMaterial.specularCubeMap = texture;
                         break;
                     case (long)ParamId.GaoMap:
                         meshMaterial.gao = texture;
@@ -298,21 +300,21 @@ namespace CrossMod.Rendering
                 }
             }
 
-            // TODO: Cube map reading doesn't work yet, so we need to assign it separately.
-            if ((long)a.ParamId == (long)ParamId.SpecularCubeMap)
-                meshMaterial.specularIbl = meshMaterial.defaultTextures.specularPbr;
+            // TODO: Find a better way to handle this case.
+            if (((long)a.ParamId == (long)ParamId.SpecularCubeMap) && text == "#replace_cubemap")
+                meshMaterial.specularCubeMap = meshMaterial.defaultTextures.specularPbr;
         }
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
             if (Model != null)
             {
-                Model.Render(Camera, Skeleton);
+                Model.Render(camera, Skeleton);
             }
 
             // Render skeleton on top.
             if (RenderSettings.Instance.RenderBones)
-                Skeleton?.Render(Camera);
+                Skeleton?.Render(camera);
         }
 
         public RModel GetModel()

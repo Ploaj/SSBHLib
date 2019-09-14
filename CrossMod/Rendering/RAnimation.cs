@@ -98,7 +98,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
         }
     }

@@ -1,11 +1,8 @@
-﻿using CrossMod.Tools;
+﻿using CrossMod.Rendering;
+using CrossMod.Tools;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
-using CrossMod.Rendering;
-using SFGraphics.GLObjects.Textures;
-using SFGraphics.GLObjects.Textures.TextureFormats;
 
 // Classes ported from StudioSB
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE

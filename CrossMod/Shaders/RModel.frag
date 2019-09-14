@@ -27,9 +27,8 @@ uniform sampler2D gaoMap;
 uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-// TODO: Cubemap loading doesn't work yet.
-uniform int hasDifCubemap;
-uniform sampler2D difCubemap;
+uniform int hasDifCubeMap;
+uniform samplerCube difCubeMap;
 
 uniform int hasDiffuse;
 uniform sampler2D difMap;
@@ -163,7 +162,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness, vec3 sssColor)
 {
@@ -281,7 +280,7 @@ void main()
     vec3 refractionVector = refract(V, normalize(newNormal), iorRatio);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, param9E, param146, param147, colorSet5);
 
     vec4 emissionColor = GetEmissionColor(map1, uvSet, param9E, param146);
     vec4 prmColor = texture(prmMap, map1).xyzw;
