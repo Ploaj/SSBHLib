@@ -138,6 +138,7 @@
     <Compile Include="Nodes\NuhlpbNode.cs" />
     <Compile Include="Nodes\ParamNode.cs" />
     <Compile Include="Nodes\ParamNodeContainer.cs" />
+    <Compile Include="Nodes\SBSurface.cs" />
     <Compile Include="Nodes\ScriptNode.cs" />
     <Compile Include="Nodes\ShanNode.cs" />
     <Compile Include="Rendering\Collision.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Rendering\ScreenTriangle.cs" />
     <Compile Include="Tools\Hash.cs" />
     <Compile Include="Tools\SwitchSwizzler.cs" />
+    <Compile Include="Tools\TextureFormatInfo.cs" />
     <EmbeddedResource Include="GUI\AnimationBar.resx">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </EmbeddedResource>
