@@ -122,21 +122,21 @@ namespace CrossMod.Rendering
                     case MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, a);
                         // HACK: Just render as white if texture is present.
-                        meshMaterial.floatByParamId[(long)a.ParamId] = 1;
+                        meshMaterial.floatByParamId[a.ParamId] = 1;
                         break;
                     case MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MatlAttribute.MatlVector4)a.DataObject; 
-                        meshMaterial.vec4ByParamId[(long)a.ParamId] = new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[a.ParamId] = new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case MatlEnums.ParamDataType.Boolean:
                         // Convert to vec4 to use with rendering.
                         // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)a.DataObject;
-                        meshMaterial.boolByParamId[(long)a.ParamId] = boolValue;
+                        meshMaterial.boolByParamId[a.ParamId] = boolValue;
                         break;
                     case MatlEnums.ParamDataType.Float:
                         float floatValue = (float)a.DataObject;
-                        meshMaterial.floatByParamId[(long)a.ParamId] = floatValue;
+                        meshMaterial.floatByParamId[a.ParamId] = floatValue;
                         break;
                     case MatlEnums.ParamDataType.BlendState:
                         SetBlendState(meshMaterial, a);

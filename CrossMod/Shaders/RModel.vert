@@ -31,14 +31,40 @@ out vec3 geomPosition;
 uniform mat4 mvp;
 uniform mat4 transform;
 
-// Sprite sheet animations.
-uniform vec4 paramAA;
-uniform int paramF1;
-
 uniform Bones
 {
     mat4 transforms[300];
 };
+
+// TODO: Fix multiple blocks.
+// uniform MaterialParams
+// {
+//     vec4 CustomVector0;
+//     vec4 CustomVector3;
+//     vec4 CustomVector6;
+//     vec4 CustomVector8;
+//     vec4 CustomVector11;
+//     vec4 CustomVector13;
+//     vec4 CustomVector14;
+//     vec3 CustomVector18;
+//     vec4 CustomVector30;
+//     vec4 CustomVector31;
+//     vec4 CustomVector32;
+//     vec4 CustomVector42;
+//     vec4 CustomVector47;
+//     vec4 CustomVector44;
+//     vec4 CustomVector45;
+
+//     vec4 vec4Param;
+
+//     int CustomBoolean1;
+//     int CustomBoolean2;
+
+//     float CustomFloat8;
+//     float CustomFloat10;
+//     float CustomFloat19;
+// };
+
 
 void main()
 {
@@ -65,10 +91,10 @@ void main()
     geomBake1 = bake1;
     geomPosition = position.xyz;
 
-    // Sprite sheet uvs.
+    // TODO: Sprite sheet uvs.
     geomMap1 = map1;
-    if (paramF1 == 1)
-        geomMap1 /= paramAA.xy;
+    // if (CustomBoolean1 == 1)
+    //     geomMap1 /= CustomVector18.xy;
 
     geomUvSet = uvSet;
     geomUvSet1 = uvSet1;

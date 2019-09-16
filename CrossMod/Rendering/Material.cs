@@ -3,6 +3,7 @@ using SFGraphics.GLObjects.Textures;
 using SFGenericModel.Materials;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SSBHLib.Formats.Materials;
 
 namespace CrossMod.Rendering
 {
@@ -56,12 +57,11 @@ namespace CrossMod.Rendering
 
         public Texture specularCubeMap = null;
 
-        public Dictionary<long, Vector4> vec4ByParamId = new Dictionary<long, Vector4>();
-        public Dictionary<long, bool> boolByParamId = new Dictionary<long, bool>();
-        public Dictionary<long, float> floatByParamId = new Dictionary<long, float>();
+        public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
+        public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
+        public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
 
-        // this isn't super clean because of the whole attribute names being different and what not...
-        public Dictionary<long, Vector4> MaterialAnimation { get; } = new Dictionary<long, Vector4>();
+        public Dictionary<MatlEnums.ParamId, Vector4> MaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
         public Material(Resources.DefaultTextures defaultTextures)
         {
@@ -98,8 +98,8 @@ namespace CrossMod.Rendering
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
-            genericMaterial.AddBoolToInt("hasParam153", vec4ByParamId.ContainsKey(0x153));
-            genericMaterial.AddBoolToInt("hasParam156", vec4ByParamId.ContainsKey(0x156));
+            genericMaterial.AddBoolToInt("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
+            genericMaterial.AddBoolToInt("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
 
             // TODO: Convert from quaternion values in light.nuanimb.
             AddQuaternion("chrLightDir", genericMaterial, -0.453154f, -0.365998f, -0.211309f, 0.784886f);
@@ -135,69 +135,71 @@ namespace CrossMod.Rendering
         public void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
-            AddVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0), true);
+            // TODO: Check if this cast is safe.
+            AddVec4(uniformBlock, (MatlEnums.ParamId)RenderSettings.Instance.ParamId, new Vector4(0), true);
         }
 
         public void AddMaterialParams(UniformBlock uniformBlock)
         {
             // Assume no edge tint if not present.
-            AddVec4(uniformBlock, 0xA6, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, new Vector4(1));
 
             // Some sort of skin subsurface color?
-            AddVec4(uniformBlock, 0xA3, new Vector4(0));
-            AddVec4(uniformBlock, 0x145, new Vector4(1, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, new Vector4(0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, new Vector4(1, 0, 0, 0));
 
-            // Mario Galaxy rim light?
-            AddVec4(uniformBlock, 0xA0, new Vector4(1));
+            // RGB color multiplier that affects all passes.
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, new Vector4(1));
 
-            // Diffuse color multiplier?
-            AddVec4(uniformBlock, 0xA5, new Vector4(1));
+            // RGB diffuse pass color multiplier.
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, new Vector4(1));
 
             // Sprite sheet UV parameters.
-            AddVec4(uniformBlock, 0xAA, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, new Vector4(1));
 
-            AddVec4(uniformBlock, 0x156, new Vector4(0));
+            // Color channels work like a PRM map.
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, new Vector4(0));
 
             // Enables/disables specular occlusion.
-            AddBool(uniformBlock, 0xE9, true);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, true);
 
-            AddBool(uniformBlock, 0xEA, true);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
 
             // Controls anisotropic specular.
-            AddFloat(uniformBlock, 0xCA, 0.0f);
+            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
 
             // Controls specular tint.
-            AddFloat(uniformBlock, 0xC8, 0.0f);
+            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
 
             // TODO: Refraction?
-            AddFloat(uniformBlock, 0xD3, 0.0f);
+            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat19, 0.0f);
 
             // TODO: du dv intensity?
-            AddFloat(uniformBlock, 0xC4, 0.0f);
+            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
 
             // Some sort of sprite sheet scale toggle.
-            AddBool(uniformBlock, 0xF1, true);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, true);
 
             // Enables/disables UV scrolling animations.
-            AddBool(uniformBlock, 0xEE, false);
-            AddBool(uniformBlock, 0xED, false);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean5, false);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
 
-            // Alpha offset.
-            AddVec4(uniformBlock, 0x98, new Vector4(0, 0, 0, 0));
+            // Alpha offset?
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, new Vector4(0, 0, 0, 0));
 
             // UV transforms.
-            AddVec4(uniformBlock, 0x146, new Vector4(1, 1, 0, 0));
-            AddVec4(uniformBlock, 0x147, new Vector4(1, 1, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector31, new Vector4(1, 1, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector32, new Vector4(1, 1, 0, 0));
 
             // UV transform for emissive map layer 1.
-            AddVec4(uniformBlock, 0x9E, new Vector4(1, 1, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector6, new Vector4(1, 1, 0, 0));
 
             // Wii Fit trainer stage color.
-            AddVec4(uniformBlock, 0x153, new Vector4(0, 0, 0, 0));
-            AddVec4(uniformBlock, 0x154, new Vector4(0, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, new Vector4(0, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, new Vector4(0, 0, 0, 0));
 
             // Some sort of emission color.
-            AddVec4(uniformBlock, 0x9B, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, new Vector4(1));
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
@@ -251,9 +253,9 @@ namespace CrossMod.Rendering
             genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 
-        private void AddBool(UniformBlock genericMaterial, long paramId, bool defaultValue)
+        private void AddBool(UniformBlock genericMaterial, MatlEnums.ParamId paramId, bool defaultValue)
         {
-            var name = $"param{paramId.ToString("X")}";
+            var name = paramId.ToString();
             if (boolByParamId.ContainsKey(paramId))
             {
                 var value = boolByParamId[paramId];
@@ -265,9 +267,9 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void AddFloat(UniformBlock genericMaterial, long paramId, float defaultValue)
+        private void AddFloat(UniformBlock genericMaterial, MatlEnums.ParamId paramId, float defaultValue)
         {
-            var name = $"param{paramId.ToString("X")}";
+            var name = paramId.ToString();
             if (floatByParamId.ContainsKey(paramId))
             {
                 var value = floatByParamId[paramId];
@@ -279,10 +281,10 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void AddVec4(UniformBlock uniformBlock, long paramId, Vector4 defaultValue, bool isDebug = false)
+        private void AddVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue, bool isDebug = false)
         {
             // Convert parameters into colors for easier visualization.
-            var name = $"param{paramId.ToString("X")}";
+            var name = paramId.ToString();
             if (isDebug)
                 name = "vec4Param";
 

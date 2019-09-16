@@ -53,29 +53,30 @@ uniform int renderNormalMaps;
 
 uniform MaterialParams
 {
-    vec4 paramA6;
-    vec4 paramA3;
-    vec4 param145;
-    vec4 paramA5;
-    vec4 paramA0;
-    vec4 param98;
-    vec4 param9B;
-    vec4 param151;
-    vec4 param146;
-    vec4 param147;
-    vec4 param9E;
-    vec4 param156;
-    vec4 param153;
-    vec4 param154;
+    vec4 CustomVector0;
+    vec4 CustomVector3;
+    vec4 CustomVector6;
+    vec4 CustomVector8;
+    vec4 CustomVector11;
+    vec4 CustomVector13;
+    vec4 CustomVector14;
+    vec3 CustomVector18;
+    vec4 CustomVector30;
+    vec4 CustomVector31;
+    vec4 CustomVector32;
+    vec4 CustomVector42;
+    vec4 CustomVector47;
+    vec4 CustomVector44;
+    vec4 CustomVector45;
 
     vec4 vec4Param;
 
-    int paramE9;
-    int paramEA;
-    float paramC8;
-    float paramCA;
+    int CustomBoolean1;
+    int CustomBoolean2;
 
-    float paramD3;
+    float CustomFloat8;
+    float CustomFloat10;
+    float CustomFloat19;
 };
 
 uniform mat4 mvp;
@@ -135,9 +136,9 @@ void main()
 	vec3 R = reflect(V, newNormal);
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, param9E, param146, param147, colorSet5);
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
-	vec4 emiColor = GetEmissionColor(map1, uvSet, param9E, param146);
+	vec4 emiColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;

@@ -58,33 +58,34 @@ uniform int renderNormalMaps;
 
 uniform MaterialParams
 {
-    vec4 paramA6;
-    vec4 paramA3;
-    vec4 param145;
-    vec4 paramA5;
-    vec4 paramA0;
-    vec4 param98;
-    vec4 param9B;
-    vec4 param151;
-    vec4 param146;
-    vec4 param147;
-    vec4 param9E;
-    vec4 param156;
-    vec4 param153;
-    vec4 param154;
+    vec4 CustomVector0;
+    vec4 CustomVector3;
+    vec4 CustomVector6;
+    vec4 CustomVector8;
+    vec4 CustomVector11;
+    vec4 CustomVector13;
+    vec4 CustomVector14;
+    vec3 CustomVector18;
+    vec4 CustomVector30;
+    vec4 CustomVector31;
+    vec4 CustomVector32;
+    vec4 CustomVector42;
+    vec4 CustomVector47;
+    vec4 CustomVector44;
+    vec4 CustomVector45;
 
     vec4 vec4Param;
 
-    int paramE9;
-    int paramEA;
-    float paramC8;
-    float paramCA;
+    int CustomBoolean1;
+    int CustomBoolean2;
 
-    float paramD3;
+    float CustomFloat8;
+    float CustomFloat10;
+    float CustomFloat19;
 };
 
-uniform int hasParam156;
-uniform int hasParam153;
+uniform int hasCustomVector47;
+uniform int hasCustomVector44;
 
 uniform float transitionFactor;
 uniform int transitionEffect;
@@ -185,11 +186,11 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     diffuseTerm *= diffuseLight;
 
     // Color multiplier param.
-    diffuseTerm *= paramA5.rgb;
+    diffuseTerm *= CustomVector13.rgb;
 
     // TODO: Wiifit stage model color.
-    if (hasParam153 == 1)
-        diffuseTerm = param153.rgb + param154.rgb;
+    if (hasCustomVector44 == 1)
+        diffuseTerm = CustomVector44.rgb + CustomVector45.rgb;
 
     return diffuseTerm;
 }
@@ -198,7 +199,7 @@ float EdgeTintBlend(vec3 N, vec3 V)
 {   
     float rimExponent = 3.0; // TODO: ???
     float facingRatio = (1 - max(dot(N, V), 0));
-    facingRatio = pow(facingRatio, rimExponent) * paramA6.w;
+    facingRatio = pow(facingRatio, rimExponent) * CustomVector14.w;
     return facingRatio;
 }
 
@@ -214,16 +215,16 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     // TODO: Does image based lighting consider anisotropy?
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessX = roughness * (1.0 + paramCA);
-    float roughnessY = roughness / (1.0 + paramCA);
+    float roughnessX = roughness * (1.0 + CustomFloat10);
+    float roughnessY = roughness / (1.0 + CustomFloat10);
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
     float specularBrdf = 0;
-    if (paramCA != 0)
+    if (CustomFloat10 != 0)
         specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
-        specularBrdf = pow(Ggx(N, halfAngle, roughness), param145.x) * directLightIntensity;
+        specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x) * directLightIntensity;
 
     // Some sort of fake SSS.
     // TODO: Does this affect the whole pass?
@@ -233,18 +234,18 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     specularTerm += kSpecular * vec3(specularBrdf);
 
     // Cavity Map used for specular occlusion.
-    if (paramE9 == 1)
+    if (CustomBoolean1 == 1)
         specularTerm.rgb *= occlusion;
 
     if (renderRimLighting == 1)
-        specularTerm = mix(specularTerm, paramA6.rgb, EdgeTintBlend(N, V));
+        specularTerm = mix(specularTerm, CustomVector14.rgb, EdgeTintBlend(N, V));
 
     return specularTerm * tintColor;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb * param9B.rgb;
+    return emissionColor.rgb * CustomVector3.rgb;
 }
 
 float GetF0(float ior)
@@ -282,22 +283,22 @@ void main()
     vec3 V = normalize(position - cameraPos);
     vec3 R = reflect(V, newNormal);
 
-    float iorRatio = 1.0 / (1.0 + paramD3);
+    float iorRatio = 1.0 / (1.0 + CustomFloat19);
     vec3 refractionVector = refract(V, normalize(newNormal), iorRatio);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, param9E, param146, param147, colorSet5);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
-    vec4 emissionColor = GetEmissionColor(map1, uvSet, param9E, param146);
+    vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
     // Probably some sort of override for PRM color.
-    if (hasParam156 == 1)
-        prmColor = param156;
+    if (hasCustomVector47 == 1)
+        prmColor = CustomVector47;
 
     // Defined separately so it can be disabled for material transitions.
-    vec3 sssColor = paramA3.rgb;
-    float specPower = param145.x;
+    vec3 sssColor = CustomVector11.rgb;
+    float specPower = CustomVector30.x;
 
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
@@ -308,29 +309,29 @@ void main()
             // Ditto
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.758027, 0.115859, 0.04), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
     }
 
@@ -359,7 +360,7 @@ void main()
     // TODO: Is this actually specular tint?
     // TODO: Is the skin specular part of the specular pass?
     vec3 albedoTint = albedoColor.rgb / Luminance(albedoColor.rgb);
-    vec3 tintColor = mix(vec3(1), albedoTint, paramC8 * renderExperimental); 
+    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8 * renderExperimental); 
 
     vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, tintColor, metalness);
     fragColor.rgb += specularTerm * renderSpecular;
@@ -376,7 +377,7 @@ void main()
         fragColor.rgb *= colorSet1.rgb;
 
     // TODO: Experimental refraction.
-    if (paramD3 > 0.0)
+    if (CustomFloat19 > 0.0)
         fragColor.rgb += refractionIbl * renderExperimental;
 
     if (renderWireframe == 1)
@@ -386,7 +387,7 @@ void main()
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
 
-    fragColor.rgb *= paramA0.rgb;
+    fragColor.rgb *= CustomVector8.rgb;
 
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);
@@ -400,13 +401,13 @@ void main()
         fragColor.a *= colorSet1.a;
 
     // TODO: Meshes with refraction have some sort of angle fade.
-    float f0Refract = GetF0(paramD3 + 1.0);
+    float f0Refract = GetF0(CustomFloat19 + 1.0);
     vec3 transmissionAlpha = FresnelSchlickRoughness(nDotV, vec3(f0Refract), roughness);
-    if (paramD3 > 0 && renderExperimental == 1)
+    if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
 
     // TODO: Alpha testing.
-    if ((fragColor.a + param98.x) < 0.01)
+    if ((fragColor.a + CustomVector0.x) < 0.01)
         discard;
 
     // TODO: What is the stipple pattern?
