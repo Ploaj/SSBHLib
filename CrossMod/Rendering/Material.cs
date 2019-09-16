@@ -166,7 +166,7 @@ namespace CrossMod.Rendering
             // Controls anisotropic specular.
             AddFloat(uniformBlock, 0xCA, 0.0f);
 
-            // Controls specular IOR.
+            // Controls specular tint.
             AddFloat(uniformBlock, 0xC8, 0.0f);
 
             // TODO: Refraction?

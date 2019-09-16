@@ -202,14 +202,14 @@ float EdgeTintBlend(vec3 N, vec3 V)
     return facingRatio;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower, vec3 tintColor, float metalness)
 {
     vec3 halfAngle = normalize(chrLightDir + V);
 
     // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
     vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularTerm = vec3(0);
-    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y);
+    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y) * metalness; // TODO: What passes does IBL affect?
 
     // TODO: Does image based lighting consider anisotropy?
     // This probably works differently in game.
@@ -239,7 +239,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     if (renderRimLighting == 1)
         specularTerm = mix(specularTerm, paramA6.rgb, EdgeTintBlend(N, V));
 
-    return specularTerm;
+    return specularTerm * tintColor;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -259,6 +259,12 @@ float GetTransitionBlend(float blendMap, float transitionFactor)
         return 1.0;
     else
         return 0.0;
+}
+
+float Luminance(vec3 rgb)
+{
+    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+    return dot(rgb, W);
 }
 
 void main()
@@ -339,8 +345,8 @@ void main()
 
     fragColor = vec4(0, 0, 0, 1);
 
-    float f0Dialectric = GetF0(paramC8 + 1);
-    vec3 f0Final = mix(prmColor.aaa * f0Dialectric, albedoColor.rgb, metalness);
+    float dialectricF0Scale = 0.5; // TODO: What is this value?
+    vec3 f0Final = mix(vec3(prmColor.a * dialectricF0Scale), albedoColor.rgb, metalness);
     float nDotV = max(dot(newNormal, V), 0.0);
 
     vec3 kSpecular = FresnelSchlickRoughness(nDotV, f0Final, roughness);
@@ -350,7 +356,12 @@ void main()
     vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
     fragColor.rgb += diffuseTerm * renderDiffuse;
 
-    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower);
+    // TODO: Is this actually specular tint?
+    // TODO: Is the skin specular part of the specular pass?
+    vec3 albedoTint = albedoColor.rgb / Luminance(albedoColor.rgb);
+    vec3 tintColor = mix(vec3(1), albedoTint, paramC8 * renderExperimental); 
+
+    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, tintColor, metalness);
     fragColor.rgb += specularTerm * renderSpecular;
 
     // Ambient Occlusion
