@@ -160,8 +160,8 @@ namespace CrossMod.Rendering
             // Color channels work like a PRM map.
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, new Vector4(0));
 
-            // Enables/disables specular occlusion.
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, true);
+            // TODO: ???
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
 
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
 

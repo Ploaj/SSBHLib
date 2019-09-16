@@ -203,7 +203,7 @@ float EdgeTintBlend(vec3 N, vec3 V)
     return facingRatio;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower, vec3 tintColor, float metalness)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float cavity, float specPower, vec3 tintColor, float metalness)
 {
     vec3 halfAngle = normalize(chrLightDir + V);
 
@@ -233,12 +233,14 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     specularTerm += kSpecular * vec3(specularBrdf);
 
-    // Cavity Map used for specular occlusion.
-    if (CustomBoolean1 == 1)
-        specularTerm.rgb *= occlusion;
-
     if (renderRimLighting == 1)
-        specularTerm = mix(specularTerm, CustomVector14.rgb, EdgeTintBlend(N, V));
+    {
+        // TODO: How does the cavity map work?
+        float edgeBlend = EdgeTintBlend(N, V);
+        if (renderExperimental == 1) 
+            edgeBlend *= cavity;
+        specularTerm = mix(specularTerm, CustomVector14.rgb, edgeBlend);
+    }
 
     return specularTerm * tintColor;
 }
@@ -346,7 +348,7 @@ void main()
 
     fragColor = vec4(0, 0, 0, 1);
 
-    float dialectricF0Scale = 0.5; // TODO: What is this value?
+    float dialectricF0Scale = 1; // TODO: What is this value?
     vec3 f0Final = mix(vec3(prmColor.a * dialectricF0Scale), albedoColor.rgb, metalness);
     float nDotV = max(dot(newNormal, V), 0.0);
 
@@ -360,7 +362,7 @@ void main()
     // TODO: Is this actually specular tint?
     // TODO: Is the skin specular part of the specular pass?
     vec3 albedoTint = albedoColor.rgb / Luminance(albedoColor.rgb);
-    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8 * renderExperimental); 
+    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
 
     vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, tintColor, metalness);
     fragColor.rgb += specularTerm * renderSpecular;
