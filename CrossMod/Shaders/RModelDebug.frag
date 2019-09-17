@@ -1,6 +1,6 @@
 #version 330
 
-in vec3 N;
+in vec3 vertexNormal;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
@@ -128,12 +128,12 @@ void main()
     if (hasInkNorMap == 1)
         norColor.rgb = texture(inkNorMap, map1).rga;
 
-    vec3 newNormal = N;
+    vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
 	vec3 V = normalize(position - cameraPos);
-	vec3 R = reflect(V, newNormal);
+	vec3 R = reflect(V, fragmentNormal);
 
     // Get texture colors.
 	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
@@ -160,7 +160,7 @@ void main()
 	switch (renderMode)
 	{
         case 1:
-            fragColor.rgb = vec3(0.218) * max(dot(newNormal, V), 0);
+            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, V), 0);
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
 		case 2:
@@ -193,7 +193,7 @@ void main()
 			fragColor = colorSet1;
 			break;
 		case 10:
-			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			fragColor = vec4(fragmentNormal * 0.5 + 0.5, 1);
 			break;
 		case 11:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);

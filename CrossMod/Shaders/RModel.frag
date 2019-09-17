@@ -1,6 +1,6 @@
 #version 330
 
-in vec3 N;
+in vec3 vertexNormal;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
@@ -270,6 +270,21 @@ float Luminance(vec3 rgb)
     return dot(rgb, W);
 }
 
+vec3 GetSpecularWeight(float prmSpec, vec3 albedoColor, float metalness, float nDotV, float roughness)
+{
+    vec3 albedoTint = albedoColor / Luminance(albedoColor);
+    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
+
+    // TODO: What is this value?
+    float dialectricF0Scale = 0.08; 
+
+    // Metals use albedo instead of the specular color/tint.
+    vec3 specularReflectionF0 = vec3(prmSpec * dialectricF0Scale) * tintColor;
+    vec3 f0Final = mix(specularReflectionF0, albedoColor, metalness);
+
+    return FresnelSchlickRoughness(nDotV, f0Final, roughness);
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
@@ -278,18 +293,19 @@ void main()
     if (hasInkNorMap == 1)
         norColor.xyz = texture(inkNorMap, map1).rga;
 
-    vec3 newNormal = N;
+    vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-    vec3 V = normalize(position - cameraPos);
-    vec3 R = reflect(V, newNormal);
+    vec3 viewVector = normalize(position - cameraPos);
+    vec3 reflectionVector = reflect(viewVector, fragmentNormal);
+    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
 
     float iorRatio = 1.0 / (1.0 + CustomFloat19);
-    vec3 refractionVector = refract(V, normalize(newNormal), iorRatio);
+    vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
     vec4 prmColor = texture(prmMap, map1).xyzw;
@@ -305,6 +321,7 @@ void main()
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
 
+    // TODO: This might be cleaner with a struct.
     switch (transitionEffect)
     {
         case 0:
@@ -341,47 +358,43 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rgb; // TODO: what is the intensity?
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb; // TODO: what is the intensity?
     int maxLod = 6;
-    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * iblIntensity;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
-    // TODO: Make more functions, so this part is easier to read.
-
-    vec3 albedoTint = albedoColor.rgb / Luminance(albedoColor.rgb);
-    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
-
-    // TODO: What is this value?
-    float dialectricF0Scale = 0.08; 
-    vec3 f0Final = mix(vec3(prmColor.a * dialectricF0Scale) * tintColor, albedoColor.rgb, metalness);
-
-    float nDotV = max(dot(newNormal, V), 0.0);
-
-    vec3 kSpecular = FresnelSchlickRoughness(nDotV, f0Final, roughness);
+    vec3 kSpecular = GetSpecularWeight(prmColor.a, albedoColor.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     // Render passes.
-    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
-    fragColor.rgb += diffuseTerm * renderDiffuse;
+    if (renderDiffuse == 1)
+        fragColor.rgb += DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, kDiffuse, metalness, sssColor);
 
+    if (renderSpecular == 1)
+        fragColor.rgb += SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, metalness);
 
-    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, metalness);
-    fragColor.rgb += specularTerm * renderSpecular;
-
+    // TODO: What passes does ambient occlusion affect?
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
     fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
-    fragColor.rgb += EmissionTerm(emissionColor) * renderEmission;
+    if (renderEmission == 1)
+        fragColor.rgb += EmissionTerm(emissionColor);
 
     // HACK: Some models have black vertex color for some reason.
-    if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
+    if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
         fragColor.rgb *= colorSet1.rgb;
 
     // TODO: Experimental refraction.
     if (CustomFloat19 > 0.0)
         fragColor.rgb += refractionIbl * renderExperimental;
+
+
+    fragColor.rgb *= CustomVector8.rgb;
+
+    // Gamma correction.
+    fragColor.rgb = GetSrgb(fragColor.rgb);
 
     if (renderWireframe == 1)
     {
@@ -389,11 +402,6 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
-
-    fragColor.rgb *= CustomVector8.rgb;
-
-    // Gamma correction.
-    fragColor.rgb = GetSrgb(fragColor.rgb);
 
     // Alpha calculations
     fragColor.a = albedoColor.a;

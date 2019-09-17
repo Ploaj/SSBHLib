@@ -17,7 +17,7 @@ in vec2 uvSet1;
 in ivec4 boneIndices;
 in vec4 boneWeights;
 
-out vec3 geomN;
+out vec3 geomVertexNormal;
 out vec3 geomTangent;
 out vec3 geomBitangent;
 out vec2 geomMap1;
@@ -85,7 +85,7 @@ void main()
     }
 
     // Assign geometry inputs
-    geomN = transformedNormal.xyz;
+    geomVertexNormal = transformedNormal.xyz;
     geomColorSet1 = colorSet1;
     geomColorSet5 = colorSet5;
     geomBake1 = bake1;
