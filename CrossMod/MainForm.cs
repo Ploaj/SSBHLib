@@ -14,9 +14,12 @@ namespace CrossMod
         public static ImageList iconList;
 
         // Controls
-        private ModelViewport modelViewport;
+        private readonly ModelViewport modelViewport = new ModelViewport
+        {
+            Dock = DockStyle.Fill
+        };
 
-        private ContextMenu fileTreeContextMenu;
+        private readonly ContextMenu fileTreeContextMenu = new ContextMenu();
 
         private CameraControl cameraControl;
 
@@ -24,12 +27,7 @@ namespace CrossMod
         {
             InitializeComponent();
 
-            modelViewport = new ModelViewport
-            {
-                Dock = DockStyle.Fill
-            };
-
-            fileTreeContextMenu = new ContextMenu();
+            ShowModelViewport();
 
             iconList = iconList = new ImageList();
             iconList.ImageSize = new Size(24, 24);
@@ -45,18 +43,22 @@ namespace CrossMod
 
             fileTree.ImageList = iconList;
 
+            // TODO: Move to designer.
             exportAnimationToGifToolStripMenuItem.Click += ExportAnimationToGifToolStripMenuItem_Click;
         }
 
         private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FileTools.TrySaveFile(out string fileName, "GIF|*.gif", "animation");
-            await modelViewport.RenderAnimationToGifAsync(fileName);
-        }
+            FileTools.TryOpenSaveFileDialog(out string fileName, "GIF|*.gif", "animation");
 
-        public void HideControl()
-        {
-            contentBox.Controls.Clear();
+            var progressViewer = new ProgressViewer { Text = "Processing GIF" };
+            progressViewer.Show();
+            var progress = new Progress<int>(percent =>
+                progressViewer.SetProgress(percent));
+
+            await modelViewport.RenderAnimationToGifAsync(fileName, progress);
+
+            progressViewer.Close();
         }
 
         public void ShowModelViewport()
@@ -67,13 +69,10 @@ namespace CrossMod
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string folderPath = FileTools.TryOpenFolder();
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
             LoadWorkspace(folderPath);
-
-            ShowModelViewport();
         }
 
         /// <summary>
@@ -126,24 +125,19 @@ namespace CrossMod
 
             if (fileTree.SelectedNode is NutexNode texture)
             {
-                ShowModelViewport();
                 modelViewport.UpdateTexture(texture);
             }
             else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                ShowModelViewport();
                 var node = (FileNode)fileTree.SelectedNode;
                 modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
                 modelViewport.UpdateTexture(null);
             }
             else if (fileTree.SelectedNode is NuanimNode animation)
             {
-                ShowModelViewport();
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
                 modelViewport.UpdateTexture(null);
             }
-            
-            modelViewport.RenderFrame();
         }
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -204,7 +198,7 @@ namespace CrossMod
 
         private void ExportExportableTexture(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".png"))
@@ -216,13 +210,13 @@ namespace CrossMod
 
         private void ExportExportableAnimation(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd, *.seanim, *.anim)|*.smd;*.seanim;*.anim"))
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Supported Files(*.smd, *.seanim, *.anim)|*.smd;*.seanim;*.anim"))
             {
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".smd") || fileName.EndsWith(".anim"))
                 {
                     Rendering.RSkeleton skeletonNode = null;
-                    if (FileTools.TryOpenFile(out string skeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
+                    if (FileTools.TryOpenFileDialog(out string skeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
                     {
                         if (skeletonFileName != null)
                         {
@@ -260,7 +254,7 @@ namespace CrossMod
 
         private void ExportExportableModelAsSmd(object sender, EventArgs args)
         {
-            if (FileTools.TrySaveFile(out string fileName, "Supported Files(*.smd*.obj*.dae*.ply)|*.smd;*.obj;*.dae;*.ply"))
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Supported Files(*.smd*.obj*.dae*.ply)|*.smd;*.obj;*.dae;*.ply"))
             {
                 if (fileName.EndsWith(".smd"))
                     IO_SMD.ExportIOModelAsSMD(fileName, ((IExportableModelNode)((MenuItem)sender).Tag).GetIOModel());
@@ -297,36 +291,31 @@ namespace CrossMod
             fileTree.Nodes.Clear();
             ParamNodeContainer.Unload();
             modelViewport.ClearFiles();
-            HideControl();
-            GC.Collect();
         }
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             BatchRenderModels();
+            stopwatch.Stop();
+            System.Diagnostics.Debug.WriteLine($"Batch render: {stopwatch.ElapsedMilliseconds} ms");
         }
 
         private void BatchRenderModels()
         {
-            string folderPath = FileTools.TryOpenFolder("Select Source Directory");
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
-            string outputPath = FileTools.TryOpenFolder("Select PNG Output Directory");
-            if (string.IsNullOrEmpty(outputPath))
+            if (!FileTools.TryOpenFolderDialog(out string outputPath, "Select PNG Output Directory"))
                 return;
+
+            modelViewport.BeginBatchRenderMode();
+            fileTree.BeginUpdate();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
-                // Just render the first alt costume, which will include models without slot specific variants.
-                //if (!file.Contains("c00"))
-                //    continue;
-
                 string sourceFolder = Directory.GetParent(file).FullName;
-
                 LoadWorkspace(sourceFolder);
-
-                ShowModelViewport();
 
                 modelViewport.RenderFrame();
 
@@ -341,6 +330,9 @@ namespace CrossMod
                 ClearWorkspace();
                 System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
+
+            fileTree.EndUpdate();
+            modelViewport.EndBatchRenderMode();
         }
 
         private static string GetCondensedPathName(string folderPath, string file)
@@ -358,8 +350,7 @@ namespace CrossMod
 
         private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
             WriteMaterialValuesToFile(folderPath);
@@ -411,8 +402,7 @@ namespace CrossMod
 
         private static void WriteAttributesToFile()
         {
-            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
             var meshesByAttribute = new Dictionary<string, List<string>>();
@@ -481,10 +471,10 @@ namespace CrossMod
             cameraControl.Focus();
             cameraControl.Show();
         }
+
         private void printLightValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var folderPath = FileTools.TryOpenFolder("Select Source Directory");
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
             var valuesByName = new Dictionary<string, HashSet<string>>();

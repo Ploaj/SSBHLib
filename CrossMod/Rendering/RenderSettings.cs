@@ -57,7 +57,7 @@ namespace CrossMod.Rendering
 
         [EditInfo("IBL Intensity", ValueEnums.ValueType.Float, "Lighting")]
         [TrackBarInfo(0, 3)]
-        public float IblIntensity { get; set; } = 0.5f;
+        public float IblIntensity { get; set; } = 1.0f;
 
         [EditInfo("Render Normal Maps", ValueEnums.ValueType.Bool, "Materials")]
         public bool RenderNormalMaps { get; set; } = true;

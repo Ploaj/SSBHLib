@@ -1,6 +1,6 @@
 #version 330
 
-in vec3 N;
+in vec3 vertexNormal;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
@@ -27,9 +27,8 @@ uniform sampler2D gaoMap;
 uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-// TODO: Cubemap loading doesn't work yet.
-uniform int hasDifCubemap;
-uniform sampler2D difCubemap;
+uniform int hasDifCubeMap;
+uniform samplerCube difCubeMap;
 
 uniform int hasDiffuse;
 uniform sampler2D difMap;
@@ -59,33 +58,34 @@ uniform int renderNormalMaps;
 
 uniform MaterialParams
 {
-    vec4 paramA6;
-    vec4 paramA3;
-    vec4 param145;
-    vec4 paramA5;
-    vec4 paramA0;
-    vec4 param98;
-    vec4 param9B;
-    vec4 param151;
-    vec4 param146;
-    vec4 param147;
-    vec4 param9E;
-    vec4 param156;
-    vec4 param153;
-    vec4 param154;
+    vec4 CustomVector0;
+    vec4 CustomVector3;
+    vec4 CustomVector6;
+    vec4 CustomVector8;
+    vec4 CustomVector11;
+    vec4 CustomVector13;
+    vec4 CustomVector14;
+    vec3 CustomVector18;
+    vec4 CustomVector30;
+    vec4 CustomVector31;
+    vec4 CustomVector32;
+    vec4 CustomVector42;
+    vec4 CustomVector47;
+    vec4 CustomVector44;
+    vec4 CustomVector45;
 
     vec4 vec4Param;
 
-    int paramE9;
-    int paramEA;
-    float paramC8;
-    float paramCA;
+    int CustomBoolean1;
+    int CustomBoolean2;
 
-    float paramD3;
+    float CustomFloat8;
+    float CustomFloat10;
+    float CustomFloat19;
 };
 
-uniform int hasParam156;
-uniform int hasParam153;
+uniform int hasCustomVector47;
+uniform int hasCustomVector44;
 
 uniform float transitionFactor;
 uniform int transitionEffect;
@@ -163,7 +163,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX,
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness, vec3 sssColor)
 {
@@ -186,44 +186,45 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     diffuseTerm *= diffuseLight;
 
     // Color multiplier param.
-    diffuseTerm *= paramA5.rgb;
+    diffuseTerm *= CustomVector13.rgb;
 
     // TODO: Wiifit stage model color.
-    if (hasParam153 == 1)
-        diffuseTerm = param153.rgb + param154.rgb;
+    if (hasCustomVector44 == 1)
+        diffuseTerm = CustomVector44.rgb + CustomVector45.rgb;
 
     return diffuseTerm;
 }
 
-vec3 RimLightingTerm(vec3 N, vec3 V, vec3 specularIbl)
-{
-    // TODO: How does this work?
+float EdgeTintBlend(vec3 N, vec3 V)
+{   
+    float rimExponent = 3.0; // TODO: ???
     float facingRatio = (1 - max(dot(N, V), 0));
-    return mix(vec3(1), paramA6.rgb, pow(facingRatio, 2));
+    facingRatio = pow(facingRatio, rimExponent) * CustomVector14.w;
+    return facingRatio;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float occlusion, float specPower)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float cavity, float specPower, float metalness)
 {
     vec3 halfAngle = normalize(chrLightDir + V);
 
     // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
     vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularTerm = vec3(0);
-    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y);
+    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y) * metalness; // TODO: What passes does IBL affect?
 
     // TODO: Does image based lighting consider anisotropy?
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessX = roughness * (1.0 + paramCA);
-    float roughnessY = roughness / (1.0 + paramCA);
+    float roughnessX = roughness * (1.0 + CustomFloat10);
+    float roughnessY = roughness / (1.0 + CustomFloat10);
 
     // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
     float specularBrdf = 0;
-    if (paramCA != 0)
+    if (CustomFloat10 != 0)
         specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
     else
-        specularBrdf = pow(Ggx(N, halfAngle, roughness), param145.x) * directLightIntensity;
+        specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x) * directLightIntensity;
 
     // Some sort of fake SSS.
     // TODO: Does this affect the whole pass?
@@ -232,19 +233,21 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
 
     specularTerm += kSpecular * vec3(specularBrdf);
 
-    // Cavity Map used for specular occlusion.
-    if (paramE9 == 1)
-        specularTerm.rgb *= occlusion;
-
-    vec3 rimTerm = RimLightingTerm(N, V, specularIbl);
-    specularTerm *= mix(vec3(1), rimTerm, renderRimLighting);
+    if (renderRimLighting == 1)
+    {
+        // TODO: How does the cavity map work?
+        float edgeBlend = EdgeTintBlend(N, V);
+        if (renderExperimental == 1) 
+            edgeBlend *= cavity;
+        specularTerm = mix(specularTerm, CustomVector14.rgb, edgeBlend);
+    }
 
     return specularTerm;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb * param9B.rgb * paramA0.rgb;
+    return emissionColor.rgb * CustomVector3.rgb;
 }
 
 float GetF0(float ior)
@@ -261,6 +264,27 @@ float GetTransitionBlend(float blendMap, float transitionFactor)
         return 0.0;
 }
 
+float Luminance(vec3 rgb)
+{
+    const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+    return dot(rgb, W);
+}
+
+vec3 GetSpecularWeight(float prmSpec, vec3 albedoColor, float metalness, float nDotV, float roughness)
+{
+    vec3 albedoTint = albedoColor / Luminance(albedoColor);
+    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
+
+    // TODO: What is this value?
+    float dialectricF0Scale = 0.08; 
+
+    // Metals use albedo instead of the specular color/tint.
+    vec3 specularReflectionF0 = vec3(prmSpec * dialectricF0Scale) * tintColor;
+    vec3 f0Final = mix(specularReflectionF0, albedoColor, metalness);
+
+    return FresnelSchlickRoughness(nDotV, f0Final, roughness);
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
@@ -269,62 +293,64 @@ void main()
     if (hasInkNorMap == 1)
         norColor.xyz = texture(inkNorMap, map1).rga;
 
-    vec3 newNormal = N;
+    vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-    vec3 V = normalize(position - cameraPos);
-    vec3 R = reflect(V, newNormal);
+    vec3 viewVector = normalize(position - cameraPos);
+    vec3 reflectionVector = reflect(viewVector, fragmentNormal);
+    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
 
-    float iorRatio = 1.0 / (1.0 + paramD3);
-    vec3 refractionVector = refract(V, normalize(newNormal), iorRatio);
+    float iorRatio = 1.0 / (1.0 + CustomFloat19);
+    vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
-    vec4 emissionColor = GetEmissionColor(map1, uvSet, param9E, param146);
+    vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
     // Probably some sort of override for PRM color.
-    if (hasParam156 == 1)
-        prmColor = param156;
+    if (hasCustomVector47 == 1)
+        prmColor = CustomVector47;
 
     // Defined separately so it can be disabled for material transitions.
-    vec3 sssColor = paramA3.rgb;
-    float specPower = param145.x;
+    vec3 sssColor = CustomVector11.rgb;
+    float specPower = CustomVector30.x;
 
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
 
+    // TODO: This might be cleaner with a struct.
     switch (transitionEffect)
     {
         case 0:
             // Ditto
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.758027, 0.115859, 0.04), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), paramA3.rgb, transitionBlend);
-            specPower = mix(1.0, param145.x, transitionBlend);
+            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
+            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
     }
 
@@ -332,41 +358,43 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, N, 0).rgb; // TODO: what is the intensity?
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb; // TODO: what is the intensity?
     int maxLod = 6;
-    vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * iblIntensity;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
-    fragColor = vec4(0, 0, 0, 1);
-
-    float f0Dialectric = GetF0(paramC8 + 1);
-    vec3 f0Final = mix(prmColor.aaa * f0Dialectric, albedoColor.rgb, metalness);
-    float nDotV = max(dot(newNormal, V), 0.0);
-
-    vec3 kSpecular = FresnelSchlickRoughness(nDotV, f0Final, roughness);
+    vec3 kSpecular = GetSpecularWeight(prmColor.a, albedoColor.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     // Render passes.
-    vec3 diffuseTerm = DiffuseTerm(albedoColor, diffuseIbl, newNormal, V, kDiffuse, metalness, sssColor);
-    fragColor.rgb += diffuseTerm * renderDiffuse;
+    if (renderDiffuse == 1)
+        fragColor.rgb += DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, kDiffuse, metalness, sssColor);
 
-    vec3 specularTerm = SpecularTerm(newNormal, V, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower);
-    fragColor.rgb += specularTerm * renderSpecular;
+    if (renderSpecular == 1)
+        fragColor.rgb += SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, metalness);
 
+    // TODO: What passes does ambient occlusion affect?
     // Ambient Occlusion
     fragColor.rgb *= prmColor.b;
     fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
-    fragColor.rgb += EmissionTerm(emissionColor) * renderEmission;
+    if (renderEmission == 1)
+        fragColor.rgb += EmissionTerm(emissionColor);
 
     // HACK: Some models have black vertex color for some reason.
-    if (renderVertexColor == 1 && dot(colorSet1.rgb, vec3(1)) != 0)
+    if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
         fragColor.rgb *= colorSet1.rgb;
 
     // TODO: Experimental refraction.
-    if (paramD3 > 0.0)
+    if (CustomFloat19 > 0.0)
         fragColor.rgb += refractionIbl * renderExperimental;
+
+
+    fragColor.rgb *= CustomVector8.rgb;
+
+    // Gamma correction.
+    fragColor.rgb = GetSrgb(fragColor.rgb);
 
     if (renderWireframe == 1)
     {
@@ -374,9 +402,6 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
-
-    // Gamma correction.
-    fragColor.rgb = GetSrgb(fragColor.rgb);
 
     // Alpha calculations
     fragColor.a = albedoColor.a;
@@ -387,13 +412,13 @@ void main()
         fragColor.a *= colorSet1.a;
 
     // TODO: Meshes with refraction have some sort of angle fade.
-    float f0Refract = GetF0(paramD3 + 1.0);
+    float f0Refract = GetF0(CustomFloat19 + 1.0);
     vec3 transmissionAlpha = FresnelSchlickRoughness(nDotV, vec3(f0Refract), roughness);
-    if (paramD3 > 0 && renderExperimental == 1)
+    if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
 
     // TODO: Alpha testing.
-    if ((fragColor.a + param98.x) < 0.01)
+    if ((fragColor.a + CustomVector0.x) < 0.01)
         discard;
 
     // TODO: What is the stipple pattern?

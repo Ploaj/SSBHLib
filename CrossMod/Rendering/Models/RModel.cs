@@ -20,12 +20,12 @@ namespace CrossMod.Rendering.Models
             boneUniformBuffer = new SFGenericModel.Materials.UniformBlock(ShaderContainer.GetShader("RModel"), "Bones");
         }
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
-            Render(Camera, null);
+            Render(camera, null);
         }
 
-        public void Render(Camera Camera, RSkeleton Skeleton = null)
+        public void Render(Camera camera, RSkeleton Skeleton = null)
         {
             Shader shader = GetCurrentShader();
             if (!shader.LinkStatusIsOk)
@@ -34,7 +34,7 @@ namespace CrossMod.Rendering.Models
             shader.UseProgram();
 
             SetUniforms(shader);
-            SetCameraUniforms(Camera, shader);
+            SetCameraUniforms(camera, shader);
 
             // Bones
             boneUniformBuffer.BindBlock(shader);
@@ -44,7 +44,7 @@ namespace CrossMod.Rendering.Models
             }
             boneUniformBuffer.SetValues("transforms", boneBinds);
 
-            DrawMeshes(Camera, Skeleton, shader);
+            DrawMeshes(camera, Skeleton, shader);
         }
 
         private static void SetCameraUniforms(Camera Camera, Shader currentShader)

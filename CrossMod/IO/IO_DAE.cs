@@ -51,7 +51,7 @@ namespace CrossMod.IO
                     bone.InvWorldTransform.M12, bone.InvWorldTransform.M22, bone.InvWorldTransform.M32, bone.InvWorldTransform.M42,
                     bone.InvWorldTransform.M13, bone.InvWorldTransform.M23, bone.InvWorldTransform.M33, bone.InvWorldTransform.M43,
                     bone.InvWorldTransform.M14, bone.InvWorldTransform.M24, bone.InvWorldTransform.M34, bone.InvWorldTransform.M44 };
-                        writer.AddJoint(bone.Name, bone.ParentID == -1 ? "" : m.Skeleton.Bones[bone.ParentID].Name, Transform, InvTransform);
+                        writer.AddJoint(bone.Name, bone.ParentId == -1 ? "" : m.Skeleton.Bones[bone.ParentId].Name, Transform, InvTransform);
                     }
                 }
 

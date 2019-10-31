@@ -179,7 +179,7 @@ namespace CrossMod.IO
 
             foreach(RBone b in Skeleton.Bones)
             {
-                if(b.ParentID == -1)
+                if(b.ParentId == -1)
                     QueueBones(b, q, Skeleton);
             }
 
@@ -202,7 +202,7 @@ namespace CrossMod.IO
             List<RBone> children = new List<RBone>();
             foreach(RBone b in Skeleton.Bones)
             {
-                if(b.ParentID == bone.ID)
+                if(b.ParentId == bone.Id)
                 {
                     children.Add(b);
                 }

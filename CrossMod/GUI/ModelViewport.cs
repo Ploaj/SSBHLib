@@ -94,7 +94,7 @@ namespace CrossMod.GUI
             var spheres = new List<Vector4>();
             foreach (var node in renderableNodes)
             {
-                if (node is Rnumdl rnumdl)
+                if (node is Rnumdl rnumdl && rnumdl.Model != null)
                 {
                     spheres.Add(rnumdl.Model.BoundingSphere);
                 }
@@ -111,7 +111,9 @@ namespace CrossMod.GUI
             renderableNodes.Clear();
             renderableNodeNames.Clear();
 
-            GC.WaitForPendingFinalizers();
+            meshList.Clear();
+            boneTree.Nodes.Clear();
+
             GLObjectManager.DeleteUnusedGLObjects();
         }
 
@@ -130,7 +132,7 @@ namespace CrossMod.GUI
             glViewport.Dispose();
         }
 
-        public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath)
+        public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath, IProgress<int> progress)
         {
             // Disable automatic updates so frames can be rendered manually.
             glViewport.PauseRendering();
@@ -150,6 +152,9 @@ namespace CrossMod.GUI
                     {
                         frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
                     }
+
+                    var ratio = (double) i / animationBar.FrameCount;
+                    progress.Report((int)(ratio * 100));
                 }
             }
             catch (Exception e)
@@ -237,15 +242,15 @@ namespace CrossMod.GUI
                     Text = b.Name
                 };
 
-                boneById.Add(b.ID, node);
-                if (b.ParentID == -1)
+                boneById.Add(b.Id, node);
+                if (b.ParentId == -1)
                     boneTree.Nodes.Add(node);
             }
 
             foreach (RBone b in skeleton.Bones)
             {
-                if (b.ParentID != -1)
-                    boneById[b.ParentID].Nodes.Add(boneById[b.ID]);
+                if (b.ParentId != -1)
+                    boneById[b.ParentId].Nodes.Add(boneById[b.Id]);
             }
         }
 
@@ -260,6 +265,20 @@ namespace CrossMod.GUI
         {
             if (!glViewport.IsDisposed)
                 glViewport.RenderFrame();
+        }
+
+        public void BeginBatchRenderMode()
+        {
+            glViewport.PauseRendering();
+            boneTree.Visible = false;
+            meshList.Visible = false;
+        }
+
+        public void EndBatchRenderMode()
+        {
+            glViewport.ResumeRendering();
+            boneTree.Visible = true;
+            meshList.Visible = true;
         }
 
         private void RenderNodes(object sender, EventArgs e)
@@ -282,9 +301,6 @@ namespace CrossMod.GUI
                 ParamNodeContainer.Render(camera);
                 ScriptNode?.Render(camera);
             }
-
-            // Clean up any unused resources.
-            GLObjectManager.DeleteUnusedGLObjects();
         }
 
         private void SetUpViewport()

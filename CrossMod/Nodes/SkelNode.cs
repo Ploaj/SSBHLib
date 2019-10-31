@@ -42,8 +42,8 @@ namespace CrossMod.Nodes
                     RBone bone = new RBone
                     {
                         Name = skel.BoneEntries[i].Name,
-                        ID = skel.BoneEntries[i].Id,
-                        ParentID = skel.BoneEntries[i].ParentId,
+                        Id = skel.BoneEntries[i].Id,
+                        ParentId = skel.BoneEntries[i].ParentId,
                         Transform = SkelToTkMatrix(skel.Transform[i]),
                         InvTransform = SkelToTkMatrix(skel.InvTransform[i]),
                         WorldTransform = SkelToTkMatrix(skel.WorldTransform[i]),

@@ -55,7 +55,7 @@ namespace CrossMod.Rendering
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
-                            m.Material.MaterialAnimation.Add((long)paramId, a.Keys.GetValue(frame));
+                            m.Material.MaterialAnimation.Add(paramId, a.Keys.GetValue(frame));
                         }
                     }
                 }
@@ -93,12 +93,12 @@ namespace CrossMod.Rendering
                     }
                 }
                 //It's probably OK to do this
-                if (b.ParentID == -1)
+                if (b.ParentId == -1)
                     b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
         }
     }

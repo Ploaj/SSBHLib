@@ -13,9 +13,8 @@ uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 uniform sampler2D inkNorMap;
 
-// TODO: Cubemap loading doesn't work yet.
-uniform int hasDifCubemap;
-uniform sampler2D difCubemap;
+uniform int hasDifCubeMap;
+uniform samplerCube difCubeMap;
 
 uniform int hasDiffuse;
 uniform sampler2D difMap;
@@ -77,7 +76,7 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)
     return emissionColor;
 }
 
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5)
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5)
 {
     // HACK: The default albedo color is white, which won't work with emission.
     if (emissionOverride == 1)
@@ -99,8 +98,8 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transfor
         albedoColor.rgb = Blend(albedoColor, albedoColor2 * vec4(vec3(1), colorSet5.a));
 
     // Materials won't have col and diffuse cubemaps.
-    if (hasDifCubemap == 1)
-        albedoColor.rgb = texture(difCubemap, uvLayer1).rgb;
+    if (hasDifCubeMap == 1)
+        albedoColor.rgb = texture(difCubeMap, R).rgb;
 
     if (hasDiffuse == 1)
         albedoColor.rgb = Blend(albedoColor, diffuseColor);

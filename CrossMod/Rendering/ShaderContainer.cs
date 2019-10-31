@@ -43,6 +43,8 @@ namespace CrossMod.Rendering
         {
             RemoveExistingBinaries();
             SetUpShaders();
+
+            System.Diagnostics.Debug.WriteLine(GetShader("RModelDebug").GetErrorLog());
         }
 
         private static void RemoveExistingBinaries()

@@ -1,6 +1,6 @@
 #version 330
 
-in vec3 N;
+in vec3 vertexNormal;
 in vec3 tangent;
 in vec3 bitangent;
 in vec2 map1;
@@ -24,8 +24,8 @@ uniform sampler2D gaoMap;
 uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-// TODO: Cubemap loading doesn't work yet.
-uniform sampler2D difCubemap;
+uniform int hasDifCubeMap;
+uniform samplerCube difCubeMap;
 
 uniform int hasDiffuse;
 uniform sampler2D difMap;
@@ -53,29 +53,30 @@ uniform int renderNormalMaps;
 
 uniform MaterialParams
 {
-    vec4 paramA6;
-    vec4 paramA3;
-    vec4 param145;
-    vec4 paramA5;
-    vec4 paramA0;
-    vec4 param98;
-    vec4 param9B;
-    vec4 param151;
-    vec4 param146;
-    vec4 param147;
-    vec4 param9E;
-    vec4 param156;
-    vec4 param153;
-    vec4 param154;
+    vec4 CustomVector0;
+    vec4 CustomVector3;
+    vec4 CustomVector6;
+    vec4 CustomVector8;
+    vec4 CustomVector11;
+    vec4 CustomVector13;
+    vec4 CustomVector14;
+    vec3 CustomVector18;
+    vec4 CustomVector30;
+    vec4 CustomVector31;
+    vec4 CustomVector32;
+    vec4 CustomVector42;
+    vec4 CustomVector47;
+    vec4 CustomVector44;
+    vec4 CustomVector45;
 
     vec4 vec4Param;
 
-    int paramE9;
-    int paramEA;
-    float paramC8;
-    float paramCA;
+    int CustomBoolean1;
+    int CustomBoolean2;
 
-    float paramD3;
+    float CustomFloat8;
+    float CustomFloat10;
+    float CustomFloat19;
 };
 
 uniform mat4 mvp;
@@ -119,7 +120,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
-vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
 void main()
 {
@@ -127,17 +128,17 @@ void main()
     if (hasInkNorMap == 1)
         norColor.rgb = texture(inkNorMap, map1).rga;
 
-    vec3 newNormal = N;
+    vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        newNormal = GetBumpMapNormal(N, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
 	vec3 V = normalize(position - cameraPos);
-	vec3 R = reflect(V, newNormal);
+	vec3 R = reflect(V, fragmentNormal);
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, param9E, param146, param147, colorSet5);
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
-	vec4 emiColor = GetEmissionColor(map1, uvSet, param9E, param146);
+	vec4 emiColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;
@@ -159,7 +160,7 @@ void main()
 	switch (renderMode)
 	{
         case 1:
-            fragColor.rgb = vec3(0.218) * max(dot(newNormal, V), 0);
+            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, V), 0);
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
 		case 2:
@@ -192,7 +193,7 @@ void main()
 			fragColor = colorSet1;
 			break;
 		case 10:
-			fragColor = vec4(newNormal * 0.5 + 0.5, 1);
+			fragColor = vec4(fragmentNormal * 0.5 + 0.5, 1);
 			break;
 		case 11:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);

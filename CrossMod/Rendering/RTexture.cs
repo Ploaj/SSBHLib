@@ -11,7 +11,7 @@ namespace CrossMod.Rendering
 
         public bool IsSrgb { get; set; } = false;
 
-        public void Render(Camera Camera)
+        public void Render(Camera camera)
         {
             if (triangle == null)
                 triangle = new ScreenTriangle();
