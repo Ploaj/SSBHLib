@@ -138,12 +138,24 @@ namespace CrossMod.GUI
 
             var frames = new List<System.Drawing.Bitmap>(animationBar.FrameCount);
 
-            // Rendering can't happen on a separate thread.
-            for (int i = 0; i <= animationBar.FrameCount; i++)
+            // Rendering can't happen on a separate thread
+            try
             {
-                animationBar.Frame = i;
-                glViewport.RenderFrame();
-                frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
+                int repeat = (int)(1 / RenderSettings.Instance.RenderSpeed);
+                for (int i = 0; i <= animationBar.FrameCount; ++i)
+                {
+                    animationBar.Frame = i;
+                    glViewport.RenderFrame();
+                    for (int j = 1; j <= repeat; ++j)
+                    {
+                        frames.Add(Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Error while making GIF");
+                Console.Error.WriteLine(e.ToString());
             }
 
             // Continue on separate thread to maintain responsiveness.
