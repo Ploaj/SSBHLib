@@ -52,6 +52,8 @@ namespace CrossMod.Nodes
 
         public void Update(float frame)
         {
+            if (CurrentAnimationName == null)
+                return;
             if (Scripts.ContainsKey(CurrentAnimationName))
                 Scripts[CurrentAnimationName].Update(frame);
         }
@@ -169,7 +171,7 @@ namespace CrossMod.Nodes
             {
                 if (lines[i].StartsWith("#begin "))
                 {
-                    string name = lines[i++].Substring("#begin ".Length);
+                    string name = lines[i++].Substring("#begin ".Length).Replace(" ", string.Empty);
                     commands.Clear();
                     for (int j = i; (i = j) < lines.Length; j++)
                     {
@@ -180,7 +182,10 @@ namespace CrossMod.Nodes
                         }
                         commands.Add(lines[j]);
                     }
-                    Scripts.Add(name, new Script(commands, this));
+                    if (!Scripts.ContainsKey(name))
+                    {
+                        Scripts.Add(name, new Script(commands, this));
+                    }
                 }
             }
         }

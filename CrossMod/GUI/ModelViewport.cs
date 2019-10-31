@@ -154,14 +154,17 @@ namespace CrossMod.GUI
             // Continue on separate thread to maintain responsiveness.
             glViewport.ResumeRendering();
 
-            await System.Threading.Tasks.Task.Run(() =>
+            if (!string.IsNullOrEmpty(outputPath))
             {
-                using (var gif = new AnimatedGif.AnimatedGifCreator(outputPath, 20, 0))
+                await System.Threading.Tasks.Task.Run(() =>
                 {
-                    for (int i = 0; i < frames.Count; i++)
-                        gif.AddFrame(frames[i], -1, AnimatedGif.GifQuality.Bit8);
-                }
-            });
+                    using (var gif = new AnimatedGif.AnimatedGifCreator(outputPath, 20, 0))
+                    {
+                        for (int i = 0; i < frames.Count; i++)
+                            gif.AddFrame(frames[i], -1, AnimatedGif.GifQuality.Bit8);
+                    }
+                });
+            }
 
             foreach (var frame in frames)
             {

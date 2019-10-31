@@ -12,10 +12,18 @@ namespace CrossMod
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            Application.Run(new MainForm());
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+                Application.Run(new MainForm());
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine(error.ToString());
+                MessageBox.Show(error.Message, "Error while running");
+            }
         }
     }
 }
