@@ -358,9 +358,7 @@ namespace CrossMod
 
         private static void WriteMaterialValuesToFile(string folderPath)
         {
-            var enumValues = Enum.GetNames(typeof(SSBHLib.Formats.Materials.MatlEnums.ParamId));
-
-            var valuesByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, HashSet<string>>();
+            var valuesByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, List<string>>();
             var outputByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, System.Text.StringBuilder>();
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
@@ -378,25 +376,17 @@ namespace CrossMod
                             outputByParamId.Add(attribute.ParamId, new System.Text.StringBuilder());
 
                         if (!valuesByParamId.ContainsKey(attribute.ParamId))
-                            valuesByParamId.Add(attribute.ParamId, new HashSet<string>());
+                            valuesByParamId.Add(attribute.ParamId, new List<string>());
 
-                        // Don't check duplicates for booleans.
-                        if (attribute.DataType == SSBHLib.Formats.Materials.MatlEnums.ParamDataType.Boolean)
-                        {
-                            outputByParamId[attribute.ParamId].AppendLine(text);
-                        }
-                        else if (!valuesByParamId.ContainsKey(attribute.ParamId) || !valuesByParamId[attribute.ParamId].Contains(attribute.DataObject.ToString()))
-                        {
-                            outputByParamId[attribute.ParamId].AppendLine(text);
-                            valuesByParamId[attribute.ParamId].Add(attribute.DataObject.ToString());
-                        }
+                        outputByParamId[attribute.ParamId].AppendLine(text);
+                        valuesByParamId[attribute.ParamId].Add(attribute.DataObject.ToString());
                     }
                 }
             }
 
             foreach (var pair in outputByParamId)
             {
-                File.WriteAllText($"{pair.Key}_unique_values.txt", pair.Value.ToString());
+                File.WriteAllText($"{pair.Key}_values.txt", pair.Value.ToString());
             }
         }
 
