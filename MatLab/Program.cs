@@ -10,45 +10,58 @@ namespace MatLab
     {
         static void Main(string[] args)
         {
-            if (args.Length < 1)
+            if (args.Length < 1 || args.Length > 2)
+            {
+                Console.WriteLine("Usage: MatLab.exe <input> [output]");
                 return;
+            }
 
             string inputPath = args[0];
-            string path = GetFullPathWithoutExtension(inputPath);
+            string outputPath = GetFullPathWithoutExtension(inputPath);
 
-            ConvertFiles(inputPath, path);
+            bool hasSpecifiedOutPath = args.Length == 2;
+            if (hasSpecifiedOutPath)
+                outputPath = args[1];
+
+            ConvertFiles(inputPath, outputPath, hasSpecifiedOutPath);
         }
 
-        private static void ConvertFiles(string inputPath, string outputPath)
+        private static void ConvertFiles(string inputPath, string outputPath, bool hasSpecifiedOutPath)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(MaterialLibrary));
             switch (Path.GetExtension(inputPath))
             {
                 case ".numatb":
-                    SerializeMatl(inputPath, outputPath, serializer);
+                    if (hasSpecifiedOutPath)
+                        SerializeMatl(inputPath, outputPath, serializer);
+                    else
+                        SerializeMatl(inputPath, outputPath + "_out.xml", serializer);
                     break;
                 case ".xml":
-                    DeserializeXml(inputPath, outputPath, serializer);
+                    if (hasSpecifiedOutPath)
+                        DeserializeXml(inputPath, outputPath, serializer);
+                    else
+                        DeserializeXml(inputPath, outputPath + "_out.numatb", serializer);
                     break;
             }
         }
 
         private static void DeserializeXml(string inputPath, string outputPath, XmlSerializer serializer)
         {
-            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}_out.numatb...");
+            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}.numatb...");
             using (TextReader reader = new StringReader(File.ReadAllText(inputPath)))
             {
                 var result = (MaterialLibrary)serializer.Deserialize(reader);
 
                 Matl newmatl = LibraryToMATL(result);
 
-                Ssbh.TrySaveSsbhFile(outputPath + "_out.numatb", newmatl);
+                Ssbh.TrySaveSsbhFile(outputPath, newmatl);
             }
         }
 
         private static void SerializeMatl(string inputPath, string outputPath, XmlSerializer serializer)
         {
-            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}_out.xml...");
+            Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}...");
             if (Ssbh.TryParseSsbhFile(inputPath, out SsbhFile file))
             {
                 Matl matlFile = (Matl)file;
@@ -59,7 +72,7 @@ namespace MatLab
                 {
                     serializer.Serialize(writer, library);
                     string serial = writer.ToString();
-                    File.WriteAllText(outputPath + "_out.xml", serial);
+                    File.WriteAllText(outputPath, serial);
                 }
             }
             else
