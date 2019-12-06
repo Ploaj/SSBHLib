@@ -6,6 +6,8 @@ using System.IO;
 using System.Windows.Forms;
 using CrossMod.IO;
 using System.Collections.Generic;
+using System.Linq;
+using SSBHLib.Tools;
 
 namespace CrossMod
 {
@@ -390,7 +392,51 @@ namespace CrossMod
             }
         }
 
-        private static void WriteAttributesToFile()
+
+        private void exportMaterialAttributeValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WriteAttributeValuesToFiles();
+        }
+
+        private static void WriteAttributeValuesToFiles()
+        {
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
+                return;
+
+            var meshesByAttribute = new Dictionary<string, Dictionary<string,int>>();
+
+
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    var node = new NumsbhNode(file);
+                    node.Open();
+                    UpdateMeshAttributeValues(meshesByAttribute, node);
+                }
+                catch (Exception)
+                {
+                    // Just skip the mesh.
+                    // Most of the values should be present in other meshes.
+                }
+            }
+
+            foreach (var nameValuesPair in meshesByAttribute)
+            {
+                var outputText = new System.Text.StringBuilder();
+                outputText.AppendLine("X,Y,Z,W,Occurrences");      
+                
+                // Make sure the most common values are at the top.
+                foreach (var valueOccurrencesPair in nameValuesPair.Value.OrderByDescending(pair => pair.Value))
+                {
+                    outputText.AppendLine($"{valueOccurrencesPair.Key},{valueOccurrencesPair.Value}");
+                }
+
+                File.AppendAllText($"{nameValuesPair.Key}_values.csv", outputText.ToString());
+            }
+        }
+
+        private static void WriteAttributeMeshNamesToFiles()
         {
             if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
@@ -414,7 +460,36 @@ namespace CrossMod
                     outputText.AppendLine(value);
                 }
 
-                File.WriteAllText($"{pair.Key} Meshes.txt", outputText.ToString());
+                File.WriteAllText($"{pair.Key}_meshes.txt", outputText.ToString());
+            }
+        }
+
+        private static void UpdateMeshAttributeValues(Dictionary<string, Dictionary<string, int>> occurrencesByValueByName, NumsbhNode node)
+        {
+            foreach (var meshObject in node.mesh.Objects)
+            {
+                var vertexAccessor = new SsbhVertexAccessor(node.mesh);
+
+                foreach (var attribute in meshObject.Attributes)
+                {
+                    // Skip the attributes that are already well understood.
+                    if (attribute.Name != "colorSet2")
+                        continue;
+
+                    if (!occurrencesByValueByName.ContainsKey(attribute.Name))
+                        occurrencesByValueByName.Add(attribute.Name, new Dictionary<string, int>());
+
+                    var attributeValues = vertexAccessor.ReadAttribute(attribute.Name, 0, meshObject.VertexCount, meshObject);
+                    foreach (var value in attributeValues)
+                    {
+                        // Store the number of occurrences to avoid generating massive files and running out of memory.
+                        var text = value.ToString();
+                        if (!occurrencesByValueByName[attribute.Name].ContainsKey(text))
+                            occurrencesByValueByName[attribute.Name].Add(text, 1);
+                        else
+                            occurrencesByValueByName[attribute.Name][text] += 1;
+                    }
+                }
             }
         }
 
@@ -438,7 +513,7 @@ namespace CrossMod
 
         private void printAttributesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            WriteAttributesToFile();
+            WriteAttributeMeshNamesToFiles();
         }
 
         /// <summary>

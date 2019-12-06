@@ -121,19 +121,17 @@ namespace CrossMod.Nodes
         private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject, RMesh rMesh)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
+            var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+
+            System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
+
+            List<CustomVertex> vertices = CreateVertices(skeleton, meshObject, vertexAccessor, vertexIndices);
+            /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
             {
-                var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
-
-                System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
-
-                List<CustomVertex> vertices = CreateVertices(skeleton, meshObject, vertexAccessor, vertexIndices);
-                /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
-                {
-                    rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
-                }
-                else*/
-                return new RenderMesh(vertices, new List<uint>(vertexIndices));
+                rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
             }
+            else*/
+            return new RenderMesh(vertices, new List<uint>(vertexIndices));
         }
 
         private List<CustomVertex> CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor, uint[] vertexIndices)
