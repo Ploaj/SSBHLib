@@ -8,7 +8,7 @@
             <summary>
             Provides functionality similar to <see cref="T:OpenTK.GameWindow"/> for <see cref="T:OpenTK.GLControl"/>.
             <para></para><para></para>
-            Frame timing can be handled manually or with a dedicated thread using <see cref="M:SFGraphics.Controls.GLViewport.ResumeRendering"/>.
+            Frame timing can be handled manually or with a dedicated thread using <see cref="M:SFGraphics.Controls.GLViewport.RestartRendering"/>.
             </summary>
         </member>
         <member name="F:SFGraphics.Controls.GLViewport.defaultGraphicsMode">
@@ -25,7 +25,7 @@
         </member>
         <member name="E:SFGraphics.Controls.GLViewport.OnRenderFrame">
             <summary>
-            Occurs after frame setup and before the front and back buffer are swapped. To render a frame, use <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/>.
+            Occurs after frame setup and before the front and back buffer are swapped. To render a frame, use <see cref="M:SFGraphics.Controls.GLViewport.SetUpAndRenderFrame"/>.
             </summary>
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
@@ -46,18 +46,19 @@
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.RenderFrame">
             <summary>
-            Sets up, renders, and displays a frame. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.OnRenderFrame"/> to add custom rendering code.
+            Renders and displays a frame on the current thread. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.OnRenderFrame"/> to add custom rendering code.
             </summary>
         </member>
-        <member name="M:SFGraphics.Controls.GLViewport.ResumeRendering">
+        <member name="M:SFGraphics.Controls.GLViewport.RestartRendering">
             <summary>
             Starts or resumes frame updates with interval specified by <see cref="P:SFGraphics.Controls.GLViewport.RenderFrameInterval"/>.
+            The context is made current on the rendering thread.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.PauseRendering">
             <summary>
-            Pauses automatic frame updates. 
-            Frames can still be rendered manually with <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/>.
+            Pauses the rendering thread and blocks until the current frame has finished.
+            The context is made current on the calling thread.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.Dispose">

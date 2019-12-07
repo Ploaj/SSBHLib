@@ -25,7 +25,7 @@ namespace CrossMod.Rendering.Shapes
             };
         }
 
-        public Line() : base(unitLine, PrimitiveType.Lines) { }
+        public Line() : base(unitLine.ToArray(), PrimitiveType.Lines) { }
 
         public void Render(Shader shader, float radians, float length, Vector3 trans, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {

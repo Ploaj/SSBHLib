@@ -33,7 +33,7 @@ namespace CrossMod.Rendering.Shapes
             unitCapsule = capsule;
         }
 
-        public Capsule() : base (unitCapsule, PrimitiveType.TriangleStrip) { }
+        public Capsule() : base (unitCapsule.ToArray(), PrimitiveType.TriangleStrip) { }
 
         public void Render(Shader shader, float size, Vector3 offset1, Vector3 offset2, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {

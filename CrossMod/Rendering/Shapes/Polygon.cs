@@ -17,7 +17,7 @@ namespace CrossMod.Rendering.Shapes
             };
         }
 
-        public Polygon(List<Vector3> shape) : base(shape, PrimitiveType.Polygon) { }
+        public Polygon(List<Vector3> shape) : base(shape.ToArray(), PrimitiveType.Polygon) { }
 
         public void Render(Shader shader, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {

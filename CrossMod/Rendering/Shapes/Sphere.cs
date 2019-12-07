@@ -21,7 +21,7 @@ namespace CrossMod.Rendering.Shapes
             UnitSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
         }
 
-        public Sphere() : base(UnitSphere, PrimitiveType.TriangleStrip) { }
+        public Sphere() : base(UnitSphere.ToArray(), PrimitiveType.TriangleStrip) { }
 
         public void Render(Shader shader, float size, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {

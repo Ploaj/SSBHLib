@@ -24,7 +24,7 @@ namespace CrossMod.Rendering
             new Vector3(-1f,  3f, 0.0f)
         };
 
-        public ScreenTriangle() : base(screenTrianglePositions, PrimitiveType.Triangles)
+        public ScreenTriangle() : base(screenTrianglePositions.ToArray(), PrimitiveType.Triangles)
         {
 
         }

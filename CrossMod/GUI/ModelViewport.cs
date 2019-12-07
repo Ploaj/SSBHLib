@@ -47,8 +47,18 @@ namespace CrossMod.GUI
         public ModelViewport()
         {
             InitializeComponent();
-            CreateRenderFrameEvents();
             AddAnimationBar();
+            CreateRenderFrameEvents();
+        }
+
+        public void RestartRendering()
+        {
+            glViewport.RestartRendering();
+        }
+
+        public void PauseRendering()
+        {
+            glViewport.PauseRendering();
         }
 
         public void UpdateTexture(NutexNode texture)
@@ -59,6 +69,9 @@ namespace CrossMod.GUI
 
         public void AddRenderableNode(string name, IRenderableNode value)
         {
+            // Make sure the context is current on this thread.
+            PauseRendering();
+
             ClearBonesAndMeshList();
 
             if (value == null)
@@ -88,6 +101,8 @@ namespace CrossMod.GUI
             {
                 FrameSelection();
             }
+
+            RestartRendering();
         }
 
         public void FrameSelection()
@@ -115,8 +130,6 @@ namespace CrossMod.GUI
 
             meshList.Clear();
             boneTree.Nodes.Clear();
-
-            GLObjectManager.DeleteUnusedGLObjects();
         }
 
         public System.Drawing.Bitmap GetScreenshot()
@@ -154,7 +167,7 @@ namespace CrossMod.GUI
             }
 
             // Continue on separate thread to maintain responsiveness.
-            glViewport.ResumeRendering();
+            glViewport.RestartRendering();
 
             await System.Threading.Tasks.Task.Run(() =>
             {
@@ -183,8 +196,10 @@ namespace CrossMod.GUI
 
         private void CreateRenderFrameEvents()
         {
+            glViewport.RenderFrameInterval = 15;
+            glViewport.VSync = false;
             glViewport.OnRenderFrame += RenderNodes;
-            glViewport.ResumeRendering();
+            glViewport.RestartRendering();
         }
 
         /// <summary>
@@ -266,7 +281,7 @@ namespace CrossMod.GUI
 
         public void EndBatchRenderMode()
         {
-            glViewport.ResumeRendering();
+            glViewport.RestartRendering();
             boneTree.Visible = true;
             meshList.Visible = true;
         }
@@ -320,34 +335,39 @@ namespace CrossMod.GUI
 
         private void UpdateCamera()
         {
-            var mouseState = Mouse.GetState();
-            var keyboardState = Keyboard.GetState();
-
-            Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
-            float newMouseScrollWheel = mouseState.Wheel;
-
-            // Reduce the chance of rotating the viewport while the mouse is on other controls.
-            if (glViewport.Focused && glViewport.ClientRectangle.Contains(PointToClient(MousePosition)))
+            // Accessing the control properties can't be done on another thread.
+            glViewport.BeginInvoke(new Action(() =>
             {
-                if (mouseState.IsButtonDown(MouseButton.Left))
-                {
-                    camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
-                    camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
-                }
-                if (mouseState.IsButtonDown(MouseButton.Right))
-                {
-                    camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
-                }
-                if (keyboardState.IsKeyDown(Key.W))
-                    camera.Zoom(0.5f);
-                if (keyboardState.IsKeyDown(Key.S))
-                    camera.Zoom(-0.5f);
+                var mouseState = Mouse.GetState();
+                var keyboardState = Keyboard.GetState();
 
-                camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
-            }
+                Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
+                float newMouseScrollWheel = mouseState.Wheel;
 
-            mousePosition = newMousePosition;
-            mouseScrollWheel = newMouseScrollWheel;
+                // Reduce the chance of rotating the viewport while the mouse is on other controls.
+                if (glViewport.Focused && glViewport.ClientRectangle.Contains(PointToClient(MousePosition)))
+                {
+                    if (mouseState.IsButtonDown(MouseButton.Left))
+                    {
+                        camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
+                        camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
+                    }
+                    if (mouseState.IsButtonDown(MouseButton.Right))
+                    {
+                        camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
+                    }
+                    if (keyboardState.IsKeyDown(Key.W))
+                        camera.Zoom(0.5f);
+                    if (keyboardState.IsKeyDown(Key.S))
+                        camera.Zoom(-0.5f);
+
+                    camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
+                }
+
+                mousePosition = newMousePosition;
+                mouseScrollWheel = newMouseScrollWheel;
+            }));
+
         }
 
         private void glViewport_Resize(object sender, EventArgs e)

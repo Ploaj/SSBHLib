@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using SFGenericModel;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CrossMod.Rendering.Models
 {
@@ -8,7 +9,7 @@ namespace CrossMod.Rendering.Models
     {
         private readonly SFGenericModel.RenderState.RenderSettings renderSettings = new SFGenericModel.RenderState.RenderSettings();
 
-        public RenderMesh(IList<CustomVertex> vertices, IList<uint> indices) : base(vertices, indices, PrimitiveType.Triangles)
+        public RenderMesh(IList<CustomVertex> vertices, IList<uint> indices) : base(vertices.ToArray(), indices.ToArray(), PrimitiveType.Triangles)
         {
 
         }

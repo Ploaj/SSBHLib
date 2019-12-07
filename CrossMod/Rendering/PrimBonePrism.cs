@@ -50,7 +50,7 @@ namespace CrossMod.Rendering
             new Vector4(0f, -1f, 0f, 0),
         };
 
-        public PrimBonePrism() : base(screenPositions, PrimitiveType.Lines)
+        public PrimBonePrism() : base(screenPositions.ToArray(), PrimitiveType.Lines)
         {
 
         }

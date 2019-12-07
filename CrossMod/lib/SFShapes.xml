@@ -9,14 +9,14 @@
             Draws simple geometry given a collection of vertex positions.
             </summary>
         </member>
-        <member name="M:SFShapes.Mesh3D.#ctor(System.Collections.Generic.List{SFShapes.Vertex3d},OpenTK.Graphics.OpenGL.PrimitiveType)">
+        <member name="M:SFShapes.Mesh3D.#ctor(SFShapes.Vertex3d[],OpenTK.Graphics.OpenGL.PrimitiveType)">
             <summary>
             
             </summary>
             <param name="vertices">The points for the shape</param>
             <param name="primitiveType">Determines how the shape should be drawn</param>
         </member>
-        <member name="M:SFShapes.Mesh3D.#ctor(System.Tuple{System.Collections.Generic.List{SFShapes.Vertex3d},OpenTK.Graphics.OpenGL.PrimitiveType})">
+        <member name="M:SFShapes.Mesh3D.#ctor(System.Tuple{SFShapes.Vertex3d[],OpenTK.Graphics.OpenGL.PrimitiveType})">
             <summary>
             
             </summary>

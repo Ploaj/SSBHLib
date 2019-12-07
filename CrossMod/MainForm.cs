@@ -144,8 +144,13 @@ namespace CrossMod
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Make sure the context is current on this thread.
+            modelViewport.PauseRendering();
+
             // Force the shaders to be generated again.
             Rendering.ShaderContainer.ReloadShaders();
+
+            modelViewport.RestartRendering();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -320,6 +325,8 @@ namespace CrossMod
                 LoadWorkspace(sourceFolder);
 
                 modelViewport.RenderFrame();
+                // TODO: This line shouldn't be necessary in newer versions of SFGraphics.
+                modelViewport.PauseRendering();
 
                 // Save screenshot.
                 using (var bmp = modelViewport.GetScreenshot())
