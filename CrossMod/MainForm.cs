@@ -325,8 +325,6 @@ namespace CrossMod
                 LoadWorkspace(sourceFolder);
 
                 modelViewport.RenderFrame();
-                // TODO: This line shouldn't be necessary in newer versions of SFGraphics.
-                modelViewport.PauseRendering();
 
                 // Save screenshot.
                 using (var bmp = modelViewport.GetScreenshot())

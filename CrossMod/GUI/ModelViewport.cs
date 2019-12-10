@@ -69,6 +69,8 @@ namespace CrossMod.GUI
 
         public void AddRenderableNode(string name, IRenderableNode value)
         {
+            var wasRendering = glViewport.IsRendering;
+
             // Make sure the context is current on this thread.
             PauseRendering();
 
@@ -102,7 +104,8 @@ namespace CrossMod.GUI
                 FrameSelection();
             }
 
-            RestartRendering();
+            if (wasRendering)
+                RestartRendering();
         }
 
         public void FrameSelection()
@@ -166,9 +169,9 @@ namespace CrossMod.GUI
                 progress.Report((int)(ratio * 100));
             }
 
-            // Continue on separate thread to maintain responsiveness.
             glViewport.RestartRendering();
 
+            // Continue on separate thread to maintain responsiveness.
             await System.Threading.Tasks.Task.Run(() =>
             {
                 using (var gif = new AnimatedGif.AnimatedGifCreator(outputPath, 20, 0))

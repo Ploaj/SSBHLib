@@ -25,13 +25,18 @@
         </member>
         <member name="E:SFGraphics.Controls.GLViewport.OnRenderFrame">
             <summary>
-            Occurs after frame setup and before the front and back buffer are swapped. To render a frame, use <see cref="M:SFGraphics.Controls.GLViewport.SetUpAndRenderFrame"/>.
+            Occurs after frame setup and before the front and back buffer are swapped. To render a frame, use <see cref="M:SFGraphics.Controls.GLViewport.SetUpAndRenderFrame(System.Boolean)"/>.
             </summary>
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
             <summary>
             The minimum time in milliseconds between frames.
             A value of <c>0</c> unlocks the frame rate but can result in very high CPU usage.
+            </summary>
+        </member>
+        <member name="P:SFGraphics.Controls.GLViewport.IsRendering">
+            <summary>
+            <c>true</c> when frame updates are being run from the dedicated rendering thread.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.#ctor">
