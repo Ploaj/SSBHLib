@@ -51,6 +51,12 @@ namespace CrossMod
 
         private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!modelViewport.HasAnimation)
+            {
+                MessageBox.Show("Please open an animation file and select an animation.", "No animation selected");
+                return;
+            }
+
             FileTools.TryOpenSaveFileDialog(out string fileName, "GIF|*.gif", "animation");
 
             var progressViewer = new ProgressViewer { Text = "Processing GIF" };

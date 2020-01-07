@@ -29,6 +29,7 @@ namespace CrossMod.GUI
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
+        public bool HasAnimation => animationBar.Animation != null;
         public IRenderableAnimation RenderableAnimation
         {
             set
