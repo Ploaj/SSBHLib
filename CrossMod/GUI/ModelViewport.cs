@@ -63,8 +63,14 @@ namespace CrossMod.GUI
 
         public void UpdateTexture(NutexNode texture)
         {
+            var wasRendering = glViewport.IsRendering;
+            PauseRendering();
+
             var node = texture?.GetRenderableNode();
             renderTexture = node;
+
+            if (wasRendering)
+                RestartRendering();
         }
 
         public void AddRenderableNode(string name, IRenderableNode value)

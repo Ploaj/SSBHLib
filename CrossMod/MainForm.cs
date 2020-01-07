@@ -205,6 +205,8 @@ namespace CrossMod
 
         private void ExportExportableTexture(object sender, EventArgs args)
         {
+            modelViewport.PauseRendering();
+            
             if (FileTools.TryOpenSaveFileDialog(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
             {
                 // need to get RSkeleton First for some types
@@ -213,6 +215,8 @@ namespace CrossMod
                     ((IExportableTextureNode)((MenuItem)sender).Tag).SaveTexturePNG(fileName);
                 }
             }
+
+            modelViewport.RestartRendering();
         }
 
         private void ExportExportableAnimation(object sender, EventArgs args)
