@@ -140,21 +140,27 @@ float Ggx(vec3 N, vec3 H, float roughness)
 
 // Code adapted from equations listed here:
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
-float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughX, float roughY)
+float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
-    float normalization = 1 / (3.14159 * roughX * roughY);
+    // TODO: Does image based lighting consider anisotropy?
+    // This probably works differently in game.
+    // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
+    float roughnessX = roughness * (1.0 + anisotropy);
+    float roughnessY = roughness / (1.0 + anisotropy);
+
+    float normalization = 1 / (3.14159 * roughnessX * roughnessY);
 
     float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
-    float roughX2 = roughX * roughX;
-    float roughY2 = roughY * roughY;
+    float roughnessX2 = roughnessX * roughnessX;
+    float roughnessY2 = roughnessY * roughnessY;
 
     float xDotH = dot(tangent, H);
-    float xTerm = (xDotH * xDotH) / roughX2;
+    float xTerm = (xDotH * xDotH) / roughnessX2;
 
     float yDotH = dot(bitangent, H);
-    float yTerm = (yDotH * yDotH) / roughY2;
+    float yTerm = (yDotH * yDotH) / roughnessY2;
 
     float denominator = xTerm + yTerm + nDotH2;
 
@@ -203,35 +209,39 @@ float EdgeTintBlend(vec3 N, vec3 V)
     return facingRatio;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float cavity, float specPower, float metalness)
+float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
 {
-    vec3 halfAngle = normalize(chrLightDir + V);
-
-    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-    vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specularTerm = vec3(0);
-    specularTerm += specularIbl * ((kSpecular * brdf.x) + brdf.y) * metalness; // TODO: What passes does IBL affect?
-
-    // TODO: Does image based lighting consider anisotropy?
-    // This probably works differently in game.
-    // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessX = roughness * (1.0 + CustomFloat10);
-    float roughnessY = roughness / (1.0 + CustomFloat10);
-
-    // Direct lighting.
     // The two BRDFs look very different so don't just use anisotropic for everything.
+    vec3 halfAngle = normalize(chrLightDir + V);
     float specularBrdf = 0;
-    if (CustomFloat10 != 0)
-        specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughnessX, roughnessY) * directLightIntensity;
+    if (CustomFloat10 != 0.0)
+        specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughness, CustomFloat10);
     else
-        specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x) * directLightIntensity;
+        specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x);
 
     // Some sort of fake SSS.
     // TODO: Does this affect the whole pass?
     if (renderExperimental == 1)
         specularBrdf = pow(specularBrdf, specPower);
 
-    specularTerm += kSpecular * vec3(specularBrdf);
+    return specularBrdf;
+}
+
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float cavity, float specPower, float metalness)
+{
+
+    // TODO: What passes does IBL affect?
+
+    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
+    // The difference is subtle, so the more accurate calculations are disabled for now.
+    // vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    // vec3 indirectSpecular = specularIbl * (kSpecular * brdf.x + brdf.y) * metalness; 
+
+    vec3 indirectSpecular = specularIbl * metalness * kSpecular;
+    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness, specPower) * directLightIntensity * kSpecular);
+
+    // TODO: This might not be correct, but it reduces the number of overly bright models.
+    vec3 specularTerm = mix(directSpecular, indirectSpecular, metalness);
 
     if (renderRimLighting == 1)
     {
@@ -347,7 +357,7 @@ void main()
             break;
         case 3:
             // Metal
-            albedoColor.rgb = mix(vec3(1), albedoColor.rgb, transitionBlend);
+            albedoColor.rgb = mix(vec3(0.5), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
             sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
             specPower = mix(1.0, CustomVector30.x, transitionBlend);

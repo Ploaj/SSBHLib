@@ -37,7 +37,7 @@ namespace CrossMod.Rendering.Resources
 
             LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
             LoadBitmap(defaultPrm, "DefaultTextures/default_Params.tif");
-            LoadBitmap(defaultNormal, "DefaultTextures/default_normal.png");
+            LoadBitmap(defaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(defaultBlack, "DefaultTextures/default_black.png");
 
             LoadBitmap(iblLut, "DefaultTextures/ibl_brdf_lut.png");
