@@ -586,5 +586,10 @@ namespace CrossMod
         {
             modelViewport.Close();
         }
+
+        private void clearViewportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            modelViewport.ClearFiles();
+        }
     }
 }

@@ -41,12 +41,13 @@ namespace CrossMod
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportMaterialAttributeValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printLightValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAnimationToGifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.exportMaterialAttributeValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearViewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -103,7 +104,8 @@ namespace CrossMod
             this.viewportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.renderSettingsToolStripMenuItem,
             this.frameSelectionToolStripMenuItem,
-            this.cameraToolStripMenuItem});
+            this.cameraToolStripMenuItem,
+            this.clearViewportToolStripMenuItem});
             this.viewportToolStripMenuItem.Name = "viewportToolStripMenuItem";
             this.viewportToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.viewportToolStripMenuItem.Text = "Viewport";
@@ -111,21 +113,21 @@ namespace CrossMod
             // renderSettingsToolStripMenuItem
             // 
             this.renderSettingsToolStripMenuItem.Name = "renderSettingsToolStripMenuItem";
-            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.renderSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.renderSettingsToolStripMenuItem.Text = "Render Settings";
             this.renderSettingsToolStripMenuItem.Click += new System.EventHandler(this.renderSettingsToolStripMenuItem_Click);
             // 
             // frameSelectionToolStripMenuItem
             // 
             this.frameSelectionToolStripMenuItem.Name = "frameSelectionToolStripMenuItem";
-            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.frameSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.frameSelectionToolStripMenuItem.Text = "Frame Models";
             this.frameSelectionToolStripMenuItem.Click += new System.EventHandler(this.frameSelectionToolStripMenuItem_Click);
             // 
             // cameraToolStripMenuItem
             // 
             this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
-            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cameraToolStripMenuItem.Text = "Camera";
             this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
@@ -162,6 +164,13 @@ namespace CrossMod
             this.printAttributesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
             this.printAttributesToolStripMenuItem.Text = "Export Vertex Attribute File Names";
             this.printAttributesToolStripMenuItem.Click += new System.EventHandler(this.printAttributesToolStripMenuItem_Click);
+            // 
+            // exportMaterialAttributeValuesToolStripMenuItem
+            // 
+            this.exportMaterialAttributeValuesToolStripMenuItem.Name = "exportMaterialAttributeValuesToolStripMenuItem";
+            this.exportMaterialAttributeValuesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.exportMaterialAttributeValuesToolStripMenuItem.Text = "Export Vertex Attribute Values";
+            this.exportMaterialAttributeValuesToolStripMenuItem.Click += new System.EventHandler(this.exportMaterialAttributeValuesToolStripMenuItem_Click);
             // 
             // printLightValuesToolStripMenuItem
             // 
@@ -219,12 +228,12 @@ namespace CrossMod
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
             // 
-            // exportMaterialAttributeValuesToolStripMenuItem
+            // clearViewportToolStripMenuItem
             // 
-            this.exportMaterialAttributeValuesToolStripMenuItem.Name = "exportMaterialAttributeValuesToolStripMenuItem";
-            this.exportMaterialAttributeValuesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.exportMaterialAttributeValuesToolStripMenuItem.Text = "Export Vertex Attribute Values";
-            this.exportMaterialAttributeValuesToolStripMenuItem.Click += new System.EventHandler(this.exportMaterialAttributeValuesToolStripMenuItem_Click);
+            this.clearViewportToolStripMenuItem.Name = "clearViewportToolStripMenuItem";
+            this.clearViewportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearViewportToolStripMenuItem.Text = "Clear Viewport";
+            this.clearViewportToolStripMenuItem.Click += new System.EventHandler(this.clearViewportToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -269,5 +278,6 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem printLightValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAnimationToGifToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportMaterialAttributeValuesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearViewportToolStripMenuItem;
     }
 }
