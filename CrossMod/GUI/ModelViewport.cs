@@ -133,6 +133,10 @@ namespace CrossMod.GUI
 
         public void ClearFiles()
         {
+            // Pause frame updates so we don't access the render nodes while clearing them.
+            bool wasRendering = glViewport.IsRendering;
+            glViewport.PauseRendering();
+
             animationBar.Clear();
 
             renderableNodes.Clear();
@@ -140,6 +144,9 @@ namespace CrossMod.GUI
 
             meshList.Clear();
             boneTree.Nodes.Clear();
+
+            if (wasRendering)
+                glViewport.RestartRendering();
         }
 
         public System.Drawing.Bitmap GetScreenshot()
