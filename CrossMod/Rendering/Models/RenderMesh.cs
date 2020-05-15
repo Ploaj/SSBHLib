@@ -16,9 +16,14 @@ namespace CrossMod.Rendering.Models
 
         public void SetRenderState(Material material)
         {
-            // TODO: The screen door transparency may also use alpha blending.
-            renderSettings.alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(!material.UseStippleBlend, material.BlendSrc, material.BlendDst, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
+            renderSettings.alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, material.BlendSrc, material.BlendDst, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
             SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(renderSettings.alphaBlendSettings);
+
+            // Meshes with screen door transparency enable this OpenGL extension.
+            if (RenderSettings.Instance.EnableExperimental && material.UseAlphaSampleCoverage)
+                GL.Enable(EnableCap.SampleAlphaToCoverage);
+            else
+                GL.Disable(EnableCap.SampleAlphaToCoverage);
         }
     }
 }

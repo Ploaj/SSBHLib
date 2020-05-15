@@ -100,9 +100,6 @@ out vec4 fragColor;
 uniform float directLightIntensity;
 uniform float iblIntensity;
 
-uniform int useStippleBlend;
-uniform sampler2D stipplePattern;
-
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
 
@@ -429,13 +426,6 @@ void main()
 
     // TODO: Alpha testing.
     if ((fragColor.a + CustomVector0.x) < 0.01)
-        discard;
-
-    // TODO: What is the stipple pattern?
-    int x = int(mod(gl_FragCoord.x - 0.5, 16));
-    int y = int(mod(gl_FragCoord.y - 0.5, 16));
-    float threshold = texelFetch(stipplePattern, ivec2(x, y), 0).x;
-    if (useStippleBlend == 1 && (fragColor.a < threshold))
         discard;
 
     // TODO: How does this work?

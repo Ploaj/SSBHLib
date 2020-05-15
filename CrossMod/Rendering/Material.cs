@@ -19,7 +19,7 @@ namespace CrossMod.Rendering
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
         public bool HasAlphaBlending { get; set; } = false;
 
-        public bool UseStippleBlend { get; set; } = false;
+        public bool UseAlphaSampleCoverage { get; set; } = false;
 
         public Texture col = null;
         public bool HasCol { get; set; } = false;
@@ -93,8 +93,6 @@ namespace CrossMod.Rendering
 
             AddTextures(genericMaterial);
 
-            genericMaterial.AddBoolToInt("useStippleBlend", UseStippleBlend);
-
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
@@ -128,8 +126,6 @@ namespace CrossMod.Rendering
             AddImageBasedLightingTextures(genericMaterial);
 
             AddRenderModeTextures(genericMaterial);
-
-            genericMaterial.AddTexture("stipplePattern", defaultTextures.stipplePattern);
         }
 
         public void AddDebugParams(UniformBlock uniformBlock)
