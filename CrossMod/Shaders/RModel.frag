@@ -403,13 +403,6 @@ void main()
     // Gamma correction.
     fragColor.rgb = GetSrgb(fragColor.rgb);
 
-    if (renderWireframe == 1)
-    {
-        vec3 edgeColor = vec3(1);
-        float intensity = WireframeIntensity(edgeDistance);
-        fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
-    }
-
     // Alpha calculations
     fragColor.a = albedoColor.a;
     fragColor.a *= emissionColor.a;
@@ -424,8 +417,12 @@ void main()
     if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
 
+    // TODO: ???
+    fragColor.a += CustomVector0.x;
+    fragColor.a = min(fragColor.a, 1.0);
+
     // TODO: Alpha testing.
-    if ((fragColor.a + CustomVector0.x) < 0.01)
+    if ((fragColor.a) < 0.01)
         discard;
 
     // TODO: How does this work?
@@ -434,4 +431,11 @@ void main()
 
     // Premultiplied alpha.
     fragColor.rgb *= fragColor.a;
+
+    if (renderWireframe == 1)
+    {
+        vec3 edgeColor = vec3(1);
+        float intensity = WireframeIntensity(edgeDistance);
+        fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
+    }
 }
