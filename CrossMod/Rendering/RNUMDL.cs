@@ -158,12 +158,7 @@ namespace CrossMod.Rendering
 
         private void SetSamplerInformation(Material material, MatlAttribute a)
         {
-            // TODO: Set the appropriate sampler information based on the attribute and param id.
-            var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
-            var wrapS = GetWrapMode(samplerStruct.WrapS);
-            var wrapT = GetWrapMode(samplerStruct.WrapT);
-            var magFilter = GetMagFilter(samplerStruct.MagFilter);
-
+            // TODO: This could be cleaner.
             Texture textureToSet = null;
             switch ((long)a.ParamId)
             {
@@ -183,9 +178,12 @@ namespace CrossMod.Rendering
 
             if (textureToSet != null)
             {
-                textureToSet.TextureWrapS = wrapS;
-                textureToSet.TextureWrapT = wrapT;
-                textureToSet.MagFilter = magFilter;
+                var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
+                textureToSet.TextureWrapS = GetWrapMode(samplerStruct.WrapS);
+                textureToSet.TextureWrapT = GetWrapMode(samplerStruct.WrapT);
+                textureToSet.TextureWrapR = GetWrapMode(samplerStruct.WrapR);
+                textureToSet.MagFilter = GetMagFilter(samplerStruct.MagFilter);
+                textureToSet.MinFilter = GetMinFilter(samplerStruct.MinFilter);
             }
         }
 
@@ -197,6 +195,16 @@ namespace CrossMod.Rendering
                 return TextureMagFilter.Linear;
 
             return TextureMagFilter.Linear;
+        }
+
+        private TextureMinFilter GetMinFilter(int minFilter)
+        {
+            if (minFilter == 0)
+                return TextureMinFilter.Nearest;
+            if (minFilter == 1)
+                return TextureMinFilter.Linear;
+
+            return TextureMinFilter.Linear;
         }
 
         private TextureWrapMode GetWrapMode(int wrapMode)

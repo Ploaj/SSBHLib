@@ -7,7 +7,7 @@
             public int WrapS { get; set; }
             public int WrapT { get; set; }
             public int WrapR { get; set; }
-            public int Unk4 { get; set; }
+            public int MinFilter { get; set; }
             public int MagFilter { get; set; }
             public int Unk6 { get; set; }
             public int Unk7 { get; set; }
