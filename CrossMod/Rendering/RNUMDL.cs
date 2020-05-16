@@ -226,17 +226,17 @@ namespace CrossMod.Rendering
             // TODO: There's a cleaner way to do this.
             var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
 
-            if (blendState.BlendFactor1 == 1)
-                meshMaterial.BlendSrc = BlendingFactor.One;
-            else if (blendState.BlendFactor1 == 6)
-                meshMaterial.BlendSrc = BlendingFactor.SrcAlpha;
+            // TODO: Does "src factor" toggle something in the shader?
+            meshMaterial.BlendSrc = BlendingFactor.One;
 
             if (blendState.BlendFactor2 == 1)
                 meshMaterial.BlendDst = BlendingFactor.One;
+            else if (blendState.BlendFactor2 == 2)
+                meshMaterial.BlendDst = BlendingFactor.SrcAlpha;
             else if (blendState.BlendFactor2 == 6)
                 meshMaterial.BlendDst = BlendingFactor.OneMinusSrcAlpha;
 
-            meshMaterial.HasAlphaBlending = blendState.BlendFactor1 != 0 || blendState.BlendFactor2 != 0;
+            meshMaterial.IsTransparent = blendState.BlendFactor1 != 0 || blendState.BlendFactor2 != 0;
 
             // TODO: Do both need to be set?
             meshMaterial.UseAlphaSampleCoverage = blendState.Unk7 == 1 || blendState.Unk8 == 1;

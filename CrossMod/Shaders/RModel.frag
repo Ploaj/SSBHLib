@@ -431,4 +431,7 @@ void main()
     // TODO: How does this work?
     if (hasInkNorMap == 1 && transitionBlend < 1)
         discard;
+
+    // Premultiplied alpha.
+    fragColor.rgb *= fragColor.a;
 }

@@ -96,7 +96,7 @@ namespace CrossMod.Rendering.Models
 
             foreach (RMesh m in subMeshes)
             {
-                if (m.Material.HasAlphaBlending)
+                if (m.Material.IsTransparent)
                     transparentDepthSorted.Add(m);
                 else
                     opaque.Add(m);
