@@ -164,6 +164,33 @@ namespace CrossMod.GUI
             glViewport.Dispose();
         }
 
+        public void HideExpressionMeshes()
+        {
+            string[] expressionPatterns = { "Blink", "Attack", "Ouch", "Talk",
+                "Capture", "Ottotto", "Escape", "Half",
+                "Pattern", "Result", "Harf", "Hot", "Heavy",
+                "Voice", "Fura", "Catch", "Cliff", "FLIP",
+                "Bound", "Down", "Final", "Result", "StepPose",
+                "Sorori", "Fall", "Appeal", "DamageFlyFront", "CameraHit", "laugh", 
+                "breath", "hot", "swell"  };
+
+            // TODO: This is probably not a very efficient way of doing this.
+            foreach (ListViewItem item in meshList.Items)
+            {
+                foreach (var pattern in expressionPatterns)
+                {
+                    if (item.Name.Contains("OpenBlink"))
+                        continue;
+
+                    if (item.Name.Contains(pattern))
+                    {
+                        item.Checked = false;
+                        ((RMesh)item.Tag).Visible = false;
+                    }
+                }
+            }
+        }
+
         public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath, IProgress<int> progress)
         {
             // Disable automatic updates so frames can be rendered manually.

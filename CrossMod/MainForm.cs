@@ -102,7 +102,8 @@ namespace CrossMod
             {
                 if (node.Text?.EndsWith("numdlb") == true)
                 {
-                    fileTree.SelectedNode = node as FileNode;
+                    fileTree.SelectedNode = node;
+                    modelViewport.HideExpressionMeshes();
                 }
                 else if (skelNode == null && node is SkelNode)
                 {
@@ -333,7 +334,6 @@ namespace CrossMod
             {
                 string sourceFolder = Directory.GetParent(file).FullName;
                 LoadWorkspace(sourceFolder);
-
                 modelViewport.RenderFrame();
 
                 // Save screenshot.
