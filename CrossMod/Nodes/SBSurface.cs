@@ -125,8 +125,8 @@ namespace CrossMod.Nodes
                     }
                     else
                     {
-                        var format = new TextureFormatUncompressed((PixelInternalFormat)PixelFormat, PixelFormat, PixelType);
-
+                        // TODO: The internal format should only be rgb, rgba, etc. A cast won't always work.
+                        var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat, PixelType);
                         cube.LoadImageData(Width, format,
                             Arrays[0].Mipmaps[0], Arrays[1].Mipmaps[0], Arrays[2].Mipmaps[0],
                             Arrays[3].Mipmaps[0], Arrays[4].Mipmaps[0], Arrays[5].Mipmaps[0]);
