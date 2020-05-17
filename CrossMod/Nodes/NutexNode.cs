@@ -2,7 +2,9 @@
 using CrossMod.Tools;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using CrossMod.Rendering.Resources;
 
 // Classes ported from StudioSB
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE
@@ -30,6 +32,16 @@ namespace CrossMod.Nodes
         public override void Open()
         {
             surface = Open(AbsolutePath);
+            // HACK: Empty streams?
+            if (surface == null)
+            {
+                using (var image = Image.FromFile("DefaultTextures/default_black.png"))
+                {
+                    surface = SBSurface.FromBitmap((Bitmap)image);
+                    surface.Name = Path.GetFileNameWithoutExtension(AbsolutePath);
+                }
+            }
+
             TexName = surface.Name;
         }
 

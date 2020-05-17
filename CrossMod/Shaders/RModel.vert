@@ -36,7 +36,6 @@ uniform Bones
     mat4 transforms[300];
 };
 
-// TODO: Fix multiple blocks.
 uniform MaterialParams
 {
     vec4 CustomVector0;
@@ -59,6 +58,7 @@ uniform MaterialParams
 
     int CustomBoolean1;
     int CustomBoolean2;
+    int CustomBoolean9;
 
     float CustomFloat8;
     float CustomFloat10;
@@ -90,9 +90,9 @@ void main()
     geomBake1 = bake1;
     geomPosition = position.xyz;
 
-    // TODO: Sprite sheet uvs.
+    // Sprite sheet uvs.
     geomMap1 = map1;
-    if (CustomBoolean1 == 1)
+    if (CustomBoolean9 == 1)
         geomMap1 /= CustomVector18.xy;
 
     geomUvSet = uvSet;

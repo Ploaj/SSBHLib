@@ -71,9 +71,10 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)
     vec2 uvLayer2 = TransformUv(uv2, transform2);
     vec4 emission2Color = texture(emi2Map, uvLayer2).rgba;
 
-    // TODO: ???
-    emissionColor.rgb += emission2Color.rgb;
-    return emissionColor;
+    // TODO: Blending?
+    vec4 result = emissionColor;
+    result.rgb += emission2Color.rgb;
+    return result;
 }
 
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5)

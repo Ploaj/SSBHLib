@@ -78,6 +78,7 @@ uniform MaterialParams
 
     int CustomBoolean1;
     int CustomBoolean2;
+    int CustomBoolean9;
 
     float CustomFloat8;
     float CustomFloat10;
@@ -195,7 +196,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffus
     if (hasCustomVector44 == 1)
         diffuseTerm = CustomVector44.rgb + CustomVector45.rgb;
 
-    return diffuseTerm;
+    // TODO: The pacman apple item has negative colors for some reason.
+    return max(diffuseTerm, vec3(0));
 }
 
 float EdgeTintBlend(vec3 N, vec3 V)
@@ -221,6 +223,7 @@ float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
     if (renderExperimental == 1)
         specularBrdf = pow(specularBrdf, specPower);
 
+    // TODO: The pacman apple item has negative colors for some reason.
     return specularBrdf;
 }
 
@@ -249,7 +252,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
         specularTerm = mix(specularTerm, CustomVector14.rgb, edgeBlend);
     }
 
-    return specularTerm;
+    return max(specularTerm,vec3(0));
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -386,8 +389,8 @@ void main()
     fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
-    if (renderEmission == 1)
-        fragColor.rgb += EmissionTerm(emissionColor);
+    // if (renderEmission == 1)
+    fragColor.rgb += EmissionTerm(emissionColor);
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)

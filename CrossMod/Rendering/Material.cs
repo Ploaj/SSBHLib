@@ -174,7 +174,7 @@ namespace CrossMod.Rendering
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
 
             // Some sort of sprite sheet scale toggle.
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, true);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, false);
 
             // Enables/disables UV scrolling animations.
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean5, false);
