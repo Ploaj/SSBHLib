@@ -1,13 +1,13 @@
 ﻿using CrossMod.GUI;
+using CrossMod.IO;
 using CrossMod.Nodes;
+using SSBHLib.Tools;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
-using CrossMod.IO;
-using System.Collections.Generic;
 using System.Linq;
-using SSBHLib.Tools;
+using System.Windows.Forms;
 
 namespace CrossMod
 {
@@ -89,18 +89,19 @@ namespace CrossMod
         /// <param name="folderPath"></param>
         private void LoadWorkspace(string folderPath)
         {
-            var mainNode = new DirectoryNode(folderPath);
-            mainNode.Open();
-            fileTree.Nodes.Add(mainNode);
+            var mainNode = CreateDirectoryNodeAndOpenSubNodes(folderPath);
+            AssignNodesAndSelectNumdlb(mainNode);
+        }
 
-            mainNode.Expand();
-
+        private void AssignNodesAndSelectNumdlb(DirectoryNode mainNode)
+        {
             // Enable rendering of the model if we have directly selected a model file.
             // Nested ones won't render a model
+            fileTree.Nodes.Add(mainNode);
             SkelNode skelNode = null;
             foreach (FileNode node in mainNode.Nodes)
             {
-                if (node.Text?.EndsWith("numdlb") == true)
+                if (node.Text.EndsWith("numdlb"))
                 {
                     fileTree.SelectedNode = node;
                     modelViewport.HideExpressionMeshes();
@@ -110,6 +111,7 @@ namespace CrossMod
                     skelNode = node as SkelNode;
                 }
             }
+
             if (skelNode == null)
                 return;
             foreach (FileNode node in mainNode.Nodes)
@@ -122,7 +124,16 @@ namespace CrossMod
                     break;
                 }
             }
+
             ParamNodeContainer.SkelNode = skelNode;
+        }
+
+        private static DirectoryNode CreateDirectoryNodeAndOpenSubNodes(string folderPath)
+        {
+            var mainNode = new DirectoryNode(folderPath);
+            mainNode.Open();
+            mainNode.Expand();
+            return mainNode;
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)

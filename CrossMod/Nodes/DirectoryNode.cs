@@ -15,6 +15,7 @@ namespace CrossMod.Nodes
         private bool isOpened = false;
         private bool isNestedOpened = false;
 
+        // Convert to list to avoid evaluating the LINQ more than once.
         private static readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                                                             from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(FileNode).IsAssignableFrom(assemblyType)
@@ -49,11 +50,11 @@ namespace CrossMod.Nodes
                 if (Directory.Exists(name))
                 {
                     var dirNode = new DirectoryNode(name, isRoot: false);
-                    this.Nodes.Add(dirNode);
+                    Nodes.Add(dirNode);
                 }
                 else
                 {
-                    this.Nodes.Add(CreateFileNode(fileNodeTypes, name));
+                    Nodes.Add(CreateFileNode(fileNodeTypes, name));
                 }
             }
 
@@ -71,7 +72,7 @@ namespace CrossMod.Nodes
                 return;
             }
 
-            foreach (var node in this.Nodes)
+            foreach (var node in Nodes)
             {
                 (node as FileNode)?.Open();
             }
