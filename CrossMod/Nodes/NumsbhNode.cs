@@ -104,10 +104,11 @@ namespace CrossMod.Nodes
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
+                    BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY,
+                        meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius),
                 };
 
                 // Get bounding sphere.
-                rMesh.BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY, meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius);
 
                 // Get vertex data.
                 rMesh.RenderMesh = GetRenderMesh(skeleton, meshObject, rMesh);
@@ -147,16 +148,61 @@ namespace CrossMod.Nodes
             var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
             var colorSet5Values = vertexAccessor.ReadAttribute("colorSet5", 0, meshObject.VertexCount, meshObject);
 
-            // TODO: Convert vectors.
-            var intIndices = new List<int>();
-            foreach (var value in vertexIndices)
-            {
-                intIndices.Add((int)value);
-            }
-            SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(GetVectors3d(positions), GetVectors3d(normals), GetVectors2d(map1Values), intIndices, out Vector3[] newTangents, out Vector3[] bitangents);
+            // Convert to the appropriate OpenTK types.
+            // TODO: There may be a way to skip this conversion.
+            var intIndices = (int[])(object)vertexIndices;
+            var positionVectors = GetVectors3d(positions);
+            var normalVectors = GetVectors3d(normals);
+            var map1Vectors = GetVectors2d(map1Values);
+            var tangentVectors = GetVectors3d(tangents);
+            var bake1Vectors = GetVectors2d(bake1Values);
+            var colorSet1Vectors = GetVectors4d(colorSet1Values);
+            var colorSet5Vectors = GetVectors4d(colorSet5Values);
+
+            SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(positionVectors, normalVectors, map1Vectors, intIndices, out _, out Vector3[] bitangents);
 
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+            var indexByBoneName = GetIndexByBoneName(skeleton);
+
+            GetRiggingData(positions, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
+
+            var vertices = new List<CustomVertex>(positions.Length);
+            for (int i = 0; i < positions.Length; i++)
+            {
+                var uvSet = map1Vectors[i];
+                if (uvSetValues.Length != 0)
+                    uvSet = GetVector4(uvSetValues[i]).Xy;
+                var uvSet1 = Vector2.Zero;
+                if (uvSet1Values.Length != 0)
+                    uvSet1 = GetVector4(uvSet1Values[i]).Xy;
+
+                var bones = boneIndices[i];
+                var weights = boneWeights[i];
+
+                // Accessors return length 0 when the attribute isn't present.
+                var bake1 = Vector2.Zero;
+                if (bake1Values.Length != 0)
+                    bake1 = bake1Vectors[i];
+
+                // The values are read as float, so we can't use OpenGL to convert.
+                // Convert the range [0, 128] to [0, 255]. 
+                var colorSet1 = Vector4.One;
+                if (colorSet1Values.Length != 0)
+                    colorSet1 = colorSet1Vectors[i] / 128.0f;
+
+                var colorSet5 = Vector4.One;
+                if (colorSet5Values.Length != 0)
+                    colorSet5 = colorSet5Vectors[i] / 128.0f;
+
+                vertices.Add(new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], map1Vectors[i], uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5));
+            }
+
+            return vertices;
+        }
+
+        private static Dictionary<string, int> GetIndexByBoneName(RSkeleton skeleton)
+        {
             var indexByBoneName = new Dictionary<string, int>();
 
             if (skeleton != null)
@@ -167,67 +213,42 @@ namespace CrossMod.Nodes
                 }
             }
 
-            GetRiggingData(positions, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
-
-            var vertices = new List<CustomVertex>(positions.Length);
-            for (int i = 0; i < positions.Length; i++)
-            {
-                var position = GetVector4(positions[i]).Xyz;
-
-                var normal = GetVector4(normals[i]).Xyz;
-                var tangent = GetVector4(tangents[i]).Xyz;
-                var bitangent = bitangents[i];
-
-                var map1 = GetVector4(map1Values[i]).Xy;
-
-                var uvSet = map1;
-                if (uvSetValues.Length != 0)
-                    uvSet = GetVector4(uvSetValues[i]).Xy;
-                var uvSet1 = new Vector2(0);
-                if (uvSet1Values.Length != 0)
-                    uvSet1 = GetVector4(uvSet1Values[i]).Xy;
-
-                var bones = boneIndices[i];
-                var weights = boneWeights[i];
-
-                // Accessors return length 0 when the attribute isn't present.
-                var bake1 = new Vector2(0);
-                if (bake1Values.Length != 0)
-                    bake1 = GetVector4(bake1Values[i]).Xy;
-
-                // The values are read as float, so we can't use OpenGL to convert.
-                // Convert the range [0, 128] to [0, 255]. 
-                var colorSet1 = new Vector4(1);
-                if (colorSet1Values.Length != 0)
-                    colorSet1 = GetVector4(colorSet1Values[i]) / 128.0f;
-
-                var colorSet5 = new Vector4(1);
-                if (colorSet5Values.Length != 0)
-                    colorSet5 = GetVector4(colorSet5Values[i]) / 128.0f;
-
-                vertices.Add(new CustomVertex(position, normal, tangent, bitangent, map1, uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5));
-            }
-
-            return vertices;
+            return indexByBoneName;
         }
 
-        private static List<Vector3> GetVectors3d(SsbhVertexAttribute[] values)
+        private static Vector4[] GetVectors4d(SsbhVertexAttribute[] values)
         {
-            var vectors = new List<Vector3>();
-            foreach (var value in values)
+            var vectors = new Vector4[values.Length];
+            for (int i = 0; i < values.Length; i++)
             {
-                vectors.Add(GetVector4(value).Xyz);
+                var value = values[i];
+                vectors[i] = new Vector4(value.X, value.Y, value.Z, value.W);
             }
+
             return vectors;
         }
 
-        private static List<Vector2> GetVectors2d(SsbhVertexAttribute[] values)
+        private static Vector3[] GetVectors3d(SsbhVertexAttribute[] values)
         {
-            var vectors = new List<Vector2>();
-            foreach (var value in values)
+            var vectors = new Vector3[values.Length];
+            for (int i = 0; i < values.Length; i++)
             {
-                vectors.Add(GetVector4(value).Xy);
+                var value = values[i];
+                vectors[i] = new Vector3(value.X, value.Y, value.Z);
             }
+
+            return vectors;
+        }
+
+        private static Vector2[] GetVectors2d(SsbhVertexAttribute[] values)
+        {
+            var vectors = new Vector2[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+                vectors[i] = new Vector2(value.X, value.Y);
+            }
+
             return vectors;
         }
 

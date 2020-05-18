@@ -73,6 +73,7 @@ uniform MaterialParams
 
     int CustomBoolean1;
     int CustomBoolean2;
+	int CustomBoolean9;
 
     float CustomFloat8;
     float CustomFloat10;
