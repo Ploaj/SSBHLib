@@ -106,12 +106,8 @@ namespace CrossMod.Nodes
                     SingleBindName = meshObject.ParentBoneName,
                     BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY,
                         meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius),
+                    RenderMesh = GetRenderMesh(skeleton, meshObject),
                 };
-
-                // Get bounding sphere.
-
-                // Get vertex data.
-                rMesh.RenderMesh = GetRenderMesh(skeleton, meshObject, rMesh);
 
                 model.subMeshes.Add(rMesh);
             }
@@ -119,23 +115,18 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject, RMesh rMesh)
+        private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
 
             System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
 
-            List<CustomVertex> vertices = CreateVertices(skeleton, meshObject, vertexAccessor, vertexIndices);
-            /*if(obs.IndexOf(meshObject) != 0x2B && ExtendedMesh != null && ExtendedMesh.MeshToIndexBuffer.ContainsKey(obs.IndexOf(meshObject)))
-            {
-                rMesh.RenderMesh = new RenderMesh(vertices, new List<uint>(ExtendedMesh.MeshToIndexBuffer[obs.IndexOf(meshObject)]), PrimitiveType.TriangleFan);
-            }
-            else*/
-            return new RenderMesh(vertices, new List<uint>(vertexIndices));
+            var vertices = CreateVertices(skeleton, meshObject, vertexAccessor, vertexIndices);
+            return new RenderMesh(vertices, vertexIndices);
         }
 
-        private List<CustomVertex> CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor, uint[] vertexIndices)
+        private CustomVertex[] CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor, uint[] vertexIndices)
         {
             // Read attribute values.
             var positions = vertexAccessor.ReadAttribute("Position0", 0, meshObject.VertexCount, meshObject);
@@ -150,7 +141,6 @@ namespace CrossMod.Nodes
 
             // Convert to the appropriate OpenTK types.
             // TODO: There may be a way to skip this conversion.
-            var intIndices = (int[])(object)vertexIndices;
             var positionVectors = GetVectors3d(positions);
             var normalVectors = GetVectors3d(normals);
             var map1Vectors = GetVectors2d(map1Values);
@@ -159,6 +149,7 @@ namespace CrossMod.Nodes
             var colorSet1Vectors = GetVectors4d(colorSet1Values);
             var colorSet5Vectors = GetVectors4d(colorSet5Values);
 
+            var intIndices = (int[])(object)vertexIndices;
             SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(positionVectors, normalVectors, map1Vectors, intIndices, out _, out Vector3[] bitangents);
 
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
@@ -167,7 +158,7 @@ namespace CrossMod.Nodes
 
             GetRiggingData(positions, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
 
-            var vertices = new List<CustomVertex>(positions.Length);
+            var vertices = new CustomVertex[positions.Length];
             for (int i = 0; i < positions.Length; i++)
             {
                 var uvSet = map1Vectors[i];
@@ -195,7 +186,7 @@ namespace CrossMod.Nodes
                 if (colorSet5Values.Length != 0)
                     colorSet5 = colorSet5Vectors[i] / 128.0f;
 
-                vertices.Add(new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], map1Vectors[i], uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5));
+                vertices[i] = new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], map1Vectors[i], uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5);
             }
 
             return vertices;
@@ -263,22 +254,22 @@ namespace CrossMod.Nodes
                 if (!indexByBoneName.ContainsKey(influence.BoneName))
                     continue;
 
-                if (boneWeights[influence.VertexIndex].X == 0)
+                if (boneWeights[influence.VertexIndex].X == 0.0)
                 {
                     boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];
                     boneWeights[influence.VertexIndex].X = influence.Weight;
                 }
-                else if (boneWeights[influence.VertexIndex].Y == 0)
+                else if (boneWeights[influence.VertexIndex].Y == 0.0)
                 {
                     boneIndices[influence.VertexIndex].Y = indexByBoneName[influence.BoneName];
                     boneWeights[influence.VertexIndex].Y = influence.Weight;
                 }
-                else if (boneWeights[influence.VertexIndex].Z == 0)
+                else if (boneWeights[influence.VertexIndex].Z == 0.0)
                 {
                     boneIndices[influence.VertexIndex].Z = indexByBoneName[influence.BoneName];
                     boneWeights[influence.VertexIndex].Z = influence.Weight;
                 }
-                else if (boneWeights[influence.VertexIndex].W == 0)
+                else if (boneWeights[influence.VertexIndex].W == 0.0)
                 {
                     boneIndices[influence.VertexIndex].W = indexByBoneName[influence.BoneName];
                     boneWeights[influence.VertexIndex].W = influence.Weight;
