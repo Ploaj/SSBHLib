@@ -138,23 +138,24 @@ namespace CrossMod.Rendering
         public void AddMaterialParams(UniformBlock uniformBlock)
         {
             // Assume no edge tint if not present.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, Vector4.One);
 
             // Some sort of skin subsurface color?
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, new Vector4(0));
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, new Vector4(1, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, Vector4.Zero);
+
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, Vector4.Zero);
 
             // RGB color multiplier that affects all passes.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, Vector4.One);
 
             // RGB diffuse pass color multiplier.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, Vector4.One);
 
             // Sprite sheet UV parameters.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, Vector4.One);
 
             // Color channels work like a PRM map.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, new Vector4(0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, Vector4.Zero);
 
             // TODO: ???
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
@@ -181,7 +182,7 @@ namespace CrossMod.Rendering
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
 
             // Alpha offset?
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, new Vector4(0, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, Vector4.Zero);
 
             // UV transforms.
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector31, new Vector4(1, 1, 0, 0));
@@ -191,11 +192,11 @@ namespace CrossMod.Rendering
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector6, new Vector4(1, 1, 0, 0));
 
             // Wii Fit trainer stage color.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, new Vector4(0, 0, 0, 0));
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, new Vector4(0, 0, 0, 0));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, Vector4.Zero);
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, Vector4.Zero);
 
             // Some sort of emission color.
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, new Vector4(1));
+            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, Vector4.One);
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)

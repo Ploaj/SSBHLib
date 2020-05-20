@@ -169,25 +169,9 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughne
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, vec3 kDiffuse, float metalness, vec3 sssColor)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metalness, vec3 sssColor)
 {
-    vec3 diffuseTerm = kDiffuse * albedoColor.rgb;
-
-    // Some sort of fake SSS color.
-    // TODO: The SSS color may be part of a separate render pass
-    // and not take into account diffuse lighting.
-    diffuseTerm += sssColor * metalness * renderExperimental * albedoColor.rgb;
-
-    // Baked ambient lighting.
-    vec3 diffuseLight = vec3(0);
-    diffuseLight += diffuseIbl;
-    vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    diffuseLight += bakedLitColor.rgb * 2;
-
-    // Direct lighting.
-    diffuseLight += LambertShading(N, normalize(chrLightDir)) * directLightIntensity * bakedLitColor.a;
-
-    diffuseTerm *= diffuseLight;
+    vec3 diffuseTerm = albedoColor.rgb;
 
     // Color multiplier param.
     diffuseTerm *= CustomVector13.rgb;
@@ -218,30 +202,25 @@ float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
     else
         specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x);
 
-    // Some sort of fake SSS.
-    // TODO: Does this affect the whole pass?
-    if (renderExperimental == 1)
-        specularBrdf = pow(specularBrdf, specPower);
-
-    // TODO: The pacman apple item has negative colors for some reason.
     return specularBrdf;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, vec3 kSpecular, float cavity, float specPower, float metalness)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, float cavity, float specPower, float metalness, vec3 sssColor)
 {
-
     // TODO: What passes does IBL affect?
-
-    // Specular calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-    // The difference is subtle, so the more accurate calculations are disabled for now.
-    // vec2 brdf  = texture(iblLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    // vec3 indirectSpecular = specularIbl * (kSpecular * brdf.x + brdf.y) * metalness; 
-
-    vec3 indirectSpecular = specularIbl * metalness * kSpecular;
-    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness, specPower) * directLightIntensity * kSpecular);
+    vec3 indirectSpecular = specularIbl;
+    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness, specPower) * directLightIntensity);
 
     // TODO: This might not be correct, but it reduces the number of overly bright models.
     vec3 specularTerm = mix(directSpecular, indirectSpecular, metalness);
+
+    // Some sort of fake SSS color.
+    // TODO: The SSS color may be part of a separate render pass
+    if (renderExperimental == 1)
+    {
+        specularTerm += sssColor;
+        specularTerm *= mix(vec3(1), sssColor, CustomVector30.x * CustomVector30.x);
+    }
 
     if (renderRimLighting == 1)
     {
@@ -252,6 +231,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
         specularTerm = mix(specularTerm, CustomVector14.rgb, edgeBlend);
     }
 
+    // TODO: The pacman apple item has negative colors for some reason.
     return max(specularTerm,vec3(0));
 }
 
@@ -280,9 +260,11 @@ float Luminance(vec3 rgb)
     return dot(rgb, W);
 }
 
-vec3 GetSpecularWeight(float prmSpec, vec3 albedoColor, float metalness, float nDotV, float roughness)
+vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
-    vec3 albedoTint = albedoColor / Luminance(albedoColor);
+    // Dividing by 0 will produce a black tint color.
+    vec3 albedoTint = diffusePass / Luminance(diffusePass);
+
     vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
 
     // TODO: What is this value?
@@ -290,7 +272,7 @@ vec3 GetSpecularWeight(float prmSpec, vec3 albedoColor, float metalness, float n
 
     // Metals use albedo instead of the specular color/tint.
     vec3 specularReflectionF0 = vec3(prmSpec * dialectricF0Scale) * tintColor;
-    vec3 f0Final = mix(specularReflectionF0, albedoColor, metalness);
+    vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
 
     return FresnelSchlickRoughness(nDotV, f0Final, roughness);
 }
@@ -373,15 +355,30 @@ void main()
     vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
-    vec3 kSpecular = GetSpecularWeight(prmColor.a, albedoColor.rgb, metalness, nDotV, roughness);
-    vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     // Render passes.
+    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, metalness, sssColor);
+
+    // TODO: Separate function.
+    // Baked ambient lighting.
+    vec3 diffuseLight = vec3(0);
+    diffuseLight += diffuseIbl;
+    vec4 bakedLitColor = texture(bakeLitMap, bake1);
+    diffuseLight += bakedLitColor.rgb * 2;
+
+    // Direct lighting.
+    diffuseLight += LambertShading(fragmentNormal, normalize(chrLightDir)) * directLightIntensity * bakedLitColor.a;
+    
+    vec3 specularPass = SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, norColor.a, specPower, metalness, sssColor);
+
+    vec3 kDiffuse = vec3(1 - metalness); // TODO Subtract specular?
+    vec3 kSpecular = GetSpecularWeight(prmColor.a, diffusePass.rgb, metalness, nDotV, roughness);
+
     if (renderDiffuse == 1)
-        fragColor.rgb += DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, kDiffuse, metalness, sssColor);
+        fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, kSpecular, norColor.a, specPower, metalness);
+        fragColor.rgb += specularPass * kSpecular;
 
     // TODO: What passes does ambient occlusion affect?
     // Ambient Occlusion
