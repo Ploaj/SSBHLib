@@ -71,6 +71,8 @@ namespace CrossMod.Rendering.Models
             currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
             currentShader.SetInt("renderMode", (int)RenderSettings.Instance.ShadingMode);
 
+            currentShader.SetFloat("floatTestParam", RenderSettings.Instance.FloatTestParam);
+
             currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
             currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
 

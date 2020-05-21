@@ -56,6 +56,8 @@ uniform int renderWireframe;
 uniform int renderVertexColor;
 uniform int renderNormalMaps;
 
+uniform float floatTestParam;
+
 uniform MaterialParams
 {
     vec4 CustomVector0;
@@ -186,10 +188,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
 
 float EdgeTintBlend(vec3 N, vec3 V)
 {   
-    float rimExponent = 3.0; // TODO: ???
-    float facingRatio = (1 - max(dot(N, V), 0));
-    facingRatio = pow(facingRatio, rimExponent) * CustomVector14.w;
-    return facingRatio;
+    // TODO: Double check the shading.
+    return clamp(FresnelSchlickRoughness(dot(N,V), vec3(0), 0).x * CustomVector14.w, 0, 1);
 }
 
 float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
@@ -200,7 +200,7 @@ float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
     if (CustomFloat10 != 0.0)
         specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughness, CustomFloat10);
     else
-        specularBrdf = pow(Ggx(N, halfAngle, roughness), CustomVector30.x);
+        specularBrdf = Ggx(N, halfAngle, roughness);
 
     return specularBrdf;
 }
@@ -210,9 +210,7 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     // TODO: What passes does IBL affect?
     vec3 indirectSpecular = specularIbl;
     vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness, specPower) * directLightIntensity);
-
-    // TODO: This might not be correct, but it reduces the number of overly bright models.
-    vec3 specularTerm = mix(directSpecular, indirectSpecular, metalness);
+    vec3 specularTerm = directSpecular + indirectSpecular;
 
     // Some sort of fake SSS color.
     // TODO: The SSS color may be part of a separate render pass
@@ -220,15 +218,6 @@ vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness,
     {
         specularTerm += sssColor;
         specularTerm *= mix(vec3(1), sssColor, CustomVector30.x * CustomVector30.x);
-    }
-
-    if (renderRimLighting == 1)
-    {
-        // TODO: How does the cavity map work?
-        float edgeBlend = EdgeTintBlend(N, V);
-        if (renderExperimental == 1) 
-            edgeBlend *= cavity;
-        specularTerm = mix(specularTerm, CustomVector14.rgb, edgeBlend);
     }
 
     // TODO: The pacman apple item has negative colors for some reason.
@@ -265,7 +254,7 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     // Dividing by 0 will produce a black tint color.
     vec3 albedoTint = diffusePass / Luminance(diffusePass);
 
-    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
+    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8 * 0); 
 
     // TODO: What is this value?
     float dialectricF0Scale = 0.08; 
@@ -273,7 +262,6 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     // Metals use albedo instead of the specular color/tint.
     vec3 specularReflectionF0 = vec3(prmSpec * dialectricF0Scale) * tintColor;
     vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
-
     return FresnelSchlickRoughness(nDotV, f0Final, roughness);
 }
 
@@ -291,6 +279,7 @@ void main()
 
     vec3 viewVector = normalize(position - cameraPos);
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
+    reflectionVector.y *= -1;
     float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
 
     float iorRatio = 1.0 / (1.0 + CustomFloat19);
@@ -350,11 +339,10 @@ void main()
     float metalness = prmColor.r;
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb; // TODO: what is the intensity?
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb;
     int maxLod = 6;
     vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
-
 
     // Render passes.
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, metalness, sssColor);
@@ -365,24 +353,34 @@ void main()
     diffuseLight += diffuseIbl;
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     diffuseLight += bakedLitColor.rgb * 2;
+    // Ambient occlusion for indirect lighting.
+    diffuseLight *= prmColor.b; 
 
     // Direct lighting.
     diffuseLight += LambertShading(fragmentNormal, normalize(chrLightDir)) * directLightIntensity * bakedLitColor.a;
     
     vec3 specularPass = SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, norColor.a, specPower, metalness, sssColor);
 
-    vec3 kDiffuse = vec3(1 - metalness); // TODO Subtract specular?
+    if (renderRimLighting == 1)
+    {
+        // TODO: How does the cavity map work?
+        float edgeBlend = EdgeTintBlend(fragmentNormal, viewVector);
+        if (renderExperimental == 1) 
+            edgeBlend *= norColor.a;
+        vec3 edgeTintColor = mix(vec3(1), CustomVector14.rgb, edgeBlend);
+        specularPass *= edgeTintColor;
+    }
+
     vec3 kSpecular = GetSpecularWeight(prmColor.a, diffusePass.rgb, metalness, nDotV, roughness);
+    vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     if (renderDiffuse == 1)
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular;
+        fragColor.rgb += specularPass * kSpecular * prmColor.b;
 
     // TODO: What passes does ambient occlusion affect?
-    // Ambient Occlusion
-    fragColor.rgb *= prmColor.b;
     fragColor.rgb *= texture(gaoMap, bake1).rgb;
 
     // Emission
@@ -421,8 +419,8 @@ void main()
     fragColor.a += CustomVector0.x;
     fragColor.a = min(fragColor.a, 1.0);
 
-    // TODO: Alpha testing.
-    if ((fragColor.a) < 0.01)
+    // Alpha testing.
+    if ((fragColor.a) < 0.5)
         discard;
 
     // TODO: How does this work?
