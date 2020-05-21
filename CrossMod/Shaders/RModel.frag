@@ -267,17 +267,18 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
 vec3 GetDiffuseLighting(vec3 fragmentNormal, vec3 diffuseIbl, float ao)
 {
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    float directLight = LambertShading(fragmentNormal, normalize(chrLightDir)) * directLightIntensity * bakedLitColor.a;
-    vec3 ambientLight = diffuseIbl + bakedLitColor.rgb * 2;
-    vec3 result = vec3(directLight) + ambientLight * ao;
-    
+    float directLight = LambertShading(fragmentNormal, normalize(chrLightDir)) * bakedLitColor.a;
     if (renderExperimental == 1 && hasCustomVector11 == 1)
     {
-        float mid = 0.75; // TODO: ambient intensity and mid value?
-        float smoothWidth = 1 / floatTestParam;
-        result = smoothstep(mid - smoothWidth, mid + smoothWidth,result);
+        // Only smooth the BRDF to avoid clamping brightness of the lighting.
+        float mid = 0.5; // TODO: ambient intensity and mid value?
+        float smoothWidth = 1 / CustomVector30.y;
+        directLight = smoothstep(mid - smoothWidth, mid + smoothWidth,directLight);
     }
 
+    vec3 ambientLight = diffuseIbl + bakedLitColor.rgb * 2;
+    vec3 result = vec3(directLight) * directLightIntensity  + ambientLight * ao;
+    
     return result;
 }
 
