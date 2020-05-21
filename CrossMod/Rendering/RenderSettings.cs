@@ -84,7 +84,7 @@ namespace CrossMod.Rendering
         public float ModelScale { get; set; } = 1f;
 
         [EditInfo("Float Test Param", ValueEnums.ValueType.Float, "Misc")]
-        [TrackBarInfo(0, 10)]
+        [TrackBarInfo(0, 1)]
         public float FloatTestParam { get; set; } = 1f;
 
         // TODO: Add to GUI.

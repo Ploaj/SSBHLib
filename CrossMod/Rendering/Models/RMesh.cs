@@ -49,7 +49,7 @@ namespace CrossMod.Rendering.Models
                 defaultTextures = new Resources.DefaultTextures();
 
             if (genericMaterial == null)
-                genericMaterial = Material.CreateGenericMaterial(Material);
+                genericMaterial = Material.CreateGenericMaterial();
             genericMaterial.SetShaderUniforms(shader);
 
             if (uniformBlock == null)

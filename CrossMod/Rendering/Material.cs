@@ -86,7 +86,7 @@ namespace CrossMod.Rendering
             dif3 = defaultTextures.defaultWhite;
         }
 
-        public GenericMaterial CreateGenericMaterial(Material material)
+        public GenericMaterial CreateGenericMaterial()
         {
             // Don't use the default texture unit.
             var genericMaterial = new GenericMaterial(1);
@@ -96,6 +96,7 @@ namespace CrossMod.Rendering
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
 
+            genericMaterial.AddBoolToInt("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
             genericMaterial.AddBoolToInt("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
             genericMaterial.AddBoolToInt("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
 
@@ -143,7 +144,6 @@ namespace CrossMod.Rendering
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, Vector4.One);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, Vector4.Zero);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, Vector4.One);
-            //uniformBlock.SetValue("CustomVector13", Vector4.Zero);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, Vector4.One);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, Vector4.One);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, Vector4.Zero);
