@@ -191,8 +191,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
         diffuseTerm += sssColor * metalness;
     }
 
-    // TODO: The pacman apple item has negative colors for some reason.
-    return max(diffuseTerm, vec3(0));
+    return diffuseTerm;
 }
 
 float EdgeTintBlend(vec3 N, vec3 V)
@@ -201,7 +200,7 @@ float EdgeTintBlend(vec3 N, vec3 V)
     return clamp(FresnelSchlickRoughness(dot(N,V), vec3(0), 0).x * CustomVector14.w, 0, 1);
 }
 
-float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
+float SpecularBrdf(vec3 N, vec3 V, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
     vec3 halfAngle = normalize(chrLightDir + V);
@@ -214,15 +213,13 @@ float SpecularBrdf(vec3 N, vec3 V, float roughness, float specPower)
     return specularBrdf;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, float cavity, float specPower, float metalness, vec3 sssColor)
+vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, float metalness, vec3 sssColor)
 {
     vec3 indirectSpecular = specularIbl;
-    // TODO: Direct light intensity?
-    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness, specPower)) * directLightIntensity;
+    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness)) * directLightIntensity;
     vec3 specularTerm = directSpecular + indirectSpecular;
 
-    // TODO: The pacman apple item has negative colors for some reason.
-    return max(specularTerm,vec3(0));
+    return specularTerm;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
@@ -297,10 +294,11 @@ void main()
     vec3 viewVector = normalize(position - cameraPos);
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
-    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
 
     float iorRatio = 1.0 / (1.0 + CustomFloat19);
     vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
+
+    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
@@ -319,7 +317,7 @@ void main()
     // Material masking.
     float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
 
-    // TODO: This might be cleaner with a struct.
+    // TODO: Remove this from the shader set uniforms instead.
     switch (transitionEffect)
     {
         case 0:
@@ -327,28 +325,24 @@ void main()
             albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
             sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), CustomVector11.rgb, transitionBlend);
-            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 1:
             // Ink
             albedoColor.rgb = mix(vec3(0.758027, 0.115859, 0.04), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
             sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 2:
             // Gold
             albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
             sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
         case 3:
             // Metal
             albedoColor.rgb = mix(vec3(0.5), albedoColor.rgb, transitionBlend);
             prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
             sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            specPower = mix(1.0, CustomVector30.x, transitionBlend);
             break;
     }
 
@@ -367,11 +361,10 @@ void main()
     // Render passes.
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r, sssColor);
     vec3 diffuseLight = GetDiffuseLighting(fragmentNormal, diffuseIbl, prmColor.b);
-    vec3 specularPass = SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, norColor.a, specPower, metalness, sssColor);
+    vec3 specularPass = SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, metalness, sssColor);
 
     if (renderRimLighting == 1)
     {
-        // TODO: How does the cavity map work?
         float edgeBlend = EdgeTintBlend(fragmentNormal, viewVector);
         if (renderExperimental == 1) 
             edgeBlend *= norColor.a;
@@ -386,7 +379,7 @@ void main()
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular * prmColor.b;
+        fragColor.rgb += specularPass * kSpecular * prmColor.b * norColor.a;
 
     // TODO: What passes does ambient occlusion affect?
     fragColor.rgb *= texture(gaoMap, bake1).rgb;

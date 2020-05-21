@@ -104,7 +104,7 @@ namespace CrossMod.Rendering.Models
                     opaque.Add(m);
             }
 
-            transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
+            //transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
             // Models often share a material, so skip redundant and costly state changes.
             string previousMaterialName = "";
