@@ -90,9 +90,7 @@ uniform MaterialParams
 uniform int hasCustomVector11;
 uniform int hasCustomVector47;
 uniform int hasCustomVector44;
-
-uniform float transitionFactor;
-uniform int transitionEffect;
+uniform int hasCustomFloat10;
 
 uniform vec3 chrLightDir;
 
@@ -110,26 +108,19 @@ float WireframeIntensity(vec3 distanceToEdges);
 // Defined in NormalMap.frag.
 vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
 
-float LambertShading(vec3 N, vec3 V)
-{
-    float lambert = max(dot(N, V), 0);
-    return lambert;
-}
-
 // Defined in Gamma.frag.
 vec3 GetSrgb(vec3 linear);
 
-vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
-}
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+} 
 
 // GGX calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-float Ggx(vec3 N, vec3 H, float roughness)
+float Ggx(float nDotH, float roughness)
 {
     float a = roughness * roughness;
     float a2 = a * a;
-    float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
     float numerator = a2;
@@ -141,9 +132,8 @@ float Ggx(vec3 N, vec3 H, float roughness)
 
 // Code adapted from equations listed here:
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
-float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
+float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
-    // TODO: Does image based lighting consider anisotropy?
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
     float roughnessX = roughness * (1.0 + anisotropy);
@@ -151,7 +141,6 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughne
 
     float normalization = 1 / (3.14159 * roughnessX * roughnessY);
 
-    float nDotH = max(dot(N, H), 0.0);
     float nDotH2 = nDotH * nDotH;
 
     float roughnessX2 = roughnessX * roughnessX;
@@ -172,7 +161,7 @@ float GgxAnisotropic(vec3 N, vec3 H, vec3 tangent, vec3 bitangent, float roughne
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metalness, vec3 sssColor)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metalness)
 {
     vec3 diffuseTerm = albedoColor.rgb;
 
@@ -187,8 +176,8 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
     // Metalness acts as a mask for the sss effect.
     if (renderExperimental == 1)
     {
-        diffuseTerm = mix(diffuseTerm, sssColor, (CustomVector30.x * CustomVector30.x) * metalness);
-        diffuseTerm += sssColor * metalness;
+        diffuseTerm = mix(diffuseTerm, CustomVector11.rgb, (CustomVector30.x * CustomVector30.x) * metalness);
+        diffuseTerm += CustomVector11.rgb * metalness;
     }
 
     return diffuseTerm;
@@ -197,26 +186,26 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
 float EdgeTintBlend(vec3 N, vec3 V)
 {   
     // TODO: Double check the shading.
-    return clamp(FresnelSchlickRoughness(dot(N,V), vec3(0), 0).x * CustomVector14.w, 0, 1);
+    return clamp(FresnelSchlick(dot(N,V), vec3(0)).x * CustomVector14.w, 0, 1);
 }
 
-float SpecularBrdf(vec3 N, vec3 V, float roughness)
+float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
-    vec3 halfAngle = normalize(chrLightDir + V);
     float specularBrdf = 0;
-    if (CustomFloat10 != 0.0)
-        specularBrdf = GgxAnisotropic(N, halfAngle, tangent, bitangent, roughness, CustomFloat10);
+    float anisotropy = CustomFloat10;
+    if (hasCustomFloat10 == 1)
+        specularBrdf = GgxAnisotropic(nDotH, halfAngle, tangent, bitangent, roughness, anisotropy);
     else
-        specularBrdf = Ggx(N, halfAngle, roughness);
+        specularBrdf = Ggx(nDotH, roughness);
 
     return specularBrdf;
 }
 
-vec3 SpecularTerm(vec3 N, vec3 V, vec3 tangent, vec3 bitangent, float roughness, vec3 specularIbl, float metalness, vec3 sssColor)
+vec3 SpecularTerm(float nDotH, vec3 halfAngle, float roughness, vec3 specularIbl, float metalness)
 {
     vec3 indirectSpecular = specularIbl;
-    vec3 directSpecular = vec3(SpecularBrdf(N,V, roughness)) * directLightIntensity;
+    vec3 directSpecular = vec3(SpecularBrdf(nDotH, halfAngle, roughness)) * directLightIntensity;
     vec3 specularTerm = directSpecular + indirectSpecular;
 
     return specularTerm;
@@ -232,15 +221,6 @@ float GetF0(float ior)
     return pow((1 - ior) / (1 + ior), 2);
 }
 
-float GetTransitionBlend(float blendMap, float transitionFactor)
-{
-    // Add a slight offset to prevent black speckles.
-    if (blendMap <= (1 - transitionFactor + 0.01))
-        return 1.0;
-    else
-        return 0.0;
-}
-
 float Luminance(vec3 rgb)
 {
     const vec3 W = vec3(0.2125, 0.7154, 0.0721);
@@ -249,34 +229,30 @@ float Luminance(vec3 rgb)
 
 vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
-    vec3 albedoTint = diffusePass;
-
-    vec3 tintColor = mix(vec3(1), albedoTint, CustomFloat8); 
-
-    float dialectricF0Scale = 0.2; 
+    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat8); 
 
     // Metals use albedo instead of the specular color/tint.
-    vec3 specularReflectionF0 = vec3(dialectricF0Scale * prmSpec) * tintColor;
+    vec3 specularReflectionF0 = vec3(prmSpec * 0.2) * tintColor;
     vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
-    return FresnelSchlickRoughness(nDotV, f0Final, roughness);
+
+    return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetDiffuseLighting(vec3 fragmentNormal, vec3 diffuseIbl, float ao)
+vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, float ao)
 {
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    float directLight = LambertShading(fragmentNormal, normalize(chrLightDir)) * bakedLitColor.a;
+    float directLight = nDotL;
     if (renderExperimental == 1 && hasCustomVector11 == 1)
     {
         // Only smooth the BRDF to avoid clamping brightness of the lighting.
         float mid = 0.5; // TODO: ambient intensity and mid value?
         float smoothWidth = 1 / CustomVector30.y;
-        directLight = smoothstep(mid - smoothWidth, mid + smoothWidth,directLight);
+        directLight = smoothstep(mid - smoothWidth, mid + smoothWidth, directLight);
     }
 
-    vec3 ambientLight = diffuseIbl + bakedLitColor.rgb * 2;
-    vec3 result = vec3(directLight) * directLightIntensity  + ambientLight * ao;
-    
-    return result;
+    vec3 ambientLight = ambientIbl + bakedLitColor.rgb * 2;
+
+    return vec3(directLight * bakedLitColor.a) * directLightIntensity  + ambientLight * ao;
 }
 
 void main()
@@ -295,10 +271,15 @@ void main()
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
 
+    // TODO: ???
     float iorRatio = 1.0 / (1.0 + CustomFloat19);
     vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
-    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
+    // Shading vectors.
+    vec3 halfAngle = normalize(chrLightDir + viewVector);
+    float nDotV = max(dot(fragmentNormal, viewVector), 0);
+    float nDotL = max(dot(fragmentNormal, chrLightDir), 0);
+    float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
@@ -310,69 +291,35 @@ void main()
     if (hasCustomVector47 == 1)
         prmColor = CustomVector47;
 
-    // Defined separately so it can be disabled for material transitions.
-    vec3 sssColor = CustomVector11.rgb;
-    float specPower = CustomVector30.x;
-
-    // Material masking.
-    float transitionBlend = GetTransitionBlend(norColor.b, transitionFactor);
-
-    // TODO: Remove this from the shader set uniforms instead.
-    switch (transitionEffect)
-    {
-        case 0:
-            // Ditto
-            albedoColor.rgb = mix(vec3(0.302, 0.242, 0.374), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(0, 0.65, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0.1962484, 0.1721312, 0.295082), CustomVector11.rgb, transitionBlend);
-            break;
-        case 1:
-            // Ink
-            albedoColor.rgb = mix(vec3(0.758027, 0.115859, 0.04), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(0, 0.075, 1, 1), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            break;
-        case 2:
-            // Gold
-            albedoColor.rgb = mix(vec3(0.6, 0.5, 0.1), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.15, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            break;
-        case 3:
-            // Metal
-            albedoColor.rgb = mix(vec3(0.5), albedoColor.rgb, transitionBlend);
-            prmColor = mix(vec4(1, 0.2, 1, 0.3), prmColor, transitionBlend);
-            sssColor = mix(vec3(0), CustomVector11.rgb, transitionBlend);
-            break;
-    }
-
     float roughness = prmColor.g;
     float metalness = prmColor.r;
     // Specular isn't effected by metalness for skin materials.
     if (hasCustomVector11 == 1)
         metalness = 0.0;
 
+    float specular = prmColor.a;
+    if (hasCustomFloat10 == 1)
+        specular = 0.5; // TODO: ???
+
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5; // TODO: constant?
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
     int maxLod = 6;
     vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity * 0.5;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
     // Render passes.
-    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r, sssColor);
-    vec3 diffuseLight = GetDiffuseLighting(fragmentNormal, diffuseIbl, prmColor.b);
-    vec3 specularPass = SpecularTerm(fragmentNormal, viewVector, tangent, bitangent, roughness, specularIbl, metalness, sssColor);
+    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r);
+    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, prmColor.b);
+    vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
 
     if (renderRimLighting == 1)
     {
         float edgeBlend = EdgeTintBlend(fragmentNormal, viewVector);
-        if (renderExperimental == 1) 
-            edgeBlend *= norColor.a;
         vec3 edgeTintColor = mix(vec3(1), CustomVector14.rgb, edgeBlend);
         specularPass *= edgeTintColor;
     }
 
-    vec3 kSpecular = GetSpecularWeight(prmColor.a, diffusePass.rgb, metalness, nDotV, roughness);
+    vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     if (renderDiffuse == 1)
@@ -396,7 +343,7 @@ void main()
     if (CustomFloat19 > 0.0)
         fragColor.rgb += refractionIbl * renderExperimental;
 
-
+    // Final color multiplier.
     fragColor.rgb *= CustomVector8.rgb;
 
     // Gamma correction.
@@ -412,7 +359,7 @@ void main()
 
     // TODO: Meshes with refraction have some sort of angle fade.
     float f0Refract = GetF0(CustomFloat19 + 1.0);
-    vec3 transmissionAlpha = FresnelSchlickRoughness(nDotV, vec3(f0Refract), roughness);
+    vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
     if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
 
@@ -421,11 +368,8 @@ void main()
     fragColor.a = min(fragColor.a, 1.0);
 
     // Alpha testing.
-    if ((fragColor.a) < 0.5)
-        discard;
-
-    // TODO: How does this work?
-    if (hasInkNorMap == 1 && transitionBlend < 1)
+    // TODO: Not all shaders have this.
+    if (fragColor.a < 0.5)
         discard;
 
     // Premultiplied alpha.

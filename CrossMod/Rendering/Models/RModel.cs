@@ -73,9 +73,6 @@ namespace CrossMod.Rendering.Models
 
             currentShader.SetFloat("floatTestParam", RenderSettings.Instance.FloatTestParam);
 
-            currentShader.SetInt("transitionEffect", (int)RenderSettings.Instance.TransitionEffect);
-            currentShader.SetFloat("transitionFactor", RenderSettings.Instance.TransitionFactor);
-
             currentShader.SetFloat("directLightIntensity", RenderSettings.Instance.DirectLightIntensity);
             currentShader.SetFloat("iblIntensity", RenderSettings.Instance.IblIntensity);
 
@@ -122,7 +119,6 @@ namespace CrossMod.Rendering.Models
                 previousMaterialName = m.Material.Name;
             }
         }
-
         private static void DrawMesh(Camera Camera, RSkeleton Skeleton, Shader currentShader, string previousMaterialName, RMesh m)
         {
             if (m.Material != null && m.Material.Name != previousMaterialName)

@@ -24,14 +24,6 @@ namespace CrossMod.Rendering
             ParamID
         }
 
-        public enum TransitionMode
-        {
-            Ditto,
-            Ink,
-            Gold,
-            Metal
-        }
-
         public static RenderSettings Instance { get; } = new RenderSettings();
 
         public bool UseDebugShading { get => ShadingMode != 0; }
@@ -125,13 +117,6 @@ namespace CrossMod.Rendering
 
         [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
         public uint ParamId { get; set; } = 0;
-
-        [EditInfo("Transition Factor", ValueEnums.ValueType.Float, "Material Transitions")]
-        [TrackBarInfo(0, 1)]
-        public float TransitionFactor { get; set; } = 0;
-
-        [EditInfo("Transition Mode", ValueEnums.ValueType.Enum, "Material Transitions")]
-        public TransitionMode TransitionEffect { get; set; } = TransitionMode.Ink;
 
         private RenderSettings()
         {
