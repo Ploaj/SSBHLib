@@ -44,6 +44,7 @@ namespace CrossMod.Rendering
             RemoveExistingBinaries();
             SetUpShaders();
 
+            System.Diagnostics.Debug.WriteLine(GetShader("RModel").GetErrorLog());
             System.Diagnostics.Debug.WriteLine(GetShader("RModelDebug").GetErrorLog());
         }
 

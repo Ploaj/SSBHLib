@@ -82,6 +82,7 @@ uniform MaterialParams
     int CustomBoolean2;
     int CustomBoolean9;
 
+    float CustomFloat1;
     float CustomFloat8;
     float CustomFloat10;
     float CustomFloat19;
@@ -239,7 +240,7 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, float ao)
+vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
 {
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     float directLight = nDotL;
@@ -307,6 +308,9 @@ void main()
     if (hasCustomFloat10 == 1)
         specular = 0.5; // TODO: ???
 
+    vec3 ambientOcclusion = vec3(prmColor.b);
+    ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat1 + 1.0));
+
     // Image based lighting.
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
     int maxLod = 6;
@@ -315,7 +319,7 @@ void main()
 
     // Render passes.
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r);
-    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, prmColor.b);
+    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion);
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
 
     if (renderRimLighting == 1)
@@ -332,10 +336,7 @@ void main()
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular * prmColor.b * norColor.a;
-
-    // TODO: What passes does ambient occlusion affect?
-    fragColor.rgb *= texture(gaoMap, bake1).rgb;
+        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * norColor.a;
 
     // Emission
     if (renderEmission == 1)

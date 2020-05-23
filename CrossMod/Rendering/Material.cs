@@ -160,6 +160,7 @@ namespace CrossMod.Rendering
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, false);
 
+            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat1, 0.0f);
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
