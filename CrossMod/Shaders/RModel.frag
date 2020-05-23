@@ -95,6 +95,7 @@ uniform int hasCustomFloat10;
 uniform vec3 chrLightDir;
 
 uniform mat4 mvp;
+uniform mat4 modelViewMatrix;
 uniform vec3 cameraPos;
 
 out vec4 fragColor;
@@ -267,7 +268,12 @@ void main()
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-    vec3 viewVector = normalize(position - cameraPos);
+    // TODO: Do a correct calculation using camera and fragment position.
+    // The camera matrices/position aren't calculated correctly for some reason.
+    // This could be a bug in SFGraphics.
+    vec3 viewVector = vec3(0,0,-1) * mat3(mvp);
+
+    // TODO: Double check the orientation.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
 
