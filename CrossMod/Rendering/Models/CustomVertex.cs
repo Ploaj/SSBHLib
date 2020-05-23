@@ -36,6 +36,9 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 UvSet1 { get; }
 
+        [VertexFloat("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false)]
+        public Vector2 UvSet2 { get; }
+
         [VertexInt("boneIndices", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
         public IVec4 BoneIndices { get; }
 
@@ -48,10 +51,38 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("colorSet1", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public Vector4 ColorSet1 { get; }
 
+        [VertexFloat("colorSet2", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet2 { get; }
+
+        [VertexFloat("colorSet2_1", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet21 { get; }
+
+        [VertexFloat("colorSet2_2", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet22 { get; }
+
+        [VertexFloat("colorSet2_3", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet23 { get; }
+
+        [VertexFloat("colorSet3", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet3 { get; }
+
+        [VertexFloat("colorSet4", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet4 { get; }
+
         [VertexFloat("colorSet5", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public Vector4 ColorSet5 { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, Vector2 map1, Vector2 uvSet, Vector2 uvSet1, IVec4 boneIndices, Vector4 boneWeights, Vector2 bake1, Vector4 colorSet1, Vector4 colorSet5)
+        [VertexFloat("colorSet6", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet6 { get; }
+
+        [VertexFloat("colorSet7", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 ColorSet7 { get; }
+
+        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, 
+            Vector2 map1, Vector2 uvSet, Vector2 uvSet1, Vector2 uvSet2, 
+            IVec4 boneIndices, Vector4 boneWeights, Vector2 bake1, 
+            Vector4 colorSet1, Vector4 colorSet2, Vector4 colorSet21, Vector4 colorSet22, Vector4 colorSet23, 
+            Vector4 colorSet3, Vector4 colorSet4, Vector4 colorSet5, Vector4 colorSet6, Vector4 colorSet7)
         {
             Position0 = position0;
             Normal0 = normal0;
@@ -60,11 +91,20 @@ namespace CrossMod.Rendering.Models
             Map1 = map1;
             UvSet = uvSet;
             UvSet1 = uvSet1;
+            UvSet2 = uvSet2;
             BoneIndices = boneIndices;
             BoneWeights = boneWeights;
             Bake1 = bake1;
             ColorSet1 = colorSet1;
+            ColorSet2 = colorSet2;
+            ColorSet21 = colorSet21;
+            ColorSet22 = colorSet22;
+            ColorSet23 = colorSet23;
+            ColorSet3 = colorSet3;
+            ColorSet4 = colorSet4;
             ColorSet5 = colorSet5;
+            ColorSet6 = colorSet6;
+            ColorSet7 = colorSet7;
         }
     }
 }

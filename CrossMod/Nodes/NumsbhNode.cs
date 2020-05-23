@@ -135,19 +135,36 @@ namespace CrossMod.Nodes
             var map1Values = vertexAccessor.ReadAttribute("map1", 0, meshObject.VertexCount, meshObject);
             var uvSetValues = vertexAccessor.ReadAttribute("uvSet", 0, meshObject.VertexCount, meshObject);
             var uvSet1Values = vertexAccessor.ReadAttribute("uvSet1", 0, meshObject.VertexCount, meshObject);
+            var uvSet2Values = vertexAccessor.ReadAttribute("uvSet2", 0, meshObject.VertexCount, meshObject);
             var bake1Values = vertexAccessor.ReadAttribute("bake1", 0, meshObject.VertexCount, meshObject);
             var colorSet1Values = vertexAccessor.ReadAttribute("colorSet1", 0, meshObject.VertexCount, meshObject);
+            var colorSet2Values = vertexAccessor.ReadAttribute("colorSet2", 0, meshObject.VertexCount, meshObject);
+            var colorSet21Values = vertexAccessor.ReadAttribute("colorSet2_1", 0, meshObject.VertexCount, meshObject);
+            var colorSet22Values = vertexAccessor.ReadAttribute("colorSet2_2", 0, meshObject.VertexCount, meshObject);
+            var colorSet23Values = vertexAccessor.ReadAttribute("colorSet2_3", 0, meshObject.VertexCount, meshObject);
+            var colorSet3Values = vertexAccessor.ReadAttribute("colorSet3", 0, meshObject.VertexCount, meshObject);
+            var colorSet4Values = vertexAccessor.ReadAttribute("colorSet4", 0, meshObject.VertexCount, meshObject);
             var colorSet5Values = vertexAccessor.ReadAttribute("colorSet5", 0, meshObject.VertexCount, meshObject);
+            var colorSet6Values = vertexAccessor.ReadAttribute("colorSet6", 0, meshObject.VertexCount, meshObject);
+            var colorSet7Values = vertexAccessor.ReadAttribute("colorSet7", 0, meshObject.VertexCount, meshObject);
 
             // Convert to the appropriate OpenTK types.
-            // TODO: There may be a way to skip this conversion.
+            // TODO: There may be a way to skip this conversion (unsafe code?)
             var positionVectors = GetVectors3d(positions);
             var normalVectors = GetVectors3d(normals);
             var map1Vectors = GetVectors2d(map1Values);
             var tangentVectors = GetVectors3d(tangents);
             var bake1Vectors = GetVectors2d(bake1Values);
             var colorSet1Vectors = GetVectors4d(colorSet1Values);
+            var colorSet2Vectors = GetVectors4d(colorSet2Values);
+            var colorSet21Vectors = GetVectors4d(colorSet21Values);
+            var colorSet22Vectors = GetVectors4d(colorSet22Values);
+            var colorSet23Vectors = GetVectors4d(colorSet23Values);
+            var colorSet3Vectors = GetVectors4d(colorSet3Values);
+            var colorSet4Vectors = GetVectors4d(colorSet4Values);
             var colorSet5Vectors = GetVectors4d(colorSet5Values);
+            var colorSet6Vectors = GetVectors4d(colorSet6Values);
+            var colorSet7Vectors = GetVectors4d(colorSet7Values);
 
             var intIndices = (int[])(object)vertexIndices;
             SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(positionVectors, normalVectors, map1Vectors, intIndices, out _, out Vector3[] bitangents);
@@ -161,17 +178,22 @@ namespace CrossMod.Nodes
             var vertices = new CustomVertex[positions.Length];
             for (int i = 0; i < positions.Length; i++)
             {
-                var uvSet = map1Vectors[i];
+                // Accessors return length 0 when the attribute isn't present.
+                var uvSet = Vector2.Zero;
                 if (uvSetValues.Length != 0)
                     uvSet = GetVector4(uvSetValues[i]).Xy;
+
                 var uvSet1 = Vector2.Zero;
                 if (uvSet1Values.Length != 0)
                     uvSet1 = GetVector4(uvSet1Values[i]).Xy;
 
+                var uvSet2 = Vector2.Zero;
+                if (uvSet2Values.Length != 0)
+                    uvSet2 = GetVector4(uvSet2Values[i]).Xy;
+
                 var bones = boneIndices[i];
                 var weights = boneWeights[i];
 
-                // Accessors return length 0 when the attribute isn't present.
                 var bake1 = Vector2.Zero;
                 if (bake1Values.Length != 0)
                     bake1 = bake1Vectors[i];
@@ -182,11 +204,45 @@ namespace CrossMod.Nodes
                 if (colorSet1Values.Length != 0)
                     colorSet1 = colorSet1Vectors[i] / 128.0f;
 
-                var colorSet5 = Vector4.One;
+                var colorSet2 = Vector4.Zero;
+                if (colorSet2Values.Length != 0)
+                    colorSet2 = colorSet2Vectors[i] / 128.0f;
+
+                var colorSet21 = Vector4.Zero;
+                if (colorSet21Values.Length != 0)
+                    colorSet21 = colorSet21Vectors[i] / 128.0f;
+
+                var colorSet22 = Vector4.Zero;
+                if (colorSet22Values.Length != 0)
+                    colorSet22 = colorSet22Vectors[i] / 128.0f;
+
+                var colorSet23 = Vector4.Zero;
+                if (colorSet23Values.Length != 0)
+                    colorSet23 = colorSet23Vectors[i] / 128.0f;
+
+                var colorSet3 = Vector4.Zero;
+                if (colorSet3Values.Length != 0)
+                    colorSet3 = colorSet3Vectors[i] / 128.0f;
+
+                var colorSet4 = Vector4.Zero;
+                if (colorSet4Values.Length != 0)
+                    colorSet4 = colorSet4Vectors[i] / 128.0f;
+
+                var colorSet5 = Vector4.Zero;
                 if (colorSet5Values.Length != 0)
                     colorSet5 = colorSet5Vectors[i] / 128.0f;
 
-                vertices[i] = new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], map1Vectors[i], uvSet, uvSet1, bones, weights, bake1, colorSet1, colorSet5);
+                var colorSet6 = Vector4.Zero;
+                if (colorSet6Values.Length != 0)
+                    colorSet6 = colorSet6Vectors[i] / 128.0f;
+
+                var colorSet7 = Vector4.Zero;
+                if (colorSet7Values.Length != 0)
+                    colorSet7 = colorSet7Vectors[i] / 128.0f;
+
+                vertices[i] = new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], 
+                    map1Vectors[i], uvSet, uvSet1, uvSet2, bones, weights, bake1, 
+                    colorSet1, colorSet2, colorSet21, colorSet22, colorSet23, colorSet3, colorSet4, colorSet5, colorSet6, colorSet7);
             }
 
             return vertices;
