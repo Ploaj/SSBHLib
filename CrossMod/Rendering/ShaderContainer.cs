@@ -2,6 +2,7 @@
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace CrossMod.Rendering
 {
@@ -13,7 +14,15 @@ namespace CrossMod.Rendering
         private static readonly SFShaderLoader.ShaderLoader shaderLoader = new SFShaderLoader.ShaderLoader();
 
         public static bool HasSetUp { get; private set; }
-
+        public static Shader GetCurrentRModelShader()
+        {
+            if (RenderSettings.Instance.RenderUVs)
+                return GetShader("RModelUV"); 
+            if (RenderSettings.Instance.UseDebugShading)
+                return GetShader("RModelDebug");
+            
+            return GetShader("RModel");
+        }
         public static Shader GetShader(string name)
         {
             return shaderLoader.GetShader(name);
@@ -44,8 +53,17 @@ namespace CrossMod.Rendering
             RemoveExistingBinaries();
             SetUpShaders();
 
-            System.Diagnostics.Debug.WriteLine(GetShader("RModel").GetErrorLog());
-            System.Diagnostics.Debug.WriteLine(GetShader("RModelDebug").GetErrorLog());
+            var modelShader = GetShader("RModel");
+            var debugShader = GetShader("RModelDebug");
+            if (!modelShader.LinkStatusIsOk || !debugShader.LinkStatusIsOk)
+            {
+                MessageBox.Show("One or more shaders failed to compile. See the generated error logs for details.",
+                    "Shader Compilation Error");
+            }
+
+            Directory.CreateDirectory("Error Logs");
+            File.WriteAllText("Error Logs//RModel_shader_errors.txt", modelShader.GetErrorLog());
+            File.WriteAllText("Error Logs//RModelDebug_shader_errors.txt", debugShader.GetErrorLog());
         }
 
         private static void RemoveExistingBinaries()
