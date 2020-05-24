@@ -198,7 +198,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
 float EdgeTintBlend(vec3 N, vec3 V)
 {   
     // TODO: Double check the shading.
-    return clamp(FresnelSchlick(dot(N,V), vec3(0)).x * CustomVector14.w, 0, 1);
+    return FresnelSchlick(dot(N,V), vec3(0)).x * CustomVector14.w;
 }
 
 float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
@@ -332,13 +332,6 @@ void main()
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion);
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
 
-    if (renderRimLighting == 1)
-    {
-        float edgeBlend = EdgeTintBlend(fragmentNormal, viewVector);
-        vec3 edgeTintColor = mix(vec3(1), CustomVector14.rgb, edgeBlend);
-        specularPass *= edgeTintColor;
-    }
-
     vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
@@ -351,6 +344,20 @@ void main()
     // Emission
     if (renderEmission == 1)
         fragColor.rgb += EmissionTerm(emissionColor);
+
+    if (renderRimLighting == 1)
+    {
+        // TODO: Add lighting vectors.
+        // TODO: Difference between RGB color intensity and W value?
+        vec4 LightCustomVector8 = vec4(1,1,1,1); 
+        vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
+        // Edge lighting lit only from above.
+        // TODO: The direction may be controlled by some value.
+        float exponent = 2;
+        float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
+        float rimIntensity = pow(rimHemisphere, exponent) * norColor.a * prmColor.b * CustomVector8.w;
+        fragColor.rgb += rimColor * rimIntensity;
+    }
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)

@@ -123,9 +123,9 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 
     vec4 diffuse2Color = texture(dif2Map, uvLayer2).rgba;
     vec4 diffuse3Color = texture(dif3Map, uvLayer3).rgba;
 
-    // Vertex color alpha is used for some stages.
+    // TODO: Vertex color alpha is used for some stages.
     if (hasCol2Map == 1)
-        albedoColor.rgb = Blend(albedoColor, albedoColor2 * vec4(vec3(1), colorSet5.a));
+        albedoColor.rgb = Blend(albedoColor, albedoColor2);
 
     // Materials won't have col and diffuse cubemaps.
     if (hasDifCubeMap == 1)
