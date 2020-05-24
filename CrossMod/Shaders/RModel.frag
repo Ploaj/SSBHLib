@@ -294,7 +294,7 @@ void main()
     // TODO: Do a correct calculation using camera and fragment position.
     // The camera matrices/position aren't calculated correctly for some reason.
     // This could be a bug in SFGraphics.
-    vec3 viewVector = vec3(0,0,-1) * mat3(mvp);
+    vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
 
     // TODO: Double check the orientation.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
