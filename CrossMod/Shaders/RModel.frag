@@ -195,12 +195,6 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
     return diffuseTerm;
 }
 
-float EdgeTintBlend(vec3 N, vec3 V)
-{   
-    // TODO: Double check the shading.
-    return FresnelSchlick(dot(N,V), vec3(0)).x * CustomVector14.w;
-}
-
 float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
@@ -265,6 +259,21 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
     vec3 ambientLight = ambientIbl + bakedLitColor.rgb * 2;
 
     return vec3(directLight * bakedLitColor.a) * directLightIntensity  + ambientLight * ao;
+}
+
+vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
+{
+    // TODO: Add lighting vectors to a uniform block.
+    // TODO: Difference between RGB color intensity and W value?
+    // TODO: The direction may be controlled by some value.
+
+    vec4 LightCustomVector8 = vec4(1.5,1.5,1.5,1); // training stage 
+    vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
+    // Edge lighting lit only from above.
+    float exponent = 2;
+    float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
+    float rimIntensity = pow(rimHemisphere, exponent) * occlusion * CustomVector8.w * CustomVector14.w;
+    return rimColor * rimIntensity;
 }
 
 void main()
@@ -347,16 +356,7 @@ void main()
 
     if (renderRimLighting == 1)
     {
-        // TODO: Add lighting vectors.
-        // TODO: Difference between RGB color intensity and W value?
-        vec4 LightCustomVector8 = vec4(1,1,1,1); 
-        vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
-        // Edge lighting lit only from above.
-        // TODO: The direction may be controlled by some value.
-        float exponent = 2;
-        float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
-        float rimIntensity = pow(rimHemisphere, exponent) * norColor.a * prmColor.b * CustomVector8.w;
-        fragColor.rgb += rimColor * rimIntensity;
+        fragColor.rgb += RimLightingTerm(nDotV, fragmentNormal, norColor.a * prmColor.b);
     }
 
     // HACK: Some models have black vertex color for some reason.
