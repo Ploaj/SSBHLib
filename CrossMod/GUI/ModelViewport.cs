@@ -172,17 +172,18 @@ namespace CrossMod.GUI
                 "Voice", "Fura", "Catch", "Cliff", "FLIP",
                 "Bound", "Down", "Final", "Result", "StepPose",
                 "Sorori", "Fall", "Appeal", "Damage", "CameraHit", "laugh", 
-                "breath", "hot", "swell", "low" };
+                "breath", "swell", "_low", "_bink" };
 
             // TODO: This is probably not a very efficient way of doing this.
             foreach (ListViewItem item in meshList.Items)
             {
+                var itemName = item.Name.ToLower();
                 foreach (var pattern in expressionPatterns)
                 {
-                    if (item.Name.Contains("OpenBlink"))
+                    if (itemName.Contains("openblink") || itemName.Contains("belly_low") || itemName.Contains("facen"))
                         continue;
 
-                    if (item.Name.Contains(pattern))
+                    if (itemName.Contains(pattern.ToLower()))
                     {
                         item.Checked = false;
                         ((RMesh)item.Tag).Visible = false;

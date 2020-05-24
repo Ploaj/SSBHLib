@@ -324,8 +324,8 @@ void main()
         metalness = 0.0;
 
     float specular = prmColor.a;
-    if (hasCustomFloat10 == 1)
-        specular = 0.5; // TODO: ???
+    if (CustomBoolean1 == 0)
+        specular = 0.16;
 
     vec3 ambientOcclusion = vec3(prmColor.b);
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat1 + 1.0));
