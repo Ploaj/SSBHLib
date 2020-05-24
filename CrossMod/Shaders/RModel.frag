@@ -89,7 +89,10 @@ uniform MaterialParams
 
     int CustomBoolean1;
     int CustomBoolean2;
+    int CustomBoolean3;
+    int CustomBoolean4;
     int CustomBoolean9;
+    int CustomBoolean11;
 
     float CustomFloat1;
     float CustomFloat4;
@@ -212,7 +215,7 @@ vec3 SpecularTerm(float nDotH, vec3 halfAngle, float roughness, vec3 specularIbl
 {
     vec3 indirectSpecular = specularIbl;
     vec3 directSpecular = vec3(SpecularBrdf(nDotH, halfAngle, roughness)) * directLightIntensity;
-    vec3 specularTerm = directSpecular + indirectSpecular;
+    vec3 specularTerm = (directSpecular * CustomBoolean3) + (indirectSpecular * CustomBoolean4);
 
     return specularTerm;
 }
@@ -311,6 +314,10 @@ void main()
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
+    // TODO: There's probably a cleaner way of doing this.
+    if (CustomBoolean11 == 0)
+        emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
+
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
     // Probably some sort of override for PRM color.
