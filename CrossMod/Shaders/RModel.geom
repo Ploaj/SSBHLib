@@ -12,15 +12,7 @@ in vec2 geomUvSet[];
 in vec2 geomUvSet1[];
 in vec2 geomUvSet2[];
 in vec4 geomColorSet1[];
-in vec4 geomColorSet2[];
-in vec4 geomColorSet2_1[];
-in vec4 geomColorSet2_2[];
-in vec4 geomColorSet2_3[];
-in vec4 geomColorSet3[];
-in vec4 geomColorSet4[];
 in vec4 geomColorSet5[];
-in vec4 geomColorSet6[];
-in vec4 geomColorSet7[];
 in vec2 geomBake1[];
 
 out vec3 vertexNormal;
@@ -31,15 +23,7 @@ out vec2 uvSet;
 out vec2 uvSet1;
 out vec2 uvSet2;
 out vec4 colorSet1;
-out vec4 colorSet2;
-out vec4 colorSet2_1;
-out vec4 colorSet2_2;
-out vec4 colorSet2_3;
-out vec4 colorSet3;
-out vec4 colorSet4;
 out vec4 colorSet5;
-out vec4 colorSet6;
-out vec4 colorSet7;
 out vec2 bake1;
 out vec3 position;
 
@@ -78,14 +62,7 @@ void main()
         uvSet1 = geomUvSet1[i];
         uvSet2 = geomUvSet2[i];
         colorSet1 = geomColorSet1[i];
-        colorSet2 = geomColorSet2[i];
-        colorSet2_1 = geomColorSet2_2[i];
-        colorSet2_2 = geomColorSet2_3[i];
-        colorSet2_3 = geomColorSet2_3[i];
-        colorSet3 = geomColorSet3[i];
-        colorSet4 = geomColorSet4[i];
         colorSet5 = geomColorSet5[i];
-        colorSet6 = geomColorSet6[i];
         position = geomPosition[i];
         bake1 = geomBake1[i];
 

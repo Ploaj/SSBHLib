@@ -7,15 +7,7 @@ in vec3 Bitangent0;
 in vec3 Normal0;
 
 in vec4 colorSet1;
-in vec4 colorSet2;
-in vec4 colorSet2_1;
-in vec4 colorSet2_2;
-in vec4 colorSet2_3;
-in vec4 colorSet3;
-in vec4 colorSet4;
 in vec4 colorSet5;
-in vec4 colorSet6;
-in vec4 colorSet7;
 
 in vec2 bake1;
 in vec2 map1;
@@ -34,15 +26,7 @@ out vec2 geomUvSet;
 out vec2 geomUvSet1;
 out vec2 geomUvSet2;
 out vec4 geomColorSet1;
-out vec4 geomColorSet2;
-out vec4 geomColorSet2_1;
-out vec4 geomColorSet2_2;
-out vec4 geomColorSet2_3;
-out vec4 geomColorSet3;
-out vec4 geomColorSet4;
 out vec4 geomColorSet5;
-out vec4 geomColorSet6;
-out vec4 geomColorSet7;
 out vec2 geomBake1;
 out vec3 geomPosition;
 
@@ -109,15 +93,7 @@ void main()
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
     geomColorSet1 = colorSet1;
-    geomColorSet2 = colorSet2;
-    geomColorSet2_1 = colorSet2_1;
-    geomColorSet2_2 = colorSet2_2;
-    geomColorSet2_3 = colorSet2_3;
-    geomColorSet3 = colorSet3;
-    geomColorSet4 = colorSet4;
     geomColorSet5 = colorSet5;
-    geomColorSet6 = colorSet6;
-    geomColorSet7 = colorSet7;
     geomBake1 = bake1;
     geomPosition = position.xyz;
 
