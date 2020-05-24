@@ -189,11 +189,9 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
 
     // Fake subsurface scattering.
     // Metalness acts as a mask for the sss effect.
-    if (renderExperimental == 1)
-    {
-        diffuseTerm = mix(diffuseTerm, CustomVector11.rgb, (CustomVector30.x * CustomVector30.x) * metalness);
-        diffuseTerm += CustomVector11.rgb * metalness;
-    }
+    float sssBlend = CustomVector30.x * metalness;
+    diffuseTerm = mix(diffuseTerm, CustomVector11.rgb, sssBlend);
+    diffuseTerm += CustomVector11.rgb * sssBlend;
 
     return diffuseTerm;
 }
@@ -251,7 +249,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
 {
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     float directLight = nDotL;
-    if (renderExperimental == 1 && hasCustomVector11 == 1)
+    if (hasCustomVector11 == 1)
     {
         // Only smooth the BRDF to avoid clamping brightness of the lighting.
         float mid = 0.5; // TODO: ambient intensity and mid value?
