@@ -343,12 +343,18 @@ namespace CrossMod
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
             {
-                if (!file.Contains("c00") || !file.Contains("body"))
-                    continue;
-
                 string sourceFolder = Directory.GetParent(file).FullName;
-                LoadWorkspace(sourceFolder);
-                modelViewport.RenderFrame();
+
+                try
+                {
+                    LoadWorkspace(sourceFolder);
+                    modelViewport.RenderFrame();
+                }
+                catch (Exception)
+                {
+                    ClearWorkspace();
+                    continue;
+                }
 
                 // Save screenshot.
                 using (var bmp = modelViewport.GetScreenshot())

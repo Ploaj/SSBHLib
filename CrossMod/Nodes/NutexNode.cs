@@ -1,4 +1,5 @@
-﻿using CrossMod.Rendering;
+﻿using System;
+using CrossMod.Rendering;
 using CrossMod.Tools;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
@@ -122,7 +123,15 @@ namespace CrossMod.Nodes
                     IsSrgb = surface.IsSRGB
                 };
 
-                renderableTexture.renderTexture = surface.GetRenderTexture();
+                // HACK: Nutex loading doesn't always work.
+                try
+                {
+                    renderableTexture.renderTexture = surface.GetRenderTexture();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
 
             return renderableTexture;

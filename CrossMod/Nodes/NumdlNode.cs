@@ -57,7 +57,7 @@ namespace CrossMod.Nodes
                 if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
-                    if (!renderableNode.sfTextureByName.ContainsKey(nutexNode.TexName.ToLower()))
+                    if (texture != null && !renderableNode.sfTextureByName.ContainsKey(nutexNode.TexName.ToLower()))
                         renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
                 }
                 if (fileNode.Text.Equals(_model.MeshString))
