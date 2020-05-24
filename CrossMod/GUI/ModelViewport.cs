@@ -197,6 +197,9 @@ namespace CrossMod.GUI
 
         public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath, IProgress<int> progress)
         {
+            if (string.IsNullOrEmpty(outputPath))
+                return;
+
             // Disable automatic updates so frames can be rendered manually.
             glViewport.PauseRendering();
             animationBar.Stop();
