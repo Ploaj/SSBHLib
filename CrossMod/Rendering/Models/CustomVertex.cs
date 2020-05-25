@@ -20,12 +20,8 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("Normal0", ValueCount.Three, VertexAttribPointerType.Float, false)]
         public Vector3 Normal0 { get; }
 
-        [VertexFloat("Tangent0", ValueCount.Three, VertexAttribPointerType.Float, false)]
-        public Vector3 Tangent0 { get; }
-
-        // Generated value.
-        [VertexFloat("Bitangent0", ValueCount.Three, VertexAttribPointerType.Float, false)]
-        public Vector3 Bitangent0 { get; }
+        [VertexFloat("Tangent0", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 Tangent0 { get; }
 
         [VertexFloat("map1", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 Map1 { get; }
@@ -78,7 +74,7 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("colorSet7", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public Vector4 ColorSet7 { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0, Vector3 tangent0, Vector3 bitangent0, 
+        public CustomVertex(Vector3 position0, Vector3 normal0, Vector4 tangent0, 
             Vector2 map1, Vector2 uvSet, Vector2 uvSet1, Vector2 uvSet2, 
             IVec4 boneIndices, Vector4 boneWeights, Vector2 bake1, 
             Vector4 colorSet1, Vector4 colorSet2, Vector4 colorSet21, Vector4 colorSet22, Vector4 colorSet23, 
@@ -87,7 +83,6 @@ namespace CrossMod.Rendering.Models
             Position0 = position0;
             Normal0 = normal0;
             Tangent0 = tangent0;
-            Bitangent0 = bitangent0;
             Map1 = map1;
             UvSet = uvSet;
             UvSet1 = uvSet1;

@@ -2,8 +2,7 @@
 
 in vec3 Position0;
 
-in vec3 Tangent0;
-in vec3 Bitangent0;
+in vec4 Tangent0;
 in vec3 Normal0;
 
 in vec4 colorSet1;
@@ -106,8 +105,9 @@ void main()
     geomUvSet1 = uvSet1;
     geomUvSet2 = uvSet2;
 
-    geomTangent = Tangent0;
-    geomBitangent = Bitangent0;
+    // The w component flips mirrored tangents.
+    geomTangent = Tangent0.xyz;
+    geomBitangent = cross(Normal0.xyz, Tangent0.xyz) * Tangent0.w;
 
     gl_Position = mvp * vec4(position.xyz, 1);
 }

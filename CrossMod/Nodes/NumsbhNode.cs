@@ -153,7 +153,7 @@ namespace CrossMod.Nodes
             var positionVectors = GetVectors3d(positions);
             var normalVectors = GetVectors3d(normals);
             var map1Vectors = GetVectors2d(map1Values);
-            var tangentVectors = GetVectors3d(tangents);
+            var tangentVectors = GetVectors4d(tangents);
             var bake1Vectors = GetVectors2d(bake1Values);
             var colorSet1Vectors = GetVectors4d(colorSet1Values);
             var colorSet2Vectors = GetVectors4d(colorSet2Values);
@@ -165,9 +165,6 @@ namespace CrossMod.Nodes
             var colorSet5Vectors = GetVectors4d(colorSet5Values);
             var colorSet6Vectors = GetVectors4d(colorSet6Values);
             var colorSet7Vectors = GetVectors4d(colorSet7Values);
-
-            var intIndices = (int[])(object)vertexIndices;
-            SFGraphics.Utils.TriangleListUtils.CalculateTangentsBitangents(positionVectors, normalVectors, map1Vectors, intIndices, out _, out Vector3[] bitangents);
 
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
@@ -240,7 +237,7 @@ namespace CrossMod.Nodes
                 if (colorSet7Values.Length != 0)
                     colorSet7 = colorSet7Vectors[i] / 128.0f;
 
-                vertices[i] = new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], bitangents[i], 
+                vertices[i] = new CustomVertex(positionVectors[i], normalVectors[i], tangentVectors[i], 
                     map1Vectors[i], uvSet, uvSet1, uvSet2, bones, weights, bake1, 
                     colorSet1, colorSet2, colorSet21, colorSet22, colorSet23, colorSet3, colorSet4, colorSet5, colorSet6, colorSet7);
             }
