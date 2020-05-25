@@ -77,7 +77,7 @@ namespace CrossMod.Rendering
             prm = defaultTextures.defaultPrm;
             emi = defaultTextures.defaultBlack;
             emi2 = defaultTextures.defaultBlack;
-            bakeLit = defaultTextures.defaultBlack;
+            bakeLit = defaultTextures.defaultWhite;
             gao = defaultTextures.defaultWhite;
             specularCubeMap = defaultTextures.blackCube;
             difCube = defaultTextures.blackCube;

@@ -240,18 +240,18 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
 vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
 {
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    float directLight = nDotL;
+    float directShading = nDotL;
     if (hasCustomVector11 == 1)
     {
         // Only smooth the BRDF to avoid clamping brightness of the lighting.
         float mid = 0.5; // TODO: ambient intensity and mid value?
         float smoothWidth = 1 / CustomVector30.y;
-        directLight = smoothstep(mid - smoothWidth, mid + smoothWidth, directLight);
+        directShading = smoothstep(mid - smoothWidth, mid + smoothWidth, directShading);
     }
-
-    vec3 ambientLight = ambientIbl + bakedLitColor.rgb * 2;
-
-    return vec3(directLight * bakedLitColor.a) * directLightIntensity  + ambientLight * ao;
+    vec3 directLight = vec3(directShading);
+    vec3 ambientLight = ambientIbl * ao;
+    vec3 result = directLight * directLightIntensity  + ambientLight;
+    return result * bakedLitColor.rgb;
 }
 
 vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
