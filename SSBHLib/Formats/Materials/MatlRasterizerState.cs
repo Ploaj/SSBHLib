@@ -21,7 +21,7 @@
 
             public int CullMode { get; set; }
 
-            public float Unk3 { get; set; }
+            public float DepthBias { get; set; }
 
             public float Unk4 { get; set; }
 

@@ -59,6 +59,8 @@ uniform int renderNormalMaps;
 
 uniform float floatTestParam;
 
+uniform float depthBias;
+
 uniform MaterialParams
 {
     vec4 CustomVector0;
@@ -402,4 +404,6 @@ void main()
         float intensity = WireframeIntensity(edgeDistance);
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
+
+    gl_FragDepth = gl_FragCoord.z + depthBias;
 }

@@ -5,6 +5,7 @@ using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
+using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
@@ -141,6 +142,9 @@ namespace CrossMod.Rendering
                     case MatlEnums.ParamDataType.BlendState:
                         SetBlendState(meshMaterial, a);
                         break;
+                    case MatlEnums.ParamDataType.RasterizerState:
+                        SetRasterizerState(meshMaterial, a);
+                        break;
                 }
             }
 
@@ -159,68 +163,49 @@ namespace CrossMod.Rendering
         private void SetSamplerInformation(Material material, MatlAttribute a)
         {
             // TODO: This could be cleaner.
-            Texture textureToSet = null;
+            SamplerObject sampler = null;
             switch ((long)a.ParamId)
             {
                 case (long)ParamId.ColSampler:
-                    textureToSet = material.col;
+                    sampler = material.colSampler;
                     break;
                 case (long)ParamId.NorSampler:
-                    textureToSet = material.nor;
+                    sampler = material.norSampler;
                     break;
                 case (long)ParamId.PrmSampler:
-                    textureToSet = material.prm;
+                    sampler = material.prmSampler;
                     break;
                 case (long)ParamId.EmiSampler:
-                    textureToSet = material.emi;
+                    sampler = material.emiSampler;
                     break;
             }
 
-            if (textureToSet != null)
+            if (sampler != null)
             {
                 var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
-                textureToSet.TextureWrapS = GetWrapMode(samplerStruct.WrapS);
-                textureToSet.TextureWrapT = GetWrapMode(samplerStruct.WrapT);
-                textureToSet.TextureWrapR = GetWrapMode(samplerStruct.WrapR);
-                textureToSet.MagFilter = GetMagFilter(samplerStruct.MagFilter);
-                textureToSet.MinFilter = GetMinFilter(samplerStruct.MinFilter);
+                sampler.TextureWrapS = MatlToGl.GetWrapMode(samplerStruct.WrapS);
+                sampler.TextureWrapT = MatlToGl.GetWrapMode(samplerStruct.WrapT);
+                sampler.TextureWrapR = MatlToGl.GetWrapMode(samplerStruct.WrapR);
+                sampler.MagFilter = MatlToGl.GetMagFilter(samplerStruct.MagFilter);
+                sampler.MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter);
+
+                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureLodBias, samplerStruct.LodBias);
+
+                if (samplerStruct.Unk6 == 2)
+                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, samplerStruct.MaxAnisotropy);
+                else
+                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, 1.0f);
             }
         }
 
-        private TextureMagFilter GetMagFilter(int magFilter)
+        private void SetRasterizerState(Material meshMaterial, MatlAttribute a)
         {
-            if (magFilter == 0)
-                return TextureMagFilter.Nearest;
-            if (magFilter == 1)
-                return TextureMagFilter.Linear;
+            // TODO: There's a cleaner way to do this.
+            var rasterizerState = (MatlAttribute.MatlRasterizerState)a.DataObject;
 
-            return TextureMagFilter.Linear;
+            meshMaterial.DepthBias = rasterizerState.DepthBias;
+            meshMaterial.CullMode = MatlToGl.GetCullMode(rasterizerState.CullMode);
         }
-
-        private TextureMinFilter GetMinFilter(int minFilter)
-        {
-            if (minFilter == 0)
-                return TextureMinFilter.Nearest;
-            if (minFilter == 1)
-                return TextureMinFilter.Linear;
-
-            return TextureMinFilter.Linear;
-        }
-
-        private TextureWrapMode GetWrapMode(int wrapMode)
-        {
-            if (wrapMode == 0)
-                return TextureWrapMode.Repeat;
-            if (wrapMode == 1)
-                return TextureWrapMode.ClampToEdge;
-            if (wrapMode == 2)
-                return TextureWrapMode.MirroredRepeat;
-            if (wrapMode == 3)
-                return TextureWrapMode.ClampToBorder;
-
-            return TextureWrapMode.ClampToEdge;
-        }
-        
         private void SetBlendState(Material meshMaterial, MatlAttribute a)
         {
             // TODO: There's a cleaner way to do this.

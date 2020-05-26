@@ -16,9 +16,8 @@
             public int Unk10 { get; set; }
             public int Unk11 { get; set; }
             public int Unk12 { get; set; }
-            public float Unk13 { get; set; }
-            public int Unk14 { get; set; }
-            //public int Unk15 { get; set; }
+            public float LodBias { get; set; }
+            public int MaxAnisotropy { get; set; }
 
             public override string ToString()
             {

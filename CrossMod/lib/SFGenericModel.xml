@@ -180,6 +180,14 @@
             <param name="uniformName">The name of the uniform variable</param>
             <param name="value">The value to set for the uniform</param>
         </member>
+        <member name="M:SFGenericModel.Materials.GenericMaterial.AddTexture(System.String,SFGraphics.GLObjects.Textures.Texture,SFGraphics.GLObjects.Samplers.SamplerObject)">
+            <summary>
+            Adds a sampler uniform to the material.
+            </summary>
+            <param name="uniformName">The name of the uniform variable</param>
+            <param name="value">The value to set for the uniform</param>
+            <param name="sampler">A sampler for the texture <paramref name="value"/></param>
+        </member>
         <member name="M:SFGenericModel.Materials.GenericMaterial.SetShaderUniforms(SFGraphics.GLObjects.Shaders.Shader)">
             <summary>
             Sets uniform values for all the added uniform values.

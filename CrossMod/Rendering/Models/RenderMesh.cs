@@ -24,6 +24,8 @@ namespace CrossMod.Rendering.Models
                 GL.Enable(EnableCap.SampleAlphaToCoverage);
             else
                 GL.Disable(EnableCap.SampleAlphaToCoverage);
+
+            SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(true, material.CullMode));
         }
     }
 }

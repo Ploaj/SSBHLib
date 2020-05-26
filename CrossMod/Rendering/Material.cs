@@ -4,6 +4,7 @@ using SFGenericModel.Materials;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SSBHLib.Formats.Materials;
+using SFGraphics.GLObjects.Samplers;
 
 namespace CrossMod.Rendering
 {
@@ -15,47 +16,69 @@ namespace CrossMod.Rendering
 
         public Resources.DefaultTextures defaultTextures;
 
+        public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
+
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
         public bool IsTransparent { get; set; } = false;
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
 
-        public Texture col = null;
+        public SamplerObject colSampler = new SamplerObject();
+        public Texture col;
         public bool HasCol { get; set; } = false;
 
-        public Texture col2 = null;
+        public SamplerObject col2Sampler = new SamplerObject();
+        public Texture col2;
         public bool HasCol2 { get; set; } = false;
 
-        public Texture dif = null;
+        public SamplerObject difSampler;
+        public Texture dif;
         public bool HasDiffuse { get; set; } = false;
 
-        public Texture dif2 = null;
+        public SamplerObject dif2Sampler = new SamplerObject();
+        public Texture dif2;
         public bool HasDiffuse2 { get; set; } = false;
 
+        public SamplerObject dif3Sampler = new SamplerObject();
         public Texture dif3 = null;
         public bool HasDiffuse3 { get; set; } = false;
 
+        public SamplerObject norSampler = new SamplerObject();
         public Texture nor = null;
+
+        public SamplerObject prmSampler = new SamplerObject();
         public Texture prm = null;
 
+        public SamplerObject emiSampler = new SamplerObject();
         public Texture emi = null;
         public bool HasEmi { get; set; } = false;
 
+        public SamplerObject emi2Sampler = new SamplerObject();
         public Texture emi2 = null;
         public bool HasEmi2 { get; set; } = false;
 
+        public SamplerObject bakeLitSampler = new SamplerObject();
         public Texture bakeLit = null;
+
+        public SamplerObject projSampler = new SamplerObject();
         public Texture proj = null;
+
+        public SamplerObject gaoSampler = new SamplerObject();
         public Texture gao = null;
 
+        public SamplerObject difCubeSampler = new SamplerObject();
         public Texture difCube = null;
         public bool HasDifCube { get; set; } = false;
 
+        public SamplerObject inkNorSampler = new SamplerObject();
         public Texture inkNor = null;
         public bool HasInkNorMap { get; set; } = false;
 
+        public SamplerObject specualrCubeSampler = new SamplerObject();
         public Texture specularCubeMap = null;
+
+        public float DepthBias { get; set; } = 0.0f;
 
         public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
         public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
@@ -100,6 +123,8 @@ namespace CrossMod.Rendering
             genericMaterial.AddBoolToInt("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
             genericMaterial.AddBoolToInt("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
             genericMaterial.AddBoolToInt("hasCustomFloat10", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat10));
+
+            genericMaterial.AddFloat("depthBias", DepthBias);
 
             // TODO: Convert from quaternion values in light.nuanimb.
             AddQuaternion("chrLightDir", genericMaterial, -0.453154f, -0.365998f, -0.211309f, 0.784886f);
@@ -172,35 +197,35 @@ namespace CrossMod.Rendering
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("colMap", col);
+            genericMaterial.AddTexture("colMap", col, colSampler);
             genericMaterial.AddBoolToInt("hasColMap", HasCol);
 
-            genericMaterial.AddTexture("col2Map", col2);
+            genericMaterial.AddTexture("col2Map", col2, col2Sampler);
             genericMaterial.AddBoolToInt("hasCol2Map", HasCol2);
 
-            genericMaterial.AddTexture("prmMap", prm);
-            genericMaterial.AddTexture("norMap", nor);
+            genericMaterial.AddTexture("prmMap", prm, prmSampler);
+            genericMaterial.AddTexture("norMap", nor, norSampler);
 
-            genericMaterial.AddTexture("inkNorMap", inkNor);
+            genericMaterial.AddTexture("inkNorMap", inkNor, inkNorSampler);
             genericMaterial.AddBoolToInt("hasInkNorMap", HasInkNorMap);
 
-            genericMaterial.AddTexture("emiMap", emi);
-            genericMaterial.AddTexture("emi2Map", emi2);
+            genericMaterial.AddTexture("emiMap", emi, emiSampler);
+            genericMaterial.AddTexture("emi2Map", emi2, emi2Sampler);
 
-            genericMaterial.AddTexture("bakeLitMap", bakeLit);
-            genericMaterial.AddTexture("gaoMap", gao);
-            genericMaterial.AddTexture("projMap", proj);
+            genericMaterial.AddTexture("bakeLitMap", bakeLit, bakeLitSampler);
+            genericMaterial.AddTexture("gaoMap", gao, gaoSampler);
+            genericMaterial.AddTexture("projMap", proj, projSampler);
 
-            genericMaterial.AddTexture("difCubeMap", difCube);
+            genericMaterial.AddTexture("difCubeMap", difCube, difCubeSampler);
             genericMaterial.AddBoolToInt("hasDifCubeMap", HasDifCube);
 
-            genericMaterial.AddTexture("difMap", dif);
+            genericMaterial.AddTexture("difMap", dif, difSampler);
             genericMaterial.AddBoolToInt("hasDiffuse", HasDiffuse);
 
-            genericMaterial.AddTexture("dif2Map", dif2);
+            genericMaterial.AddTexture("dif2Map", dif2, dif2Sampler);
             genericMaterial.AddBoolToInt("hasDiffuse2", HasDiffuse2);
 
-            genericMaterial.AddTexture("dif3Map", dif3);
+            genericMaterial.AddTexture("dif3Map", dif3, dif3Sampler);
             genericMaterial.AddBoolToInt("hasDiffuse3", HasDiffuse3);
 
             // HACK: There's probably a better way to handle blending emission and base color maps.
