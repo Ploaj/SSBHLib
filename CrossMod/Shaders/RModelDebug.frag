@@ -138,11 +138,17 @@ void main()
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-	vec3 V = normalize(position - cameraPos);
-	vec3 R = reflect(V, fragmentNormal);
+    // TODO: Do a correct calculation using camera and fragment position.
+    // The camera matrices/position aren't calculated correctly for some reason.
+    // This could be a bug in SFGraphics.
+    vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
+
+    // TODO: Double check the orientation.
+    vec3 reflectionVector = reflect(viewVector, fragmentNormal);
+    reflectionVector.y *= -1;
 
     // Get texture colors.
-	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, R, CustomVector6, CustomVector31, CustomVector32, colorSet5);
+	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
 	vec4 emiColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
 	vec4 bakeLitColor = texture(bakeLitMap, bake1).rgba;
@@ -155,9 +161,9 @@ void main()
     vec4 uvPatternColor = texture(uvPattern, map1).rgba;
 
 	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, R, 0).rgb * 2.5;
+	vec3 diffuseIbl = textureLod(diffusePbrCube, reflectionVector, 0).rgb * 2.5;
 	int maxLod = 10;
-	vec3 specularIbl = textureLod(specularPbrCube, R, roughness * maxLod).rgb * 2.5;
+	vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * 2.5;
 
 	float metalness = prmColor.r;
 
@@ -166,7 +172,7 @@ void main()
 	switch (renderMode)
 	{
         case 1:
-            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, V), 0);
+            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, viewVector), 0);
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
 		case 2:
