@@ -191,8 +191,8 @@ namespace CrossMod.Rendering
 
                 GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureLodBias, samplerStruct.LodBias);
 
-                if (samplerStruct.Unk6 == 2)
-                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, samplerStruct.MaxAnisotropy);
+                if (samplerStruct.Unk6 == 2 && RenderSettings.Instance.EnableExperimental)
+                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, (float)samplerStruct.MaxAnisotropy);
                 else
                     GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, 1.0f);
             }

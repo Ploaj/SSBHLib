@@ -32,7 +32,7 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 UvSet1 { get; }
 
-        [VertexFloat("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false)]
+        [VertexFloat("uvSet2", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 UvSet2 { get; }
 
         [VertexInt("boneIndices", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
