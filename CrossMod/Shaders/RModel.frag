@@ -303,6 +303,12 @@ void main()
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
+    fragColor.a = max(albedoColor.a, CustomVector0.x);
+    // Alpha testing.
+    // TODO: Not all shaders have this.
+    if (fragColor.a < 0.5)
+        discard;
+
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
     // TODO: There's probably a cleaner way of doing this.
     if (CustomBoolean11 == 0)
@@ -371,7 +377,6 @@ void main()
     fragColor.rgb = GetSrgb(fragColor.rgb);
 
     // Alpha calculations
-    fragColor.a = albedoColor.a;
     fragColor.a *= emissionColor.a;
 
     // HACK: Some models have black vertex color for some reason.
@@ -383,15 +388,6 @@ void main()
     vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
     if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
-
-    // TODO: ???
-    fragColor.a += CustomVector0.x;
-    fragColor.a = min(fragColor.a, 1.0);
-
-    // Alpha testing.
-    // TODO: Not all shaders have this.
-    if (fragColor.a < 0.5)
-        discard;
 
     // Premultiplied alpha.
     fragColor.rgb *= fragColor.a;
