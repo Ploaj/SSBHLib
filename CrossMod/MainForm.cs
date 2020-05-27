@@ -1,12 +1,9 @@
 ﻿using CrossMod.GUI;
 using CrossMod.IO;
 using CrossMod.Nodes;
-using SSBHLib.Tools;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace CrossMod
@@ -51,24 +48,8 @@ namespace CrossMod
 
         private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!modelViewport.HasAnimation)
-            {
-                MessageBox.Show("Please open an animation file and select an animation.", "No animation selected");
-                return;
-            }
-
-            FileTools.TryOpenSaveFileDialog(out string fileName, "GIF|*.gif", "animation");
-
-            var progressViewer = new ProgressViewer { Text = "Processing GIF" };
-            progressViewer.Show();
-            var progress = new Progress<int>(percent =>
-                progressViewer.SetProgress(percent));
-
-            await modelViewport.RenderAnimationToGifAsync(fileName, progress);
-
-            progressViewer.Close();
+            await AnimationToGif.ConvertAnimationToGif(modelViewport);
         }
-
         public void ShowModelViewport()
         {
             contentBox.Controls.Clear();
@@ -80,60 +61,7 @@ namespace CrossMod
             if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
 
-            LoadWorkspace(folderPath);
-        }
-
-        /// <summary>
-        /// Loads a directory and all sub-directories into the filetree.
-        /// </summary>
-        /// <param name="folderPath"></param>
-        private void LoadWorkspace(string folderPath)
-        {
-            var mainNode = CreateDirectoryNodeAndOpenSubNodes(folderPath);
-            AssignNodesAndSelectNumdlb(mainNode);
-        }
-
-        private void AssignNodesAndSelectNumdlb(DirectoryNode mainNode)
-        {
-            // Enable rendering of the model if we have directly selected a model file.
-            // Nested ones won't render a model
-            fileTree.Nodes.Add(mainNode);
-            SkelNode skelNode = null;
-            foreach (FileNode node in mainNode.Nodes)
-            {
-                if (node.Text.EndsWith("numdlb"))
-                {
-                    fileTree.SelectedNode = node;
-                    modelViewport.HideExpressionMeshes();
-                }
-                else if (skelNode == null && node is SkelNode)
-                {
-                    skelNode = node as SkelNode;
-                }
-            }
-
-            if (skelNode == null)
-                return;
-            foreach (FileNode node in mainNode.Nodes)
-            {
-                if (node is ScriptNode scriptNode)
-                {
-                    scriptNode.SkelNode = skelNode;
-                    modelViewport.ScriptNode = scriptNode;
-                    //only do this once, there should only be one anyway
-                    break;
-                }
-            }
-
-            ParamNodeContainer.SkelNode = skelNode;
-        }
-
-        private static DirectoryNode CreateDirectoryNodeAndOpenSubNodes(string folderPath)
-        {
-            var mainNode = new DirectoryNode(folderPath);
-            mainNode.Open();
-            mainNode.Expand();
-            return mainNode;
+            WorkSpaceTools.LoadWorkspace(fileTree, modelViewport, folderPath);
         }
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -312,72 +240,12 @@ namespace CrossMod
 
         private void clearWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ClearWorkspace();
-        }
-
-        private void ClearWorkspace()
-        {
-            fileTree.Nodes.Clear();
-            ParamNodeContainer.Unload();
-            modelViewport.ClearFiles();
+            WorkSpaceTools.ClearWorkspace(fileTree, modelViewport);
         }
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            BatchRenderModels();
-            stopwatch.Stop();
-            System.Diagnostics.Debug.WriteLine($"Batch render: {stopwatch.ElapsedMilliseconds} ms");
-        }
-
-        private void BatchRenderModels()
-        {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            if (!FileTools.TryOpenFolderDialog(out string outputPath, "Select PNG Output Directory"))
-                return;
-
-            modelViewport.BeginBatchRenderMode();
-            fileTree.BeginUpdate();
-
-            foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
-            {
-                string sourceFolder = Directory.GetParent(file).FullName;
-
-                try
-                {
-                    LoadWorkspace(sourceFolder);
-                    modelViewport.RenderFrame();
-                }
-                catch (Exception)
-                {
-                    ClearWorkspace();
-                    continue;
-                }
-
-                // Save screenshot.
-                using (var bmp = modelViewport.GetScreenshot())
-                {
-                    string condensedName = GetCondensedPathName(folderPath, file);
-                    bmp.Save(Path.Combine(outputPath, $"{condensedName}.png"));
-                }
-
-                // Cleanup.
-                ClearWorkspace();
-                System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
-            }
-
-            fileTree.EndUpdate();
-            modelViewport.EndBatchRenderMode();
-        }
-
-        private static string GetCondensedPathName(string folderPath, string file)
-        {
-            string condensedName = file.Replace(folderPath, "");
-            condensedName = condensedName.Replace(Path.DirectorySeparatorChar, '_');
-            condensedName = condensedName.Substring(1); // remove leading underscore
-            return condensedName;
+            BatchRendering.RenderModels(modelViewport, fileTree);
         }
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -385,177 +253,6 @@ namespace CrossMod
             modelViewport.FrameSelection();
         }
 
-        private void printMaterialValuesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            WriteMaterialValuesToFile(folderPath);
-        }
-
-        private static void WriteMaterialValuesToFile(string folderPath)
-        {
-            var valuesByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, List<string>>();
-            var outputByParamId = new Dictionary<SSBHLib.Formats.Materials.MatlEnums.ParamId, System.Text.StringBuilder>();
-
-            foreach (var file in Directory.EnumerateFiles(folderPath, "*numatb", SearchOption.AllDirectories))
-            {
-                var matl = new MatlNode(file);
-                matl.Open();
-
-                foreach (var entry in matl.Material.Entries)
-                {
-                    foreach (var attribute in entry.Attributes)
-                    {
-                        string text = $"{attribute.ParamId} {attribute.DataObject} {file.Replace(folderPath, "")}";
-
-                        if (!outputByParamId.ContainsKey(attribute.ParamId))
-                            outputByParamId.Add(attribute.ParamId, new System.Text.StringBuilder());
-
-                        if (!valuesByParamId.ContainsKey(attribute.ParamId))
-                            valuesByParamId.Add(attribute.ParamId, new List<string>());
-
-                        outputByParamId[attribute.ParamId].AppendLine(text);
-                        valuesByParamId[attribute.ParamId].Add(attribute.DataObject.ToString());
-                    }
-                }
-            }
-
-            foreach (var pair in outputByParamId)
-            {
-                File.WriteAllText($"{pair.Key}_values.txt", pair.Value.ToString());
-            }
-        }
-
-
-        private void exportMaterialAttributeValuesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WriteAttributeValuesToFiles();
-        }
-
-        private static void WriteAttributeValuesToFiles()
-        {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            var meshesByAttribute = new Dictionary<string, Dictionary<string,int>>();
-
-
-            foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
-            {
-                try
-                {
-                    var node = new NumsbhNode(file);
-                    node.Open();
-                    UpdateMeshAttributeValues(meshesByAttribute, node);
-                }
-                catch (Exception)
-                {
-                    // Just skip the mesh.
-                    // Most of the values should be present in other meshes.
-                }
-            }
-
-            foreach (var nameValuesPair in meshesByAttribute)
-            {
-                var outputText = new System.Text.StringBuilder();
-                outputText.AppendLine("X,Y,Z,W,Occurrences");      
-                
-                // Make sure the most common values are at the top.
-                foreach (var valueOccurrencesPair in nameValuesPair.Value.OrderByDescending(pair => pair.Value))
-                {
-                    outputText.AppendLine($"{valueOccurrencesPair.Key},{valueOccurrencesPair.Value}");
-                }
-
-                File.AppendAllText($"{nameValuesPair.Key}_values.csv", outputText.ToString());
-            }
-        }
-
-        private static void WriteAttributeMeshNamesToFiles()
-        {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            var meshesByAttribute = new Dictionary<string, List<string>>();
-
-
-            foreach (var file in Directory.EnumerateFiles(folderPath, "*numshb", SearchOption.AllDirectories))
-            {
-                var node = new NumsbhNode(file);
-                node.Open();
-
-                UpdateMeshAttributes(folderPath, meshesByAttribute, file, node);
-            }
-
-            foreach (var pair in meshesByAttribute)
-            {
-                var outputText = new System.Text.StringBuilder();
-                foreach (var value in pair.Value)
-                {
-                    outputText.AppendLine(value);
-                }
-
-                File.WriteAllText($"{pair.Key}_meshes.txt", outputText.ToString());
-            }
-        }
-
-        private static void UpdateMeshAttributeValues(Dictionary<string, Dictionary<string, int>> occurrencesByValueByName, NumsbhNode node)
-        {
-            foreach (var meshObject in node.mesh.Objects)
-            {
-                var vertexAccessor = new SsbhVertexAccessor(node.mesh);
-
-                foreach (var attribute in meshObject.Attributes)
-                {
-                    // Skip the attributes that are already well understood.
-                    if (attribute.Name != "colorSet2")
-                        continue;
-
-                    if (!occurrencesByValueByName.ContainsKey(attribute.Name))
-                        occurrencesByValueByName.Add(attribute.Name, new Dictionary<string, int>());
-
-                    var attributeValues = vertexAccessor.ReadAttribute(attribute.Name, 0, meshObject.VertexCount, meshObject);
-                    foreach (var value in attributeValues)
-                    {
-                        // Store the number of occurrences to avoid generating massive files and running out of memory.
-                        var text = value.ToString();
-                        if (!occurrencesByValueByName[attribute.Name].ContainsKey(text))
-                            occurrencesByValueByName[attribute.Name].Add(text, 1);
-                        else
-                            occurrencesByValueByName[attribute.Name][text] += 1;
-                    }
-                }
-            }
-        }
-
-        private static void UpdateMeshAttributes(string folderPath, Dictionary<string, List<string>> meshesByAttribute, string file, NumsbhNode node)
-        {
-            foreach (var meshObject in node.mesh.Objects)
-            {
-                foreach (var attribute in meshObject.Attributes)
-                {
-                    if (!meshesByAttribute.ContainsKey(attribute.Name))
-                        meshesByAttribute.Add(attribute.Name, new List<string>());
-
-                    var text = $"{meshObject.Name} {file.Replace(folderPath, "")}";
-                    if (!meshesByAttribute[attribute.Name].Contains(text))
-                    {
-                        meshesByAttribute[attribute.Name].Add(text);
-                    }
-                }
-            }
-        }
-
-        private void printAttributesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WriteAttributeMeshNamesToFiles();
-        }
-
-        /// <summary>
-        /// When a node 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             if (e.Node is DirectoryNode node)
@@ -570,36 +267,6 @@ namespace CrossMod
                 cameraControl = modelViewport.GetCameraControl();
             cameraControl.Focus();
             cameraControl.Show();
-        }
-
-        private void printLightValuesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            var valuesByName = new Dictionary<string, HashSet<string>>();
-
-            foreach (var file in Directory.EnumerateFiles(folderPath, "*nuanmb", SearchOption.AllDirectories))
-            {
-                if (!file.Contains("render") || !file.Contains("light"))
-                    continue;
-
-                var node = new NuanimNode(file);
-                node.Open();
-
-                node.UpdateUniqueLightValues(valuesByName);
-            }
-
-            foreach (var pair in valuesByName)
-            {
-                var output = new System.Text.StringBuilder();
-                foreach (var value in pair.Value)
-                {
-                    output.AppendLine(value);
-                }
-
-                File.WriteAllText($"{pair.Key} unique values.txt", output.ToString());
-            }
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)

@@ -37,17 +37,13 @@ namespace CrossMod
             this.renderSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frameSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearViewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.experimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchRenderModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printMaterialValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printAttributesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportMaterialAttributeValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printLightValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAnimationToGifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.clearViewportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -131,14 +127,17 @@ namespace CrossMod
             this.cameraToolStripMenuItem.Text = "Camera";
             this.cameraToolStripMenuItem.Click += new System.EventHandler(this.cameraToolStripMenuItem_Click);
             // 
+            // clearViewportToolStripMenuItem
+            // 
+            this.clearViewportToolStripMenuItem.Name = "clearViewportToolStripMenuItem";
+            this.clearViewportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearViewportToolStripMenuItem.Text = "Clear Viewport";
+            this.clearViewportToolStripMenuItem.Click += new System.EventHandler(this.clearViewportToolStripMenuItem_Click);
+            // 
             // experimentalToolStripMenuItem
             // 
             this.experimentalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.batchRenderModelsToolStripMenuItem,
-            this.printMaterialValuesToolStripMenuItem,
-            this.printAttributesToolStripMenuItem,
-            this.exportMaterialAttributeValuesToolStripMenuItem,
-            this.printLightValuesToolStripMenuItem,
             this.exportAnimationToGifToolStripMenuItem});
             this.experimentalToolStripMenuItem.Name = "experimentalToolStripMenuItem";
             this.experimentalToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
@@ -147,42 +146,14 @@ namespace CrossMod
             // batchRenderModelsToolStripMenuItem
             // 
             this.batchRenderModelsToolStripMenuItem.Name = "batchRenderModelsToolStripMenuItem";
-            this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.batchRenderModelsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.batchRenderModelsToolStripMenuItem.Text = "Batch Render Models";
             this.batchRenderModelsToolStripMenuItem.Click += new System.EventHandler(this.batchRenderModelsToolStripMenuItem_Click);
-            // 
-            // printMaterialValuesToolStripMenuItem
-            // 
-            this.printMaterialValuesToolStripMenuItem.Name = "printMaterialValuesToolStripMenuItem";
-            this.printMaterialValuesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.printMaterialValuesToolStripMenuItem.Text = "Export Material Values";
-            this.printMaterialValuesToolStripMenuItem.Click += new System.EventHandler(this.printMaterialValuesToolStripMenuItem_Click);
-            // 
-            // printAttributesToolStripMenuItem
-            // 
-            this.printAttributesToolStripMenuItem.Name = "printAttributesToolStripMenuItem";
-            this.printAttributesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.printAttributesToolStripMenuItem.Text = "Export Vertex Attribute File Names";
-            this.printAttributesToolStripMenuItem.Click += new System.EventHandler(this.printAttributesToolStripMenuItem_Click);
-            // 
-            // exportMaterialAttributeValuesToolStripMenuItem
-            // 
-            this.exportMaterialAttributeValuesToolStripMenuItem.Name = "exportMaterialAttributeValuesToolStripMenuItem";
-            this.exportMaterialAttributeValuesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.exportMaterialAttributeValuesToolStripMenuItem.Text = "Export Vertex Attribute Values";
-            this.exportMaterialAttributeValuesToolStripMenuItem.Click += new System.EventHandler(this.exportMaterialAttributeValuesToolStripMenuItem_Click);
-            // 
-            // printLightValuesToolStripMenuItem
-            // 
-            this.printLightValuesToolStripMenuItem.Name = "printLightValuesToolStripMenuItem";
-            this.printLightValuesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.printLightValuesToolStripMenuItem.Text = "Export Light Values";
-            this.printLightValuesToolStripMenuItem.Click += new System.EventHandler(this.printLightValuesToolStripMenuItem_Click);
             // 
             // exportAnimationToGifToolStripMenuItem
             // 
             this.exportAnimationToGifToolStripMenuItem.Name = "exportAnimationToGifToolStripMenuItem";
-            this.exportAnimationToGifToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.exportAnimationToGifToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.exportAnimationToGifToolStripMenuItem.Text = "Export Animation to Gif";
             // 
             // fileTree
@@ -228,13 +199,6 @@ namespace CrossMod
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
             // 
-            // clearViewportToolStripMenuItem
-            // 
-            this.clearViewportToolStripMenuItem.Name = "clearViewportToolStripMenuItem";
-            this.clearViewportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.clearViewportToolStripMenuItem.Text = "Clear Viewport";
-            this.clearViewportToolStripMenuItem.Click += new System.EventHandler(this.clearViewportToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,13 +235,9 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem experimentalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem batchRenderModelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem frameSelectionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printMaterialValuesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printAttributesToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripMenuItem cameraToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printLightValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAnimationToGifToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportMaterialAttributeValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearViewportToolStripMenuItem;
     }
 }

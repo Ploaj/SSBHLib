@@ -103,6 +103,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationToGif.cs" />
+    <Compile Include="BatchRendering.cs" />
     <Compile Include="GUI\AnimationBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -204,6 +206,7 @@
     <Compile Include="Tools\Hash.cs" />
     <Compile Include="Tools\SwitchSwizzler.cs" />
     <Compile Include="Tools\TextureFormatInfo.cs" />
+    <Compile Include="WorkSpaceTools.cs" />
     <EmbeddedResource Include="GUI\AnimationBar.resx">
       <DependentUpon>AnimationBar.cs</DependentUpon>
     </EmbeddedResource>
