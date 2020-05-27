@@ -139,9 +139,7 @@ void main()
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-    // TODO: Do a correct calculation using camera and fragment position.
-    // The camera matrices/position aren't calculated correctly for some reason.
-    // This could be a bug in SFGraphics.
+    // Transform the view vector to world space.
     vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
 
     // TODO: Double check the orientation.

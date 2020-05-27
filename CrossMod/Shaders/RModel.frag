@@ -260,10 +260,10 @@ vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
 {
     // TODO: Add lighting vectors to a uniform block.
     // TODO: Difference between RGB color intensity and W value?
-    // TODO: The direction may be controlled by some value.
-
     vec4 LightCustomVector8 = vec4(1.5,1.5,1.5,1); // training stage 
     vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
+    
+    // TODO: The direction may be controlled by some value.
     // Edge lighting lit only from above.
     float exponent = 2;
     float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
@@ -283,9 +283,7 @@ void main()
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
 
-    // TODO: Do a correct calculation using camera and fragment position.
-    // The camera matrices/position aren't calculated correctly for some reason.
-    // This could be a bug in SFGraphics.
+    // Transform the view vector to world space.
     vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
 
     // TODO: Double check the orientation.
