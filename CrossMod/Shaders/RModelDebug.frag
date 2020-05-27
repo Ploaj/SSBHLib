@@ -86,6 +86,7 @@ uniform MaterialParams
 };
 
 uniform mat4 mvp;
+uniform mat4 modelView;
 uniform vec3 cameraPos;
 
 out vec4 fragColor;
@@ -205,7 +206,8 @@ void main()
 			fragColor = colorSet1;
 			break;
 		case 10:
-			fragColor = vec4(fragmentNormal * 0.5 + 0.5, 1);
+            vec4 viewNormal = transpose(inverse(modelView)) * vec4(fragmentNormal, 0);
+			fragColor = vec4(normalize(viewNormal.xyz) * 0.5 + 0.5, 1);
 			break;
 		case 11:
 			fragColor = vec4(tangent * 0.5 + 0.5, 1);

@@ -64,6 +64,7 @@ namespace CrossMod.Rendering.Models
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
+            currentShader.SetMatrix4x4("modelView", Camera.ModelViewMatrix);
             currentShader.SetVector3("cameraPos", Camera.TransformedPosition);
         }
 
