@@ -267,7 +267,7 @@ vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
     // Edge lighting lit only from above.
     float exponent = 2;
     float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
-    float rimIntensity = pow(rimHemisphere, exponent) * occlusion * CustomVector8.w * CustomVector14.w;
+    float rimIntensity = pow(rimHemisphere, exponent) * occlusion * LightCustomVector8.w * CustomVector14.w;
     return rimColor * rimIntensity;
 }
 
