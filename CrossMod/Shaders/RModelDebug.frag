@@ -1,7 +1,7 @@
 #version 330
 
 in vec3 vertexNormal;
-in vec3 tangent;
+in vec4 tangent;
 in vec3 bitangent;
 in vec2 map1;
 in vec2 uvSet;
@@ -137,7 +137,7 @@ void main()
 
     vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
     // Transform the view vector to world space.
     vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
@@ -208,7 +208,7 @@ void main()
 			fragColor = vec4(normalize(viewNormal.xyz) * 0.5 + 0.5, 1);
 			break;
 		case 11:
-			fragColor = vec4(tangent * 0.5 + 0.5, 1);
+			fragColor = vec4(tangent.xyz * 0.5 + 0.5, tangent.w);
 			break;
         case 12:
             fragColor = vec4(bitangent * 0.5 + 0.5, 1);

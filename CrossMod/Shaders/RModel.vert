@@ -18,7 +18,7 @@ in ivec4 boneIndices;
 in vec4 boneWeights;
 
 out vec3 geomVertexNormal;
-out vec3 geomTangent;
+out vec4 geomTangent;
 out vec3 geomBitangent;
 out vec2 geomMap1;
 out vec2 geomUvSet;
@@ -30,6 +30,7 @@ out vec2 geomBake1;
 out vec3 geomPosition;
 
 uniform mat4 mvp;
+uniform mat4 modelView;
 uniform mat4 transform;
 
 uniform Bones
@@ -76,6 +77,7 @@ void main()
     // Single bind transform
     vec4 position = transform * vec4(Position0, 1);
     vec4 transformedNormal = transform * vec4(Normal0, 0);
+    vec4 transformedTangent = transform * vec4(Tangent0.xyz, 0);
 
     // Vertex skinning
     if (boneWeights.x != 0) {
@@ -85,9 +87,13 @@ void main()
         for (int i = 0; i < 4; i++)
         {
             position += transforms[boneIndices[i]] * vec4(Position0, 1) * boneWeights[i];
-            transformedNormal.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Normal0, 1) * boneWeights[i]).xyz;
+            transformedNormal.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Normal0.xyz, 1) * boneWeights[i]).xyz;
+            transformedTangent.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Tangent0.xyz, 1) * boneWeights[i]).xyz;
         }
     }
+
+    transformedNormal.xyz = normalize(transformedNormal.xyz);
+    transformedTangent.xyz = normalize(transformedTangent.xyz);
 
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
@@ -106,8 +112,7 @@ void main()
     geomUvSet2 = uvSet2;
 
     // The w component flips mirrored tangents.
-    geomTangent = Tangent0.xyz;
-    geomBitangent = cross(Normal0.xyz, Tangent0.xyz) * Tangent0.w;
-
+    geomTangent = vec4(transformedTangent.xyz, Tangent0.w);
+    geomBitangent = normalize(cross(transformedNormal.xyz, transformedTangent.xyz) * Tangent0.w);
     gl_Position = mvp * vec4(position.xyz, 1);
 }

@@ -1,7 +1,7 @@
 #version 330
 
 in vec3 vertexNormal;
-in vec3 tangent;
+in vec4 tangent;
 in vec3 bitangent;
 in vec2 map1;
 in vec2 uvSet;
@@ -95,6 +95,13 @@ uniform MaterialParams
     float CustomFloat19;
 };
 
+
+// TODO: Add lighting vectors to a uniform block.
+// Values taken from the training stage light.nuanmb.
+float LightCustomFloat0 = 4.0;
+vec4 LightCustomVector0 = vec4(1,1,1,0); 
+vec4 LightCustomVector8 = vec4(1.5,1.5,1.5,1); 
+
 uniform int hasCustomVector11;
 uniform int hasCustomVector47;
 uniform int hasCustomVector44;
@@ -148,7 +155,7 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
     float roughnessX = roughness * (1.0 + anisotropy);
     float roughnessY = roughness / (1.0 + anisotropy);
 
-    float normalization = 1 / (3.14159 * roughnessX * roughnessY);
+    float normalization = (3.14159 * roughnessX * roughnessY);
 
     float nDotH2 = nDotH * nDotH;
 
@@ -196,7 +203,7 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
     float specularBrdf = 0;
     float anisotropy = CustomFloat10;
     if (hasCustomFloat10 == 1)
-        specularBrdf = GgxAnisotropic(nDotH, halfAngle, tangent, bitangent, roughness, anisotropy);
+        specularBrdf = GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, anisotropy);
     else
         specularBrdf = Ggx(nDotH, roughness);
 
@@ -205,8 +212,8 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
 
 vec3 SpecularTerm(float nDotH, vec3 halfAngle, float roughness, vec3 specularIbl, float metalness)
 {
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
-    vec3 directSpecular = vec3(SpecularBrdf(nDotH, halfAngle, roughness)) * directLightIntensity;
     vec3 specularTerm = (directSpecular * CustomBoolean3) + (indirectSpecular * CustomBoolean4);
 
     return specularTerm;
@@ -250,23 +257,23 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
         float smoothWidth = 1 / CustomVector30.y;
         directShading = smoothstep(mid - smoothWidth, mid + smoothWidth, directShading);
     }
-    vec3 directLight = vec3(directShading);
+
+    vec3 directLight = LightCustomVector0.xyz * LightCustomFloat0 * directShading;
     vec3 ambientLight = ambientIbl * ao;
+
     vec3 result = directLight * directLightIntensity  + ambientLight;
     return result * bakedLitColor.rgb;
 }
 
 vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
 {
-    // TODO: Add lighting vectors to a uniform block.
     // TODO: Difference between RGB color intensity and W value?
-    vec4 LightCustomVector8 = vec4(1.5,1.5,1.5,1); // training stage 
     vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
     
     // TODO: The direction may be controlled by some value.
     // Edge lighting lit only from above.
     float exponent = 2;
-    float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, vec3(0,1,0)),0);
+    float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, normalize(vec3(0,1,-2))),0);
     float rimIntensity = pow(rimHemisphere, exponent) * occlusion * LightCustomVector8.w * CustomVector14.w;
     return rimColor * rimIntensity;
 }
@@ -281,7 +288,7 @@ void main()
 
     vec3 fragmentNormal = vertexNormal;
     if (renderNormalMaps == 1)
-        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent, bitangent, norColor);
+        fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
     // Transform the view vector to world space.
     vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));

@@ -5,7 +5,7 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in vec3 geomVertexNormal[];
 in vec3 geomPosition[];
-in vec3 geomTangent[];
+in vec4 geomTangent[];
 in vec3 geomBitangent[];
 in vec2 geomMap1[];
 in vec2 geomUvSet[];
@@ -16,7 +16,7 @@ in vec4 geomColorSet5[];
 in vec2 geomBake1[];
 
 out vec3 vertexNormal;
-out vec3 tangent;
+out vec4 tangent;
 out vec3 bitangent;
 out vec2 map1;
 out vec2 uvSet;
