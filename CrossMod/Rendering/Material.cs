@@ -179,7 +179,7 @@ namespace CrossMod.Rendering
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, Vector4.Zero);
             AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, Vector4.Zero);
 
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
+            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, true);
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean3, true);
             AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean4, true);

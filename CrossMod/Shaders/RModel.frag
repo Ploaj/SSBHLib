@@ -150,6 +150,9 @@ float Ggx(float nDotH, float roughness)
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
 float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
+    // TODO: Rework this code.
+    // The specular highlights are too intense and have an incorrect shape.
+
     // This probably works differently in game.
     // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
     float roughnessX = roughness * (1.0 + anisotropy);
@@ -259,10 +262,10 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
     }
 
     vec3 directLight = LightCustomVector0.xyz * LightCustomFloat0 * directShading;
-    vec3 ambientLight = ambientIbl * ao;
+    vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
 
     vec3 result = directLight * directLightIntensity  + ambientLight;
-    return result * bakedLitColor.rgb;
+    return result;
 }
 
 vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
@@ -276,6 +279,18 @@ vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
     float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, normalize(vec3(0,1,-2))),0);
     float rimIntensity = pow(rimHemisphere, exponent) * occlusion * LightCustomVector8.w * CustomVector14.w;
     return rimColor * rimIntensity;
+}
+
+float RoughnessToLod(float roughness)
+{
+    // Adapted from decompiled shader source.
+    // Applies a curves adjustment to roughness.
+    float gpr23 = max(roughness, 0.01);
+    float gpr21 = (gpr23 * gpr23);
+    float gpr0 = (1.0 / gpr21);
+    float gpr1 = log2(gpr0 * 2 - 2);
+    gpr1 = gpr1 * -0.4545 + 4;
+    return gpr1;
 }
 
 void main()
@@ -310,12 +325,6 @@ void main()
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
-    fragColor.a = max(albedoColor.a, CustomVector0.x);
-    // Alpha testing.
-    // TODO: Not all shaders have this.
-    if (fragColor.a < 0.5)
-        discard;
-
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
     // TODO: There's probably a cleaner way of doing this.
     if (CustomBoolean11 == 0)
@@ -326,6 +335,12 @@ void main()
     // Probably some sort of override for PRM color.
     if (hasCustomVector47 == 1)
         prmColor = CustomVector47;
+
+    fragColor.a = max(albedoColor.a * emissionColor.a, CustomVector0.x);
+    // Alpha testing.
+    // TODO: Not all shaders have this.
+    if (fragColor.a < 0.5)
+        discard;
 
     float roughness = prmColor.g;
     float metalness = prmColor.r;
@@ -341,9 +356,10 @@ void main()
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat1 + 1.0));
 
     // Image based lighting.
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
     int maxLod = 6;
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * iblIntensity * 0.5;
+    float specularLod = RoughnessToLod(roughness);
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
     // Render passes.

@@ -175,7 +175,7 @@ namespace CrossMod.GUI
                 "Voice", "Fura", "Catch", "Cliff", "FLIP",
                 "Bound", "Down", "Final", "Result", "StepPose",
                 "Sorori", "Fall", "Appeal", "Damage", "CameraHit", "laugh", 
-                "breath", "swell", "_low", "_bink" };
+                "breath", "swell", "_low", "_bink", "inkMesh" };
 
             // TODO: This is probably not a very efficient way of doing this.
             foreach (ListViewItem item in meshList.Items)
