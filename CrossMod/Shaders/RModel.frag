@@ -150,14 +150,12 @@ float Ggx(float nDotH, float roughness)
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
 float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
-    // TODO: Rework this code.
-    // The specular highlights are too intense and have an incorrect shape.
+    float roughnessX = max(roughness * anisotropy, 0.01);
+    float roughnessY = max(roughness / anisotropy, 0.01);
 
-    // This probably works differently in game.
-    // https://developer.blender.org/diffusion/B/browse/master/intern/cycles/kernel/shaders/node_anisotropic_bsdf.osl
-    float roughnessX = roughness * (1.0 + anisotropy);
-    float roughnessY = roughness / (1.0 + anisotropy);
+    // TODO: Anisotropic rotation using PRM alpha?
 
+    // TODO: Check this section of code.
     float normalization = (3.14159 * roughnessX * roughnessY);
 
     float nDotH2 = nDotH * nDotH;
@@ -203,14 +201,10 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
 float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
-    float specularBrdf = 0;
-    float anisotropy = CustomFloat10;
     if (hasCustomFloat10 == 1)
-        specularBrdf = GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, anisotropy);
+        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat10);
     else
-        specularBrdf = Ggx(nDotH, roughness);
-
-    return specularBrdf;
+        return Ggx(nDotH, roughness);
 }
 
 vec3 SpecularTerm(float nDotH, vec3 halfAngle, float roughness, vec3 specularIbl, float metalness)
