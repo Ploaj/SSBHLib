@@ -22,7 +22,6 @@ namespace CrossMod.Rendering.Resources
         };
 
         // PBR image based lighting.
-        public Texture2D iblLut = new Texture2D();
         public TextureCubeMap diffusePbr = new TextureCubeMap();
         public TextureCubeMap specularPbr = new TextureCubeMap();
         public TextureCubeMap blackCube = new TextureCubeMap();
@@ -35,8 +34,6 @@ namespace CrossMod.Rendering.Resources
             LoadBitmap(defaultPrm, "DefaultTextures/default_Params.tif");
             LoadBitmap(defaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(defaultBlack, "DefaultTextures/default_black.png");
-
-            LoadBitmap(iblLut, "DefaultTextures/ibl_brdf_lut.png");
 
             using (var bmp = new Bitmap("DefaultTextures/default_cube_black.png"))
                 blackCube.LoadImageData(bmp, 8);

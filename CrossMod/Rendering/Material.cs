@@ -243,7 +243,6 @@ namespace CrossMod.Rendering
         {
             genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
             genericMaterial.AddTexture("specularPbrCube", specularCubeMap);
-            genericMaterial.AddTexture("iblLut", defaultTextures.iblLut);
         }
 
         private void AddBool(UniformBlock genericMaterial, MatlEnums.ParamId paramId, bool defaultValue)
