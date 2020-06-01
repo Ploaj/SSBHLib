@@ -265,17 +265,11 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
+vec3 GetSpecularEdgeTint(float nDotV)
 {
-    // TODO: Difference between RGB color intensity and W value?
     vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
-    
-    // TODO: The direction may be controlled by some value.
-    // Edge lighting lit only from above.
-    float exponent = 2;
-    float rimHemisphere = (1 - nDotV) * max(dot(fragmentNormal, normalize(vec3(0,1,-2))),0);
-    float rimIntensity = pow(rimHemisphere, exponent) * occlusion * LightCustomVector8.w * CustomVector14.w;
-    return rimColor * rimIntensity;
+    float rimBlend = pow(1 - nDotV,5);
+    return mix(vec3(1), rimColor, rimBlend * LightCustomVector8.w * CustomVector14.w);
 }
 
 float RoughnessToLod(float roughness)
@@ -362,7 +356,10 @@ void main()
     // Render passes.
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r);
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion);
+
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
+    if (renderRimLighting == 1)
+        specularPass *= GetSpecularEdgeTint(nDotV);
 
     vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
@@ -371,20 +368,16 @@ void main()
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += clamp(specularPass * kSpecular * ambientOcclusion * norColor.a, 0, 1);
+        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * norColor.a;
 
     // Emission
     if (renderEmission == 1)
         fragColor.rgb += EmissionTerm(emissionColor);
 
-    if (renderRimLighting == 1)
-    {
-        fragColor.rgb += RimLightingTerm(nDotV, fragmentNormal, norColor.a * prmColor.b);
-    }
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
-        fragColor.rgb *= colorSet1.rgb;
+        fragColor.rgb *= colorSet1.rgb; 
 
     // TODO: Experimental refraction.
     if (CustomFloat19 > 0.0)
@@ -409,7 +402,8 @@ void main()
     if (CustomFloat19 > 0 && renderExperimental == 1)
         fragColor.a = transmissionAlpha.x;
 
-    // Premultiplied alpha.
+    // Premultiplied alpha. 
+    fragColor.a = clamp(fragColor.a, 0, 1); // TODO: krool???
     fragColor.rgb *= fragColor.a;
 
     if (renderWireframe == 1)
