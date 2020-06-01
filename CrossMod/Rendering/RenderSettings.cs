@@ -45,7 +45,7 @@ namespace CrossMod.Rendering
 
         [EditInfo("Direct Light Intensity", ValueEnums.ValueType.Float, "Lighting")]
         [TrackBarInfo(0, 3)]
-        public float DirectLightIntensity { get; set; } = 0.5f;
+        public float DirectLightIntensity { get; set; } = 1.0f;
 
         [EditInfo("IBL Intensity", ValueEnums.ValueType.Float, "Lighting")]
         [TrackBarInfo(0, 3)]

@@ -178,6 +178,28 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
+vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
+{
+    // Diffuse shading is remapped to be softer.
+    // Multiplying be a constant and clamping affects the "smoothness".
+    float directShading = nDotL;
+    if (hasCustomVector11 == 1)
+    {
+        directShading *= CustomVector30.y;
+        directShading = directShading * 0.5 + 0.5;
+    }
+    directShading = clamp(directShading, 0, 1);
+
+    // TODO: Investigate why diffuse is so bright?
+    vec3 directLight = LightCustomVector0.xyz * directShading; // * LightCustomFloat0
+    
+    vec4 bakedLitColor = texture(bakeLitMap, bake1);
+    vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
+
+    vec3 result = directLight * directLightIntensity  + ambientLight;
+    return result;
+}
+
 vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metalness)
 {
     vec3 diffuseTerm = albedoColor.rgb;
@@ -243,25 +265,6 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
-{
-    vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    float directShading = nDotL;
-    if (hasCustomVector11 == 1)
-    {
-        // Only smooth the BRDF to avoid clamping brightness of the lighting.
-        float mid = 0.5; // TODO: ambient intensity and mid value?
-        float smoothWidth = 1 / CustomVector30.y;
-        directShading = smoothstep(mid - smoothWidth, mid + smoothWidth, directShading);
-    }
-
-    vec3 directLight = LightCustomVector0.xyz * LightCustomFloat0 * directShading;
-    vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
-
-    vec3 result = directLight * directLightIntensity  + ambientLight;
-    return result;
-}
-
 vec3 RimLightingTerm(float nDotV, vec3 fragmentNormal, float occlusion)
 {
     // TODO: Difference between RGB color intensity and W value?
@@ -313,7 +316,7 @@ void main()
     // Shading vectors.
     vec3 halfAngle = normalize(chrLightDir + viewVector);
     float nDotV = max(dot(fragmentNormal, viewVector), 0);
-    float nDotL = max(dot(fragmentNormal, chrLightDir), 0);
+    float nDotL = dot(fragmentNormal, chrLightDir);
     float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
 
     // Get texture color.
@@ -368,7 +371,7 @@ void main()
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * norColor.a;
+        fragColor.rgb += clamp(specularPass * kSpecular * ambientOcclusion * norColor.a, 0, 1);
 
     // Emission
     if (renderEmission == 1)
@@ -416,5 +419,5 @@ void main()
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
 
-    gl_FragDepth = gl_FragCoord.z + depthBias;
+    //gl_FragDepth = gl_FragCoord.z + depthBias;
 }
