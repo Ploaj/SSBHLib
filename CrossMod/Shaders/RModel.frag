@@ -185,8 +185,10 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
     float directShading = nDotL;
     if (hasCustomVector11 == 1)
     {
-        directShading *= CustomVector30.y;
-        directShading = directShading * 0.5 + 0.5;
+        float skinShading = nDotL;
+        skinShading *= CustomVector30.y;
+        skinShading = skinShading * 0.5 + 0.5;
+        directShading = mix(directShading, skinShading, CustomVector30.x);
     }
     directShading = clamp(directShading, 0, 1);
 
@@ -310,8 +312,9 @@ void main()
     // Shading vectors.
     vec3 halfAngle = normalize(chrLightDir + viewVector);
     float nDotV = max(dot(fragmentNormal, viewVector), 0);
-    float nDotL = dot(fragmentNormal, chrLightDir);
     float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
+    // Don't clamp to allow remapping the range of values later.
+    float nDotL = dot(fragmentNormal, chrLightDir);
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
