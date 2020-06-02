@@ -178,7 +178,7 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 
-vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
+vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 {
     // Diffuse shading is remapped to be softer.
     // Multiplying be a constant and clamping affects the "smoothness".
@@ -188,7 +188,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
         float skinShading = nDotL;
         skinShading *= CustomVector30.y;
         skinShading = skinShading * 0.5 + 0.5;
-        directShading = mix(directShading, skinShading, CustomVector30.x);
+        directShading = mix(directShading, skinShading, sssBlend);
     }
     directShading = clamp(directShading, 0, 1);
 
@@ -202,7 +202,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao)
     return result;
 }
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metalness)
+vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBlend)
 {
     vec3 diffuseTerm = albedoColor.rgb;
 
@@ -214,8 +214,6 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float metaln
         diffuseTerm = CustomVector44.rgb + CustomVector45.rgb;
 
     // Fake subsurface scattering.
-    // Metalness acts as a mask for the sss effect.
-    float sssBlend = CustomVector30.x * metalness;
     diffuseTerm = mix(diffuseTerm, CustomVector11.rgb, sssBlend);
     diffuseTerm += CustomVector11.rgb * sssBlend;
 
@@ -342,6 +340,7 @@ void main()
     if (hasCustomVector11 == 1)
         metalness = 0.0;
 
+    // TODO: Is specular overridden by default?
     float specular = prmColor.a;
     if (CustomBoolean1 == 0)
         specular = 0.16;
@@ -357,8 +356,9 @@ void main()
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
     // Render passes.
-    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, prmColor.r);
-    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion);
+    float sssBlend = prmColor.r * CustomVector30.x;
+    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
+    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
     if (renderRimLighting == 1)
