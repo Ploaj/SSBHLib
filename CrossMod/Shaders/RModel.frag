@@ -318,9 +318,9 @@ void main()
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
 
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
-    // TODO: There's probably a cleaner way of doing this.
-    if (CustomBoolean11 == 0)
-        emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
+    // TODO: Mega man's eyes?.
+    // if (CustomBoolean11 == 0)
+    //     emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
@@ -393,8 +393,6 @@ void main()
     fragColor.rgb = GetSrgb(fragColor.rgb);
 
     // Alpha calculations
-    fragColor.a *= emissionColor.a;
-
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor.a *= colorSet1.a;
