@@ -106,6 +106,7 @@ uniform int hasCustomVector11;
 uniform int hasCustomVector47;
 uniform int hasCustomVector44;
 uniform int hasCustomFloat10;
+uniform int hasCustomBoolean1;
 
 uniform vec3 chrLightDir;
 
@@ -345,6 +346,12 @@ void main()
     if (CustomBoolean1 == 0)
         specular = 0.16;
 
+
+    float specularOcclusion = norColor.a;
+    // These materials don't have a nor map.
+    if (hasCustomBoolean1 == 0)
+        specularOcclusion *= prmColor.a;
+
     vec3 ambientOcclusion = vec3(prmColor.b);
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat1 + 1.0));
 
@@ -371,7 +378,7 @@ void main()
         fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * norColor.a;
+        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
 
     // Emission
     if (renderEmission == 1)

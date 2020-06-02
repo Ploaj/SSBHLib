@@ -123,6 +123,7 @@ namespace CrossMod.Rendering
             genericMaterial.AddBoolToInt("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
             genericMaterial.AddBoolToInt("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
             genericMaterial.AddBoolToInt("hasCustomFloat10", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat10));
+            genericMaterial.AddBoolToInt("hasCustomBoolean1", boolByParamId.ContainsKey(MatlEnums.ParamId.CustomBoolean1));
 
             genericMaterial.AddFloat("depthBias", DepthBias);
 
