@@ -15,7 +15,6 @@ noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
 
-uniform int hasCol2Map;
 uniform sampler2D col2Map;
 
 uniform sampler2D prmMap;
@@ -25,27 +24,18 @@ uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 
-uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-uniform int hasDifCubeMap;
 uniform samplerCube difCubeMap;
 
-uniform int hasDiffuse;
 uniform sampler2D difMap;
-
-uniform int hasDiffuse2;
 uniform sampler2D dif2Map;
-
-uniform int hasDiffuse3;
 uniform sampler2D dif3Map;
 
 uniform sampler2D iblLut;
 
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
-
-uniform int emissionOverride;
 
 uniform int renderDiffuse;
 uniform int renderSpecular;
@@ -93,20 +83,28 @@ uniform MaterialParams
     float CustomFloat8;
     float CustomFloat10;
     float CustomFloat19;
-};
 
+    int hasCustomVector11;
+    int hasCustomVector47;
+    int hasCustomVector44;
+    int hasCustomFloat10;
+    int hasCustomBoolean1;
+
+    int hasColMap; 
+    int hasCol2Map; 
+    int hasInkNorMap; 
+    int hasDifCubeMap; 
+    int hasDiffuse; 
+    int hasDiffuse2;
+    int hasDiffuse3; 
+    int emissionOverride;
+};
 
 // TODO: Add lighting vectors to a uniform block.
 // Values taken from the training stage light.nuanmb.
 float LightCustomFloat0 = 4.0;
 vec4 LightCustomVector0 = vec4(1,1,1,0); 
 vec4 LightCustomVector8 = vec4(1.5,1.5,1.5,1); 
-
-uniform int hasCustomVector11;
-uniform int hasCustomVector47;
-uniform int hasCustomVector44;
-uniform int hasCustomFloat10;
-uniform int hasCustomBoolean1;
 
 uniform vec3 chrLightDir;
 

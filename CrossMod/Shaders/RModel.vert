@@ -70,6 +70,21 @@ uniform MaterialParams
     float CustomFloat8;
     float CustomFloat10;
     float CustomFloat19;
+
+    int hasCustomVector11;
+    int hasCustomVector47;
+    int hasCustomVector44;
+    int hasCustomFloat10;
+    int hasCustomBoolean1;
+
+    int hasColMap; 
+    int hasCol2Map; 
+    int hasInkNorMap; 
+    int hasDifCubeMap; 
+    int hasDiffuse; 
+    int hasDiffuse2;
+    int hasDiffuse3; 
+    int emissionOverride;
 };
 
 void main()

@@ -14,33 +14,21 @@ noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
 uniform sampler2D col2Map;
+
+uniform sampler2D projMap;
 uniform sampler2D prmMap;
 uniform sampler2D norMap;
 uniform sampler2D emiMap;
 uniform sampler2D emi2Map;
 uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
-
-uniform int hasInkNorMap;
 uniform sampler2D inkNorMap;
 
-uniform int hasDifCubeMap;
 uniform samplerCube difCubeMap;
 
-uniform int hasDiffuse;
 uniform sampler2D difMap;
-
-uniform int hasDiffuse2;
 uniform sampler2D dif2Map;
-
-uniform int hasDiffuse3;
 uniform sampler2D dif3Map;
-
-uniform sampler2D projMap;
-
-uniform sampler2D uvPattern;
-
-uniform sampler2D iblLut;
 
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
@@ -50,6 +38,8 @@ uniform int renderMode;
 
 uniform int renderWireframe;
 uniform int renderNormalMaps;
+
+uniform sampler2D uvPattern;
 
 uniform MaterialParams
 {
@@ -83,6 +73,21 @@ uniform MaterialParams
     float CustomFloat8;
     float CustomFloat10;
     float CustomFloat19;
+
+    int hasCustomVector11;
+    int hasCustomVector47;
+    int hasCustomVector44;
+    int hasCustomFloat10;
+    int hasCustomBoolean1;
+
+    int hasColMap; 
+    int hasCol2Map; 
+    int hasInkNorMap; 
+    int hasDifCubeMap; 
+    int hasDiffuse; 
+    int hasDiffuse2;
+    int hasDiffuse3; 
+    int emissionOverride;
 };
 
 uniform mat4 mvp;

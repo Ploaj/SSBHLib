@@ -118,13 +118,6 @@ namespace CrossMod.Rendering
 
             // HACK: There isn't an easy way to access the current frame.
             genericMaterial.AddFloat("currentFrame", CurrentFrame);
-
-            genericMaterial.AddBoolToInt("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
-            genericMaterial.AddBoolToInt("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
-            genericMaterial.AddBoolToInt("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
-            genericMaterial.AddBoolToInt("hasCustomFloat10", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat10));
-            genericMaterial.AddBoolToInt("hasCustomBoolean1", boolByParamId.ContainsKey(MatlEnums.ParamId.CustomBoolean1));
-
             genericMaterial.AddFloat("depthBias", DepthBias);
 
             // TODO: Convert from quaternion values in light.nuanimb.
@@ -194,45 +187,43 @@ namespace CrossMod.Rendering
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
             AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat19, 0.0f);
+
+            uniformBlock.SetValue("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
+            uniformBlock.SetValue("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
+            uniformBlock.SetValue("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
+            uniformBlock.SetValue("hasCustomFloat10", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat10));
+            uniformBlock.SetValue("hasCustomBoolean1", boolByParamId.ContainsKey(MatlEnums.ParamId.CustomBoolean1));
+
+            uniformBlock.SetValue("hasColMap", HasCol);
+            uniformBlock.SetValue("hasCol2Map", HasCol2);
+            uniformBlock.SetValue("hasInkNorMap", HasInkNorMap);
+            uniformBlock.SetValue("hasDifCubeMap", HasDifCube);
+            uniformBlock.SetValue("hasDiffuse", HasDiffuse);
+            uniformBlock.SetValue("hasDiffuse2", HasDiffuse2);
+            uniformBlock.SetValue("hasDiffuse3", HasDiffuse3);
+
+            // HACK: There's probably a better way to handle blending emission and base color maps.
+            var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
+            var hasEmiMaps = HasEmi || HasEmi2;
+            uniformBlock.SetValue("emissionOverride", hasEmiMaps && !hasDiffuseMaps);
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("colMap", col, colSampler);
-            genericMaterial.AddBoolToInt("hasColMap", HasCol);
-
             genericMaterial.AddTexture("col2Map", col2, col2Sampler);
-            genericMaterial.AddBoolToInt("hasCol2Map", HasCol2);
-
             genericMaterial.AddTexture("prmMap", prm, prmSampler);
             genericMaterial.AddTexture("norMap", nor, norSampler);
-
             genericMaterial.AddTexture("inkNorMap", inkNor, inkNorSampler);
-            genericMaterial.AddBoolToInt("hasInkNorMap", HasInkNorMap);
-
             genericMaterial.AddTexture("emiMap", emi, emiSampler);
             genericMaterial.AddTexture("emi2Map", emi2, emi2Sampler);
-
             genericMaterial.AddTexture("bakeLitMap", bakeLit, bakeLitSampler);
             genericMaterial.AddTexture("gaoMap", gao, gaoSampler);
             genericMaterial.AddTexture("projMap", proj, projSampler);
-
             genericMaterial.AddTexture("difCubeMap", difCube, difCubeSampler);
-            genericMaterial.AddBoolToInt("hasDifCubeMap", HasDifCube);
-
             genericMaterial.AddTexture("difMap", dif, difSampler);
-            genericMaterial.AddBoolToInt("hasDiffuse", HasDiffuse);
-
             genericMaterial.AddTexture("dif2Map", dif2, dif2Sampler);
-            genericMaterial.AddBoolToInt("hasDiffuse2", HasDiffuse2);
-
             genericMaterial.AddTexture("dif3Map", dif3, dif3Sampler);
-            genericMaterial.AddBoolToInt("hasDiffuse3", HasDiffuse3);
-
-            // HACK: There's probably a better way to handle blending emission and base color maps.
-            var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
-            var hasEmiMaps = HasEmi || HasEmi2;
-            genericMaterial.AddBoolToInt("emissionOverride", hasEmiMaps && !hasDiffuseMaps);
         }
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
