@@ -39,6 +39,11 @@
             <c>true</c> when frame updates are being run from the dedicated rendering thread.
             </summary>
         </member>
+        <member name="M:SFGraphics.Controls.GLViewport.#ctor(OpenTK.Graphics.GraphicsMode)">
+            <summary>
+            Creates a new viewport with <paramref name="graphicsMode"/>.
+            </summary>
+        </member>
         <member name="M:SFGraphics.Controls.GLViewport.#ctor">
             <summary>
             Creates a new viewport with <see cref="F:SFGraphics.Controls.GLViewport.defaultGraphicsMode"/>.

@@ -2,6 +2,7 @@
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using OpenTK.Graphics.OpenGL;
+using SFGenericModel.Materials;
 
 namespace CrossMod.Rendering.Models
 {
@@ -22,7 +23,7 @@ namespace CrossMod.Rendering.Models
 
         public bool Visible { get; set; } = true;
 
-        private SFGenericModel.Materials.GenericMaterial genericMaterial = null;
+        public SFGenericModel.Materials.GenericMaterial genericMaterial = null;
         private SFGenericModel.Materials.UniformBlock uniformBlock = null;
 
         public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
@@ -41,8 +42,7 @@ namespace CrossMod.Rendering.Models
 
             RenderMesh?.Draw(shader);
         }
-
-        public void SetMaterialUniforms(Shader shader)
+        public void SetMaterialUniforms(Shader shader, GenericMaterial previousMaterial)
         {
             // TODO: Rework default texture creation.
             if (defaultTextures == null)
@@ -50,11 +50,11 @@ namespace CrossMod.Rendering.Models
 
             if (genericMaterial == null)
                 genericMaterial = Material.CreateGenericMaterial();
-            genericMaterial.SetShaderUniforms(shader);
+            genericMaterial.SetShaderUniforms(shader, previousMaterial);
 
             if (uniformBlock == null)
             {
-                uniformBlock = new SFGenericModel.Materials.UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
+                uniformBlock = new UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
                 Material.AddMaterialParams(uniformBlock);
             }
             // This needs to be updated more than once.

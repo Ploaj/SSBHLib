@@ -188,11 +188,13 @@
             <param name="value">The value to set for the uniform</param>
             <param name="sampler">A sampler for the texture <paramref name="value"/></param>
         </member>
-        <member name="M:SFGenericModel.Materials.GenericMaterial.SetShaderUniforms(SFGraphics.GLObjects.Shaders.Shader)">
+        <member name="M:SFGenericModel.Materials.GenericMaterial.SetShaderUniforms(SFGraphics.GLObjects.Shaders.Shader,SFGenericModel.Materials.GenericMaterial)">
             <summary>
             Sets uniform values for all the added uniform values.
+            Redundant setting of texture uniform is skipped to improve performance.
             </summary>
             <param name="shader">The shader whose uniforms will be set</param>
+            <param name="previousMaterial">The previous material used to set this shader's uniforms</param>
         </member>
         <member name="T:SFGenericModel.RenderState.PolygonModeSettings">
             <summary>

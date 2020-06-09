@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.glViewport = new SFGraphics.Controls.GLViewport();
+            this.glViewport = new SFGraphics.Controls.GLViewport(new OpenTK.Graphics.GraphicsMode(new OpenTK.Graphics.ColorFormat(8,8,8,8),8,8,8));
             this.controlBox = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.meshList = new System.Windows.Forms.ListView();

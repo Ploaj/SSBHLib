@@ -3,6 +3,7 @@ using System.Linq;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
+using SFGenericModel.Materials;
 
 namespace CrossMod.Rendering.Models
 {
@@ -103,33 +104,37 @@ namespace CrossMod.Rendering.Models
                     opaque.Add(m);
             }
 
+            // TODO: Investigate how sorting works in game.
             //transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
             // Models often share a material, so skip redundant and costly state changes.
             string previousMaterialName = "";
+            GenericMaterial previousUniforms = null;
 
             foreach (RMesh m in opaque)
             {
-                DrawMesh(Camera, Skeleton, currentShader, previousMaterialName, m);
+                DrawMesh(m, Camera, Skeleton, currentShader, previousMaterialName, previousUniforms);
                 previousMaterialName = m.Material.Name;
+                previousUniforms = m.genericMaterial;
             }
 
             // Draw transparent meshes last for proper alpha blending.
             foreach (RMesh m in transparentDepthSorted)
             {
-                DrawMesh(Camera, Skeleton, currentShader, previousMaterialName, m);
+                DrawMesh(m, Camera, Skeleton, currentShader, previousMaterialName, previousUniforms);
                 previousMaterialName = m.Material.Name;
+                previousUniforms = m.genericMaterial;
             }
         }
-        private static void DrawMesh(Camera Camera, RSkeleton Skeleton, Shader currentShader, string previousMaterialName, RMesh m)
+        private static void DrawMesh(RMesh m, Camera camera, RSkeleton skeleton, Shader currentShader, string previousMaterialName, GenericMaterial previousUniforms)
         {
             if (m.Material != null && m.Material.Name != previousMaterialName)
             {
-                m.SetMaterialUniforms(currentShader);
+                m.SetMaterialUniforms(currentShader, previousUniforms);
                 m.RenderMesh.SetRenderState(m.Material);
             }
 
-            m.Draw(currentShader, Camera, Skeleton);
+            m.Draw(currentShader, camera, skeleton);
         }
     }
 }
