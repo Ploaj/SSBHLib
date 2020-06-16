@@ -169,10 +169,12 @@ namespace CrossMod.Nodes
             return false;
         }
 
-        private void ReadScriptFile()
+        public void ReadScriptFile()
         {
             string[] lines = File.ReadAllLines(AbsolutePath);
             List<string> commands = new List<string>();
+
+            Scripts.Clear();
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("#begin "))
