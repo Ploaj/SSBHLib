@@ -32,8 +32,13 @@ namespace CrossMod.Nodes
                 Skel = value.GetRenderableNode() as RSkeleton;
                 BoneIDs.Clear();
                 BoneIDs.Add(Hash.Hash40("top"), 0);
-                for (int i = 0; i < Skel.Bones.Count; i++)
-                    BoneIDs.Add(Hash.Hash40(Skel.Bones[i].Name), i);
+                for (int i = 0; i < Skel.Bones.Count; i++) 
+                {
+                    ulong hash = Hash.Hash40(Skel.Bones[i].Name);
+                    if (!BoneIDs.ContainsKey(hash))
+                        BoneIDs.Add(hash, i);
+                }
+                    
             } }
         public RSkeleton Skel { get; set; }
         public string CurrentAnimationName { get; set; }
