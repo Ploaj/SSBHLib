@@ -399,6 +399,7 @@ namespace CrossMod.GUI
 
             SetUpViewport();
 
+
             if (renderTexture != null)
             {
                 renderTexture.Render(camera);
@@ -418,6 +419,12 @@ namespace CrossMod.GUI
             ClearViewportBuffers();
             SetRenderState();
             UpdateCamera();
+
+            if (RenderSettings.Instance.RenderGrid)
+                FloorDrawing.DrawFloor(camera.MvpMatrix);
+
+            if (RenderSettings.Instance.RenderAxis)
+                FloorDrawing.DrawAxis(camera.MvpMatrix);
         }
 
         private static void ClearViewportBuffers()

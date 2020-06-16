@@ -145,6 +145,7 @@
     <Compile Include="Nodes\ShanNode.cs" />
     <Compile Include="Rendering\Collision.cs" />
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
+    <Compile Include="Rendering\FloorDrawing.cs" />
     <Compile Include="Rendering\MatlToGl.cs" />
     <Compile Include="Rendering\Models\CustomVertex.cs" />
     <Compile Include="Rendering\Models\RenderMesh.cs" />

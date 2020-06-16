@@ -69,6 +69,12 @@ namespace CrossMod.Rendering
         [EditInfo("Render Hit Collisions (Experimental)", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderHitCollisions { get; set; } = false;
 
+        [EditInfo("Render Gridlines", ValueEnums.ValueType.Bool, "Misc")]
+        public bool RenderGrid { get; set; } = true;
+
+        [EditInfo("Render XYZ Axis", ValueEnums.ValueType.Bool, "Misc")]
+        public bool RenderAxis { get; set; } = true;
+
         [EditInfo("Render Speed", ValueEnums.ValueType.Float, "Misc")]
         public float RenderSpeed { get; set; } = 1;
 
