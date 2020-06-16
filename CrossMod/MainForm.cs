@@ -293,5 +293,11 @@ namespace CrossMod
                 modelViewport.SaveScreenshot(fileName);
             
         }
+
+        private void hitboxHurtboxSelectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorSelector colorSelector = new ColorSelector();
+            colorSelector.ShowDialog();
+        }
     }
 }

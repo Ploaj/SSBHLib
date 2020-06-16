@@ -47,6 +47,7 @@ namespace CrossMod
             this.fileTree = new System.Windows.Forms.TreeView();
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.hitboxHurtboxSelectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -104,7 +105,8 @@ namespace CrossMod
             this.renderSettingsToolStripMenuItem,
             this.frameSelectionToolStripMenuItem,
             this.cameraToolStripMenuItem,
-            this.clearViewportToolStripMenuItem});
+            this.clearViewportToolStripMenuItem,
+            this.hitboxHurtboxSelectorToolStripMenuItem});
             this.viewportToolStripMenuItem.Name = "viewportToolStripMenuItem";
             this.viewportToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.viewportToolStripMenuItem.Text = "Viewport";
@@ -227,6 +229,13 @@ namespace CrossMod
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 4;
             // 
+            // hitboxHurtboxSelectorToolStripMenuItem
+            // 
+            this.hitboxHurtboxSelectorToolStripMenuItem.Name = "hitboxHurtboxSelectorToolStripMenuItem";
+            this.hitboxHurtboxSelectorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.hitboxHurtboxSelectorToolStripMenuItem.Text = "Hitbox / Hurtbox Selector";
+            this.hitboxHurtboxSelectorToolStripMenuItem.Click += new System.EventHandler(this.hitboxHurtboxSelectorToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -270,5 +279,6 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem exportAnimationToGIFToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exportAnimationToFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportCurrentFrameToBitmapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hitboxHurtboxSelectorToolStripMenuItem;
     }
 }
