@@ -75,6 +75,9 @@ namespace CrossMod.Rendering
         [EditInfo("Render XYZ Axis", ValueEnums.ValueType.Bool, "Misc")]
         public bool RenderAxis { get; set; } = true;
 
+        [EditInfo("Render Background", ValueEnums.ValueType.Bool, "Misc")]
+        public bool RenderBackground { get; set; } = true;
+
         [EditInfo("Render Speed", ValueEnums.ValueType.Float, "Misc")]
         public float RenderSpeed { get; set; } = 1;
 

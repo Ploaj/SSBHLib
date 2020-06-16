@@ -430,7 +430,10 @@ namespace CrossMod.GUI
         private static void ClearViewportBuffers()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
+            if (RenderSettings.Instance.RenderBackground)
+                GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
+            else
+                GL.ClearColor(0f, 0f, 0f, 1);
         }
 
         private static void SetRenderState()
