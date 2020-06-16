@@ -145,6 +145,8 @@ namespace CrossMod.GUI
             meshList.Clear();
             boneTree.Nodes.Clear();
 
+            ParamNodeContainer.HitData = new Collision[0];
+
             GC.WaitForPendingFinalizers();
             GLObjectManager.DeleteUnusedGLObjects();
 
