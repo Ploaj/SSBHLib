@@ -157,6 +157,13 @@ namespace CrossMod.GUI
             return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
+        public void SaveScreenshot(string filePath)
+        {
+            glViewport.PauseRendering();
+            Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false).Save(filePath);
+            glViewport.RestartRendering();
+        }
+
         public CameraControl GetCameraControl()
         {
             return new CameraControl(camera);
@@ -193,6 +200,39 @@ namespace CrossMod.GUI
                     }
                 }
             }
+        }
+
+
+        public void RenderAnimationToFolder(string folderPath)
+        {
+            if (string.IsNullOrEmpty(folderPath))
+                return;
+
+            glViewport.PauseRendering();
+            animationBar.Stop();
+
+            try
+            {
+                int repeat = (int)(1 / RenderSettings.Instance.RenderSpeed);
+                for (int i = 0; i <= animationBar.FrameCount; ++i)
+                {
+                    animationBar.Frame = i;
+                    glViewport.RenderFrame();
+                    for (int j = 1; j <= repeat; ++j)
+                    {
+                        Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false)
+                                   .Save($"{folderPath}//Frame {i}.png");
+                    }
+                }
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Error while exporting frames");
+                Console.Error.WriteLine(e.ToString());
+            }
+
+            glViewport.RestartRendering();
         }
 
         public async System.Threading.Tasks.Task RenderAnimationToGifAsync(string outputPath, IProgress<int> progress)

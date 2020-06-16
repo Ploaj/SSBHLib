@@ -103,7 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationToGif.cs" />
+    <Compile Include="AnimationExport.cs" />
     <Compile Include="BatchRendering.cs" />
     <Compile Include="GUI\AnimationBar.cs">
       <SubType>UserControl</SubType>

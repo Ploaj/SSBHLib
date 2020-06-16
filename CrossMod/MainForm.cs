@@ -41,15 +41,9 @@ namespace CrossMod
             iconList.Images.Add("animation", Properties.Resources.ico_animation);
 
             fileTree.ImageList = iconList;
-
-            // TODO: Move to designer.
-            exportAnimationToGifToolStripMenuItem.Click += ExportAnimationToGifToolStripMenuItem_Click;
+            
         }
 
-        private async void ExportAnimationToGifToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            await AnimationToGif.ConvertAnimationToGif(modelViewport);
-        }
         public void ShowModelViewport()
         {
             contentBox.Controls.Clear();
@@ -277,6 +271,23 @@ namespace CrossMod
         private void clearViewportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             modelViewport.ClearFiles();
+        }
+
+        private async void ExportAnimationToGIFToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            await AnimationExport.ConvertAnimationToGif(modelViewport);
+        }
+
+        private void ExportAnimationToFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AnimationExport.ExportFramesToFolder(modelViewport);
+        }
+
+        private void ExportCurrentFrameToBitmapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "PNG|*.png", "CurrentFrame.png"))
+                modelViewport.SaveScreenshot(fileName);
+            
         }
     }
 }
