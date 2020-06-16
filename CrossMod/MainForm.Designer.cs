@@ -48,6 +48,7 @@ namespace CrossMod
             this.contentBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.hitboxHurtboxSelectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -71,8 +72,9 @@ namespace CrossMod
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openModelFolderToolStripMenuItem,
-            this.reloadShadersToolStripMenuItem,
-            this.clearWorkspaceToolStripMenuItem});
+            this.clearWorkspaceToolStripMenuItem,
+            this.reloadScriptsToolStripMenuItem,
+            this.reloadShadersToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -236,6 +238,13 @@ namespace CrossMod
             this.hitboxHurtboxSelectorToolStripMenuItem.Text = "Hitbox / Hurtbox Selector";
             this.hitboxHurtboxSelectorToolStripMenuItem.Click += new System.EventHandler(this.hitboxHurtboxSelectorToolStripMenuItem_Click);
             // 
+            // reloadScriptsToolStripMenuItem
+            // 
+            this.reloadScriptsToolStripMenuItem.Name = "reloadScriptsToolStripMenuItem";
+            this.reloadScriptsToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.reloadScriptsToolStripMenuItem.Text = "Reload Scripts";
+            this.reloadScriptsToolStripMenuItem.Click += new System.EventHandler(this.reloadScriptsToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -280,5 +289,6 @@ namespace CrossMod
         private System.Windows.Forms.ToolStripMenuItem exportAnimationToFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportCurrentFrameToBitmapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hitboxHurtboxSelectorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadScriptsToolStripMenuItem;
     }
 }

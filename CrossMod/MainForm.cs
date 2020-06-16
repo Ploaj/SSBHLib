@@ -299,5 +299,15 @@ namespace CrossMod
             ColorSelector colorSelector = new ColorSelector();
             colorSelector.ShowDialog();
         }
+
+        private void reloadScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (modelViewport.ScriptNode != null)
+            {
+                modelViewport.ScriptNode.ReadScriptFile();
+                modelViewport.ResetAnimation();
+                modelViewport.ScriptNode.Start();
+            }
+        }
     }
 }

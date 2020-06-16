@@ -159,6 +159,11 @@ namespace CrossMod.GUI
             return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
         }
 
+        public void ResetAnimation()
+        {
+            animationBar.Frame = 0f;
+        }
+
         public void SaveScreenshot(string filePath)
         {
             glViewport.PauseRendering();
