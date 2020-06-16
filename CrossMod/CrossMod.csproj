@@ -117,6 +117,12 @@
     <Compile Include="GUI\CameraControl.Designer.cs">
       <DependentUpon>CameraControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ColorSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ColorSelector.Designer.cs">
+      <DependentUpon>ColorSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\ProgressViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -213,6 +219,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\CameraControl.resx">
       <DependentUpon>CameraControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ColorSelector.resx">
+      <DependentUpon>ColorSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\ModelViewport.resx">
       <DependentUpon>ModelViewport.cs</DependentUpon>
