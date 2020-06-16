@@ -1,4 +1,6 @@
 ﻿using OpenTK;
+using System;
+using System.Security.Policy;
 
 namespace CrossMod.Rendering
 {
@@ -57,6 +59,7 @@ namespace CrossMod.Rendering
         public Vector3 Pos2 { get; set; }
         public Shape ShapeType { get; set; }
         public bool Enabled { get; set; }
+        public Vector3 Color { get; set; }
 
         public Collision(ulong bone, float size, Vector3 pos)
         {
@@ -66,6 +69,7 @@ namespace CrossMod.Rendering
             Size = size;
             ShapeType = Shape.sphere;
             Enabled = true;
+            Color = DefaultColor;
         }
         public Collision(ulong bone, float size, Vector3 pos, Vector3 pos2)
         {
@@ -75,6 +79,7 @@ namespace CrossMod.Rendering
             Size = size;
             ShapeType = Shape.capsule;
             Enabled = true;
+            Color = DefaultColor;
         }
 
         public enum Shape
@@ -96,6 +101,14 @@ namespace CrossMod.Rendering
             new Vector3(0.7843f, 0f, 1f),
             new Vector3(0.3765f, 0.2863f, 0.5294f),
             new Vector3(0.6f, 0.6f, 0.6f),
+        };
+
+        public static Vector3[] InvulnColors = new Vector3[]
+        {
+            new Vector3(0.098f, 0.098f, 0.439f), // Intangibility
+            new Vector3(0.22f, 0.969f, 0.533f), // Invincibility
+            new Vector3(0.188f, 0.098f, 0.204f), // Super Armor / Heavy Armor
+            new Vector3(1f, 1f, 1f) // Normal
         };
 
         public static Vector3 DefaultColor = new Vector3(1, 1, 1);

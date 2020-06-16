@@ -135,7 +135,7 @@ namespace CrossMod.Nodes
                         continue;
 
                     Matrix4 bone = Skel.GetAnimationSingleBindsTransform(boneIndex);
-                    Vector4 color = new Vector4(1, 1, 1, 0.3f);
+                    Vector4 color = new Vector4(hit.Color, 0.3f);
                     //if (BoneIDs[hit.Bone] == 0)//special purpose HitData attached to trans or top
                     //    color = new Vector4(1, 0.3f, 0.3f, 0.3f);
                     if (hit.Pos != hit.Pos2)

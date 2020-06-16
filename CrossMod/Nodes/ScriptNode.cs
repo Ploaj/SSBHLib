@@ -7,6 +7,7 @@ using paracobNET;
 using SFGraphics.Cameras;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 
@@ -86,14 +87,14 @@ namespace CrossMod.Nodes
                 Collision coll = collisions[i];
                 if (!coll.Enabled)
                     continue;
-                
+
                 Vector4 collColor = new Vector4(Collision.IDColors[i % Collision.IDColors.Length], 0.5f);
 
                 Matrix4 boneTransform = Skel.GetAnimationSingleBindsTransform(BoneIDs[coll.Bone]);
                 Matrix4 boneNoScale =
                     Matrix4.CreateFromQuaternion(boneTransform.ExtractRotation())
                     * Matrix4.CreateTranslation(boneTransform.ExtractTranslation());
-                
+
                 if (IsSphere(coll))
                 {
                     Sphere.Render(sphereShader, coll.Size, coll.Pos, boneNoScale, mvp, collColor);
@@ -102,6 +103,7 @@ namespace CrossMod.Nodes
                 {
                     Capsule.Render(capsuleShader, coll.Size, coll.Pos, coll.Pos2, boneNoScale, mvp, collColor);
                 }
+
                 //angle marker
                 if (coll is Attack attack)
                 {
@@ -147,6 +149,7 @@ namespace CrossMod.Nodes
                     }
                 }
             }
+
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);
@@ -354,6 +357,9 @@ namespace CrossMod.Nodes
                         case CmdType.ft_motion_rate:
                             Parent.Observer.MotionRate = 1f / float.Parse(args[0]);
                             break;
+                        case CmdType.motion_set_rate:
+                            Parent.Observer.MotionRate = float.Parse(args[0]);
+                            break;
                         case CmdType.set_vec_target_pos:
                             Parent.Observer.Attacks[IntParse(args[0])].SetVecTargetPos(
                                 HashParse(args[1]),
@@ -363,6 +369,58 @@ namespace CrossMod.Nodes
                                     ),
                                 float.Parse(args[4]));
                             break;
+
+                        case CmdType.invuln:
+                            {
+
+                                if (Enum.TryParse(args[1], true, out InvulnState type))
+                                {
+                                    ulong bone = HashParse(args[0]);
+                                    if (args[0] == "all")
+                                    {
+                                        Array.ForEach(ParamNodeContainer.HitData, x => SetInvuln(x.Bone, type));
+                                    }
+
+                                    else
+                                    {
+                                        SetInvuln(bone, type);
+                                    }
+
+                                }
+                                break;
+
+                            }
+                        case CmdType.invuln_clear:
+                            SetInvuln(HashParse(args[0]), InvulnState.Normal);
+                            break;
+                        case CmdType.invuln_clear_all:
+                            Array.ForEach(ParamNodeContainer.HitData, x => SetInvuln(x.Bone, InvulnState.Normal));
+                            break;
+                    }
+                }
+
+                private void SetInvuln(ulong bone, InvulnState type)
+                {
+                    // Multiple hurtboxes can be on one bone, so get all of the hurtboxes
+                    Collision[] collisions = Array.FindAll(ParamNodeContainer.HitData, col => col.Bone == bone);
+                    foreach (Collision coll in collisions)
+                    {
+                        switch (type)
+                        {
+                            case InvulnState.Intangibility:
+                                coll.Color = Collision.InvulnColors[0];
+                                break;
+                            case InvulnState.Invincibility:
+                                coll.Color = Collision.InvulnColors[1];
+                                break;
+                            case InvulnState.HeavyArmor:
+                            case InvulnState.SuperArmor:
+                                coll.Color = Collision.InvulnColors[2];
+                                break;
+                            case InvulnState.Normal:
+                                coll.Color = Collision.InvulnColors[3];
+                                break;
+                        }
                     }
                 }
 
@@ -379,7 +437,20 @@ namespace CrossMod.Nodes
                     catch_clear,
                     catch_clear_all,
                     ft_motion_rate,
-                    set_vec_target_pos
+                    motion_set_rate,
+                    set_vec_target_pos,
+                    invuln,
+                    invuln_clear,
+                    invuln_clear_all
+                }
+
+                public enum InvulnState
+                {
+                    Intangibility,
+                    Invincibility,
+                    SuperArmor,
+                    HeavyArmor,
+                    Normal
                 }
 
                 private int IntParse(string word)

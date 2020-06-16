@@ -1,6 +1,7 @@
 ﻿using CrossMod.GUI;
 using CrossMod.IO;
 using CrossMod.Nodes;
+using CrossMod.Rendering;
 using System;
 using System.Drawing;
 using System.IO;
@@ -41,7 +42,6 @@ namespace CrossMod
             iconList.Images.Add("animation", Properties.Resources.ico_animation);
 
             fileTree.ImageList = iconList;
-            
         }
 
         public void ShowModelViewport()
@@ -60,6 +60,10 @@ namespace CrossMod
 
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            // Reset collision color before rendering
+            foreach (Collision coll in ParamNodeContainer.HitData)
+                coll.Color = Collision.DefaultColor;
+
             if (fileTree.SelectedNode.Text.EndsWith("nuanmb") && modelViewport.ScriptNode != null)
             {
                 modelViewport.ScriptNode.CurrentAnimationName = fileTree.SelectedNode.Text;
