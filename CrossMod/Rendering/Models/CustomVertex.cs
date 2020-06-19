@@ -2,17 +2,46 @@
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
 using SSBHLib.Tools;
+using System.Runtime.InteropServices;
 
 namespace CrossMod.Rendering.Models
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct IVec4
     {
-        public int X { get; set; } 
+        public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
         public int W { get; set; }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct UintColor
+    {
+        public byte R { get; set; }
+        public byte G { get; set; }
+        public byte B { get; set; }
+        public byte A { get; set; }
+
+        public UintColor(SsbhVertexAttribute vals)
+        {
+            R = (byte)vals.X;
+            G = (byte)vals.Y;
+            B = (byte)vals.Z;
+            A = (byte)vals.W;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Packed4Colors
+    {
+        public UintColor Color1 { get; set; }
+        public UintColor Color2 { get; set; }
+        public UintColor Color3 { get; set; }
+        public UintColor Color4 { get; set; }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct CustomVertex
     {
         [VertexFloat("Position0", ValueCount.Four, VertexAttribPointerType.Float, false, AttributeUsage.Position, false, false)]
@@ -27,84 +56,63 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("map1", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 Map1 { get; }
 
-        [VertexFloat("uvSet", ValueCount.Two, VertexAttribPointerType.Float, false)]
-        public Vector2 UvSet { get; }
+        [VertexFloat("uvSetUvSet1", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 UvSetUvSet1 { get; }
 
-        [VertexFloat("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false)]
-        public Vector2 UvSet1 { get; }
+        [VertexFloat("uvSet2Bake1", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public Vector4 UvSet2Bake1 { get; }
 
-        [VertexFloat("uvSet2", ValueCount.Two, VertexAttribPointerType.Float, false)]
-        public Vector2 UvSet2 { get; }
-
-        [VertexInt("boneIndices", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
+        [VertexInt("boneIndices", ValueCount.Four, VertexAttribIntegerType.Int)]
         public IVec4 BoneIndices { get; }
 
         [VertexFloat("boneWeights", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public Vector4 BoneWeights { get; }
 
-        [VertexFloat("bake1", ValueCount.Two, VertexAttribPointerType.Float, false)]
-        public Vector2 Bake1 { get; }
-
         [VertexFloat("colorSet1", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public SsbhVertexAttribute ColorSet1 { get; }
 
-        [VertexFloat("colorSet2", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet2 { get; }
+        [VertexInt("colorSet2", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
+        public Packed4Colors ColorSet2Packed { get; }
 
-        [VertexFloat("colorSet2_1", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet21 { get; }
-
-        [VertexFloat("colorSet2_2", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet22 { get; }
-
-        [VertexFloat("colorSet2_3", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet23 { get; }
-
-        [VertexFloat("colorSet3", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet3 { get; }
-
-        [VertexFloat("colorSet4", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet4 { get; }
-
-        [VertexFloat("colorSet5", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet5 { get; }
-
-        [VertexFloat("colorSet6", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public SsbhVertexAttribute ColorSet6 { get; }
+        [VertexInt("colorSet3456Packed", ValueCount.Four, VertexAttribIntegerType.UnsignedInt)]
+        public Packed4Colors ColorSet3456Packed { get; }
 
         [VertexFloat("colorSet7", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public SsbhVertexAttribute ColorSet7 { get; }
 
+        private static Packed4Colors GetPacked4ByteColor(SsbhVertexAttribute x, SsbhVertexAttribute y, SsbhVertexAttribute z, SsbhVertexAttribute w)
+        {
+            var color1 = new UintColor(x);
+            var color2 = new UintColor(x);
+            var color3 = new UintColor(x);
+            var color4 = new UintColor(x);
+            return new Packed4Colors { Color1 = color1, Color2 = color2, Color3 = color3, Color4 = color4 };
+        }
+
         public CustomVertex(
-            SsbhVertexAttribute position0, SsbhVertexAttribute normal0, SsbhVertexAttribute tangent0, 
-            SsbhVertexAttribute map1, SsbhVertexAttribute uvSet, SsbhVertexAttribute uvSet1, SsbhVertexAttribute uvSet2, 
-            IVec4 boneIndices, Vector4 boneWeights, SsbhVertexAttribute bake1, 
-            SsbhVertexAttribute colorSet1, SsbhVertexAttribute colorSet2, SsbhVertexAttribute colorSet21, SsbhVertexAttribute colorSet22, SsbhVertexAttribute colorSet23, 
+            SsbhVertexAttribute position0, SsbhVertexAttribute normal0, SsbhVertexAttribute tangent0,
+            SsbhVertexAttribute map1, SsbhVertexAttribute uvSet, SsbhVertexAttribute uvSet1, SsbhVertexAttribute uvSet2,
+            IVec4 boneIndices, Vector4 boneWeights, SsbhVertexAttribute bake1,
+            SsbhVertexAttribute colorSet1, SsbhVertexAttribute colorSet2, SsbhVertexAttribute colorSet21, SsbhVertexAttribute colorSet22, SsbhVertexAttribute colorSet23,
             SsbhVertexAttribute colorSet3, SsbhVertexAttribute colorSet4, SsbhVertexAttribute colorSet5, SsbhVertexAttribute colorSet6, SsbhVertexAttribute colorSet7)
         {
-            // TODO: Attributes could use vec4 in the shaders and avoid the conversion.
-            // vec2 attributes can be packed together to save vertex attributes.
-            // Intel/Nvidia have a max of 16 vertex attributes.
             Position0 = position0;
             Normal0 = normal0;
             Tangent0 = tangent0;
             Map1 = map1.ToVector2();
-            UvSet = uvSet.ToVector2();
-            UvSet1 = uvSet1.ToVector2();
-            UvSet2 = uvSet2.ToVector2();
+
+            // Intel/Nvidia have a max of 16 vertex attributes, so some attributes have to be packed together.
+            UvSetUvSet1 = new Vector4(uvSet.X, uvSet.Y, uvSet1.X, uvSet1.Y);
+            UvSet2Bake1 = new Vector4(uvSet2.X, uvSet2.Y, bake1.X, bake1.Y);
+
             BoneIndices = boneIndices;
             BoneWeights = boneWeights;
-            Bake1 = bake1.ToVector2();
 
+            // RGBA colors are 4 bytes, so 4 colors fit in a vec4 attribute.
+            // TODO: These should be read from file as uints directly to avoid the byte -> float -> byte conversion.
             ColorSet1 = colorSet1;
-            ColorSet2 = colorSet2;
-            ColorSet21 = colorSet21;
-            ColorSet22 = colorSet22;
-            ColorSet23 = colorSet23;
-            ColorSet3 = colorSet3;
-            ColorSet4 = colorSet4;
-            ColorSet5 = colorSet5;
-            ColorSet6 = colorSet6;
+            ColorSet2Packed = GetPacked4ByteColor(colorSet2, colorSet21, colorSet22, colorSet23);
+            ColorSet3456Packed = GetPacked4ByteColor(colorSet3, colorSet4, colorSet5, colorSet6);
             ColorSet7 = colorSet7;
         }
     }
