@@ -6,7 +6,17 @@
     /// </summary>
     public struct SsbhVertexAttribute
     {
-        public float X, Y, Z, W;
+        public static readonly SsbhVertexAttribute Zero = new SsbhVertexAttribute(0.0f, 0.0f, 0.0f, 0.0f);
+
+        public static readonly SsbhVertexAttribute One = new SsbhVertexAttribute(1.0f, 1.0f, 1.0f, 1.0f);
+
+        public float X;
+
+        public float Y;
+
+        public float Z;
+
+        public float W;
 
         public SsbhVertexAttribute(float x, float y, float z, float w = 0)
         {

@@ -161,6 +161,7 @@
     <Compile Include="Rendering\Shapes\Capsule.cs" />
     <Compile Include="Rendering\Shapes\Polygon.cs" />
     <Compile Include="Rendering\Shapes\Sphere.cs" />
+    <Compile Include="Rendering\SsbhVertexAttributeExtensions.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="GUI\ModelViewport.cs">

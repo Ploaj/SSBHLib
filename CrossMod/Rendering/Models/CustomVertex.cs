@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
+using SSBHLib.Tools;
 
 namespace CrossMod.Rendering.Models
 {
@@ -74,32 +75,38 @@ namespace CrossMod.Rendering.Models
         [VertexFloat("colorSet7", ValueCount.Four, VertexAttribPointerType.Float, false)]
         public Vector4 ColorSet7 { get; }
 
-        public CustomVertex(Vector3 position0, Vector3 normal0, Vector4 tangent0, 
-            Vector2 map1, Vector2 uvSet, Vector2 uvSet1, Vector2 uvSet2, 
-            IVec4 boneIndices, Vector4 boneWeights, Vector2 bake1, 
-            Vector4 colorSet1, Vector4 colorSet2, Vector4 colorSet21, Vector4 colorSet22, Vector4 colorSet23, 
-            Vector4 colorSet3, Vector4 colorSet4, Vector4 colorSet5, Vector4 colorSet6, Vector4 colorSet7)
+        public CustomVertex(
+            SsbhVertexAttribute position0, SsbhVertexAttribute normal0, SsbhVertexAttribute tangent0, 
+            SsbhVertexAttribute map1, SsbhVertexAttribute uvSet, SsbhVertexAttribute uvSet1, SsbhVertexAttribute uvSet2, 
+            IVec4 boneIndices, Vector4 boneWeights, SsbhVertexAttribute bake1, 
+            SsbhVertexAttribute colorSet1, SsbhVertexAttribute colorSet2, SsbhVertexAttribute colorSet21, SsbhVertexAttribute colorSet22, SsbhVertexAttribute colorSet23, 
+            SsbhVertexAttribute colorSet3, SsbhVertexAttribute colorSet4, SsbhVertexAttribute colorSet5, SsbhVertexAttribute colorSet6, SsbhVertexAttribute colorSet7)
         {
-            Position0 = position0;
-            Normal0 = normal0;
-            Tangent0 = tangent0;
-            Map1 = map1;
-            UvSet = uvSet;
-            UvSet1 = uvSet1;
-            UvSet2 = uvSet2;
+            // TODO: Attributes could use vec4 in the shaders and avoid the conversion.
+            // vec2 attributes can be packed together to save vertex attributes.
+            // Intel/Nvidia have a max of 16 vertex attributes.
+            Position0 = position0.ToVector3();
+            Normal0 = normal0.ToVector3();
+            Tangent0 = tangent0.ToVector4();
+            Map1 = map1.ToVector2();
+            UvSet = uvSet.ToVector2();
+            UvSet1 = uvSet1.ToVector2();
+            UvSet2 = uvSet2.ToVector2();
             BoneIndices = boneIndices;
             BoneWeights = boneWeights;
-            Bake1 = bake1;
-            ColorSet1 = colorSet1;
-            ColorSet2 = colorSet2;
-            ColorSet21 = colorSet21;
-            ColorSet22 = colorSet22;
-            ColorSet23 = colorSet23;
-            ColorSet3 = colorSet3;
-            ColorSet4 = colorSet4;
-            ColorSet5 = colorSet5;
-            ColorSet6 = colorSet6;
-            ColorSet7 = colorSet7;
+            Bake1 = bake1.ToVector2();
+
+            // TODO: This operation could be done in OpenGL to improve performance.
+            ColorSet1 = colorSet1.ToVector4() / 128.0f;
+            ColorSet2 = colorSet2.ToVector4() / 128.0f;
+            ColorSet21 = colorSet21.ToVector4() / 128.0f;
+            ColorSet22 = colorSet22.ToVector4() / 128.0f;
+            ColorSet23 = colorSet23.ToVector4() / 128.0f;
+            ColorSet3 = colorSet3.ToVector4() / 128.0f;
+            ColorSet4 = colorSet4.ToVector4() / 128.0f;
+            ColorSet5 = colorSet5.ToVector4() / 128.0f;
+            ColorSet6 = colorSet6.ToVector4() / 128.0f;
+            ColorSet7 = colorSet7.ToVector4() / 128.0f;
         }
     }
 }

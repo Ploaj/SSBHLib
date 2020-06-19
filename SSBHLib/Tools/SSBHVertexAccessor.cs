@@ -211,6 +211,7 @@ namespace SSBHLib.Tools
             return attributes;
         }
 
+        // TODO: It may be better to convert bytes to floating point by diving by 255.0f.
         private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, string attributeName, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
