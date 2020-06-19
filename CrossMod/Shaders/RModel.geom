@@ -6,7 +6,6 @@ layout (triangle_strip, max_vertices = 3) out;
 in vec3 geomVertexNormal[];
 in vec3 geomPosition[];
 in vec4 geomTangent[];
-in vec3 geomBitangent[];
 in vec2 geomMap1[];
 in vec2 geomUvSet[];
 in vec2 geomUvSet1[];
@@ -17,7 +16,6 @@ in vec2 geomBake1[];
 
 out vec3 vertexNormal;
 out vec4 tangent;
-out vec3 bitangent;
 out vec2 map1;
 out vec2 uvSet;
 out vec2 uvSet1;
@@ -55,7 +53,6 @@ void main()
         gl_Position = gl_in[i].gl_Position;
         vertexNormal = geomVertexNormal[i];
         tangent = geomTangent[i];
-        bitangent = geomBitangent[i];
 
         map1 = geomMap1[i];
         uvSet = geomUvSet[i];

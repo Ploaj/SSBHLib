@@ -15,14 +15,14 @@ namespace CrossMod.Rendering.Models
 
     public struct CustomVertex
     {
-        [VertexFloat("Position0", ValueCount.Three, VertexAttribPointerType.Float, false, AttributeUsage.Position, false, false)]
-        public Vector3 Position0 { get; }
+        [VertexFloat("Position0", ValueCount.Four, VertexAttribPointerType.Float, false, AttributeUsage.Position, false, false)]
+        public SsbhVertexAttribute Position0 { get; }
 
-        [VertexFloat("Normal0", ValueCount.Three, VertexAttribPointerType.Float, false)]
-        public Vector3 Normal0 { get; }
+        [VertexFloat("Normal0", ValueCount.Four, VertexAttribPointerType.Float, false)]
+        public SsbhVertexAttribute Normal0 { get; }
 
         [VertexFloat("Tangent0", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 Tangent0 { get; }
+        public SsbhVertexAttribute Tangent0 { get; }
 
         [VertexFloat("map1", ValueCount.Two, VertexAttribPointerType.Float, false)]
         public Vector2 Map1 { get; }
@@ -46,34 +46,34 @@ namespace CrossMod.Rendering.Models
         public Vector2 Bake1 { get; }
 
         [VertexFloat("colorSet1", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet1 { get; }
+        public SsbhVertexAttribute ColorSet1 { get; }
 
         [VertexFloat("colorSet2", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet2 { get; }
+        public SsbhVertexAttribute ColorSet2 { get; }
 
         [VertexFloat("colorSet2_1", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet21 { get; }
+        public SsbhVertexAttribute ColorSet21 { get; }
 
         [VertexFloat("colorSet2_2", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet22 { get; }
+        public SsbhVertexAttribute ColorSet22 { get; }
 
         [VertexFloat("colorSet2_3", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet23 { get; }
+        public SsbhVertexAttribute ColorSet23 { get; }
 
         [VertexFloat("colorSet3", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet3 { get; }
+        public SsbhVertexAttribute ColorSet3 { get; }
 
         [VertexFloat("colorSet4", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet4 { get; }
+        public SsbhVertexAttribute ColorSet4 { get; }
 
         [VertexFloat("colorSet5", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet5 { get; }
+        public SsbhVertexAttribute ColorSet5 { get; }
 
         [VertexFloat("colorSet6", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet6 { get; }
+        public SsbhVertexAttribute ColorSet6 { get; }
 
         [VertexFloat("colorSet7", ValueCount.Four, VertexAttribPointerType.Float, false)]
-        public Vector4 ColorSet7 { get; }
+        public SsbhVertexAttribute ColorSet7 { get; }
 
         public CustomVertex(
             SsbhVertexAttribute position0, SsbhVertexAttribute normal0, SsbhVertexAttribute tangent0, 
@@ -85,9 +85,9 @@ namespace CrossMod.Rendering.Models
             // TODO: Attributes could use vec4 in the shaders and avoid the conversion.
             // vec2 attributes can be packed together to save vertex attributes.
             // Intel/Nvidia have a max of 16 vertex attributes.
-            Position0 = position0.ToVector3();
-            Normal0 = normal0.ToVector3();
-            Tangent0 = tangent0.ToVector4();
+            Position0 = position0;
+            Normal0 = normal0;
+            Tangent0 = tangent0;
             Map1 = map1.ToVector2();
             UvSet = uvSet.ToVector2();
             UvSet1 = uvSet1.ToVector2();
@@ -96,17 +96,16 @@ namespace CrossMod.Rendering.Models
             BoneWeights = boneWeights;
             Bake1 = bake1.ToVector2();
 
-            // TODO: This operation could be done in OpenGL to improve performance.
-            ColorSet1 = colorSet1.ToVector4() / 128.0f;
-            ColorSet2 = colorSet2.ToVector4() / 128.0f;
-            ColorSet21 = colorSet21.ToVector4() / 128.0f;
-            ColorSet22 = colorSet22.ToVector4() / 128.0f;
-            ColorSet23 = colorSet23.ToVector4() / 128.0f;
-            ColorSet3 = colorSet3.ToVector4() / 128.0f;
-            ColorSet4 = colorSet4.ToVector4() / 128.0f;
-            ColorSet5 = colorSet5.ToVector4() / 128.0f;
-            ColorSet6 = colorSet6.ToVector4() / 128.0f;
-            ColorSet7 = colorSet7.ToVector4() / 128.0f;
+            ColorSet1 = colorSet1;
+            ColorSet2 = colorSet2;
+            ColorSet21 = colorSet21;
+            ColorSet22 = colorSet22;
+            ColorSet23 = colorSet23;
+            ColorSet3 = colorSet3;
+            ColorSet4 = colorSet4;
+            ColorSet5 = colorSet5;
+            ColorSet6 = colorSet6;
+            ColorSet7 = colorSet7;
         }
     }
 }

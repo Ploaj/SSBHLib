@@ -2,7 +2,6 @@
 
 in vec3 vertexNormal;
 in vec4 tangent;
-in vec3 bitangent;
 in vec2 map1;
 in vec2 uvSet;
 in vec2 uvSet1;
@@ -141,6 +140,7 @@ void main()
         norColor.rgb = texture(inkNorMap, map1).rga;
 
     vec3 fragmentNormal = vertexNormal;
+    vec3 bitangent = normalize(cross(vertexNormal.xyz, vertexNormal.xyz) * tangent.w);
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 

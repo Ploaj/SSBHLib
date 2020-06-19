@@ -1,8 +1,8 @@
 #version 330
 
+in vec3 position;
 in vec3 vertexNormal;
 in vec4 tangent;
-in vec3 bitangent;
 in vec2 map1;
 in vec2 uvSet;
 in vec2 uvSet1;
@@ -10,7 +10,7 @@ in vec2 uvSet2;
 in vec4 colorSet1;
 in vec4 colorSet5;
 in vec2 bake1;
-in vec3 position;
+
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -219,7 +219,7 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBle
     return diffuseTerm;
 }
 
-float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
+float SpecularBrdf(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
     if (hasCustomFloat10 == 1)
@@ -228,9 +228,9 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, float roughness)
         return Ggx(nDotH, roughness);
 }
 
-vec3 SpecularTerm(float nDotH, vec3 halfAngle, float roughness, vec3 specularIbl, float metalness)
+vec3 SpecularTerm(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
 {
-    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, roughness) * directLightIntensity;
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
     vec3 specularTerm = (directSpecular * CustomBoolean3) + (indirectSpecular * CustomBoolean4);
 
@@ -291,7 +291,9 @@ void main()
     if (hasInkNorMap == 1)
         norColor.xyz = texture(inkNorMap, map1).rga;
 
+
     vec3 fragmentNormal = vertexNormal;
+    vec3 bitangent = normalize(cross(vertexNormal.xyz, vertexNormal.xyz) * tangent.w);
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
@@ -365,7 +367,7 @@ void main()
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
-    vec3 specularPass = SpecularTerm(nDotH, halfAngle, roughness, specularIbl, metalness);
+    vec3 specularPass = SpecularTerm(nDotH, halfAngle, bitangent, roughness, specularIbl, metalness);
     if (renderRimLighting == 1)
         specularPass *= GetSpecularEdgeTint(nDotV);
 
