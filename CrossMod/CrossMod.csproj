@@ -103,6 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\AnimationExport.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
     <Compile Include="GUI\AnimationBar.cs">

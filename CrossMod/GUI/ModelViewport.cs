@@ -1,9 +1,7 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
-using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.Models;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Framebuffers;
@@ -208,7 +206,6 @@ namespace CrossMod.GUI
             }
         }
 
-
         public void RenderAnimationToFolder(string folderPath)
         {
             if (string.IsNullOrEmpty(folderPath))
@@ -311,10 +308,15 @@ namespace CrossMod.GUI
             glViewport.RestartRendering();
         }
 
-        /// <summary>
-        /// Populates the meshes tab, and binds the given model to subcomponents such as the animation bar.
-        /// </summary>
-        /// <param name="model"></param>
+        private void RenderNodes(object sender, EventArgs e)
+        {
+            // TODO: The camera doesn't need to be updated every frame.
+            // This should only need to be called on mouse or keyboard input.
+            UpdateCamera();
+
+            ViewportRenderer.RenderNodes(renderTexture, renderableNodes, camera, ScriptNode);
+        }
+
         private void DisplayMeshes(RModel model)
         {
             animationBar.Model = model;
@@ -395,53 +397,6 @@ namespace CrossMod.GUI
             meshList.Visible = true;
         }
 
-        private void RenderNodes(object sender, EventArgs e)
-        {
-            // Ensure shaders are created before drawing anything.
-            if (!ShaderContainer.HasSetUp)
-                ShaderContainer.SetUpShaders();
-
-            SetUpViewport();
-
-            if (renderTexture != null)
-            {
-                renderTexture.Render(camera);
-            }            
-            else
-            {
-                foreach (var node in renderableNodes)
-                    node.Render(camera);
-
-                ParamNodeContainer.Render(camera);
-                ScriptNode?.Render(camera);
-            }
-        }
-
-        private void SetUpViewport()
-        {
-            ClearViewportBuffers();
-            SetRenderState();
-            UpdateCamera();
-        }
-
-        private static void ClearViewportBuffers()
-        {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
-        }
-
-        private static void SetRenderState()
-        {
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthFunc(DepthFunction.Lequal);
-
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-        }
-
         private void UpdateCamera()
         {
             // Accessing the control properties can't be done on another thread.
@@ -476,7 +431,6 @@ namespace CrossMod.GUI
                 mousePosition = newMousePosition;
                 mouseScrollWheel = newMouseScrollWheel;
             }));
-
         }
 
         private void glViewport_Resize(object sender, EventArgs e)
