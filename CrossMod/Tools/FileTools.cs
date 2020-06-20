@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CrossMod
+namespace CrossMod.Tools
 {
     public class FileTools
     {

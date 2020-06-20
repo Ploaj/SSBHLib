@@ -18,9 +18,8 @@ namespace CrossMod.GUI
     {
         private AnimationBar animationBar;
 
-        private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
-
         // This isn't a dictionary so that render order is preserved.
+        private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
         private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
 
         private IRenderable renderTexture = null;

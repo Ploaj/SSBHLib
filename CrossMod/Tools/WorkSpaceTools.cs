@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IO;
+﻿using CrossMod.GUI;
 using CrossMod.Nodes;
-using CrossMod.GUI;
+using System.Windows.Forms;
 
-namespace CrossMod
+namespace CrossMod.Tools
 {
     public static class WorkSpaceTools
     {
