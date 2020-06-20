@@ -156,7 +156,7 @@ namespace SSBHLib.IO
         {
             foreach (var prop in tObject.GetType().GetProperties())
             {
-                if (ShouldSkipProperty(tObject, prop))
+                if (ShouldSkipProperty<T>(prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
@@ -179,33 +179,33 @@ namespace SSBHLib.IO
         private void SetArray<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
             bool inline = prop.GetValue(tObject) != null;
-            long offset = GetOffset(inline);
-            long size = GetSize(tObject, prop, inline);
+            long absoluteOffset = GetOffset(inline);
+            long dataSize = GetSize(tObject, prop, inline);
 
-            long temp = Position;
+            long previousPosition = Position;
 
             var propElementType = prop.PropertyType.GetElementType();
 
-            Seek(offset);
+            Seek(absoluteOffset);
 
             // Check for the most frequent types first before using reflection.
             if (propElementType == typeof(byte))
-                SetArrayPropertyByte(tObject, prop, size);
+                SetArrayPropertyByte(tObject, prop, dataSize);
             else if (propElementType == typeof(AnimTrack))
-                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, size);
+                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, dataSize);
             else if (propElementType == typeof(AnimNode))
-                SetArrayPropertyIssbh<AnimNode>(tObject, prop, size);
+                SetArrayPropertyIssbh<AnimNode>(tObject, prop, dataSize);
             else if (propElementType == typeof(AnimGroup))
-                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, size);
+                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, dataSize);
             else if (propElementType == typeof(MatlAttribute))
-                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, size);
+                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, dataSize);
             else if (propElementType == typeof(SkelMatrix))
-                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, size);
+                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, dataSize);
             else
-                SetArrayPropertyGeneric(tObject, prop, size, propElementType);
+                SetArrayPropertyGeneric(tObject, prop, dataSize, propElementType);
 
             if (!inline)
-                Seek(temp);
+                Seek(previousPosition);
         }
 
         private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : SsbhFile
@@ -240,11 +240,8 @@ namespace SSBHLib.IO
 
         private void SetArrayPropertyByte(object targetObject, PropertyInfo prop, long size)
         {
-            var array = new byte[size];
-            for (int i = 0; i < size; i++)
-                array[i] = ReadByte();
-
-            prop.SetValue(targetObject, array);
+            // TODO: Size mismatch for bytes read?
+            prop.SetValue(targetObject, ReadBytes((int)size));
         }
 
         private void SetArrayPropertyIssbh<T>(object targetObject, PropertyInfo prop, long size) where T : SsbhFile
@@ -278,7 +275,7 @@ namespace SSBHLib.IO
             prop.SetValue(tObject, ReadString(stringOffset));
         }
 
-        private static bool ShouldSkipProperty<T>(T tObject, PropertyInfo prop) where T : SsbhFile
+        private static bool ShouldSkipProperty<T>(PropertyInfo prop) where T : SsbhFile
         {
             bool shouldSkip = false;
 

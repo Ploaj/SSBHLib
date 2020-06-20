@@ -86,9 +86,20 @@ namespace SSBHLib.Tools
             using (var indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
                 indexBuffer.BaseStream.Position = meshObject.ElementOffset + startPosition * (meshObject.DrawElementType == 1 ? 4 : 2);
-                for (int i = 0; i < count; i++)
+
+                if (meshObject.DrawElementType == 1)
                 {
-                    indices[i] = meshObject.DrawElementType == 1 ? indexBuffer.ReadUInt32() : indexBuffer.ReadUInt16();
+                    for (int i = 0; i < count; i++)
+                    {
+                        indices[i] = indexBuffer.ReadUInt32();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        indices[i] = indexBuffer.ReadUInt16();
+                    }
                 }
             }
 
