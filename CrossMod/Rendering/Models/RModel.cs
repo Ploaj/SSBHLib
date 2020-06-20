@@ -1,9 +1,9 @@
-﻿using OpenTK;
-using System.Linq;
+﻿using CrossMod.Rendering.GlTools;
+using OpenTK;
+using SFGenericModel.Materials;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
-using SFGenericModel.Materials;
 
 namespace CrossMod.Rendering.Models
 {
@@ -12,7 +12,7 @@ namespace CrossMod.Rendering.Models
         public Vector4 BoundingSphere { get; set; }
 
         Matrix4[] boneBinds = new Matrix4[200];
-        public SFGenericModel.Materials.UniformBlock boneUniformBuffer;
+        public UniformBlock boneUniformBuffer;
 
         public List<RMesh> subMeshes = new List<RMesh>();
 
@@ -20,7 +20,7 @@ namespace CrossMod.Rendering.Models
         {
             var shader = ShaderContainer.GetShader("RModel");
             if (shader.LinkStatusIsOk)
-                boneUniformBuffer = new SFGenericModel.Materials.UniformBlock(shader, "Bones");
+                boneUniformBuffer = new UniformBlock(shader, "Bones");
         }
         public void Render(Camera camera)
         {
@@ -113,7 +113,7 @@ namespace CrossMod.Rendering.Models
 
             foreach (RMesh m in opaque)
             {
-                DrawMesh(m, Camera, Skeleton, currentShader, previousMaterialName, previousUniforms);
+                DrawMesh(m, Skeleton, currentShader, previousMaterialName, previousUniforms);
                 previousMaterialName = m.Material.Name;
                 previousUniforms = m.genericMaterial;
             }
@@ -121,12 +121,12 @@ namespace CrossMod.Rendering.Models
             // Draw transparent meshes last for proper alpha blending.
             foreach (RMesh m in transparentDepthSorted)
             {
-                DrawMesh(m, Camera, Skeleton, currentShader, previousMaterialName, previousUniforms);
+                DrawMesh(m, Skeleton, currentShader, previousMaterialName, previousUniforms);
                 previousMaterialName = m.Material.Name;
                 previousUniforms = m.genericMaterial;
             }
         }
-        private static void DrawMesh(RMesh m, Camera camera, RSkeleton skeleton, Shader currentShader, string previousMaterialName, GenericMaterial previousUniforms)
+        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, string previousMaterialName, GenericMaterial previousUniforms)
         {
             if (m.Material != null && m.Material.Name != previousMaterialName)
             {
@@ -134,7 +134,7 @@ namespace CrossMod.Rendering.Models
                 m.RenderMesh.SetRenderState(m.Material);
             }
 
-            m.Draw(currentShader, camera, skeleton);
+            m.Draw(currentShader, skeleton);
         }
     }
 }

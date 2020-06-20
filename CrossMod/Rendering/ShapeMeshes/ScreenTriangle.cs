@@ -4,7 +4,7 @@ using SFGenericModel;
 using System.Collections.Generic;
 using SFGenericModel.VertexAttributes;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.ShapeMeshes
 {
     class ScreenTriangle : GenericMesh<Vector3>
     {

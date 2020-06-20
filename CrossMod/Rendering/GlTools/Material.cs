@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 using SSBHLib.Formats.Materials;
 using SFGraphics.GLObjects.Samplers;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.GlTools
 {
     public class Material
     {

@@ -5,6 +5,7 @@ using SFGraphics.GLObjects.Shaders;
 using SFGraphics.Cameras;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using CrossMod.Rendering.ShapeMeshes;
 
 namespace CrossMod.Rendering
 {

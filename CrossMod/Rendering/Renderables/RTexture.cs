@@ -1,5 +1,7 @@
 ﻿using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Textures;
+using CrossMod.Rendering.ShapeMeshes;
+using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering
 {

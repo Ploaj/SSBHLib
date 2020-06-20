@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering;
-using CrossMod.Rendering.Shapes;
+using CrossMod.Rendering.GlTools;
+using CrossMod.Rendering.ShapeMeshes;
 using CrossMod.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -7,7 +8,6 @@ using paracobNET;
 using SFGraphics.Cameras;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 

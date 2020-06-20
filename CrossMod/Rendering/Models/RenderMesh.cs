@@ -2,6 +2,7 @@
 using SFGenericModel;
 using System.Collections.Generic;
 using System.Linq;
+using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering.Models
 {

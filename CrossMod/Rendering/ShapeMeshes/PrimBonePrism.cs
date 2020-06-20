@@ -4,7 +4,7 @@ using SFGenericModel;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.ShapeMeshes
 {
     public class PrimBonePrism : GenericMesh<Vector4>
     {

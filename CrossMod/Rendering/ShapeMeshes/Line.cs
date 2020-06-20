@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace CrossMod.Rendering.Shapes
+namespace CrossMod.Rendering.ShapeMeshes
 {
     public class Line : GenericMesh<Vector3>
     {

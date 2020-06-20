@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
-namespace CrossMod.Rendering
+namespace CrossMod.Rendering.GlTools
 {
     /// <summary>
     /// Stores all <see cref="Shader"/> instances used for rendering.

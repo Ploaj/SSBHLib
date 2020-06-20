@@ -9,6 +9,7 @@ using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
+using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering
 {

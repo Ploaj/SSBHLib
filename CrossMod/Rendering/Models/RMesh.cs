@@ -1,8 +1,8 @@
-﻿using OpenTK;
-using SFGraphics.Cameras;
-using SFGraphics.GLObjects.Shaders;
+﻿using CrossMod.Rendering.GlTools;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.Materials;
+using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Rendering.Models
 {
@@ -23,10 +23,10 @@ namespace CrossMod.Rendering.Models
 
         public bool Visible { get; set; } = true;
 
-        public SFGenericModel.Materials.GenericMaterial genericMaterial = null;
-        private SFGenericModel.Materials.UniformBlock uniformBlock = null;
+        public GenericMaterial genericMaterial = null;
+        private UniformBlock uniformBlock = null;
 
-        public void Draw(Shader shader, Camera camera, RSkeleton skeleton)
+        public void Draw(Shader shader, RSkeleton skeleton)
         {
             if (!Visible)
                 return;

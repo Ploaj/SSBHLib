@@ -92,7 +92,7 @@ namespace CrossMod
             modelViewport.PauseRendering();
 
             // Force the shaders to be generated again.
-            Rendering.ShaderContainer.ReloadShaders();
+            Rendering.GlTools.ShaderContainer.ReloadShaders();
 
             modelViewport.RestartRendering();
         }
@@ -170,14 +170,14 @@ namespace CrossMod
                 // need to get RSkeleton First for some types
                 if (fileName.EndsWith(".smd") || fileName.EndsWith(".anim"))
                 {
-                    Rendering.RSkeleton skeletonNode = null;
+                    RSkeleton skeletonNode = null;
                     if (FileTools.TryOpenFileDialog(out string skeletonFileName, "SKEL (*.nusktb)|*.nusktb"))
                     {
                         if (skeletonFileName != null)
                         {
                             SkelNode node = new SkelNode(skeletonFileName);
                             node.Open();
-                            skeletonNode = (Rendering.RSkeleton)node.GetRenderableNode();
+                            skeletonNode = (RSkeleton)node.GetRenderableNode();
                         }
                     }
                     if (skeletonNode == null)

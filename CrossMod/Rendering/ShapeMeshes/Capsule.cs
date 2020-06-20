@@ -7,7 +7,7 @@ using SFShapes;
 using System;
 using System.Collections.Generic;
 
-namespace CrossMod.Rendering.Shapes
+namespace CrossMod.Rendering.ShapeMeshes
 {
     public class Capsule : GenericMesh<Vector4>
     {
