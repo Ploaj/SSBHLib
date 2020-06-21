@@ -54,21 +54,21 @@ namespace CrossMod.Nodes
                 {
                     helperNode = node;
                 }
-                if (fileNode is NutexNode nutexNode)
+                else if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
                     if (texture != null && !renderableNode.sfTextureByName.ContainsKey(nutexNode.TexName.ToLower()))
                         renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
                 }
-                if (fileNode.Text.Equals(_model.MeshString))
+                else if (fileNode.Text.Equals(_model.MeshString))
                 {
                     modelNode = (NumsbhNode)fileNode;
                 }
-                if (fileNode.Text.Equals(_model.SkeletonFileName))
+                else if (fileNode.Text.Equals(_model.SkeletonFileName))
                 {
                     renderableNode.Skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
                 }
-                if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
+                else if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
                 {
                     renderableNode.Material = ((MatlNode)fileNode).Material;
                 }

@@ -22,7 +22,7 @@ namespace CrossMod.GUI
 
         private IRenderable renderTexture = null;
 
-        private readonly Camera camera = new Camera() { FarClipPlane = 500000 };
+        public readonly Camera camera = new Camera() { FarClipPlane = 500000 };
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
@@ -375,6 +375,11 @@ namespace CrossMod.GUI
             boneTree.Nodes.Clear();
             meshList.Items.Clear();
             controlBox.Visible = false;
+        }
+
+        public void SwapBuffers()
+        {
+            glViewport.SwapBuffers();
         }
 
         public void RenderFrame()

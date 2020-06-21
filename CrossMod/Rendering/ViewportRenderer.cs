@@ -20,7 +20,7 @@ namespace CrossMod.Rendering
             {
                 renderTexture.Render(camera);
             }
-            else
+            else if (renderableNodes != null)
             {
                 foreach (var node in renderableNodes)
                     node.Render(camera);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CrossMod.Nodes
 {
@@ -10,7 +11,7 @@ namespace CrossMod.Nodes
     /// Class for all Directory entries in the file system. Executing Open()
     /// populates sub-nodes, and executing OpenNodes() calls Open() on all sub-nodes.
     /// </summary>
-    class DirectoryNode : FileNode
+    public class DirectoryNode : FileNode
     {
         private bool isOpened = false;
         private bool isNestedOpened = false;
@@ -20,6 +21,8 @@ namespace CrossMod.Nodes
                                                             from assemblyType in domainAssembly.GetTypes()
                                                             where typeof(FileNode).IsAssignableFrom(assemblyType)
                                                             select assemblyType).ToList();
+
+        private static readonly Dictionary<string, Type> typeByExtension = new Dictionary<string, Type>();
 
         /// <summary>
         /// Creates a new DirectoryNode. The FilePath is set to the given value
@@ -72,11 +75,14 @@ namespace CrossMod.Nodes
                 return;
             }
 
+            // Some nodes take a while to open, so use a threadpool to save time.
+            var openNodes = new List<Task>();
             foreach (var node in Nodes)
             {
-                (node as FileNode)?.Open();
+                openNodes.Add(Task.Run(() => (node as FileNode)?.Open()));               
             }
 
+            Task.WaitAll(openNodes.ToArray());
             isNestedOpened = true;
         }
 
@@ -94,16 +100,9 @@ namespace CrossMod.Nodes
 
             string extension = Path.GetExtension(file);
 
-            foreach (var type in Types)
-            {
-                if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
-                {
-                    if (attr.Extension.Equals(extension))
-                    {
-                        fileNode = (FileNode)Activator.CreateInstance(type, file);
-                    }
-                }
-            }
+            var type = GetType(extension);
+            if (type != null)
+                fileNode = (FileNode)Activator.CreateInstance(type, file);
 
             if (fileNode == null)
                 fileNode = new FileNode(file);
@@ -116,6 +115,37 @@ namespace CrossMod.Nodes
 
             fileNode.Text = Path.GetFileName(file);
             return fileNode;
+        }
+
+        private static Type GetType(string extension)
+        {
+            // Cache results to avoid doing lots of lookups.
+            // TODO: Hard code the common types into the dictionary initialization.
+            if (typeByExtension.ContainsKey(extension))
+            {
+                return typeByExtension[extension];
+            }
+            else
+            {
+                var type = FindType(extension);
+                typeByExtension[extension] = type;
+                return type;
+            }
+        }
+
+        private static Type FindType(string extension)
+        {
+            foreach (var type in fileNodeTypes)
+            {
+                if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
+                {
+                    if (attr.Extension.Equals(extension))
+                    {
+                        return type;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

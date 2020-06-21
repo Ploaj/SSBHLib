@@ -15,7 +15,7 @@ namespace CrossMod.Tools
         /// <param name="folderPath"></param>
         public static void LoadWorkspace(TreeView fileTree, ModelViewport modelViewport, string folderPath)
         {
-            var mainNode = CreateDirectoryNodeAndOpenSubNodes(folderPath);
+            var mainNode = CreateDirectoryNodeAndExpand(folderPath);
             AssignNodesAndSelectNumdlb(fileTree, modelViewport, mainNode);
         }
 
@@ -25,8 +25,7 @@ namespace CrossMod.Tools
             ParamNodeContainer.Unload();
             viewport.ClearFiles();
         }
-
-        private static DirectoryNode CreateDirectoryNodeAndOpenSubNodes(string folderPath)
+        public static DirectoryNode CreateDirectoryNodeAndExpand(string folderPath)
         {
             var mainNode = new DirectoryNode(folderPath);
             mainNode.Open();
