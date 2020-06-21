@@ -59,7 +59,7 @@ namespace CrossMod.Tools
                     RenderModel(modelViewport, nodes);
 
                     // Screenshots will be saved later to improve performance.
-                    //imagesToSave.Enqueue(new SaveImageWorkItem(modelViewport.GetScreenshot(), folderPath, file, outputPath));
+                    imagesToSave.Enqueue(new SaveImageWorkItem(modelViewport.GetScreenshot(), folderPath, file, outputPath));
                 }
                 catch (Exception)
                 {
