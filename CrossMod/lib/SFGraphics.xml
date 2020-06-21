@@ -1012,7 +1012,6 @@
         <member name="M:SFGraphics.GLObjects.Shaders.Shader.AttachShader(System.Int32,OpenTK.Graphics.OpenGL.ShaderType,System.String)">
             <summary>
             Attaches <paramref name="shaderId"/> and links the program. 
-            The value for <see cref="P:SFGraphics.GLObjects.Shaders.Shader.LinkStatusIsOk"/> is updated.
             </summary>
             <param name="shaderId">The integer ID returned by <see cref="M:SFGraphics.GLObjects.Shaders.Shader.CreateGlShader(System.String,OpenTK.Graphics.OpenGL.ShaderType)"/></param>
             <param name="shaderType">The type of shader.
@@ -1067,16 +1066,16 @@
             <param name="binaryFormat">The platform specific binary format</param>
             <returns><c>true</c> if the binary was successfully created</returns>
         </member>
-        <member name="M:SFGraphics.GLObjects.Shaders.Shader.LoadProgramBinary(System.Byte[],OpenTK.Graphics.OpenGL.BinaryFormat)">
+        <member name="M:SFGraphics.GLObjects.Shaders.Shader.TryLoadProgramBinary(System.Byte[],OpenTK.Graphics.OpenGL.BinaryFormat)">
             <summary>
             Loads the entire program from the compiled binary and format.
-            The value returned by <see cref="P:SFGraphics.GLObjects.Shaders.Shader.LinkStatusIsOk"/> is updated.
             <para></para><para></para>
             Hardware or software changes may cause compatibility issues with the program binary.
             If program creation fails with precompiled binaries, resort to compiling the shaders from source. 
             </summary>
             <param name="binaryFormat">The format of the compiled binary</param>
             <param name="programBinary">The compiled program binary</param>
+            <returns><c>true</c> if the binary was loaded successfully</returns>
         </member>
         <member name="M:SFGraphics.GLObjects.Shaders.Shader.GetShaderSources">
             <summary>

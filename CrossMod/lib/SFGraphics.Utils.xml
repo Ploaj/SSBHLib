@@ -244,7 +244,7 @@
             <param name="normal">The vertex normal</param>
             <param name="tangent"></param>
             <param name="bitangent"></param>
-            <returns><code>1.0</code> if the bitangent should not flipped, <code>-1.0</code> if the bitangent should be flipped</returns>
+            <returns><code>1.0</code> if the bitangent should not be flipped, <code>-1.0</code> if the bitangent should be flipped</returns>
         </member>
         <member name="T:SFGraphics.Utils.VertexOptimization">
             <summary>

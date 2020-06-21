@@ -293,7 +293,7 @@ void main()
 
 
     vec3 fragmentNormal = vertexNormal;
-    vec3 bitangent = normalize(cross(vertexNormal.xyz, tangent.xyz) * tangent.w);
+    vec3 bitangent = normalize(cross(vertexNormal.xyz, tangent.xyz) * tangent.w * -1);
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
