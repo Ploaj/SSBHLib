@@ -136,7 +136,7 @@ namespace CrossMod.Nodes
             var uvSet1Values = ReadAttributeOrSetZero("uvSet1", meshObject, vertexAccessor);
             var uvSet2Values = ReadAttributeOrSetZero("uvSet2", meshObject, vertexAccessor);
             var bake1Values = ReadAttributeOrSetZero("bake1", meshObject, vertexAccessor);
-            var colorSet1Values = ReadAttributeOrSet255("colorSet1", meshObject, vertexAccessor);
+            var colorSet1Values = ReadAttributeOrSetDefault("colorSet1", meshObject, vertexAccessor, 128f);
             var colorSet2Values = ReadAttributeOrSetZero("colorSet2", meshObject, vertexAccessor);
             var colorSet21Values = ReadAttributeOrSetZero("colorSet2_1", meshObject, vertexAccessor);
             var colorSet22Values = ReadAttributeOrSetZero("colorSet2_2", meshObject, vertexAccessor);
@@ -165,7 +165,8 @@ namespace CrossMod.Nodes
             return vertices;
         }
 
-        private static SsbhVertexAttribute[] ReadAttributeOrSetZero(string name, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
+        private static SsbhVertexAttribute[] ReadAttributeOrSetZero(string name, MeshObject meshObject,
+            SsbhVertexAccessor vertexAccessor)
         {
             // Accessors return length 0 when the attribute isn't present.
             var result = vertexAccessor.ReadAttribute(name, 0, meshObject.VertexCount, meshObject);
@@ -174,7 +175,8 @@ namespace CrossMod.Nodes
             return result;
         }
 
-        private static SsbhVertexAttribute[] ReadAttributeOrSet255(string name, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
+        private static SsbhVertexAttribute[] ReadAttributeOrSetDefault(string name, MeshObject meshObject,
+            SsbhVertexAccessor vertexAccessor, float defaultValue)
         {
             // Accessors return length 0 when the attribute isn't present.
             var result = vertexAccessor.ReadAttribute(name, 0, meshObject.VertexCount, meshObject);
@@ -183,7 +185,7 @@ namespace CrossMod.Nodes
                 result = new SsbhVertexAttribute[meshObject.VertexCount];
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = new SsbhVertexAttribute(255f, 255f, 255f, 255f);
+                    result[i] = new SsbhVertexAttribute(defaultValue, defaultValue, defaultValue, defaultValue);
                 }
             }
             return result;
