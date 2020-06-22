@@ -9,6 +9,6 @@ namespace CrossModGui.ViewModels
 {
     public class MainWindowViewModel
     {
-        public ObservableCollection<FileTreeItem> FileTreeItems { get; } = new ObservableCollection<FileTreeItem>();
+        public ObservableCollection<CrossMod.Nodes.FileNode> FileTreeItems { get; } = new ObservableCollection<CrossMod.Nodes.FileNode>();
     }
 }

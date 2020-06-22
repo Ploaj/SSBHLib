@@ -1,4 +1,5 @@
 ﻿using CrossMod.GUI;
+using CrossMod.Nodes;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
 using Microsoft.Win32;
@@ -53,8 +54,21 @@ namespace CrossModGui
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
         {
-            // TODO:
-            ViewModel.FileTreeItems.Add(new FileTreeItem { Text = "parent", Children = new List<FileTreeItem>() { new FileTreeItem { Text = "child" } } });
+            if (CrossMod.Tools.FileTools.TryOpenFolderDialog(out string folderPath))
+            {
+                // Populate the treeview with the folder structure.
+                // TODO: Don't populate subnodes until expanding the directory node.
+                var rootNode = new DirectoryNode(folderPath);
+                rootNode.OpenRecursive();
+
+                ViewModel.FileTreeItems.Clear();
+                ViewModel.FileTreeItems.Add(rootNode);
+            }
+        }
+
+        private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.FileTreeItems.Clear();
         }
     }
 }

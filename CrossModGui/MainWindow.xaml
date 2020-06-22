@@ -11,7 +11,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Open Folder (Ctrl + O)" Click="OpenFolder_Click"/>
-                <MenuItem Header="Clear Workspace" />
+                <MenuItem Header="Clear Workspace" Click="ClearWorkspace_Click"/>
                 <Separator></Separator>
                 <MenuItem Header="Reload Scripts"/>
                 <MenuItem Header="Reload Shaders"/>
@@ -41,9 +41,8 @@
             </Grid.ColumnDefinitions>
             <TreeView Grid.Column="0" ItemsSource="{Binding FileTreeItems}">
                 <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding IconPath}" Width="30" Height="30"></Image>
                             <TextBlock Text="{Binding Text}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>

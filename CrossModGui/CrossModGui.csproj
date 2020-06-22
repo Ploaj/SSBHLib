@@ -35,12 +35,43 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AnimatedGif">
+      <HintPath>..\CrossMod\Lib\AnimatedGif.dll</HintPath>
+    </Reference>
+    <Reference Include="GenericValueEditor">
+      <HintPath>..\CrossMod\Lib\GenericValueEditor.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="paracobNET">
+      <HintPath>..\CrossMod\Lib\paracobNET.dll</HintPath>
+    </Reference>
+    <Reference Include="SELib">
+      <HintPath>..\CrossMod\Lib\SELib.dll</HintPath>
+    </Reference>
+    <Reference Include="SFGenericModel">
+      <HintPath>..\CrossMod\Lib\SFGenericModel.dll</HintPath>
+    </Reference>
+    <Reference Include="SFGraphics">
+      <HintPath>..\CrossMod\Lib\SFGraphics.dll</HintPath>
+    </Reference>
+    <Reference Include="SFGraphics.Controls">
+      <HintPath>..\CrossMod\Lib\SFGraphics.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="SFGraphics.Utils">
+      <HintPath>..\CrossMod\Lib\SFGraphics.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SFShaderLoader">
+      <HintPath>..\CrossMod\Lib\SFShaderLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="SFShapes">
+      <HintPath>..\CrossMod\Lib\SFShapes.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -53,6 +84,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

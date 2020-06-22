@@ -65,10 +65,32 @@ namespace CrossMod.Nodes
         }
 
         /// <summary>
+        /// Recursively adds all subnodes to this node.
+        /// File nodes are not opened.
+        /// </summary>
+        public void OpenRecursive()
+        {
+            // TODO: Opening multiple times.
+            foreach (var name in Directory.EnumerateFileSystemEntries(AbsolutePath))
+            {
+                if (Directory.Exists(name))
+                {
+                    var dirNode = new DirectoryNode(name, isRoot: false);
+                    Nodes.Add(dirNode);
+                    dirNode.OpenRecursive();
+                }
+                else
+                {
+                    Nodes.Add(CreateFileNode(fileNodeTypes, name));
+                }
+            }
+        }
+
+        /// <summary>
         /// Opens all nodes. Make sure to call after Open().
         /// Repeated executions result in a no-op.
         /// </summary>
-        public void OpenNodes()
+        public void OpenSubNodes()
         {
             if (isNestedOpened)
             {
