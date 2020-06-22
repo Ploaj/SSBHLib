@@ -79,7 +79,11 @@ namespace CrossMod.Nodes
             var openNodes = new List<Task>();
             foreach (var node in Nodes)
             {
-                openNodes.Add(Task.Run(() => (node as FileNode)?.Open()));               
+                // Don't modify UI elements from other threads.
+                if (node is DirectoryNode directory)
+                    directory.Open();
+                else
+                    openNodes.Add(Task.Run(() => (node as FileNode)?.Open()));               
             }
 
             Task.WaitAll(openNodes.ToArray());
