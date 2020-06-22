@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrossModGui.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,12 @@ namespace CrossModGui.Views
     /// </summary>
     public partial class CameraSettingsWindow : Window
     {
-        public CameraSettingsWindow()
+        public CameraSettingsWindowViewModel ViewModel { get; }
+
+        public CameraSettingsWindow(CameraSettingsWindowViewModel viewModel)
         {
+            ViewModel = viewModel;
+            DataContext = ViewModel;
             InitializeComponent();
         }
     }

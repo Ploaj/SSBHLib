@@ -1,7 +1,10 @@
 ﻿using CrossMod.GUI;
+using CrossModGui.ViewModels;
 using CrossModGui.Views;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,21 +25,36 @@ namespace CrossModGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindowViewModel ViewModel { get; }
+
+        // TODO: Link view models to model classes.
+        private readonly RenderSettingsWindowViewModel renderSettingsViewModel = new RenderSettingsWindowViewModel();
+        private readonly CameraSettingsWindowViewModel cameraSettingsViewModel = new CameraSettingsWindowViewModel();
+
+        public MainWindow(MainWindowViewModel viewModel)
         {
+            ViewModel = viewModel;
+            DataContext = viewModel;
             InitializeComponent();
         }
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
-            var window = new RenderSettingsWindow();
+            // TODO: Link render settings to the view model.
+            var window = new RenderSettingsWindow(renderSettingsViewModel);
             window.Show();
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CameraSettingsWindow();
+            var window = new CameraSettingsWindow(cameraSettingsViewModel);
             window.Show();
+        }
+
+        private void OpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO:
+            ViewModel.FileTreeItems.Add(new FileTreeItem { Text = "parent", Children = new List<FileTreeItem>() { new FileTreeItem { Text = "child" } } });
         }
     }
 }

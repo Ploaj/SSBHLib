@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrossModGui.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,10 @@ namespace CrossModGui
     /// </summary>
     public partial class App : Application
     {
+        void App_Startup(object sender, StartupEventArgs e)
+        {
+            MainWindow = new MainWindow(new MainWindowViewModel());
+            MainWindow.Show();
+        }
     }
 }

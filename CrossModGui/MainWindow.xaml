@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui"
+        xmlns:vms="clr-namespace:CrossModGui.ViewModels"
         mc:Ignorable="d"
         Title="Cross Mod" Height="450" Width="800">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open Folder (Ctrl + O)" />
+                <MenuItem Header="Open Folder (Ctrl + O)" Click="OpenFolder_Click"/>
                 <MenuItem Header="Clear Workspace" />
                 <Separator></Separator>
                 <MenuItem Header="Reload Scripts"/>
@@ -32,16 +33,46 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <DockPanel>
-            <ListView>
-                <ListViewItem>Test</ListViewItem>
-                <ListViewItem>Test</ListViewItem>
-                <ListViewItem>Test</ListViewItem>
-
-            </ListView>
-            <Grid>
-                <!--TODO: Insert viewport-->
-            </Grid>
-        </DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Grid.Column="0" ItemsSource="{Binding FileTreeItems}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding IconPath}" Width="30" Height="30"></Image>
+                            <TextBlock Text="{Binding Text}" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+            <Button Grid.Column="1">TODO: Viewport</Button>
+            <TabControl Grid.Column="2">
+                <TabItem Header="Meshes">
+                    <ListView>
+                        <ListViewItem>
+                            <CheckBox>Test</CheckBox>
+                        </ListViewItem>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="Bones">
+                    <TreeView>
+                        <TreeViewItem Header="a">
+                            <TreeViewItem Header="b">
+                                
+                            </TreeViewItem>
+                        </TreeViewItem>
+                    </TreeView>
+                </TabItem>
+            </TabControl>
+        </Grid>
     </DockPanel>
 </Window>

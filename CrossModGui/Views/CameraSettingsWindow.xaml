@@ -20,11 +20,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0">X (Scene Units)</Label>
-                <TextBox Grid.Row="0" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PositionX}"></TextBox>
                 <Label Grid.Row="1" Grid.Column="0">Y (Scene Units))</Label>
-                <TextBox Grid.Row="1" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PositionY}"></TextBox>
                 <Label Grid.Row="2" Grid.Column="0">Z (Scene Units)</Label>
-                <TextBox Grid.Row="2" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PositionZ}"></TextBox>
             </Grid>
         </GroupBox>
         <GroupBox Header="Rotation">
@@ -40,11 +40,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0">X (Degrees)</Label>
-                <TextBox Grid.Row="0" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RotationXDegrees}"></TextBox>
                 <Label Grid.Row="1" Grid.Column="0">Y (Degrees)</Label>
-                <TextBox Grid.Row="1" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RotationYDegrees}"></TextBox>
                 <Label Grid.Row="2" Grid.Column="0">Z (Degrees)</Label>
-                <TextBox Grid.Row="2" Grid.Column="1">0.0</TextBox>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RotationZDegrees}"></TextBox>
             </Grid>
         </GroupBox>
     </StackPanel>

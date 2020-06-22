@@ -9,9 +9,9 @@
     <StackPanel>
         <Expander Header="Render Passes">
             <StackPanel>
-                <CheckBox>Enable Diffuse</CheckBox>
-                <CheckBox>Enable Specular</CheckBox>
-                <CheckBox>Enable Emission</CheckBox>
+                <CheckBox IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
+                <CheckBox IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
+                <CheckBox IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Lighting">
@@ -27,19 +27,19 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0">Direct Light Intensity</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1">1.0</TextBox>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectLightIntensity}"></TextBox>
                     <Slider Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="100" Value="50"></Slider>
-                    <Label Grid.Row="1" Grid.Column="0">Indirect Light Intensity</Label>
-                    <TextBox Grid.Row="1" Grid.Column="1">1.0</TextBox>
+                    <Label Grid.Row="1" Grid.Column="0" >Indirect Light Intensity</Label>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IndirectLightIntensity}"></TextBox>
                     <Slider Grid.Row="1" Grid.Column="2" Minimum="0" Maximum="100" Value="50"></Slider>
                 </Grid>
             </StackPanel>
         </Expander>
         <Expander Header="Materials">
             <StackPanel>
-                <CheckBox>Enable Normal Maps</CheckBox>
-                <CheckBox>Enable Vertex Color</CheckBox>
-                <CheckBox>Enable Edge Tint</CheckBox>
+                <CheckBox IsChecked="{Binding EnableNormalMaps}">Enable Normal Maps</CheckBox>
+                <CheckBox IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
+                <CheckBox IsChecked="{Binding EnableEdgeTint}">Enable Edge Tint</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
@@ -50,16 +50,19 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0">Render Mode</Label>
-                    <ComboBox Grid.Column="1">
-                        <!--TODO: Bind items-->
+                    <ComboBox Name="fooBarComboBox" 
+                      ItemsSource="{Binding DescriptionByRenderMode}" 
+                      DisplayMemberPath="Value" 
+                      SelectedValuePath="Key"
+                      SelectedValue="{Binding SelectedRenderMode}">
                     </ComboBox>
                 </Grid>
                 <GroupBox Header="Channel Toggles">
                     <StackPanel>
-                        <CheckBox>Enable Red Channel</CheckBox>
-                        <CheckBox>Enable Green Channel</CheckBox>
-                        <CheckBox>Enable Blue Channel</CheckBox>
-                        <CheckBox>Enable Alpha Channel</CheckBox>
+                        <CheckBox IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
+                        <CheckBox IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
+                        <CheckBox IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
+                        <CheckBox IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Material Param Debug Shading">
@@ -69,7 +72,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0">Param Name</Label>
-                        <TextBox Grid.Column="1">CustomVector11</TextBox>
+                        <TextBox Grid.Column="1" Text="{Binding ParamName}"></TextBox>
                     </Grid>
                 </GroupBox>
             </StackPanel>
