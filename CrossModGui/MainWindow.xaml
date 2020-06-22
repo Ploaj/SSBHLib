@@ -1,0 +1,47 @@
+﻿<Window x:Class="CrossModGui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CrossModGui"
+        mc:Ignorable="d"
+        Title="Cross Mod" Height="450" Width="800">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open Folder (Ctrl + O)" />
+                <MenuItem Header="Clear Workspace" />
+                <Separator></Separator>
+                <MenuItem Header="Reload Scripts"/>
+                <MenuItem Header="Reload Shaders"/>
+            </MenuItem>
+            <MenuItem Header="Viewport">
+                <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
+                <MenuItem Header="Camera" Click="Camera_Click"/>
+                <MenuItem Header="Hitbox/Hurtbox Selector"/>
+                <Separator></Separator>
+                <MenuItem Header="Frame Model" />
+                <MenuItem Header="Clear Viewport"/>
+            </MenuItem>
+            <MenuItem Header="Experimental">
+                <MenuItem Header="Batch Render Models" />
+                <MenuItem Header="Animation Export Options">
+                    <MenuItem Header="Export Animation to Gif"/>
+                    <MenuItem Header="Export Animation to Folder"/>
+                    <MenuItem Header="Export Current Frame to Bitmmap"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <DockPanel>
+            <ListView>
+                <ListViewItem>Test</ListViewItem>
+                <ListViewItem>Test</ListViewItem>
+                <ListViewItem>Test</ListViewItem>
+
+            </ListView>
+            <Grid>
+                <!--TODO: Insert viewport-->
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</Window>

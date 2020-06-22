@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HBSSTester", "HBSSTester\HBSSTester.csproj", "{938ED26A-8FA1-400D-B0FC-AC5B120A6912}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatLab", "MatLab\MatLab.csproj", "{6942BDEB-F328-4B32-8A6E-9100FD3604F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuanmbToJson", "NuanmbToJson\NuanmbToJson.csproj", "{386984B1-122C-4B6C-9B18-F5C2FC8B3E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossModGui", "CrossModGui\CrossModGui.csproj", "{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{386984B1-122C-4B6C-9B18-F5C2FC8B3E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{386984B1-122C-4B6C-9B18-F5C2FC8B3E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{386984B1-122C-4B6C-9B18-F5C2FC8B3E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
