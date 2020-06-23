@@ -105,6 +105,8 @@ namespace CrossMod.GUI
 
         public void UpdateGui(IRenderable newNode)
         {
+            ClearBonesAndMeshList();
+
             // Duplicate nodes should still update the mesh list.
             if (newNode is RSkeleton skeleton)
             {
