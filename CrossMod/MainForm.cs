@@ -71,30 +71,26 @@ namespace CrossMod
 
             if (fileTree.SelectedNode is NutexNode texture)
             {
-                modelViewport.UpdateTexture(texture);
+                modelViewport.Renderer.UpdateTexture(texture);
             }
             else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
                 var node = (FileNode)fileTree.SelectedNode;
-                modelViewport.AddRenderableNode(node.AbsolutePath, renderableNode);
-                modelViewport.UpdateTexture(null);
+                modelViewport.Renderer.AddRenderableNode(node.AbsolutePath, renderableNode);
+                modelViewport.UpdateGui(renderableNode.GetRenderableNode());
+                modelViewport.Renderer.UpdateTexture(null);
             }
             else if (fileTree.SelectedNode is NuanimNode animation)
             {
                 modelViewport.RenderableAnimation = (Rendering.IRenderableAnimation)animation.GetRenderableNode();
-                modelViewport.UpdateTexture(null);
+                modelViewport.Renderer.UpdateTexture(null);
             }
         }
 
         private void reloadShadersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Make sure the context is current on this thread.
-            modelViewport.PauseRendering();
-
             // Force the shaders to be generated again.
-            Rendering.GlTools.ShaderContainer.ReloadShaders();
-
-            modelViewport.RestartRendering();
+            modelViewport.Renderer.ReloadShaders();
         }
 
         private void renderSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -149,18 +145,17 @@ namespace CrossMod
 
         private void ExportExportableTexture(object sender, EventArgs args)
         {
-            modelViewport.PauseRendering();
-            
-            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
+            modelViewport.Renderer.SwitchContextToCurrentThreadAndPerformAction(() =>
             {
-                // need to get RSkeleton First for some types
-                if (fileName.EndsWith(".png"))
+                if (FileTools.TryOpenSaveFileDialog(out string fileName, "Portable Networks Graphic(*.png)|*.png", ((MenuItem)sender).Tag.ToString()))
                 {
-                    ((IExportableTextureNode)((MenuItem)sender).Tag).SaveTexturePNG(fileName);
+                    // need to get RSkeleton First for some types
+                    if (fileName.EndsWith(".png"))
+                    {
+                        ((IExportableTextureNode)((MenuItem)sender).Tag).SaveTexturePNG(fileName);
+                    }
                 }
-            }
-
-            modelViewport.RestartRendering();
+            });
         }
 
         private void ExportExportableAnimation(object sender, EventArgs args)
@@ -248,7 +243,7 @@ namespace CrossMod
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            modelViewport.FrameSelection();
+            modelViewport.Renderer.FrameSelection();
         }
 
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)

@@ -58,8 +58,8 @@ namespace CrossMod.Tools
                     var nodes = GetRenderableNodes(sourceFolder);
                     RenderModel(modelViewport, nodes);
 
-                    // Screenshots will be saved later to improve performance.
-                    imagesToSave.Enqueue(new SaveImageWorkItem(modelViewport.GetScreenshot(), folderPath, file, outputPath));
+                    // Screenshots will be saved and disposed later to improve performance.
+                    imagesToSave.Enqueue(new SaveImageWorkItem(modelViewport.Renderer.GetScreenshot(), folderPath, file, outputPath));
                 }
                 catch (Exception)
                 {
@@ -86,9 +86,9 @@ namespace CrossMod.Tools
             {
                 var rnumdl = nodes[0] as Rnumdl;
                 if (rnumdl?.Model != null)
-                    modelViewport.camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
+                    modelViewport.Renderer.Camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
             }
-            ViewportRenderer.RenderNodes(null, nodes, modelViewport.camera, null);
+            modelViewport.Renderer.RenderNodes(null);
             modelViewport.SwapBuffers();
         }
 

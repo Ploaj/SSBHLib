@@ -3,7 +3,6 @@ using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
 using OpenTK;
 using OpenTK.Input;
-using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
 using System;
@@ -14,15 +13,10 @@ namespace CrossMod.GUI
 {
     public partial class ModelViewport : UserControl
     {
+        public ViewportRenderer Renderer { get; }
+
         private AnimationBar animationBar;
 
-        // This isn't a dictionary so that render order is preserved.
-        private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
-        private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
-
-        private IRenderable renderTexture = null;
-
-        public readonly Camera camera = new Camera() { FarClipPlane = 500000 };
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
@@ -45,115 +39,25 @@ namespace CrossMod.GUI
         public ModelViewport()
         {
             InitializeComponent();
+            Renderer = new ViewportRenderer(glViewport);
             AddAnimationBar();
             CreateRenderFrameEvents();
         }
 
-        public void RestartRendering()
-        {
-            glViewport.RestartRendering();
-        }
-
-        public void PauseRendering()
-        {
-            glViewport.PauseRendering();
-        }
-
-        public void UpdateTexture(NutexNode texture)
-        {
-            var wasRendering = glViewport.IsRendering;
-            PauseRendering();
-
-            var node = texture?.GetRenderableNode();
-            renderTexture = node;
-
-            if (wasRendering)
-                RestartRendering();
-        }
-
-        public void AddRenderableNode(string name, IRenderableNode value)
-        {
-            var wasRendering = glViewport.IsRendering;
-
-            // Make sure the context is current on this thread.
-            PauseRendering();
-
-            ClearBonesAndMeshList();
-
-            if (value == null)
-                return;
-
-            var newNode = value.GetRenderableNode();
-
-            // Prevent duplicates. Paths should be unique.
-            if (!renderableNodeNames.Contains(name))
-            {
-                renderableNodes.Add(newNode);
-                renderableNodeNames.Add(name);
-            }
-
-            // Duplicate nodes should still update the mesh list.
-            if (newNode is RSkeleton skeleton)
-            {
-                AddSkeletonToGui(skeleton);
-            }
-            else if (newNode is IRenderableModel renderableModel)
-            {
-                AddMeshesToGui(renderableModel.GetModel());
-                AddSkeletonToGui(renderableModel.GetSkeleton());
-            }
-
-            if (value is NumdlNode)
-            {
-                FrameSelection();
-            }
-
-            if (wasRendering)
-                RestartRendering();
-        }
-
-        public void FrameSelection()
-        {
-            // Bounding spheres will help account for the vastly different model sizes.
-            var spheres = new List<Vector4>();
-            foreach (var node in renderableNodes)
-            {
-                if (node is Rnumdl rnumdl && rnumdl.Model != null)
-                {
-                    spheres.Add(rnumdl.Model.BoundingSphere);
-                }
-            }
-
-            var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
-            camera.FrameBoundingSphere(allModelBoundingSphere, 0);
-        }
-
         public void ClearFiles()
         {
-            // Pause frame updates so we don't access the render nodes while clearing them.
-            bool wasRendering = glViewport.IsRendering;
-            glViewport.PauseRendering();
-
             animationBar.Clear();
-
-            renderableNodes.Clear();
-            renderableNodeNames.Clear();
-
             meshList.Clear();
             boneTree.Nodes.Clear();
-
             ParamNodeContainer.HitData = new Collision[0];
 
-            GC.WaitForPendingFinalizers();
-            GLObjectManager.DeleteUnusedGLObjects();
-
-            if (wasRendering)
-                glViewport.RestartRendering();
+            Renderer.ClearRenderableNodes();
         }
 
-        public System.Drawing.Bitmap GetScreenshot()
+        public void SaveScreenshot(string filePath)
         {
-            return Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
+            using (var bmp = Renderer.GetScreenshot())
+                bmp.Save(filePath);
         }
 
         public void ResetAnimation()
@@ -161,16 +65,9 @@ namespace CrossMod.GUI
             animationBar.Frame = 0f;
         }
 
-        public void SaveScreenshot(string filePath)
-        {
-            glViewport.PauseRendering();
-            Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, false).Save(filePath);
-            glViewport.RestartRendering();
-        }
-
         public CameraControl GetCameraControl()
         {
-            return new CameraControl(camera);
+            return new CameraControl(Renderer.Camera);
         }
 
         public void Close()
@@ -203,6 +100,20 @@ namespace CrossMod.GUI
                         ((RMesh)item.Tag).Visible = false;
                     }
                 }
+            }
+        }
+
+        public void UpdateGui(IRenderable newNode)
+        {
+            // Duplicate nodes should still update the mesh list.
+            if (newNode is RSkeleton skeleton)
+            {
+                AddSkeletonToGui(skeleton);
+            }
+            else if (newNode is IRenderableModel renderableModel)
+            {
+                AddMeshesToGui(renderableModel.GetModel());
+                AddSkeletonToGui(renderableModel.GetSkeleton());
             }
         }
 
@@ -314,7 +225,7 @@ namespace CrossMod.GUI
             // This should only need to be called on mouse or keyboard input.
             UpdateCamera();
 
-            ViewportRenderer.RenderNodes(renderTexture, renderableNodes, camera, ScriptNode);
+            Renderer.RenderNodes(ScriptNode);
         }
 
         private void AddMeshesToGui(RModel model)
@@ -420,19 +331,19 @@ namespace CrossMod.GUI
                 {
                     if (mouseState.IsButtonDown(MouseButton.Left))
                     {
-                        camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
-                        camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
+                        Renderer.Camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
+                        Renderer.Camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
                     }
                     if (mouseState.IsButtonDown(MouseButton.Right))
                     {
-                        camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
+                        Renderer.Camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
                     }
                     if (keyboardState.IsKeyDown(Key.W))
-                        camera.Zoom(0.5f);
+                        Renderer.Camera.Zoom(0.5f);
                     if (keyboardState.IsKeyDown(Key.S))
-                        camera.Zoom(-0.5f);
+                        Renderer.Camera.Zoom(-0.5f);
 
-                    camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
+                    Renderer.Camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
                 }
 
                 mousePosition = newMousePosition;
@@ -443,8 +354,8 @@ namespace CrossMod.GUI
         private void glViewport_Resize(object sender, EventArgs e)
         {
             // Adjust for changing render dimensions.
-            camera.RenderWidth = glViewport.Width;
-            camera.RenderHeight = glViewport.Height;
+            Renderer.Camera.RenderWidth = glViewport.Width;
+            Renderer.Camera.RenderHeight = glViewport.Height;
 
             glViewport.RenderFrame();
         }
