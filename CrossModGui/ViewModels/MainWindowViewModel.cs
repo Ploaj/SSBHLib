@@ -111,7 +111,7 @@ namespace CrossModGui.ViewModels
 
             foreach (var mesh in model.subMeshes)
             {
-                MeshListItems.Add(new MainWindowViewModel.MeshListItem
+                MeshListItems.Add(new MeshListItem
                 {
                     Name = mesh.Name,
                     IsChecked = mesh.Visible
