@@ -54,7 +54,5 @@ namespace CrossModGui.ViewModels
         public bool EnableAlpha { get; set; }
 
         public string ParamName { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

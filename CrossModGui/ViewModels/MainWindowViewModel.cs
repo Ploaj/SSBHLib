@@ -32,6 +32,21 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
+        public int CurrentFrame 
+        {
+            get => currentFrame;
+            set
+            {
+                if (value > TotalFrames)
+                    currentFrame = TotalFrames;
+                else
+                    currentFrame = value;
+            }
+        }
+        private int currentFrame;
+
+        public int TotalFrames { get; set; }
+
         public void Clear()
         {
             FileTreeItems.Clear();
