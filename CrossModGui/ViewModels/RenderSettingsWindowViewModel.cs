@@ -5,6 +5,7 @@ namespace CrossModGui.ViewModels
 {
     public class RenderSettingsWindowViewModel
     {
+        // Workaround to get enums to work with MVVM.
         public Dictionary<RenderSettings.RenderMode, string> DescriptionByRenderMode { get; } = new Dictionary<RenderSettings.RenderMode, string>()
         {
             { RenderSettings.RenderMode.Shaded, "Shaded" },

@@ -19,6 +19,8 @@ namespace CrossModGui.ViewModels
             public bool IsChecked { get; set; }
         }
 
+        public CrossMod.Nodes.FileNode SelectedFileNode { get; set; }
+
         public ObservableCollection<CrossMod.Nodes.FileNode> FileTreeItems { get; } = new ObservableCollection<CrossMod.Nodes.FileNode>();
 
         public ObservableCollection<BoneTreeItem> BoneTreeItems { get; } = new ObservableCollection<BoneTreeItem>();

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sfcontrol="clr-namespace:SFGraphics.Controls;assembly=SFGraphics.Controls"
         mc:Ignorable="d"
         Title="Cross Mod" Height="450" Width="800">
     <DockPanel LastChildFill="True">
@@ -52,7 +53,9 @@
                     </Style>
                 </TreeView.ItemContainerStyle>
             </TreeView>
-            <Button Grid.Column="1">TODO: Viewport</Button>
+            <WindowsFormsHost Grid.Column="1">
+                <sfcontrol:GLViewport x:Name="glViewport"/>
+            </WindowsFormsHost>           
             <TabControl Grid.Column="2">
                 <TabItem Header="Meshes">
                     <ListView ItemsSource="{Binding MeshListItems}">

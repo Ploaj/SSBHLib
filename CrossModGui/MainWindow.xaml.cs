@@ -58,30 +58,11 @@ namespace CrossModGui
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            // TODO: Use some form of data binding.
             if (!(e.NewValue is FileNode item))
                 return;
 
-            // TODO: Add proper item processing and sync with the currently open files.
-            ViewModel.MeshListItems.Clear();
-            ViewModel.BoneTreeItems.Clear();
-
-            if (item.Text.EndsWith(".numdlb"))
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    ViewModel.MeshListItems.Add(new MainWindowViewModel.MeshListItem { IsChecked = true, Name = $"Mesh{i}" });
-                }
-
-                var rootBone = new MainWindowViewModel.BoneTreeItem
-                {
-                    Name = "root",
-                    Children = new List<MainWindowViewModel.BoneTreeItem>()
-                    {
-                        new MainWindowViewModel.BoneTreeItem {Name = "child" }
-                    }
-                };
-                ViewModel.BoneTreeItems.Add(rootBone);
-            }
+            ViewModel.SelectedFileNode = item;
         }
     }
 }
