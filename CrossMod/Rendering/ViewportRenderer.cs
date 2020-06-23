@@ -1,17 +1,23 @@
 ﻿using CrossMod.Nodes;
-using CrossMod.Rendering.GlTools;
-using OpenTK.Graphics.OpenGL;
-using SFGraphics.Cameras;
-using SFGraphics.Controls;
+using OpenTK;
+using OpenTK.Input;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
 using System;
 using System.Collections.Generic;
+using SFGraphics.Cameras;
+using SFGraphics.Controls;
+using OpenTK.Graphics.OpenGL;
+using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering
 {
     public class ViewportRenderer
     {
+        // Previous mouse state.
+        private Vector2 mousePosition;
+        private float mouseScrollWheel;
+
         // TODO: Combine with renderable nodes as a tuple list?
         private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
         private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
@@ -64,7 +70,7 @@ namespace CrossMod.Rendering
         public void FrameSelection()
         {
             // Bounding spheres will help account for the vastly different model sizes.
-            var spheres = new List<OpenTK.Vector4>();
+            var spheres = new List<Vector4>();
             foreach (var node in renderableNodes)
             {
                 // TODO: Make bounding spheres an interface.
@@ -76,6 +82,38 @@ namespace CrossMod.Rendering
 
             var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
             Camera.FrameBoundingSphere(allModelBoundingSphere, 0);
+        }
+
+        public void UpdateCameraFromMouseKeyboard(System.Drawing.Point mouseCoordinates)
+        {
+            var mouseState = Mouse.GetState();
+            var keyboardState = Keyboard.GetState();
+
+            Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
+            float newMouseScrollWheel = mouseState.Wheel;
+
+            // Reduce the chance of rotating the viewport while the mouse is on other controls.
+            if (glViewport.Focused && glViewport.ClientRectangle.Contains(mouseCoordinates))
+            {
+                if (mouseState.IsButtonDown(MouseButton.Left))
+                {
+                    Camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
+                    Camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
+                }
+                if (mouseState.IsButtonDown(MouseButton.Right))
+                {
+                    Camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
+                }
+                if (keyboardState.IsKeyDown(Key.W))
+                    Camera.Zoom(0.5f);
+                if (keyboardState.IsKeyDown(Key.S))
+                    Camera.Zoom(-0.5f);
+
+                Camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
+            }
+
+            mousePosition = newMousePosition;
+            mouseScrollWheel = newMouseScrollWheel;
         }
 
         public void UpdateTexture(NutexNode texture)

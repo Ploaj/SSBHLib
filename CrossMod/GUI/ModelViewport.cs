@@ -1,10 +1,7 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
-using OpenTK;
-using OpenTK.Input;
 using SFGraphics.GLObjects.Framebuffers;
-using SFGraphics.GLObjects.GLObjectManagement;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -16,9 +13,6 @@ namespace CrossMod.GUI
         public ViewportRenderer Renderer { get; }
 
         private AnimationBar animationBar;
-
-        private Vector2 mousePosition;
-        private float mouseScrollWheel;
 
         public bool HasAnimation => animationBar.Animation != null;
         public IRenderableAnimation RenderableAnimation
@@ -322,34 +316,7 @@ namespace CrossMod.GUI
             // Accessing the control properties can't be done on another thread.
             glViewport.BeginInvoke(new Action(() =>
             {
-                var mouseState = Mouse.GetState();
-                var keyboardState = Keyboard.GetState();
-
-                Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
-                float newMouseScrollWheel = mouseState.Wheel;
-
-                // Reduce the chance of rotating the viewport while the mouse is on other controls.
-                if (glViewport.Focused && glViewport.ClientRectangle.Contains(PointToClient(MousePosition)))
-                {
-                    if (mouseState.IsButtonDown(MouseButton.Left))
-                    {
-                        Renderer.Camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
-                        Renderer.Camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
-                    }
-                    if (mouseState.IsButtonDown(MouseButton.Right))
-                    {
-                        Renderer.Camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
-                    }
-                    if (keyboardState.IsKeyDown(Key.W))
-                        Renderer.Camera.Zoom(0.5f);
-                    if (keyboardState.IsKeyDown(Key.S))
-                        Renderer.Camera.Zoom(-0.5f);
-
-                    Renderer.Camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
-                }
-
-                mousePosition = newMousePosition;
-                mouseScrollWheel = newMouseScrollWheel;
+                Renderer.UpdateCameraFromMouseKeyboard(PointToClient(MousePosition));
             }));
         }
 

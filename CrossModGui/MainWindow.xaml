@@ -8,11 +8,22 @@
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         Title="Cross Mod" Height="450" Width="800">
+    <Window.Resources>
+        <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
+        <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolder_Click" />
+        <CommandBinding Command="{StaticResource ClearWorkspaceCommand}" Executed="ClearWorkspace_Click" />
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Command="{StaticResource OpenFolderCommand}" Key="O" Modifiers="Ctrl"/>
+    </Window.InputBindings>
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open Folder (Ctrl + O)" Click="OpenFolder_Click"/>
-                <MenuItem Header="Clear Workspace" Click="ClearWorkspace_Click"/>
+                <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
                 <Separator></Separator>
                 <MenuItem Header="Reload Scripts"/>
                 <MenuItem Header="Reload Shaders"/>
