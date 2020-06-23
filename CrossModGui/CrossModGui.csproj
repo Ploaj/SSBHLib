@@ -103,6 +103,7 @@
     <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\RenderSettingsWindowViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\CameraSettingsWindow.xaml.cs">
       <DependentUpon>CameraSettingsWindow.xaml</DependentUpon>
     </Compile>

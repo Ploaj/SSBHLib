@@ -4,7 +4,7 @@ using CrossMod.Rendering;
 
 namespace CrossModGui.ViewModels
 {
-    public class RenderSettingsWindowViewModel : INotifyPropertyChanged
+    public class RenderSettingsWindowViewModel : ViewModelBase
     {
         // Workaround to get enums to work with MVVM.
         public Dictionary<RenderSettings.RenderMode, string> DescriptionByRenderMode { get; } = new Dictionary<RenderSettings.RenderMode, string>()
@@ -42,8 +42,6 @@ namespace CrossModGui.ViewModels
         public bool EnableVertexColor { get; set; }
 
         public bool EnableEdgeTint { get; set; }
-
-        public RenderSettings.RenderMode SelectedRenderMode { get; set; }
 
         public bool EnableRed { get; set; }
 

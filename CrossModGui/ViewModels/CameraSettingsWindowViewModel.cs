@@ -2,7 +2,7 @@
 
 namespace CrossModGui.ViewModels
 {
-    public class CameraSettingsWindowViewModel : INotifyPropertyChanged
+    public class CameraSettingsWindowViewModel : ViewModelBase
     {
         public float PositionX { get; set; }
 
@@ -15,7 +15,5 @@ namespace CrossModGui.ViewModels
         public float RotationYDegrees { get; set; }
 
         public float RotationZDegrees { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
