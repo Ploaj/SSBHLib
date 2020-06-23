@@ -36,6 +36,14 @@ namespace CrossMod.GUI
             Renderer = new ViewportRenderer(glViewport);
             AddAnimationBar();
             CreateRenderFrameEvents();
+
+            glViewport.MouseMove += GlViewport_MouseInteract;
+            glViewport.MouseWheel += GlViewport_MouseInteract;
+        }
+
+        private void GlViewport_MouseInteract(object sender, MouseEventArgs e)
+        {
+            Renderer.UpdateCameraFromMouse();
         }
 
         public void ClearFiles()
@@ -217,10 +225,6 @@ namespace CrossMod.GUI
 
         private void RenderNodes(object sender, EventArgs e)
         {
-            // TODO: The camera doesn't need to be updated every frame.
-            // This should only need to be called on mouse or keyboard input.
-            UpdateCamera();
-
             Renderer.RenderNodes(ScriptNode);
         }
 
@@ -311,21 +315,11 @@ namespace CrossMod.GUI
             meshList.Visible = true;
         }
 
-        private void UpdateCamera()
-        {
-            // Accessing the control properties can't be done on another thread.
-            glViewport.BeginInvoke(new Action(() =>
-            {
-                Renderer.UpdateCameraFromMouseKeyboard(PointToClient(MousePosition));
-            }));
-        }
-
         private void glViewport_Resize(object sender, EventArgs e)
         {
             // Adjust for changing render dimensions.
             Renderer.Camera.RenderWidth = glViewport.Width;
             Renderer.Camera.RenderHeight = glViewport.Height;
-
             glViewport.RenderFrame();
         }
 

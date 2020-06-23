@@ -67,7 +67,7 @@
                 </TreeView.ItemContainerStyle>
             </TreeView>
             <WindowsFormsHost Grid.Column="1">
-                <sfcontrol:GLViewport x:Name="glViewport" Resize="glViewport_Resize"/>
+                <sfcontrol:GLViewport x:Name="glViewport" Resize="glViewport_Resize" MouseMove="glViewport_MouseInteract" MouseWheel="glViewport_MouseInteract"/>
             </WindowsFormsHost>           
             <TabControl Grid.Column="2">
                 <TabItem Header="Meshes">

@@ -30,17 +30,6 @@ namespace CrossModGui
 
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
         {
-            // TODO: Only call this on new input.
-            // TODO: Update camera from mouse.
-            // Accessing the control properties can't be done on another thread.
-            glViewport.BeginInvoke(new Action(() =>
-            {
-                // TODO: This conversion is questionable.
-                // Ignoring mouse input not focused can probably be handled more cleanly.
-                var point = PointToScreen(Mouse.GetPosition(this));
-                ViewModel.Renderer.UpdateCameraFromMouseKeyboard(new System.Drawing.Point((int)point.X, (int)point.Y));
-            }));
-
             // TODO: Script node.
             ViewModel.Renderer.RenderNodes(null);
         }
@@ -102,6 +91,11 @@ namespace CrossModGui
         {
             ViewModel.Renderer.Camera.RenderWidth = glViewport.Width;
             ViewModel.Renderer.Camera.RenderHeight = glViewport.Height;
+        }
+
+        private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            ViewModel.Renderer.UpdateCameraFromMouse();
         }
     }
 }

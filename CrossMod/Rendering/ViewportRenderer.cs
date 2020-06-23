@@ -84,33 +84,24 @@ namespace CrossMod.Rendering
             Camera.FrameBoundingSphere(allModelBoundingSphere, 0);
         }
 
-        public void UpdateCameraFromMouseKeyboard(System.Drawing.Point mouseCoordinates)
+        public void UpdateCameraFromMouse()
         {
             var mouseState = Mouse.GetState();
-            var keyboardState = Keyboard.GetState();
 
             Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
             float newMouseScrollWheel = mouseState.Wheel;
 
-            // Reduce the chance of rotating the viewport while the mouse is on other controls.
-            if (glViewport.Focused && glViewport.ClientRectangle.Contains(mouseCoordinates))
+            if (mouseState.IsButtonDown(MouseButton.Left))
             {
-                if (mouseState.IsButtonDown(MouseButton.Left))
-                {
-                    Camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
-                    Camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
-                }
-                if (mouseState.IsButtonDown(MouseButton.Right))
-                {
-                    Camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
-                }
-                if (keyboardState.IsKeyDown(Key.W))
-                    Camera.Zoom(0.5f);
-                if (keyboardState.IsKeyDown(Key.S))
-                    Camera.Zoom(-0.5f);
-
-                Camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
+                Camera.RotationXRadians += (newMousePosition.Y - mousePosition.Y) / 100f;
+                Camera.RotationYRadians += (newMousePosition.X - mousePosition.X) / 100f;
             }
+            if (mouseState.IsButtonDown(MouseButton.Right))
+            {
+                Camera.Pan(newMousePosition.X - mousePosition.X, newMousePosition.Y - mousePosition.Y);
+            }
+
+            Camera.Zoom((newMouseScrollWheel - mouseScrollWheel) * 0.1f);
 
             mousePosition = newMousePosition;
             mouseScrollWheel = newMouseScrollWheel;
