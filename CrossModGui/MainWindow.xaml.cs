@@ -1,6 +1,8 @@
 ﻿using CrossMod.Nodes;
+using CrossMod.Rendering;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -13,6 +15,8 @@ namespace CrossModGui
     {
         public MainWindowViewModel ViewModel { get; }
 
+        public ViewportRenderer Renderer { get; } 
+
         // TODO: Link view models to model classes.
         private readonly RenderSettingsWindowViewModel renderSettingsViewModel = new RenderSettingsWindowViewModel();
         private readonly CameraSettingsWindowViewModel cameraSettingsViewModel = new CameraSettingsWindowViewModel();
@@ -22,6 +26,14 @@ namespace CrossModGui
             ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
+            Renderer = new ViewportRenderer(glViewport);
+        }
+
+        private void GlViewport_OnRenderFrame(object sender, System.EventArgs e)
+        {
+            // TODO: Update camera from mouse.
+            // TODO: Script node.
+            Renderer.RenderNodes(null);
         }
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
@@ -42,9 +54,12 @@ namespace CrossModGui
             if (CrossMod.Tools.FileTools.TryOpenFolderDialog(out string folderPath))
             {
                 // Populate the treeview with the folder structure.
-                // TODO: Don't populate subnodes until expanding the directory node.
+                // TODO: Populate subnodes after expanding the directory node.
                 var rootNode = new DirectoryNode(folderPath);
-                rootNode.OpenRecursive();
+
+                // TODO: Combine these two methods?
+                rootNode.Open();
+                rootNode.OpenChildNodes();
 
                 ViewModel.FileTreeItems.Clear();
                 ViewModel.FileTreeItems.Add(rootNode);
@@ -53,16 +68,47 @@ namespace CrossModGui
 
         private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.FileTreeItems.Clear();
+            ViewModel.Clear();
+            Renderer.ClearRenderableNodes();
         }
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            // TODO: Use some form of data binding.
+            // TODO: Use some form of data binding?
             if (!(e.NewValue is FileNode item))
                 return;
 
-            ViewModel.SelectedFileNode = item;
+            // Assume only directory nodes have children.
+            if (item.Parent is DirectoryNode dir)
+            {
+                dir.OpenChildNodes();
+            }
+            UpdateCurrentViewportRenderables(item);
+        }
+
+        private void UpdateCurrentViewportRenderables(FileNode item)
+        {
+            if (item is NutexNode texture)
+            {
+                Renderer.UpdateTexture(texture);
+            }
+            else if (item is IRenderableNode renderableNode)
+            {
+                Renderer.AddRenderableNode(item.AbsolutePath, renderableNode);
+                // TODO: Update the mesh and bone list.
+                Renderer.UpdateTexture(null);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            glViewport.OnRenderFrame += GlViewport_OnRenderFrame;
+            glViewport.RestartRendering();
+        }
+
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            glViewport.Dispose();
         }
     }
 }

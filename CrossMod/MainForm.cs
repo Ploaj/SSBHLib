@@ -250,7 +250,7 @@ namespace CrossMod
         {
             if (e.Node is DirectoryNode node)
             {
-                node.OpenSubNodes();
+                node.OpenChildNodes();
             }
         }
 

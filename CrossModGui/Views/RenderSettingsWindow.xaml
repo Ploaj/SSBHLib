@@ -50,11 +50,12 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0">Render Mode</Label>
-                    <ComboBox Name="fooBarComboBox" 
-                      ItemsSource="{Binding DescriptionByRenderMode}" 
-                      DisplayMemberPath="Value" 
-                      SelectedValuePath="Key"
-                      SelectedValue="{Binding SelectedRenderMode}">
+                    <ComboBox 
+                        Grid.Column="1"
+                        ItemsSource="{Binding DescriptionByRenderMode}" 
+                        DisplayMemberPath="Value" 
+                        SelectedValuePath="Key"
+                        SelectedValue="{Binding SelectedRenderMode}">
                     </ComboBox>
                 </Grid>
                 <GroupBox Header="Channel Toggles">

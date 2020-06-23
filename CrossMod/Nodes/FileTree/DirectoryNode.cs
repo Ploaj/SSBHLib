@@ -38,7 +38,7 @@ namespace CrossMod.Nodes
 
         /// <summary>
         /// Reads the directory, populating all subnodes.
-        /// Subnodes are not opened, use OpenNodes() afterwards to do that.
+        /// Subnodes are not opened, use <see cref="OpenChildNodes"/> afterwards to do that.
         /// Repeated executions are no-ops.
         /// </summary>
         public override void Open()
@@ -65,32 +65,10 @@ namespace CrossMod.Nodes
         }
 
         /// <summary>
-        /// Recursively adds all subnodes to this node.
-        /// File nodes are not opened.
-        /// </summary>
-        public void OpenRecursive()
-        {
-            // TODO: Opening multiple times.
-            foreach (var name in Directory.EnumerateFileSystemEntries(AbsolutePath))
-            {
-                if (Directory.Exists(name))
-                {
-                    var dirNode = new DirectoryNode(name, isRoot: false);
-                    Nodes.Add(dirNode);
-                    dirNode.OpenRecursive();
-                }
-                else
-                {
-                    Nodes.Add(CreateFileNode(fileNodeTypes, name));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Opens all nodes. Make sure to call after Open().
+        /// Opens all nodes. Make sure to call after <see cref="Open"/>.
         /// Repeated executions result in a no-op.
         /// </summary>
-        public void OpenSubNodes()
+        public void OpenChildNodes()
         {
             if (isNestedOpened)
             {

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace CrossModGui.ViewModels
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         public class BoneTreeItem
         {
@@ -19,12 +20,19 @@ namespace CrossModGui.ViewModels
             public bool IsChecked { get; set; }
         }
 
-        public CrossMod.Nodes.FileNode SelectedFileNode { get; set; }
-
         public ObservableCollection<CrossMod.Nodes.FileNode> FileTreeItems { get; } = new ObservableCollection<CrossMod.Nodes.FileNode>();
 
         public ObservableCollection<BoneTreeItem> BoneTreeItems { get; } = new ObservableCollection<BoneTreeItem>();
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Clear()
+        {
+            FileTreeItems.Clear();
+            BoneTreeItems.Clear();
+            MeshListItems.Clear();
+        }
     }
 }

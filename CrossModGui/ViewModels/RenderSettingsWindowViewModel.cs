@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using CrossMod.Rendering;
 
 namespace CrossModGui.ViewModels
 {
-    public class RenderSettingsWindowViewModel
+    public class RenderSettingsWindowViewModel : INotifyPropertyChanged
     {
         // Workaround to get enums to work with MVVM.
         public Dictionary<RenderSettings.RenderMode, string> DescriptionByRenderMode { get; } = new Dictionary<RenderSettings.RenderMode, string>()
@@ -53,5 +54,7 @@ namespace CrossModGui.ViewModels
         public bool EnableAlpha { get; set; }
 
         public string ParamName { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

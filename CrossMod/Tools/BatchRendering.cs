@@ -96,7 +96,7 @@ namespace CrossMod.Tools
         {
             // Loading the numdlb node will load the texture as well.
             var mainNode = WorkSpaceTools.CreateDirectoryNodeAndExpand(sourceFolder);
-            mainNode.OpenSubNodes();
+            mainNode.OpenChildNodes();
 
             foreach (FileNode node in mainNode.Nodes)
             {

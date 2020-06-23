@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sfcontrol="clr-namespace:SFGraphics.Controls;assembly=SFGraphics.Controls"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
         Title="Cross Mod" Height="450" Width="800">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
@@ -38,7 +40,7 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" ItemsSource="{Binding FileTreeItems}" 
+            <TreeView Name="fileTreeView" Grid.Column="0" ItemsSource="{Binding FileTreeItems}" 
                       SelectedItemChanged="FileTreeView_SelectedItemChanged">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
