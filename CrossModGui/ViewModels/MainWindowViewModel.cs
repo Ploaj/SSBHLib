@@ -1,14 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrossModGui.ViewModels
 {
     public class MainWindowViewModel
     {
+        public class BoneTreeItem
+        {
+            public string Name { get; set; }
+
+            public List<BoneTreeItem> Children { get; set;  } = new List<BoneTreeItem>();
+        }
+
+        public class MeshListItem
+        {
+            public string Name { get; set; }
+
+            public bool IsChecked { get; set; }
+        }
+
         public ObservableCollection<CrossMod.Nodes.FileNode> FileTreeItems { get; } = new ObservableCollection<CrossMod.Nodes.FileNode>();
+
+        public ObservableCollection<BoneTreeItem> BoneTreeItems { get; } = new ObservableCollection<BoneTreeItem>();
+
+        public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
     }
 }

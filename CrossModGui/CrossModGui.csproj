@@ -92,7 +92,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
-    <Compile Include="ViewModels\FileTreeItem.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\RenderSettingsWindowViewModel.cs" />
     <Compile Include="Views\CameraSettingsWindow.xaml.cs">

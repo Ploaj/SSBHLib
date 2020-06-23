@@ -95,12 +95,12 @@ namespace CrossMod.GUI
             // Duplicate nodes should still update the mesh list.
             if (newNode is RSkeleton skeleton)
             {
-                DisplaySkeleton(skeleton);
+                AddSkeletonToGui(skeleton);
             }
             else if (newNode is IRenderableModel renderableModel)
             {
-                DisplayMeshes(renderableModel.GetModel());
-                DisplaySkeleton(renderableModel.GetSkeleton());
+                AddMeshesToGui(renderableModel.GetModel());
+                AddSkeletonToGui(renderableModel.GetSkeleton());
             }
 
             if (value is NumdlNode)
@@ -317,7 +317,7 @@ namespace CrossMod.GUI
             ViewportRenderer.RenderNodes(renderTexture, renderableNodes, camera, ScriptNode);
         }
 
-        private void DisplayMeshes(RModel model)
+        private void AddMeshesToGui(RModel model)
         {
             animationBar.Model = model;
 
@@ -343,7 +343,7 @@ namespace CrossMod.GUI
         /// Populates the bones tab, and binds the given skeleton to subcomponents such as the animation bar
         /// </summary>
         /// <param name="skeleton"></param>
-        private void DisplaySkeleton(RSkeleton skeleton)
+        private void AddSkeletonToGui(RSkeleton skeleton)
         {
             if (skeleton == null)
                 return;
@@ -357,12 +357,14 @@ namespace CrossMod.GUI
                 {
                     Text = b.Name
                 };
-
                 boneById.Add(b.Id, node);
+
+                // The root bone has no parent.
                 if (b.ParentId == -1)
                     boneTree.Nodes.Add(node);
             }
-
+            
+            // Add each bone to its parent.
             foreach (RBone b in skeleton.Bones)
             {
                 if (b.ParentId != -1)

@@ -3,8 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CrossModGui"
-        xmlns:vms="clr-namespace:CrossModGui.ViewModels"
         mc:Ignorable="d"
         Title="Cross Mod" Height="450" Width="800">
     <DockPanel LastChildFill="True">
@@ -39,7 +37,8 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" ItemsSource="{Binding FileTreeItems}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding FileTreeItems}" 
+                      SelectedItemChanged="FileTreeView_SelectedItemChanged">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
@@ -56,19 +55,25 @@
             <Button Grid.Column="1">TODO: Viewport</Button>
             <TabControl Grid.Column="2">
                 <TabItem Header="Meshes">
-                    <ListView>
-                        <ListViewItem>
-                            <CheckBox>Test</CheckBox>
-                        </ListViewItem>
+                    <ListView ItemsSource="{Binding MeshListItems}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsChecked}">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </TabItem>
                 <TabItem Header="Bones">
-                    <TreeView>
-                        <TreeViewItem Header="a">
-                            <TreeViewItem Header="b">
-                                
-                            </TreeViewItem>
-                        </TreeViewItem>
+                    <TreeView ItemsSource="{Binding BoneTreeItems}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
                     </TreeView>
                 </TabItem>
             </TabControl>

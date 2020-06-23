@@ -1,23 +1,8 @@
-﻿using CrossMod.GUI;
-using CrossMod.Nodes;
+﻿using CrossMod.Nodes;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
-using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CrossModGui
 {
@@ -69,6 +54,34 @@ namespace CrossModGui
         private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.FileTreeItems.Clear();
+        }
+
+        private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (!(e.NewValue is FileNode item))
+                return;
+
+            // TODO: Add proper item processing and sync with the currently open files.
+            ViewModel.MeshListItems.Clear();
+            ViewModel.BoneTreeItems.Clear();
+
+            if (item.Text.EndsWith(".numdlb"))
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    ViewModel.MeshListItems.Add(new MainWindowViewModel.MeshListItem { IsChecked = true, Name = $"Mesh{i}" });
+                }
+
+                var rootBone = new MainWindowViewModel.BoneTreeItem
+                {
+                    Name = "root",
+                    Children = new List<MainWindowViewModel.BoneTreeItem>()
+                    {
+                        new MainWindowViewModel.BoneTreeItem {Name = "child" }
+                    }
+                };
+                ViewModel.BoneTreeItems.Add(rootBone);
+            }
         }
     }
 }
