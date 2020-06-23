@@ -27,6 +27,8 @@ namespace CrossModGui.ViewModels
             { RenderSettings.RenderMode.ParamID, "Param Values" }
         };
 
+        public RenderSettings.RenderMode SelectedRenderMode { get; set; } = RenderSettings.RenderMode.Shaded;
+
         public bool EnableDiffuse { get; set; }
 
         public bool EnableSpecular { get; set; }
