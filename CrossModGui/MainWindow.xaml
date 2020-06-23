@@ -56,7 +56,7 @@
                 </TreeView.ItemContainerStyle>
             </TreeView>
             <WindowsFormsHost Grid.Column="1">
-                <sfcontrol:GLViewport x:Name="glViewport"/>
+                <sfcontrol:GLViewport x:Name="glViewport" Resize="glViewport_Resize"/>
             </WindowsFormsHost>           
             <TabControl Grid.Column="2">
                 <TabItem Header="Meshes">
