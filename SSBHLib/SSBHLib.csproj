@@ -72,11 +72,11 @@
     <Compile Include="IO\SSBHExporter.cs" />
     <Compile Include="IO\SSBHOffset.cs" />
     <Compile Include="IO\SSBHParser.cs" />
-    <Compile Include="IO\SsbhParserExtensions.cs">
+    <None Include="IO\SsbhParserExtensions.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SsbhParserExtensions.tt</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="SsbhFile.cs" />
     <Compile Include="Ssbh.cs" />
     <Compile Include="Formats\Modl.cs" />

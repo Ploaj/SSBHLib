@@ -32,17 +32,22 @@ namespace SSBHLib.IO
 #>
         public static <#=typeFullName#> Parse<#=typeName#>(this SsbhParser parser)
         {
-            return new <#=typeFullName#>
-            {
-    <#		
+            var result = new <#=typeFullName#>();
+<#		
         foreach (var prop in type.GetProperties())
         {
-    #>
-            <#=prop.Name#> = default,            
-    <#  
+            if (SSBHLib.IO.SsbhParser.ShouldSkipProperty(prop))
+                continue;
+#>
+            result.<#=prop.Name#> = default;       
+<#  
         }
-    #>
-        };
+#>
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+            return result;
         }
 
 <#  

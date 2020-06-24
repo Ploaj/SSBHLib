@@ -4,6 +4,7 @@ using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats.Rendering;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -156,7 +157,7 @@ namespace SSBHLib.IO
         {
             foreach (var prop in tObject.GetType().GetProperties())
             {
-                if (ShouldSkipProperty<T>(prop))
+                if (ShouldSkipProperty(prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
@@ -275,7 +276,7 @@ namespace SSBHLib.IO
             prop.SetValue(tObject, ReadString(stringOffset));
         }
 
-        private static bool ShouldSkipProperty<T>(PropertyInfo prop) where T : SsbhFile
+        public static bool ShouldSkipProperty(PropertyInfo prop)
         {
             bool shouldSkip = false;
 
