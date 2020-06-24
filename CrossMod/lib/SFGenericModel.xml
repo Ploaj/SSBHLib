@@ -1056,7 +1056,7 @@
         </member>
         <member name="P:SFGenericModel.VertexAttributes.VertexFloatAttribute.Normalized">
             <summary>
-            <param name="normalized">When <c>true</c>, integer values are converted to floats. Ex: <c>float = int / INT_MAX</c></param>
+            When <c>true</c>, integer values are converted to floats. Ex: <c>float = int / INT_MAX</c>
             </summary>
         </member>
         <member name="M:SFGenericModel.VertexAttributes.VertexFloatAttribute.#ctor(System.String,SFGenericModel.VertexAttributes.ValueCount,OpenTK.Graphics.OpenGL.VertexAttribPointerType,System.Boolean,SFGenericModel.VertexAttributes.AttributeUsage,System.Boolean,System.Boolean)">

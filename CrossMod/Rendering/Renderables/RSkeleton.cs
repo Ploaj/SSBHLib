@@ -155,8 +155,7 @@ namespace CrossMod.Rendering
             if (boneShader == null)
             {
                 boneShader = new Shader();
-                boneShader.LoadShader(File.ReadAllText("Shaders/Bone.frag"), ShaderType.FragmentShader);
-                boneShader.LoadShader(File.ReadAllText("Shaders/Bone.vert"), ShaderType.VertexShader);
+                boneShader.LoadShaders(File.ReadAllText("Shaders/Bone.vert"), File.ReadAllText("Shaders/Bone.frag"));
             }
             
             boneShader.UseProgram();
