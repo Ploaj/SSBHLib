@@ -243,7 +243,7 @@ namespace CrossMod
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            modelViewport.Renderer.FrameSelection();
+            modelViewport.Renderer.FrameRnumdl();
         }
 
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)

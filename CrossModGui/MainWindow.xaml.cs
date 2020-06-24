@@ -1,4 +1,5 @@
-﻿using CrossMod.Nodes;
+﻿using CrossMod.IO;
+using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
@@ -29,9 +30,23 @@ namespace CrossModGui
             renderSettingsViewModel = RenderSettings.Instance;
             renderSettingsViewModel.PropertyChanged += (s,e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
 
-            // TODO: Sync camera view model with camera.
+            // TODO: Sync mouse movement with viewmodel?
             cameraSettingsViewModel = ViewModel.Renderer.Camera;
-            //cameraSettingsViewModel.PropertyChanged += (s, e) => ViewModel.Renderer.Camera.SetValues(cameraSettingsViewModel);
+            cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
+        }
+
+        private void CameraSettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "RotationXDegrees":
+                    ViewModel.Renderer.Camera.RotationXDegrees = cameraSettingsViewModel.RotationXDegrees;
+                    break;
+                case "RotationYDegrees":
+                    ViewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
+                    break;
+                // TODO: Position needs a separate property for X,Y,Z.
+            }
         }
 
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
@@ -49,6 +64,8 @@ namespace CrossModGui
 
         private void Camera_Click(object sender, RoutedEventArgs e)
         {
+            // Make sure the window has current values.
+            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
             var window = new CameraSettingsWindow(cameraSettingsViewModel);
             window.Show();
         }
@@ -69,10 +86,10 @@ namespace CrossModGui
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            // TODO: Use some form of data binding?
             if (!(e.NewValue is FileNode item))
                 return;
 
+            // TODO: Use some form of binding to the directory's expanded event?
             // Assume only directory nodes have children.
             if (item.Parent is DirectoryNode dir)
             {
@@ -102,11 +119,13 @@ namespace CrossModGui
         private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             ViewModel.Renderer.UpdateCameraFromMouse();
+            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
         }
 
         private void FrameModel_Click(object sender, RoutedEventArgs e)
         {
-            // TODO:
+            ViewModel.Renderer.FrameRnumdl();
+            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
         }
     }
 }

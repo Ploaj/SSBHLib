@@ -51,7 +51,7 @@ namespace CrossMod.Rendering
 
                 if (value is NumdlNode)
                 {
-                    FrameSelection();
+                    FrameRnumdl();
                 }
             });
         }
@@ -67,7 +67,7 @@ namespace CrossMod.Rendering
             });
         }
 
-        public void FrameSelection()
+        public void FrameRnumdl()
         {
             // Bounding spheres will help account for the vastly different model sizes.
             var spheres = new List<Vector4>();

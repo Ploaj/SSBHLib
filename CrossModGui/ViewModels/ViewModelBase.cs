@@ -1,9 +1,8 @@
-﻿using System.ComponentModel;
+﻿using ReactiveUI;
 
 namespace CrossModGui.ViewModels
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : ReactiveObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
