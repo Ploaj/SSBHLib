@@ -34,7 +34,7 @@
                 <MenuItem Header="Hitbox/Hurtbox Selector"/>
                 <Separator></Separator>
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>
-                <MenuItem Header="Clear Viewport"/>
+                <MenuItem Header="Clear Viewport" Click="ClearViewport_Click"/>
             </MenuItem>
             <MenuItem Header="Experimental">
                 <MenuItem Header="Batch Render Models" />

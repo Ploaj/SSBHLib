@@ -37,6 +37,7 @@ namespace CrossModGui
 
         private void CameraSettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // TODO: Do this with less code using reactiveui?
             switch (e.PropertyName)
             {
                 case "RotationXDegrees":
@@ -45,7 +46,15 @@ namespace CrossModGui
                 case "RotationYDegrees":
                     ViewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
                     break;
-                // TODO: Position needs a separate property for X,Y,Z.
+                case "PositionX":
+                    ViewModel.Renderer.Camera.TranslationX = cameraSettingsViewModel.PositionX;
+                    break;
+                case "PositionY":
+                    ViewModel.Renderer.Camera.TranslationY = cameraSettingsViewModel.PositionY;
+                    break;
+                case "PositionZ":
+                    ViewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
+                    break;
             }
         }
 
@@ -126,6 +135,11 @@ namespace CrossModGui
         {
             ViewModel.Renderer.FrameRnumdl();
             cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+        }
+
+        private void ClearViewport_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Renderer.ClearRenderableNodes();
         }
     }
 }
