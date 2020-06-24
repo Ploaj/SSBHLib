@@ -54,5 +54,25 @@ namespace CrossModGui.ViewModels
         public bool EnableAlpha { get; set; }
 
         public string ParamName { get; set; }
+
+        public static implicit operator RenderSettingsWindowViewModel(RenderSettings rhs)
+        {
+            return new RenderSettingsWindowViewModel
+            {
+                EnableRed = rhs.EnableRed,
+                EnableGreen = rhs.EnableGreen,
+                EnableBlue = rhs.EnableBlue,
+                EnableAlpha = rhs.EnableAlpha,
+                EnableDiffuse = rhs.EnableDiffuse,
+                EnableEmission = rhs.EnableEmission,
+                EnableEdgeTint = rhs.EnableRimLighting,
+                EnableSpecular = rhs.EnableSpecular,
+                SelectedRenderMode = rhs.ShadingMode,
+                EnableVertexColor = rhs.RenderVertexColor,
+                EnableNormalMaps = rhs.RenderNormalMaps,
+                DirectLightIntensity = rhs.DirectLightIntensity,
+                IndirectLightIntensity = rhs.DirectLightIntensity,
+            };
+        }
     }
 }

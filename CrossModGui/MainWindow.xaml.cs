@@ -4,7 +4,6 @@ using CrossModGui.ViewModels;
 using CrossModGui.Views;
 using System;
 using System.Windows;
-using System.Windows.Input;
 
 namespace CrossModGui
 {
@@ -15,9 +14,8 @@ namespace CrossModGui
     {
         public MainWindowViewModel ViewModel { get; }
 
-        // TODO: Link view models to model classes.
-        private readonly RenderSettingsWindowViewModel renderSettingsViewModel = new RenderSettingsWindowViewModel();
-        private readonly CameraSettingsWindowViewModel cameraSettingsViewModel = new CameraSettingsWindowViewModel();
+        private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
+        private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
 
         public MainWindow(MainWindowViewModel viewModel)
         {
@@ -26,6 +24,14 @@ namespace CrossModGui
             ViewModel = viewModel;
             ViewModel.Renderer = new ViewportRenderer(glViewport);
             DataContext = viewModel;
+
+            // Link view models to models.
+            renderSettingsViewModel = RenderSettings.Instance;
+            renderSettingsViewModel.PropertyChanged += (s,e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
+
+            // TODO: Sync camera view model with camera.
+            cameraSettingsViewModel = ViewModel.Renderer.Camera;
+            //cameraSettingsViewModel.PropertyChanged += (s, e) => ViewModel.Renderer.Camera.SetValues(cameraSettingsViewModel);
         }
 
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
@@ -96,6 +102,11 @@ namespace CrossModGui
         private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             ViewModel.Renderer.UpdateCameraFromMouse();
+        }
+
+        private void FrameModel_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO:
         }
     }
 }

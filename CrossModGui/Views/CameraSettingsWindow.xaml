@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="Camera Settings" Height="450" Width="800">
+        Title="Camera Settings" Height="244.844" Width="387.856">
     <StackPanel>
         <GroupBox Header="Translation">
             <!--TODO: custom controls for combined textbox,label,slider,etc-->
@@ -20,11 +20,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0">X (Scene Units)</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PositionX}"></TextBox>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 <Label Grid.Row="1" Grid.Column="0">Y (Scene Units))</Label>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PositionY}"></TextBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 <Label Grid.Row="2" Grid.Column="0">Z (Scene Units)</Label>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PositionZ}"></TextBox>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PositionZ, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </Grid>
         </GroupBox>
         <GroupBox Header="Rotation">
@@ -33,18 +33,15 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0">X (Degrees)</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RotationXDegrees}"></TextBox>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RotationXDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                 <Label Grid.Row="1" Grid.Column="0">Y (Degrees)</Label>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RotationYDegrees}"></TextBox>
-                <Label Grid.Row="2" Grid.Column="0">Z (Degrees)</Label>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RotationZDegrees}"></TextBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RotationYDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </Grid>
         </GroupBox>
     </StackPanel>

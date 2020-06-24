@@ -27,11 +27,11 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0">Direct Light Intensity</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectLightIntensity}"></TextBox>
-                    <Slider Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="100" Value="50"></Slider>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="2" Value="{Binding DirectLightIntensity}"></Slider>
                     <Label Grid.Row="1" Grid.Column="0" >Indirect Light Intensity</Label>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IndirectLightIntensity}"></TextBox>
-                    <Slider Grid.Row="1" Grid.Column="2" Minimum="0" Maximum="100" Value="50"></Slider>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="1" Grid.Column="2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
                 </Grid>
             </StackPanel>
         </Expander>
@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0">Param Name</Label>
-                        <TextBox Grid.Column="1" Text="{Binding ParamName}"></TextBox>
+                        <TextBox Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     </Grid>
                 </GroupBox>
             </StackPanel>
