@@ -1,0 +1,54 @@
+﻿<#@ template debug="true" hostspecific="true" #>
+<#@ output extension="cs" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(TargetDir)\SSBHLib.dll" #>
+<#@ import namespace="SSBHLib" #>
+<#   
+var assembly = typeof(SsbhFile).Assembly;
+var types = Assembly.GetAssembly(typeof(Ssbh))
+                    .GetTypes()
+                    .Where(t => typeof(SsbhFile)
+                    .IsAssignableFrom(t) && t != typeof(SsbhFile));
+#>
+namespace SSBHLib.IO
+{
+    /// <summary>
+    /// Generated code for parsing specific SSBH types.
+    /// Changes made to this file will be overridden.    
+    /// </summary>
+    public static class Parsers
+    {
+<#		
+    foreach (var type in types)
+    {
+        // Nested classes use '+'.
+        var typeName = type.Name.Replace("SSBHLib","");
+        var typeFullName = type.FullName.Replace('+','.').Replace("SSBHLib.","");
+#>
+        public static <#=typeFullName#> Parse<#=typeName#>(this SsbhParser parser)
+        {
+            return new <#=typeFullName#>
+            {
+    <#		
+        foreach (var prop in type.GetProperties())
+        {
+    #>
+            <#=prop.Name#> = default,            
+    <#  
+        }
+    #>
+        };
+        }
+
+<#  
+    }
+#>
+    }
+}
+	
+   
