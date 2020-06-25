@@ -47,6 +47,10 @@ namespace CrossModGui.ViewModels
 
         public int TotalFrames { get; set; }
 
+        public bool IsPlayingAnimation { get; set; }
+
+        public string PlayAnimationText => IsPlayingAnimation ? "Pause" : "Play";
+
         public void Clear()
         {
             FileTreeItems.Clear();

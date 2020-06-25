@@ -1,5 +1,4 @@
-﻿using CrossMod.IO;
-using CrossMod.Nodes;
+﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
@@ -28,10 +27,23 @@ namespace CrossModGui
 
             // Link view models to models.
             renderSettingsViewModel = RenderSettings.Instance;
-            renderSettingsViewModel.PropertyChanged += (s,e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
+            renderSettingsViewModel.PropertyChanged += (s, e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
 
             cameraSettingsViewModel = ViewModel.Renderer.Camera;
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
+
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainWindowViewModel.IsPlayingAnimation))
+            {
+                if (ViewModel.IsPlayingAnimation)
+                    glViewport.RestartRendering();
+                else
+                    glViewport.PauseRendering();
+            }
         }
 
         private void CameraSettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -39,19 +51,19 @@ namespace CrossModGui
             // TODO: Do this with less code using reactiveui?
             switch (e.PropertyName)
             {
-                case "RotationXDegrees":
+                case nameof(CameraSettingsWindowViewModel.RotationXDegrees):
                     ViewModel.Renderer.Camera.RotationXDegrees = cameraSettingsViewModel.RotationXDegrees;
                     break;
-                case "RotationYDegrees":
+                case nameof(CameraSettingsWindowViewModel.RotationYDegrees):
                     ViewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
                     break;
-                case "PositionX":
+                case nameof(CameraSettingsWindowViewModel.PositionX):
                     ViewModel.Renderer.Camera.TranslationX = cameraSettingsViewModel.PositionX;
                     break;
-                case "PositionY":
+                case nameof(CameraSettingsWindowViewModel.PositionY):
                     ViewModel.Renderer.Camera.TranslationY = cameraSettingsViewModel.PositionY;
                     break;
-                case "PositionZ":
+                case nameof(CameraSettingsWindowViewModel.PositionZ):
                     ViewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
                     break;
             }
@@ -65,17 +77,37 @@ namespace CrossModGui
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Link render settings to the view model.
+            // Start automatic frame updates instead of making the window have to refresh the viewport.
+            var wasRendering = glViewport.IsRendering;
+            glViewport.RestartRendering();
+
             var window = new RenderSettingsWindow(renderSettingsViewModel);
             window.Show();
+
+            window.Closed += (s, e2) =>
+            {
+                if (!wasRendering)
+                    glViewport.PauseRendering();
+            };
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
         {
+            // Start automatic frame updates instead of making the window have to refresh the viewport.
+            var wasRendering = glViewport.IsRendering;
+            glViewport.RestartRendering();
+
             // Make sure the window has current values.
             cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+
             var window = new CameraSettingsWindow(cameraSettingsViewModel);
             window.Show();
+
+            window.Closed += (s, e2) =>
+            {
+                if (!wasRendering)
+                    glViewport.PauseRendering();
+            };
         }
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
@@ -104,13 +136,15 @@ namespace CrossModGui
                 dir.OpenChildNodes();
             }
 
+            // Update the current viewport item.
             ViewModel.UpdateCurrentRenderableNode(item);
+            RenderFrameIfNeeded();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Don't start rendering here to save CPU usage.
             glViewport.OnRenderFrame += GlViewport_OnRenderFrame;
-            glViewport.RestartRendering();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -122,23 +156,47 @@ namespace CrossModGui
         {
             ViewModel.Renderer.Camera.RenderWidth = glViewport.Width;
             ViewModel.Renderer.Camera.RenderHeight = glViewport.Height;
+
+            RenderFrameIfNeeded();
         }
 
         private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             ViewModel.Renderer.UpdateCameraFromMouse();
             cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+
+            RenderFrameIfNeeded();
         }
 
         private void FrameModel_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Renderer.FrameRnumdl();
             cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+
+            RenderFrameIfNeeded();
         }
 
         private void ClearViewport_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Renderer.ClearRenderableNodes();
+            RenderFrameIfNeeded();
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsPlayingAnimation = !ViewModel.IsPlayingAnimation;
+        }
+
+        private void RenderFrameIfNeeded()
+        {
+            if (!glViewport.IsRendering)
+                glViewport.RenderFrame();
+        }
+
+        private void MeshListCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            // Ensure mesh visibility is updated.
+            RenderFrameIfNeeded();
         }
     }
 }
