@@ -80,19 +80,21 @@ namespace CrossMod.Tools
             modelViewport.EndBatchRenderMode();
         }
 
-        private static void RenderModel(ModelViewport modelViewport, List<IRenderable> nodes)
+        private static void RenderModel(ModelViewport modelViewport, List<IRenderableNode> nodes)
         {
-            if (nodes.Count != 0)
-            {
-                var rnumdl = nodes[0] as Rnumdl;
-                if (rnumdl?.Model != null)
-                    modelViewport.Renderer.Camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
-            }
+            if (nodes.Count == 0)
+                return;
+
+            var rnumdl = nodes[0] as Rnumdl;
+            if (rnumdl?.Model != null)
+                modelViewport.Renderer.Camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
+
+            modelViewport.Renderer.AddRenderableNode("model", nodes[0]);
             modelViewport.Renderer.RenderNodes(null);
             modelViewport.SwapBuffers();
         }
 
-        private static List<IRenderable> GetRenderableNodes(string sourceFolder)
+        private static List<IRenderableNode> GetRenderableNodes(string sourceFolder)
         {
             // Loading the numdlb node will load the texture as well.
             var mainNode = WorkSpaceTools.CreateDirectoryNodeAndExpand(sourceFolder);
@@ -102,9 +104,9 @@ namespace CrossMod.Tools
             {
                 if (node.Text.EndsWith("numdlb"))
                 {
-                    var renderable = (node as NumdlNode)?.GetRenderableNode();
+                    var renderable = (node as NumdlNode);
                     if (renderable != null)
-                        return new List<IRenderable>() { renderable };
+                        return new List<IRenderableNode>() { renderable };
                 }
             }
 
