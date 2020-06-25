@@ -24,6 +24,10 @@ namespace CrossMod.Rendering
      
         private IRenderable renderTexture;
 
+        public IRenderableAnimation RenderableAnimation { get; set; }
+
+        public float CurrentFrame { get; set; }
+
         private readonly GLViewport glViewport;
 
         public Camera Camera { get; } = new Camera() { FarClipPlane = 500000 };
@@ -141,6 +145,7 @@ namespace CrossMod.Rendering
 
             SetUpViewport();
 
+            // Don't render anything else if there is a texture.
             if (renderTexture != null)
             {
                 renderTexture.Render(Camera);
@@ -148,7 +153,14 @@ namespace CrossMod.Rendering
             else if (renderableNodes != null)
             {
                 foreach (var node in renderableNodes)
+                {
+                    if (node is IRenderableModel model)
+                    {
+                        RenderableAnimation?.SetFrameModel(model.GetModel(), CurrentFrame);
+                        RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), CurrentFrame);
+                    }
                     node.Render(Camera);
+                }
 
                 ParamNodeContainer.Render(Camera);
                 scriptNode?.Render(Camera);

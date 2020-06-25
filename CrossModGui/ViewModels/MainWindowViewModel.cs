@@ -24,6 +24,22 @@ namespace CrossModGui.ViewModels
             public bool IsChecked { get; set; }
         }
 
+        public float CurrentFrame
+        {
+            get => Renderer.CurrentFrame;
+            set 
+            {
+                if (value < 0)
+                    Renderer.CurrentFrame = 0;
+                else if (value > TotalFrames)
+                    Renderer.CurrentFrame = TotalFrames;
+                else
+                    Renderer.CurrentFrame = value; 
+            }
+        }
+
+        public float TotalFrames { get; set; }
+
         public ViewportRenderer Renderer { get; set; }
 
         public ObservableCollection<FileNode> FileTreeItems { get; } = new ObservableCollection<FileNode>();
@@ -31,21 +47,6 @@ namespace CrossModGui.ViewModels
         public ObservableCollection<BoneTreeItem> BoneTreeItems { get; } = new ObservableCollection<BoneTreeItem>();
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
-
-        public int CurrentFrame 
-        {
-            get => currentFrame;
-            set
-            {
-                if (value > TotalFrames)
-                    currentFrame = TotalFrames;
-                else
-                    currentFrame = value;
-            }
-        }
-        private int currentFrame;
-
-        public int TotalFrames { get; set; }
 
         public bool IsPlayingAnimation { get; set; }
 
@@ -92,13 +93,28 @@ namespace CrossModGui.ViewModels
         {
             BoneTreeItems.Clear();
             MeshListItems.Clear();
+            CurrentFrame = 0;
+            TotalFrames = 0;
 
-            // TODO: Textures?
             if (item is IRenderableNode node)
             {
-                // TODO: Why can't these lines be switched?
-                UpdateCurrentViewportRenderables(item.AbsolutePath, node);
-                UpdateMeshesAndBones(node.GetRenderableNode());
+                if (node is NutexNode nutexNode)
+                {
+                    Renderer.UpdateTexture(nutexNode);
+                }
+                else
+                {
+                    Renderer.UpdateTexture(null);
+
+                    // TODO: Why can't these lines be switched?
+                    UpdateCurrentViewportRenderables(item.AbsolutePath, node);
+                    UpdateMeshesAndBones(node.GetRenderableNode());
+                }
+            }
+            else if (item is NuanimNode animation)
+            {
+                Renderer.RenderableAnimation = (IRenderableAnimation)animation.GetRenderableNode();
+                TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
             }
         }
 

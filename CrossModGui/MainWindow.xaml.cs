@@ -38,12 +38,17 @@ namespace CrossModGui
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // Ensure animations update the viewport.
             if (e.PropertyName == nameof(MainWindowViewModel.IsPlayingAnimation))
             {
                 if (ViewModel.IsPlayingAnimation)
                     glViewport.RestartRendering();
                 else
                     glViewport.PauseRendering();
+            }
+            if (e.PropertyName == nameof(MainWindowViewModel.CurrentFrame))
+            {
+                glViewport.RenderFrame();
             }
         }
 
@@ -214,6 +219,26 @@ namespace CrossModGui
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
             BatchRendering.RenderModels(ViewModel.Renderer);
+        }
+
+        private void NextFrame_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CurrentFrame++;
+        }
+
+        private void LastFrame_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CurrentFrame = ViewModel.TotalFrames;
+        }
+
+        private void PreviousFrame_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CurrentFrame--;
+        }
+
+        private void FirstFrame_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CurrentFrame = 0f;
         }
     }
 }

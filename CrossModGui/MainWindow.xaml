@@ -85,19 +85,19 @@
                         <ColumnDefinition Width="30"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Slider Grid.Column="0" VerticalAlignment="Center" Maximum="{Binding TotalFrames}" 
-                            IsSnapToTickEnabled="True" Value="{Binding CurrentFrame}" TickFrequency="1"></Slider>
+                            IsSnapToTickEnabled="True" Value="{Binding Path=CurrentFrame, Mode=TwoWay}" TickFrequency="1"></Slider>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center" Margin="5">Frame:</TextBlock>
-                        <TextBox VerticalAlignment="Center" Margin="5" Text="{Binding CurrentFrame, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                        <TextBlock VerticalAlignment="Center" Margin="5" Text="{Binding TotalFrames, StringFormat={}of {0}}" />
+                        <TextBox VerticalAlignment="Center" Margin="5" Text="{Binding Path=CurrentFrame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <TextBlock VerticalAlignment="Center" Margin="5" Text="{Binding Path=TotalFrames, Mode=OneWay, StringFormat={}of {0}}" />
                     </StackPanel>
-                    <Button Grid.Column="2">&lt;&lt;</Button>
-                    <Button Grid.Column="3">&lt;</Button>
+                    <Button Grid.Column="2" Click="FirstFrame_Click">&lt;&lt;</Button>
+                    <Button Grid.Column="3" Click="PreviousFrame_Click">&lt;</Button>
                     <Button Grid.Column="4" Click="PlayButton_Click">
                         <TextBlock Text="{Binding PlayAnimationText}"></TextBlock>
                     </Button>
-                    <Button Grid.Column="5">&gt;</Button>
-                    <Button Grid.Column="6">&gt;&gt;</Button>
+                    <Button Grid.Column="5" Click="NextFrame_Click">&gt;</Button>
+                    <Button Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
                 </Grid>
             </Grid>
             <TabControl Grid.Column="2">
