@@ -1,0 +1,116 @@
+﻿<#@ template debug="true" hostspecific="true" #>
+<#@ output extension="cs" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(TargetDir)\SSBHLib.dll" #>
+<#@ import namespace="SSBHLib" #>
+<#   
+var assembly = typeof(SsbhFile).Assembly;
+var types = Assembly.GetAssembly(typeof(Ssbh))
+                    .GetTypes()
+                    .Where(t => typeof(SsbhFile)
+                    .IsAssignableFrom(t) && t != typeof(SsbhFile));
+
+var parserTextByType = new Dictionary<Type, string>()
+{
+    { typeof(float), "parser.ReadSingle()" },
+    { typeof(int), "parser.ReadInt32()" },
+    { typeof(uint), "parser.ReadUInt32()" },
+    { typeof(ulong), "parser.ReadUInt64()" },
+    { typeof(short), "parser.ReadInt16()" },
+    { typeof(ushort), "parser.ReadUInt16()" },
+    { typeof(long), "parser.ReadInt64()" },
+    { typeof(byte), "parser.ReadByte()" },
+    { typeof(SSBHLib.IO.SsbhOffset), "parser.Position + parser.ReadInt64()" },
+};
+
+// Nested classes use '+'.
+string GetFullTypeName(Type type) => type.FullName.Replace('+','.').Replace("SSBHLib.","");
+
+string GetParseText(Type type)
+{
+    var typeFullName = GetFullTypeName(type);
+    if (parserTextByType.ContainsKey(type))
+        return parserTextByType[type];
+    else if (types.Contains(type))
+        return $"parser.Parse{type.Name}()";
+    else if (type.IsEnum)
+        return $"({typeFullName})parser.ReadUInt64()";
+    else
+        return "default";
+}
+#>
+namespace SSBHLib.IO
+{
+    /// <summary>
+    /// Generated code for parsing SSBH types using a <see cref="SsbhParser"/>.
+    /// Changes made to this file will be overridden.    
+    /// </summary>
+    public static class Parsers
+    {
+<#		
+    foreach (var type in types)
+    {
+        var typeName = type.Name.Replace("SSBHLib","");
+        var typeFullName = GetFullTypeName(type);
+#>
+        public static <#=typeFullName#> Parse<#=typeName#>(this SsbhParser parser)
+        {
+            var result = new <#=typeFullName#>();
+<#		foreach (var prop in type.GetProperties())
+        {
+            if (SSBHLib.IO.SsbhParser.ShouldSkipProperty(prop))
+                continue;
+
+            var propertyTypeFullName = GetFullTypeName(prop.PropertyType);
+            var parseText = GetParseText(prop.PropertyType);
+
+            var fullAssignmentText = $"result.{prop.Name} = {parseText};";
+
+            if (prop.PropertyType.IsArray) 
+            {
+                var propElementType = prop.PropertyType.GetElementType();
+                var propElementTypeFullName = GetFullTypeName(propElementType);
+                var arrayElementParseText = GetParseText(propElementType);
+#>
+            {
+                // TODO: Extract this code to a method?
+                bool inline = false; // TODO: Add proper check for this.
+                long absoluteOffset = parser.GetOffset(inline);
+                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long previousPosition = parser.Position;
+                parser.Seek(absoluteOffset);
+
+                // TODO: Optimize reading arrays of blittable types.
+                result.<#=prop.Name#> = new <#=propElementTypeFullName#>[elementCount];
+                for (int i = 0; i < elementCount; i++)
+                {
+                    result.<#=prop.Name#>[i] = <#=arrayElementParseText#>;
+                }
+
+                if (!inline)
+                    parser.Seek(previousPosition); 
+            }
+<#          } else if (prop.PropertyType == typeof(string))  { #>
+            result.<#=prop.Name#> = parser.ReadOffsetReadString();
+<#          } else{ #>
+            <#=fullAssignmentText#>      
+<#          } #>
+<#      } #>
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+
+            return result;
+        }
+
+<#  } #>
+    }
+}
+	
+   

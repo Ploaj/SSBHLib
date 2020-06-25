@@ -4,6 +4,7 @@ using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats.Rendering;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,34 +28,34 @@ namespace SSBHLib.IO
         // Avoid reflection invoke overhead for known file magics.
         private static readonly Dictionary<string, Func<SsbhParser, SsbhFile>> parseMethodByMagic = new Dictionary<string, Func<SsbhParser, SsbhFile>>()
         {
-            { "BPLH", (parser) => parser.Parse<Hlpb>() },
-            { "DPRN", (parser) => parser.Parse<Nrpd>() },
-            { "RDHS", (parser) => parser.Parse<Shdr>() },
-            { "LEKS", (parser) => parser.Parse<Skel>() },
-            { "LDOM", (parser) => parser.Parse<Modl>() },
-            { "HSEM", (parser) => parser.Parse<Mesh>() },
-            { "LTAM", (parser) => parser.Parse<Matl>() },
-            { "MINA", (parser) => parser.Parse<Anim>() }
+            { "BPLH", (parser) => parser.ParseHlpb() },
+            { "DPRN", (parser) => parser.ParseNrpd() },
+            { "RDHS", (parser) => parser.ParseShdr() },
+            { "LEKS", (parser) => parser.ParseSkel() },
+            { "LDOM", (parser) => parser.ParseModl() },
+            { "HSEM", (parser) => parser.ParseMesh() },
+            { "LTAM", (parser) => parser.ParseMatl() },
+            { "MINA", (parser) => parser.ParseAnim() }
         };
 
         // Avoid reflection invoke overhead for known types.
         private static readonly Dictionary<Type, Func<SsbhParser, SsbhFile>> parseMethodByType = new Dictionary<Type, Func<SsbhParser, SsbhFile>>()
         {
-            { typeof(AnimGroup), (parser) => parser.Parse<AnimGroup>() },
-            { typeof(AnimNode), (parser) => parser.Parse<AnimNode>() },
-            { typeof(AnimTrack), (parser) => parser.Parse<AnimTrack>() },
-            { typeof(MatlEntry), (parser) => parser.Parse<MatlEntry>() },
-            { typeof(MatlAttribute), (parser) => parser.Parse<MatlAttribute>() },
-            { typeof(ModlMaterialName), (parser) => parser.Parse<ModlMaterialName>() },
-            { typeof(ModlEntry), (parser) => parser.Parse<ModlEntry>() },
-            { typeof(MeshObject), (parser) => parser.Parse<MeshObject>() },
-            { typeof(MeshAttribute), (parser) => parser.Parse<MeshAttribute>() },
-            { typeof(MeshAttributeString), (parser) => parser.Parse<MeshAttributeString>() },
-            { typeof(MeshBuffer), (parser) => parser.Parse<MeshBuffer>() },
-            { typeof(MeshRiggingGroup), (parser) => parser.Parse<MeshRiggingGroup>() },
-            { typeof(MeshBoneBuffer), (parser) => parser.Parse<MeshBoneBuffer>() },
-            { typeof(SkelBoneEntry), (parser) => parser.Parse<SkelBoneEntry>() },
-            { typeof(SkelMatrix), (parser) => parser.Parse<SkelMatrix>() }
+            { typeof(AnimGroup), (parser) => parser.ParseAnimGroup() },
+            { typeof(AnimNode), (parser) => parser.ParseAnimNode() },
+            { typeof(AnimTrack), (parser) => parser.ParseAnimTrack() },
+            { typeof(MatlEntry), (parser) => parser.ParseMatlEntry() },
+            { typeof(MatlAttribute), (parser) => parser.ParseMatlAttribute() },
+            { typeof(ModlMaterialName), (parser) => parser.ParseModlMaterialName() },
+            { typeof(ModlEntry), (parser) => parser.ParseModlEntry() },
+            { typeof(MeshObject), (parser) => parser.ParseMeshObject() },
+            { typeof(MeshAttribute), (parser) => parser.ParseMeshAttribute() },
+            { typeof(MeshAttributeString), (parser) => parser.ParseMeshAttributeString() },
+            { typeof(MeshBuffer), (parser) => parser.ParseMeshBuffer() },
+            { typeof(MeshRiggingGroup), (parser) => parser.ParseMeshRiggingGroup() },
+            { typeof(MeshBoneBuffer), (parser) => parser.ParseMeshBoneBuffer() },
+            { typeof(SkelBoneEntry), (parser) => parser.ParseSkelBoneEntry() },
+            { typeof(SkelMatrix), (parser) => parser.ParseSkelMatrix() }
         };
 
         public SsbhParser(Stream stream) : base(stream)
@@ -114,16 +115,22 @@ namespace SSBHLib.IO
             return false;
         }
 
+        public string ReadOffsetReadString()
+        {
+            long stringOffset = Position + ReadInt64();
+            return ReadString(stringOffset);
+        }
+
         public string ReadString(long offset)
         {
-            long temp = Position;
+            long previousPosition = Position;
 
             var stringValue = new System.Text.StringBuilder();
 
             Seek(offset);
             if (Position >= FileSize)
             {
-                Seek(temp);
+                Seek(previousPosition);
                 return "";
             }
 
@@ -134,7 +141,7 @@ namespace SSBHLib.IO
                 b = ReadByte();
             }
             
-            Seek(temp);
+            Seek(previousPosition);
 
             return stringValue.ToString();
         }
@@ -156,7 +163,7 @@ namespace SSBHLib.IO
         {
             foreach (var prop in tObject.GetType().GetProperties())
             {
-                if (ShouldSkipProperty<T>(prop))
+                if (ShouldSkipProperty(prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
@@ -180,7 +187,7 @@ namespace SSBHLib.IO
         {
             bool inline = prop.GetValue(tObject) != null;
             long absoluteOffset = GetOffset(inline);
-            long dataSize = GetSize(tObject, prop, inline);
+            long elementCount = GetElementCount(tObject, prop, inline);
 
             long previousPosition = Position;
 
@@ -190,28 +197,18 @@ namespace SSBHLib.IO
 
             // Check for the most frequent types first before using reflection.
             if (propElementType == typeof(byte))
-                SetArrayPropertyByte(tObject, prop, dataSize);
-            else if (propElementType == typeof(AnimTrack))
-                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, dataSize);
-            else if (propElementType == typeof(AnimNode))
-                SetArrayPropertyIssbh<AnimNode>(tObject, prop, dataSize);
-            else if (propElementType == typeof(AnimGroup))
-                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, dataSize);
-            else if (propElementType == typeof(MatlAttribute))
-                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, dataSize);
-            else if (propElementType == typeof(SkelMatrix))
-                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, dataSize);
+                SetArrayPropertyByte(tObject, prop, elementCount);
             else
-                SetArrayPropertyGeneric(tObject, prop, dataSize, propElementType);
+                SetArrayPropertyGeneric(tObject, prop, elementCount, propElementType);
 
             if (!inline)
                 Seek(previousPosition);
         }
 
-        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : SsbhFile
+        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long elementCount, Type propElementType) where T : SsbhFile
         {
-            Array array = Array.CreateInstance(propElementType, size);
-            for (int i = 0; i < size; i++)
+            Array array = Array.CreateInstance(propElementType, elementCount);
+            for (int i = 0; i < elementCount; i++)
             {
                 // Check for primitive types first.
                 // If the type is not primitive, check for an SSBH type.
@@ -253,7 +250,7 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, array);
         }
 
-        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
+        private long GetElementCount<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
         {
             if (!inline)
                 return ReadInt64();
@@ -261,7 +258,7 @@ namespace SSBHLib.IO
                 return (prop.GetValue(tObject) as Array).Length;
         }
 
-        private long GetOffset(bool inline)
+        public long GetOffset(bool inline)
         {
             if (!inline)
                 return Position + ReadInt64();
@@ -275,7 +272,7 @@ namespace SSBHLib.IO
             prop.SetValue(tObject, ReadString(stringOffset));
         }
 
-        private static bool ShouldSkipProperty<T>(PropertyInfo prop) where T : SsbhFile
+        public static bool ShouldSkipProperty(PropertyInfo prop)
         {
             bool shouldSkip = false;
 
@@ -362,12 +359,17 @@ namespace SSBHLib.IO
 
         public T[] ByteToType<T>(int count)
         {
-            T[] items = new T[count];
+            int sizeOfT = Marshal.SizeOf(typeof(T));
 
-            for (int i = 0; i < count; i++)
-                items[i] = ByteToType<T>();
+            var buffer = ReadBytes(sizeOfT * count);
 
-            return items;
+            T[] result = new T[count];
+
+            var pinnedHandle = GCHandle.Alloc(result, GCHandleType.Pinned);
+            Marshal.Copy(buffer, 0, pinnedHandle.AddrOfPinnedObject(), buffer.Length);
+            pinnedHandle.Free();
+
+            return result;
         }
 
         public T ByteToType<T>()
