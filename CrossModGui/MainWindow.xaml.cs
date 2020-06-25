@@ -30,7 +30,6 @@ namespace CrossModGui
             renderSettingsViewModel = RenderSettings.Instance;
             renderSettingsViewModel.PropertyChanged += (s,e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
 
-            // TODO: Sync mouse movement with viewmodel?
             cameraSettingsViewModel = ViewModel.Renderer.Camera;
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
         }

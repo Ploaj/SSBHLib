@@ -124,11 +124,21 @@ namespace CrossModGui.ViewModels
 
             foreach (var mesh in model.subMeshes)
             {
-                MeshListItems.Add(new MeshListItem
+                var newItem = new MeshListItem
                 {
                     Name = mesh.Name,
                     IsChecked = mesh.Visible
-                });
+                };
+                // TODO: Sync in the other direction to support animations/expression hiding?
+                newItem.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(MeshListItem.IsChecked))
+                        mesh.Visible = newItem.IsChecked;
+                    else if (e.PropertyName == nameof(MeshListItem.Name))
+                        mesh.Name = newItem.Name;
+                };
+
+                MeshListItems.Add(newItem);
             }
         }
 
