@@ -14,6 +14,7 @@ var types = Assembly.GetAssembly(typeof(Ssbh))
                     .GetTypes()
                     .Where(t => typeof(SsbhFile)
                     .IsAssignableFrom(t) && t != typeof(SsbhFile));
+
 var parserTextByType = new Dictionary<Type, string>()
 {
     { typeof(float), "parser.ReadSingle()" },
@@ -23,6 +24,7 @@ var parserTextByType = new Dictionary<Type, string>()
     { typeof(short), "parser.ReadInt16()" },
     { typeof(ushort), "parser.ReadUInt16()" },
     { typeof(long), "parser.ReadInt64()" },
+    { typeof(byte), "parser.ReadByte()" },
     { typeof(SSBHLib.IO.SsbhOffset), "parser.Position + parser.ReadInt64()" },
 };
 #>
@@ -64,6 +66,12 @@ namespace SSBHLib.IO
             if (prop.PropertyType.IsArray) 
             {
                 var propElementType = prop.PropertyType.GetElementType();
+                var arrayElementParseText = "default";
+                // Check for the most frequent types first before using reflection.
+                if (parserTextByType.ContainsKey(propElementType))
+                    arrayElementParseText = parserTextByType[propElementType];
+                else if (types.Contains(propElementType))
+                    arrayElementParseText = $"parser.Parse{propElementType.Name}()";
 #>
             {
                 // TODO: Extract this code to a method?
@@ -73,29 +81,11 @@ namespace SSBHLib.IO
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
+                // TODO: Optimize reading arrays of blittable types.
                 result.<#=prop.Name#> = new <#=propElementType.FullName.Replace("SSBHLib.","")#>[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.<#=prop.Name#>[i] = default; // TODO:
-<#  
-                // Check for the most frequent types first before using reflection.
-                /*
-                if (propElementType == typeof(byte))
-                    SetArrayPropertyByte(tObject, prop, dataSize);
-                else if (propElementType == typeof(AnimTrack))
-                    SetArrayPropertyIssbh<AnimTrack>(tObject, prop, dataSize);
-                else if (propElementType == typeof(AnimNode))
-                    SetArrayPropertyIssbh<AnimNode>(tObject, prop, dataSize);
-                else if (propElementType == typeof(AnimGroup))
-                    SetArrayPropertyIssbh<AnimGroup>(tObject, prop, dataSize);
-                else if (propElementType == typeof(MatlAttribute))
-                    SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, dataSize);
-                else if (propElementType == typeof(SkelMatrix))
-                    SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, dataSize);
-                else
-                    SetArrayPropertyGeneric(tObject, prop, dataSize, propElementType);
-                */
-#>
+                    result.<#=prop.Name#>[i] = <#=arrayElementParseText#>;
                 }
 
                 if (!inline)

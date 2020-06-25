@@ -46,19 +46,19 @@ namespace SSBHLib.Formats.Materials
             if (DataType == MatlEnums.ParamDataType.Float)
                 DataObject = parser.ReadSingle();
             else if (DataType == MatlEnums.ParamDataType.Boolean)
-                DataObject = parser.ReadUInt32() == 1;
+                DataObject = parser.ReadUInt32() == 1; // should this just be > 0?
             else if (DataType == MatlEnums.ParamDataType.Vector4)
-                DataObject = parser.Parse<MatlVector4>();
+                DataObject = parser.ParseMatlVector4();
             else if (DataType == MatlEnums.ParamDataType.String)
-                DataObject = parser.Parse<MatlString>();
+                DataObject = parser.ParseMatlString();
             else if (DataType == MatlEnums.ParamDataType.Sampler)
-                DataObject = parser.Parse<MatlSampler>();
+                DataObject = parser.ParseMatlSampler();
             else if (DataType == MatlEnums.ParamDataType.UvTransform)
-                DataObject = parser.Parse<MatlUvTransform>();
+                DataObject = parser.ParseMatlUvTransform();
             else if (DataType == MatlEnums.ParamDataType.BlendState)
-                DataObject = parser.Parse<MatlBlendState>();
+                DataObject = parser.ParseMatlBlendState();
             else if (DataType == MatlEnums.ParamDataType.RasterizerState)
-                DataObject = parser.Parse<MatlRasterizerState>();
+                DataObject = parser.ParseMatlRasterizerState();
         }
 
         private static string GetPropertyValues(Type type, object obj)

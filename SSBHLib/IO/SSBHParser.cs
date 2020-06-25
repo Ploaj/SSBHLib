@@ -28,14 +28,14 @@ namespace SSBHLib.IO
         // Avoid reflection invoke overhead for known file magics.
         private static readonly Dictionary<string, Func<SsbhParser, SsbhFile>> parseMethodByMagic = new Dictionary<string, Func<SsbhParser, SsbhFile>>()
         {
-            { "BPLH", (parser) => parser.Parse<Hlpb>() },
-            { "DPRN", (parser) => parser.Parse<Nrpd>() },
-            { "RDHS", (parser) => parser.Parse<Shdr>() },
-            { "LEKS", (parser) => parser.Parse<Skel>() },
-            { "LDOM", (parser) => parser.Parse<Modl>() },
-            { "HSEM", (parser) => parser.Parse<Mesh>() },
-            { "LTAM", (parser) => parser.Parse<Matl>() },
-            { "MINA", (parser) => parser.Parse<Anim>() }
+            { "BPLH", (parser) => parser.ParseHlpb() },
+            { "DPRN", (parser) => parser.ParseNrpd() },
+            { "RDHS", (parser) => parser.ParseShdr() },
+            { "LEKS", (parser) => parser.ParseSkel() },
+            { "LDOM", (parser) => parser.ParseModl() },
+            { "HSEM", (parser) => parser.ParseMesh() },
+            { "LTAM", (parser) => parser.ParseMatl() },
+            { "MINA", (parser) => parser.ParseAnim() }
         };
 
         // Avoid reflection invoke overhead for known types.
@@ -369,12 +369,17 @@ namespace SSBHLib.IO
 
         public T[] ByteToType<T>(int count)
         {
-            T[] items = new T[count];
+            int sizeOfT = Marshal.SizeOf(typeof(T));
 
-            for (int i = 0; i < count; i++)
-                items[i] = ByteToType<T>();
+            var buffer = ReadBytes(sizeOfT * count);
 
-            return items;
+            T[] result = new T[count];
+
+            var pinnedHandle = GCHandle.Alloc(result, GCHandleType.Pinned);
+            Marshal.Copy(buffer, 0, pinnedHandle.AddrOfPinnedObject(), buffer.Length);
+            pinnedHandle.Free();
+
+            return result;
         }
 
         public T ByteToType<T>()
