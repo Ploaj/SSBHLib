@@ -61,10 +61,60 @@ namespace SSBHLib.IO
 
             var fullAssignmentText = $"result.{prop.Name} = {parseText};";
 
-            // TODO: Arrays and strings.
+            if (prop.PropertyType.IsArray) 
+            {
+                var propElementType = prop.PropertyType.GetElementType();
+#>
+            {
+                // TODO: Extract this code to a method?
+                bool inline = false; // TODO: Add proper check for this.
+                long absoluteOffset = parser.GetOffset(inline);
+                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long previousPosition = parser.Position;
+                parser.Seek(absoluteOffset);
+
+                result.<#=prop.Name#> = new <#=propElementType.FullName.Replace("SSBHLib.","")#>[elementCount];
+                for (int i = 0; i < elementCount; i++)
+                {
+                    result.<#=prop.Name#>[i] = default; // TODO:
+<#  
+                // Check for the most frequent types first before using reflection.
+                /*
+                if (propElementType == typeof(byte))
+                    SetArrayPropertyByte(tObject, prop, dataSize);
+                else if (propElementType == typeof(AnimTrack))
+                    SetArrayPropertyIssbh<AnimTrack>(tObject, prop, dataSize);
+                else if (propElementType == typeof(AnimNode))
+                    SetArrayPropertyIssbh<AnimNode>(tObject, prop, dataSize);
+                else if (propElementType == typeof(AnimGroup))
+                    SetArrayPropertyIssbh<AnimGroup>(tObject, prop, dataSize);
+                else if (propElementType == typeof(MatlAttribute))
+                    SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, dataSize);
+                else if (propElementType == typeof(SkelMatrix))
+                    SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, dataSize);
+                else
+                    SetArrayPropertyGeneric(tObject, prop, dataSize, propElementType);
+                */
+#>
+                }
+
+                if (!inline)
+                    parser.Seek(previousPosition); 
+            }
+<#
+            }
+            else if (prop.PropertyType == typeof(string)) 
+            {
+#>
+            result.<#=prop.Name#> = parser.ReadOffsetReadString();
+<#
+            }
+            else
+            {
 #>
             <#=fullAssignmentText#>      
 <#  
+            }
         }
 #>
 

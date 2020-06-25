@@ -115,16 +115,22 @@ namespace SSBHLib.IO
             return false;
         }
 
+        public string ReadOffsetReadString()
+        {
+            long stringOffset = Position + ReadInt64();
+            return ReadString(stringOffset);
+        }
+
         public string ReadString(long offset)
         {
-            long temp = Position;
+            long previousPosition = Position;
 
             var stringValue = new System.Text.StringBuilder();
 
             Seek(offset);
             if (Position >= FileSize)
             {
-                Seek(temp);
+                Seek(previousPosition);
                 return "";
             }
 
@@ -135,7 +141,7 @@ namespace SSBHLib.IO
                 b = ReadByte();
             }
             
-            Seek(temp);
+            Seek(previousPosition);
 
             return stringValue.ToString();
         }
@@ -181,7 +187,7 @@ namespace SSBHLib.IO
         {
             bool inline = prop.GetValue(tObject) != null;
             long absoluteOffset = GetOffset(inline);
-            long dataSize = GetSize(tObject, prop, inline);
+            long elementCount = GetElementCount(tObject, prop, inline);
 
             long previousPosition = Position;
 
@@ -191,28 +197,28 @@ namespace SSBHLib.IO
 
             // Check for the most frequent types first before using reflection.
             if (propElementType == typeof(byte))
-                SetArrayPropertyByte(tObject, prop, dataSize);
+                SetArrayPropertyByte(tObject, prop, elementCount);
             else if (propElementType == typeof(AnimTrack))
-                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, dataSize);
+                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, elementCount);
             else if (propElementType == typeof(AnimNode))
-                SetArrayPropertyIssbh<AnimNode>(tObject, prop, dataSize);
+                SetArrayPropertyIssbh<AnimNode>(tObject, prop, elementCount);
             else if (propElementType == typeof(AnimGroup))
-                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, dataSize);
+                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, elementCount);
             else if (propElementType == typeof(MatlAttribute))
-                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, dataSize);
+                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, elementCount);
             else if (propElementType == typeof(SkelMatrix))
-                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, dataSize);
+                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, elementCount);
             else
-                SetArrayPropertyGeneric(tObject, prop, dataSize, propElementType);
+                SetArrayPropertyGeneric(tObject, prop, elementCount, propElementType);
 
             if (!inline)
                 Seek(previousPosition);
         }
 
-        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long size, Type propElementType) where T : SsbhFile
+        private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long elementCount, Type propElementType) where T : SsbhFile
         {
-            Array array = Array.CreateInstance(propElementType, size);
-            for (int i = 0; i < size; i++)
+            Array array = Array.CreateInstance(propElementType, elementCount);
+            for (int i = 0; i < elementCount; i++)
             {
                 // Check for primitive types first.
                 // If the type is not primitive, check for an SSBH type.
@@ -254,7 +260,7 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, array);
         }
 
-        private long GetSize<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
+        private long GetElementCount<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
         {
             if (!inline)
                 return ReadInt64();
@@ -262,7 +268,7 @@ namespace SSBHLib.IO
                 return (prop.GetValue(tObject) as Array).Length;
         }
 
-        private long GetOffset(bool inline)
+        public long GetOffset(bool inline)
         {
             if (!inline)
                 return Position + ReadInt64();
