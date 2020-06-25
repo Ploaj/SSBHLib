@@ -14,11 +14,22 @@ var types = Assembly.GetAssembly(typeof(Ssbh))
                     .GetTypes()
                     .Where(t => typeof(SsbhFile)
                     .IsAssignableFrom(t) && t != typeof(SsbhFile));
+var parserTextByType = new Dictionary<Type, string>()
+{
+    { typeof(float), "parser.ReadSingle()" },
+    { typeof(int), "parser.ReadInt32()" },
+    { typeof(uint), "parser.ReadUInt32()" },
+    { typeof(ulong), "parser.ReadUInt64()" },
+    { typeof(short), "parser.ReadInt16()" },
+    { typeof(ushort), "parser.ReadUInt16()" },
+    { typeof(long), "parser.ReadInt64()" },
+    { typeof(SSBHLib.IO.SsbhOffset), "parser.Position + parser.ReadInt64()" },
+};
 #>
 namespace SSBHLib.IO
 {
     /// <summary>
-    /// Generated code for parsing specific SSBH types.
+    /// Generated code for parsing SSBH types using a <see cref="SsbhParser"/>.
     /// Changes made to this file will be overridden.    
     /// </summary>
     public static class Parsers
@@ -38,8 +49,21 @@ namespace SSBHLib.IO
         {
             if (SSBHLib.IO.SsbhParser.ShouldSkipProperty(prop))
                 continue;
+
+            var propertyTypeFullName = prop.PropertyType.FullName.Replace('+','.').Replace("SSBHLib.","");
+            var parseText = "default";
+            if (parserTextByType.ContainsKey(prop.PropertyType))
+                parseText = parserTextByType[prop.PropertyType];
+            else if (types.Contains(prop.PropertyType))
+                parseText = $"parser.Parse{prop.PropertyType.Name}()";
+            else if (prop.PropertyType.IsEnum)
+                parseText = $"({propertyTypeFullName})parser.ReadUInt64()";
+
+            var fullAssignmentText = $"result.{prop.Name} = {parseText};";
+
+            // TODO: Arrays and strings.
 #>
-            result.<#=prop.Name#> = default;       
+            <#=fullAssignmentText#>      
 <#  
         }
 #>
@@ -47,6 +71,7 @@ namespace SSBHLib.IO
             long temp = parser.Position;
             result.PostProcess(parser);
             parser.Seek(temp);
+
             return result;
         }
 
