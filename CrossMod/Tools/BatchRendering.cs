@@ -33,9 +33,9 @@ namespace CrossMod.Tools
         }
 
         private static readonly ConcurrentQueue<SaveImageWorkItem> imagesToSave = new ConcurrentQueue<SaveImageWorkItem>();
-        private static bool isRendering = false;
+        private static bool isBatchRendering = false;
 
-        public static void RenderModels(ModelViewport modelViewport, TreeView fileTree)
+        public static void RenderModels(ViewportRenderer renderer)
         {
             if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
                 return;
@@ -43,10 +43,10 @@ namespace CrossMod.Tools
             if (!FileTools.TryOpenFolderDialog(out string outputPath, "Select PNG Output Directory"))
                 return;
 
-            modelViewport.BeginBatchRenderMode();
-            fileTree.BeginUpdate();
+            var viewportWasRendering = renderer.IsRendering;
+            renderer.PauseRendering();
 
-            isRendering = true;
+            isBatchRendering = true;
             var saveImages = Task.Run(SaveImagesFromQueue);
 
             foreach (var file in Directory.EnumerateFiles(folderPath, "*model.numdlb", SearchOption.AllDirectories))
@@ -56,10 +56,10 @@ namespace CrossMod.Tools
                 try
                 {
                     var nodes = GetRenderableNodes(sourceFolder);
-                    RenderModel(modelViewport, nodes);
+                    RenderModel(renderer, nodes);
 
                     // Screenshots will be saved and disposed later to improve performance.
-                    imagesToSave.Enqueue(new SaveImageWorkItem(modelViewport.Renderer.GetScreenshot(), folderPath, file, outputPath));
+                    imagesToSave.Enqueue(new SaveImageWorkItem(renderer.GetScreenshot(), folderPath, file, outputPath));
                 }
                 catch (Exception)
                 {
@@ -67,31 +67,31 @@ namespace CrossMod.Tools
                 }
                 finally
                 {
-                    WorkSpaceTools.ClearWorkspace(fileTree, modelViewport);
+                    renderer.ClearRenderableNodes();
                 }
 
                 System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
 
-            isRendering = false;
+            isBatchRendering = false;
             saveImages.Wait();
 
-            fileTree.EndUpdate();
-            modelViewport.EndBatchRenderMode();
+            if (viewportWasRendering)
+                renderer.RestartRendering();
         }
 
-        private static void RenderModel(ModelViewport modelViewport, List<IRenderableNode> nodes)
+        private static void RenderModel(ViewportRenderer renderer, List<IRenderableNode> nodes)
         {
             if (nodes.Count == 0)
                 return;
 
             var rnumdl = nodes[0] as Rnumdl;
             if (rnumdl?.Model != null)
-                modelViewport.Renderer.Camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
+                renderer.Camera.FrameBoundingSphere(rnumdl.Model.BoundingSphere);
 
-            modelViewport.Renderer.AddRenderableNode("model", nodes[0]);
-            modelViewport.Renderer.RenderNodes(null);
-            modelViewport.SwapBuffers();
+            renderer.AddRenderableNode("model", nodes[0]);
+            renderer.RenderNodes(null);
+            renderer.SwapBuffers();
         }
 
         private static List<IRenderableNode> GetRenderableNodes(string sourceFolder)
@@ -123,7 +123,7 @@ namespace CrossMod.Tools
 
         private static void SaveImagesFromQueue()
         {
-            while (isRendering)
+            while (isBatchRendering)
             {
                 if (imagesToSave.TryDequeue(out SaveImageWorkItem item))
                 {

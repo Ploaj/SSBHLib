@@ -25,8 +25,8 @@
                 <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
                 <Separator></Separator>
-                <MenuItem Header="Reload Scripts"/>
-                <MenuItem Header="Reload Shaders"/>
+                <MenuItem Header="Reload Scripts" Click="ReloadScripts_Click"/>
+                <MenuItem Header="Reload Shaders" Click="ReloadShaders_Click"/>
             </MenuItem>
             <MenuItem Header="Viewport">
                 <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
@@ -37,7 +37,7 @@
                 <MenuItem Header="Clear Viewport" Click="ClearViewport_Click"/>
             </MenuItem>
             <MenuItem Header="Experimental">
-                <MenuItem Header="Batch Render Models" />
+                <MenuItem Header="Batch Render Models" Click="BatchRenderModels_Click"/>
                 <MenuItem Header="Animation Export Options">
                     <MenuItem Header="Export Animation to Gif"/>
                     <MenuItem Header="Export Animation to Folder"/>
@@ -69,12 +69,12 @@
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="70"></RowDefinition>
                 </Grid.RowDefinitions>
                 <WindowsFormsHost Grid.Row="0">
                     <sfcontrol:GLViewport x:Name="glViewport" Resize="glViewport_Resize" MouseMove="glViewport_MouseInteract" MouseWheel="glViewport_MouseInteract"/>
                 </WindowsFormsHost>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="auto"></ColumnDefinition>

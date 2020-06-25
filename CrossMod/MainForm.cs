@@ -238,7 +238,7 @@ namespace CrossMod
 
         private void batchRenderModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BatchRendering.RenderModels(modelViewport, fileTree);
+            BatchRendering.RenderModels(modelViewport.Renderer);
         }
 
         private void frameSelectionToolStripMenuItem_Click(object sender, EventArgs e)

@@ -33,6 +33,15 @@ namespace CrossMod.Rendering
             glViewport = viewport;
         }
 
+        public void SwapBuffers() => glViewport.SwapBuffers();
+
+        public void PauseRendering() => glViewport.PauseRendering();
+
+        public void RestartRendering() => glViewport.RestartRendering();
+
+        public bool IsRendering => glViewport.IsRendering;
+
+
         public void AddRenderableNode(string name, IRenderableNode value)
         {
             if (value == null)

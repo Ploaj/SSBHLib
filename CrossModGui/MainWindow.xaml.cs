@@ -1,5 +1,6 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
+using CrossMod.Tools;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
 using System;
@@ -197,6 +198,22 @@ namespace CrossModGui
         {
             // Ensure mesh visibility is updated.
             RenderFrameIfNeeded();
+        }
+
+        private void ReloadShaders_Click(object sender, RoutedEventArgs e)
+        {
+            // Force the shaders to be generated again.
+            ViewModel.Renderer.ReloadShaders();
+        }
+
+        private void ReloadScripts_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO:
+        }
+
+        private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
+        {
+            BatchRendering.RenderModels(ViewModel.Renderer);
         }
     }
 }
