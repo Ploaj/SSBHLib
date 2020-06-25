@@ -41,21 +41,21 @@ namespace SSBHLib.IO
         // Avoid reflection invoke overhead for known types.
         private static readonly Dictionary<Type, Func<SsbhParser, SsbhFile>> parseMethodByType = new Dictionary<Type, Func<SsbhParser, SsbhFile>>()
         {
-            { typeof(AnimGroup), (parser) => parser.Parse<AnimGroup>() },
-            { typeof(AnimNode), (parser) => parser.Parse<AnimNode>() },
-            { typeof(AnimTrack), (parser) => parser.Parse<AnimTrack>() },
-            { typeof(MatlEntry), (parser) => parser.Parse<MatlEntry>() },
-            { typeof(MatlAttribute), (parser) => parser.Parse<MatlAttribute>() },
-            { typeof(ModlMaterialName), (parser) => parser.Parse<ModlMaterialName>() },
-            { typeof(ModlEntry), (parser) => parser.Parse<ModlEntry>() },
-            { typeof(MeshObject), (parser) => parser.Parse<MeshObject>() },
-            { typeof(MeshAttribute), (parser) => parser.Parse<MeshAttribute>() },
-            { typeof(MeshAttributeString), (parser) => parser.Parse<MeshAttributeString>() },
-            { typeof(MeshBuffer), (parser) => parser.Parse<MeshBuffer>() },
-            { typeof(MeshRiggingGroup), (parser) => parser.Parse<MeshRiggingGroup>() },
-            { typeof(MeshBoneBuffer), (parser) => parser.Parse<MeshBoneBuffer>() },
-            { typeof(SkelBoneEntry), (parser) => parser.Parse<SkelBoneEntry>() },
-            { typeof(SkelMatrix), (parser) => parser.Parse<SkelMatrix>() }
+            { typeof(AnimGroup), (parser) => parser.ParseAnimGroup() },
+            { typeof(AnimNode), (parser) => parser.ParseAnimNode() },
+            { typeof(AnimTrack), (parser) => parser.ParseAnimTrack() },
+            { typeof(MatlEntry), (parser) => parser.ParseMatlEntry() },
+            { typeof(MatlAttribute), (parser) => parser.ParseMatlAttribute() },
+            { typeof(ModlMaterialName), (parser) => parser.ParseModlMaterialName() },
+            { typeof(ModlEntry), (parser) => parser.ParseModlEntry() },
+            { typeof(MeshObject), (parser) => parser.ParseMeshObject() },
+            { typeof(MeshAttribute), (parser) => parser.ParseMeshAttribute() },
+            { typeof(MeshAttributeString), (parser) => parser.ParseMeshAttributeString() },
+            { typeof(MeshBuffer), (parser) => parser.ParseMeshBuffer() },
+            { typeof(MeshRiggingGroup), (parser) => parser.ParseMeshRiggingGroup() },
+            { typeof(MeshBoneBuffer), (parser) => parser.ParseMeshBoneBuffer() },
+            { typeof(SkelBoneEntry), (parser) => parser.ParseSkelBoneEntry() },
+            { typeof(SkelMatrix), (parser) => parser.ParseSkelMatrix() }
         };
 
         public SsbhParser(Stream stream) : base(stream)
@@ -198,16 +198,6 @@ namespace SSBHLib.IO
             // Check for the most frequent types first before using reflection.
             if (propElementType == typeof(byte))
                 SetArrayPropertyByte(tObject, prop, elementCount);
-            else if (propElementType == typeof(AnimTrack))
-                SetArrayPropertyIssbh<AnimTrack>(tObject, prop, elementCount);
-            else if (propElementType == typeof(AnimNode))
-                SetArrayPropertyIssbh<AnimNode>(tObject, prop, elementCount);
-            else if (propElementType == typeof(AnimGroup))
-                SetArrayPropertyIssbh<AnimGroup>(tObject, prop, elementCount);
-            else if (propElementType == typeof(MatlAttribute))
-                SetArrayPropertyIssbh<MatlAttribute>(tObject, prop, elementCount);
-            else if (propElementType == typeof(SkelMatrix))
-                SetArrayPropertyIssbh<SkelMatrix>(tObject, prop, elementCount);
             else
                 SetArrayPropertyGeneric(tObject, prop, elementCount, propElementType);
 
