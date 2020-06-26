@@ -75,8 +75,7 @@ namespace CrossMod
             }
             else if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                var node = (FileNode)fileTree.SelectedNode;
-                modelViewport.Renderer.AddRenderableNode(node.AbsolutePath, renderableNode);
+                modelViewport.Renderer.AddRenderableNode(renderableNode);
                 modelViewport.UpdateGui(renderableNode.GetRenderableNode());
                 modelViewport.Renderer.UpdateTexture(null);
             }

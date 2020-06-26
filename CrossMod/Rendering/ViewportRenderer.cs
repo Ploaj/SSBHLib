@@ -9,6 +9,7 @@ using SFGraphics.Cameras;
 using SFGraphics.Controls;
 using OpenTK.Graphics.OpenGL;
 using CrossMod.Rendering.GlTools;
+using System.Linq;
 
 namespace CrossMod.Rendering
 {
@@ -18,8 +19,6 @@ namespace CrossMod.Rendering
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
-        // TODO: Combine with renderable nodes as a tuple list?
-        private readonly HashSet<string> renderableNodeNames = new HashSet<string>();
         private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
      
         private IRenderable renderTexture;
@@ -46,7 +45,7 @@ namespace CrossMod.Rendering
         public bool IsRendering => glViewport.IsRendering;
 
 
-        public void AddRenderableNode(string name, IRenderableNode value)
+        public void AddRenderableNode(IRenderableNode value)
         {
             if (value == null)
                 return;
@@ -54,15 +53,7 @@ namespace CrossMod.Rendering
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
                 var newNode = value.GetRenderableNode();
-
-                // Prevent duplicates. Paths should be unique.
-                if (!renderableNodeNames.Contains(name))
-                {
-                    renderableNodes.Add(newNode);
-                    renderableNodeNames.Add(name);
-                }
-
-
+                renderableNodes.Add(newNode);
                 FrameRenderableModels();
             });
         }
@@ -71,7 +62,6 @@ namespace CrossMod.Rendering
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
-                renderableNodeNames.Clear();
                 renderableNodes.Clear();
                 GC.WaitForPendingFinalizers();
                 GLObjectManager.DeleteUnusedGLObjects();
@@ -80,17 +70,8 @@ namespace CrossMod.Rendering
 
         public void FrameRenderableModels()
         {
-            // Bounding spheres will help account for the vastly different model sizes.
-            var spheres = new List<Vector4>();
-            foreach (var node in renderableNodes)
-            {
-                if (node is IRenderableModel model)
-                {
-                    spheres.Add(model.GetModel().BoundingSphere);
-                }
-            }
-
-            var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(spheres);
+            var allSpheres = renderableNodes.OfType<IRenderableModel>().Select(n => n.GetModel().BoundingSphere);
+            var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(allSpheres);
             Camera.FrameBoundingSphere(allModelBoundingSphere, 0);
         }
 

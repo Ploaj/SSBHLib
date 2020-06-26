@@ -118,7 +118,7 @@ namespace CrossModGui
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (CrossMod.Tools.FileTools.TryOpenFolderDialog(out string folderPath))
+            if (FileTools.TryOpenFolderDialog(out string folderPath))
             {
                 ViewModel.PopulateFileTree(folderPath);
             }

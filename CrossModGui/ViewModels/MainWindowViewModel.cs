@@ -3,7 +3,6 @@ using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 
 namespace CrossModGui.ViewModels
@@ -107,7 +106,7 @@ namespace CrossModGui.ViewModels
                     Renderer.UpdateTexture(null);
 
                     // TODO: Why can't these lines be switched?
-                    UpdateCurrentViewportRenderables(item.AbsolutePath, node);
+                    UpdateCurrentViewportRenderables(node);
                     UpdateMeshesAndBones(node.GetRenderableNode());
                 }
             }
@@ -118,14 +117,14 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private void UpdateCurrentViewportRenderables(string name, IRenderableNode renderableNode)
+        private void UpdateCurrentViewportRenderables(IRenderableNode renderableNode)
         {
             if (renderableNode is NutexNode node)
                 Renderer.UpdateTexture(node);
             else
                 Renderer.UpdateTexture(null);
 
-            Renderer.AddRenderableNode(name, renderableNode);
+            Renderer.AddRenderableNode(renderableNode);
         }
 
         private void AddSkeletonToGui(RSkeleton skeleton)

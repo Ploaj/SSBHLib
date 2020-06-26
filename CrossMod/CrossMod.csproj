@@ -208,7 +208,7 @@
     <Compile Include="Rendering\RenderSettings.cs" />
     <Compile Include="Rendering\Models\RMesh.cs" />
     <Compile Include="Rendering\Models\RModel.cs" />
-    <Compile Include="Rendering\Renderables\Rnumdl.cs" />
+    <Compile Include="Rendering\Renderables\RNumdl.cs" />
     <Compile Include="Rendering\Renderables\RSkeleton.cs" />
     <Compile Include="Rendering\Renderables\RTexture.cs" />
     <Compile Include="Rendering\ShapeMeshes\ScreenTriangle.cs" />
