@@ -43,6 +43,22 @@ string GetParseText(Type type)
     else
         return "default";
 }
+
+bool IsBlittable(Type type)
+{
+    if (type.IsArray)
+    {
+        var elem = type.GetElementType();
+        return elem.IsValueType && IsBlittable(elem);
+    }
+    try{
+        object instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+        System.Runtime.InteropServices.GCHandle.Alloc(instance, System.Runtime.InteropServices.GCHandleType.Pinned).Free();
+        return true;
+    }catch{
+        return false;
+    }
+}
 #>
 namespace SSBHLib.IO
 {
@@ -85,13 +101,17 @@ namespace SSBHLib.IO
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+<#              if (propElementType == typeof(byte)) { #>
+                result.<#=prop.Name#> = parser.ReadBytes((int)elementCount);
+<#              } else if (IsBlittable(prop.PropertyType)) { #>
+                result.<#=prop.Name#> = parser.ByteToType<<#=propElementTypeFullName#>>((int)elementCount);
+<#              } else { #> 
                 result.<#=prop.Name#> = new <#=propElementTypeFullName#>[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.<#=prop.Name#>[i] = <#=arrayElementParseText#>;
                 }
-
+<#              } #> 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }

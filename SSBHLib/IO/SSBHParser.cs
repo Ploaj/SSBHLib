@@ -60,7 +60,7 @@ namespace SSBHLib.IO
 
         public SsbhParser(Stream stream) : base(stream)
         {
-
+            
         }
 
         public void Seek(long position)
@@ -357,7 +357,7 @@ namespace SSBHLib.IO
             return value;
         }
 
-        public T[] ByteToType<T>(int count)
+        public T[] ByteToType<T>(int count) where T : struct
         {
             int sizeOfT = Marshal.SizeOf(typeof(T));
 
@@ -372,7 +372,7 @@ namespace SSBHLib.IO
             return result;
         }
 
-        public T ByteToType<T>()
+        public T ByteToType<T>() where T : struct
         {
             byte[] bytes = ReadBytes(Marshal.SizeOf(typeof(T)));
 

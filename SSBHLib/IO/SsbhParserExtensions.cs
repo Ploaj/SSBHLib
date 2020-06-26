@@ -20,13 +20,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.AimEntries = new Formats.HlpbRotateAim[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.AimEntries[i] = parser.ParseHlpbRotateAim();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -38,13 +38,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.InterpolationEntries = new Formats.HlpbRotateInterpolation[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.InterpolationEntries[i] = parser.ParseHlpbRotateInterpolation();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -56,13 +56,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.List1 = new System.Int32[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.List1[i] = parser.ReadInt32();
-                }
-
+                result.List1 = parser.ByteToType<System.Int32>((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -74,13 +69,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.List2 = new System.Int32[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.List2[i] = parser.ReadInt32();
-                }
-
+                result.List2 = parser.ByteToType<System.Int32>((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -180,13 +170,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.BoneEntries = new Formats.SkelBoneEntry[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.BoneEntries[i] = parser.ParseSkelBoneEntry();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -198,13 +188,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.WorldTransform = new Formats.SkelMatrix[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.WorldTransform[i] = parser.ParseSkelMatrix();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -216,13 +206,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.InvWorldTransform = new Formats.SkelMatrix[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.InvWorldTransform[i] = parser.ParseSkelMatrix();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -234,13 +224,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Transform = new Formats.SkelMatrix[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Transform[i] = parser.ParseSkelMatrix();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -252,13 +242,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.InvTransform = new Formats.SkelMatrix[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.InvTransform[i] = parser.ParseSkelMatrix();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -328,13 +318,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.MaterialFileNames = new Formats.ModlMaterialName[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.MaterialFileNames[i] = parser.ParseModlMaterialName();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -348,13 +338,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.ModelEntries = new Formats.ModlEntry[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.ModelEntries[i] = parser.ParseModlEntry();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -406,13 +396,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.FrameBufferContainers = new Formats.Rendering.NrpdFrameBufferContainer[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.FrameBufferContainers[i] = parser.ParseNrpdFrameBufferContainer();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -424,13 +414,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.StateContainers = new Formats.Rendering.NrpdStateContainer[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.StateContainers[i] = parser.ParseNrpdStateContainer();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -442,13 +432,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.RenderPasses = new Formats.Rendering.NrpdRenderPass[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.RenderPasses[i] = parser.ParseNrpdRenderPass();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -564,13 +554,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Shaders = new Formats.Rendering.ShdrShader[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Shaders[i] = parser.ParseShdrShader();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -596,13 +586,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.ShaderBinary = new System.Byte[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.ShaderBinary[i] = parser.ReadByte();
-                }
-
+                result.ShaderBinary = parser.ReadBytes((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -658,13 +643,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Objects = new Formats.Meshes.MeshObject[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Objects[i] = parser.ParseMeshObject();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -676,13 +661,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.BufferSizes = new System.Int32[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.BufferSizes[i] = parser.ReadInt32();
-                }
-
+                result.BufferSizes = parser.ByteToType<System.Int32>((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -695,13 +675,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.VertexBuffers = new Formats.Meshes.MeshBuffer[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.VertexBuffers[i] = parser.ParseMeshBuffer();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -713,13 +693,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.PolygonBuffer = new System.Byte[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.PolygonBuffer[i] = parser.ReadByte();
-                }
-
+                result.PolygonBuffer = parser.ReadBytes((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -731,13 +706,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.RiggingBuffers = new Formats.Meshes.MeshRiggingGroup[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.RiggingBuffers[i] = parser.ParseMeshRiggingGroup();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -769,13 +744,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.AttributeStrings = new Formats.Meshes.MeshAttributeString[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.AttributeStrings[i] = parser.ParseMeshAttributeString();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -811,13 +786,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.Data = new System.Byte[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.Data[i] = parser.ReadByte();
-                }
-
+                result.Data = parser.ReadBytes((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -840,13 +810,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.Buffer = new System.Byte[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.Buffer[i] = parser.ReadByte();
-                }
-
+                result.Buffer = parser.ReadBytes((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -914,13 +879,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Attributes = new Formats.Meshes.MeshAttribute[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Attributes[i] = parser.ParseMeshAttribute();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -946,13 +911,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Buffers = new Formats.Meshes.MeshBoneBuffer[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Buffers[i] = parser.ParseMeshBoneBuffer();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -990,13 +955,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Attributes = new Formats.Materials.MatlAttribute[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Attributes[i] = parser.ParseMatlAttribute();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -1023,13 +988,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Entries = new Formats.Materials.MatlEntry[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Entries[i] = parser.ParseMatlEntry();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -1059,13 +1024,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Animations = new Formats.Animation.AnimGroup[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Animations[i] = parser.ParseAnimGroup();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -1077,13 +1042,8 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
-                result.Buffer = new System.Byte[elementCount];
-                for (int i = 0; i < elementCount; i++)
-                {
-                    result.Buffer[i] = parser.ReadByte();
-                }
-
+                result.Buffer = parser.ReadBytes((int)elementCount);
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -1107,13 +1067,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Nodes = new Formats.Animation.AnimNode[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Nodes[i] = parser.ParseAnimNode();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
@@ -1137,13 +1097,13 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                // TODO: Optimize reading arrays of blittable types.
+ 
                 result.Tracks = new Formats.Animation.AnimTrack[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
                     result.Tracks[i] = parser.ParseAnimTrack();
                 }
-
+ 
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
