@@ -1,14 +1,13 @@
 ﻿using CrossMod.Nodes;
+using CrossMod.Rendering.GlTools;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using SFGraphics.Cameras;
+using SFGraphics.Controls;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
 using System;
-using System.Collections.Generic;
-using SFGraphics.Cameras;
-using SFGraphics.Controls;
-using OpenTK.Graphics.OpenGL;
-using CrossMod.Rendering.GlTools;
 using System.Linq;
 
 namespace CrossMod.Rendering
@@ -19,10 +18,17 @@ namespace CrossMod.Rendering
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
-        private readonly List<IRenderable> renderableNodes = new List<IRenderable>();
+        public IRenderable ItemToRender
+        {
+            get => itemToRender;
+            set
+            {
+                itemToRender = value;
+                FrameRenderableModels();
+            }
+        }
+        private IRenderable itemToRender;
      
-        private IRenderable renderTexture;
-
         public IRenderableAnimation RenderableAnimation { get; set; }
 
         public float CurrentFrame { get; set; }
@@ -44,25 +50,11 @@ namespace CrossMod.Rendering
 
         public bool IsRendering => glViewport.IsRendering;
 
-
-        public void AddRenderableNode(IRenderableNode value)
-        {
-            if (value == null)
-                return;
-
-            SwitchContextToCurrentThreadAndPerformAction(() =>
-            {
-                var newNode = value.GetRenderableNode();
-                renderableNodes.Add(newNode);
-                FrameRenderableModels();
-            });
-        }
-
         public void ClearRenderableNodes()
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
-                renderableNodes.Clear();
+                ItemToRender = null;
                 GC.WaitForPendingFinalizers();
                 GLObjectManager.DeleteUnusedGLObjects();
             });
@@ -70,9 +62,8 @@ namespace CrossMod.Rendering
 
         public void FrameRenderableModels()
         {
-            var allSpheres = renderableNodes.OfType<IRenderableModel>().Select(n => n.GetModel().BoundingSphere);
-            var allModelBoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(allSpheres);
-            Camera.FrameBoundingSphere(allModelBoundingSphere, 0);
+            if (itemToRender is IRenderableModel model && model.GetModel() != null)
+                Camera.FrameBoundingSphere(model.GetModel().BoundingSphere, 0);
         }
 
         public void UpdateCameraFromMouse()
@@ -98,15 +89,6 @@ namespace CrossMod.Rendering
             mouseScrollWheel = newMouseScrollWheel;
         }
 
-        public void UpdateTexture(NutexNode texture)
-        {
-            SwitchContextToCurrentThreadAndPerformAction(() =>
-            {
-                var node = texture?.GetRenderableNode();
-                renderTexture = node;
-            });
-        }
-
         public void ReloadShaders()
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
@@ -124,25 +106,16 @@ namespace CrossMod.Rendering
             SetUpViewport();
 
             // Don't render anything else if there is a texture.
-            if (renderTexture != null)
-            {
-                renderTexture.Render(Camera);
-            }
-            else if (renderableNodes != null)
-            {
-                foreach (var node in renderableNodes)
-                {
-                    if (node is IRenderableModel model)
-                    {
-                        RenderableAnimation?.SetFrameModel(model.GetModel(), CurrentFrame);
-                        RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), CurrentFrame);
-                    }
-                    node.Render(Camera);
-                }
 
-                ParamNodeContainer.Render(Camera);
-                scriptNode?.Render(Camera);
+            if (itemToRender is IRenderableModel model)
+            {
+                RenderableAnimation?.SetFrameModel(model.GetModel(), CurrentFrame);
+                RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), CurrentFrame);
             }
+            itemToRender?.Render(Camera);
+                
+            ParamNodeContainer.Render(Camera);
+            scriptNode?.Render(Camera);
         }
 
         public System.Drawing.Bitmap GetScreenshot()

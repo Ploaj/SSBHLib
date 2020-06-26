@@ -92,39 +92,26 @@ namespace CrossModGui.ViewModels
         {
             BoneTreeItems.Clear();
             MeshListItems.Clear();
-            CurrentFrame = 0;
-            TotalFrames = 0;
+            ResetAnimation();
 
             if (item is IRenderableNode node)
             {
-                if (node is NutexNode nutexNode)
-                {
-                    Renderer.UpdateTexture(nutexNode);
-                }
-                else
-                {
-                    Renderer.UpdateTexture(null);
-
-                    // TODO: Why can't these lines be switched?
-                    UpdateCurrentViewportRenderables(node);
-                    UpdateMeshesAndBones(node.GetRenderableNode());
-                }
+                UpdateMeshesAndBones(node.GetRenderableNode());
+                Renderer.ItemToRender = node.GetRenderableNode();
             }
-            else if (item is NuanimNode animation)
+
+            if (item is NuanimNode animation)
             {
                 Renderer.RenderableAnimation = (IRenderableAnimation)animation.GetRenderableNode();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
             }
         }
 
-        private void UpdateCurrentViewportRenderables(IRenderableNode renderableNode)
+        private void ResetAnimation()
         {
-            if (renderableNode is NutexNode node)
-                Renderer.UpdateTexture(node);
-            else
-                Renderer.UpdateTexture(null);
-
-            Renderer.AddRenderableNode(renderableNode);
+            Renderer.RenderableAnimation = null;
+            CurrentFrame = 0;
+            TotalFrames = 0;
         }
 
         private void AddSkeletonToGui(RSkeleton skeleton)

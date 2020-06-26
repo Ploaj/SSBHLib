@@ -69,20 +69,19 @@ namespace CrossMod
                 modelViewport.ScriptNode.CurrentAnimationName = fileTree.SelectedNode.Text;
             }
 
-            if (fileTree.SelectedNode is NutexNode texture)
+            if (fileTree.SelectedNode is IRenderableNode renderableNode)
             {
-                modelViewport.Renderer.UpdateTexture(texture);
-            }
-            else if (fileTree.SelectedNode is IRenderableNode renderableNode)
-            {
-                modelViewport.Renderer.AddRenderableNode(renderableNode);
+                // TODO: This should be done automatically.
+                modelViewport.Renderer.PauseRendering();
+
+                modelViewport.Renderer.ItemToRender = renderableNode.GetRenderableNode();
                 modelViewport.UpdateGui(renderableNode.GetRenderableNode());
-                modelViewport.Renderer.UpdateTexture(null);
+
+                modelViewport.Renderer.RestartRendering();
             }
             else if (fileTree.SelectedNode is NuanimNode animation)
             {
                 modelViewport.RenderableAnimation = (IRenderableAnimation)animation.GetRenderableNode();
-                modelViewport.Renderer.UpdateTexture(null);
             }
         }
 
