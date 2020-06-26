@@ -13,7 +13,7 @@ using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering
 {
-    public class Rnumdl : IRenderableModel
+    public class RNumdl : IRenderableModel
     {
         public Modl MODL;
 

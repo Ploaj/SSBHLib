@@ -28,7 +28,7 @@ namespace CrossMod.Nodes
             if (renderableNode == null)
                 renderableNode = CreateRenderableModel();
 
-            if (renderableNode is Rnumdl MDL)
+            if (renderableNode is RNumdl MDL)
             {
                 if (MDL.Skeleton != null)
                 {
@@ -41,7 +41,7 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
-            Rnumdl renderableNode = new Rnumdl
+            RNumdl renderableNode = new RNumdl
             {
                 MODL = model
             };
