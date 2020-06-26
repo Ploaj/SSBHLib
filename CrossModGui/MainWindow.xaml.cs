@@ -176,7 +176,7 @@ namespace CrossModGui
 
         private void FrameModel_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Renderer.FrameRnumdl();
+            ViewModel.Renderer.FrameRenderableModels();
             cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
 
             RenderFrameIfNeeded();

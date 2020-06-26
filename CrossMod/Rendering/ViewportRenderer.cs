@@ -62,10 +62,8 @@ namespace CrossMod.Rendering
                     renderableNodeNames.Add(name);
                 }
 
-                if (value is NumdlNode)
-                {
-                    FrameRnumdl();
-                }
+
+                FrameRenderableModels();
             });
         }
 
@@ -80,16 +78,15 @@ namespace CrossMod.Rendering
             });
         }
 
-        public void FrameRnumdl()
+        public void FrameRenderableModels()
         {
             // Bounding spheres will help account for the vastly different model sizes.
             var spheres = new List<Vector4>();
             foreach (var node in renderableNodes)
             {
-                // TODO: Make bounding spheres an interface.
-                if (node is Rnumdl rnumdl && rnumdl.Model != null)
+                if (node is IRenderableModel model)
                 {
-                    spheres.Add(rnumdl.Model.BoundingSphere);
+                    spheres.Add(model.GetModel().BoundingSphere);
                 }
             }
 

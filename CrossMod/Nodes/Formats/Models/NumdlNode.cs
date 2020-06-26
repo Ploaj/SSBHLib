@@ -12,7 +12,7 @@ namespace CrossMod.Nodes
     [FileTypeAttribute(".numdlb")]
     public class NumdlNode : FileNode, IRenderableNode, IExportableModelNode
     {
-        private Modl _model;
+        private Modl model;
         private IRenderable renderableNode = null;
 
         public NumdlNode(string path) : base(path)
@@ -43,7 +43,7 @@ namespace CrossMod.Nodes
         {
             Rnumdl renderableNode = new Rnumdl
             {
-                MODL = _model
+                MODL = model
             };
 
             NumsbhNode modelNode = null;
@@ -60,15 +60,15 @@ namespace CrossMod.Nodes
                     if (texture != null && !renderableNode.sfTextureByName.ContainsKey(nutexNode.TexName.ToLower()))
                         renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
                 }
-                else if (fileNode.Text.Equals(_model.MeshString))
+                else if (fileNode.Text.Equals(model.MeshString))
                 {
                     modelNode = (NumsbhNode)fileNode;
                 }
-                else if (fileNode.Text.Equals(_model.SkeletonFileName))
+                else if (fileNode.Text.Equals(model.SkeletonFileName))
                 {
                     renderableNode.Skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
                 }
-                else if (fileNode.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
+                else if (fileNode.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
                 {
                     renderableNode.Material = ((MatlNode)fileNode).Material;
                 }
@@ -93,7 +93,7 @@ namespace CrossMod.Nodes
             {
                 if (ssbhFile is Modl modl)
                 {
-                    _model = modl;
+                    model = modl;
                 }
             }
         }
@@ -107,15 +107,15 @@ namespace CrossMod.Nodes
 
             foreach (FileNode n in Parent.Nodes)
             {
-                if (n.Text.Equals(_model.MeshString))
+                if (n.Text.Equals(model.MeshString))
                 {
                     meshFile = ((NumsbhNode)n).mesh;
                 }
-                if (n.Text.Equals(_model.SkeletonFileName))
+                if (n.Text.Equals(model.SkeletonFileName))
                 {
                     outModel.Skeleton = (RSkeleton)((SkelNode)n).GetRenderableNode();
                 }
-                if (n.Text.Equals(_model.MaterialFileNames[0].MaterialFileName))
+                if (n.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
                 {
                     materialFile = ((MatlNode)n).Material;
                 }
@@ -173,7 +173,7 @@ namespace CrossMod.Nodes
                         // get material
                         if (materialFile != null)
                         {
-                            foreach (var entry in _model.ModelEntries)
+                            foreach (var entry in model.ModelEntries)
                             {
                                 if (entry.MeshName.Equals(obj.Name) && entry.SubIndex == obj.SubMeshIndex)
                                 {
