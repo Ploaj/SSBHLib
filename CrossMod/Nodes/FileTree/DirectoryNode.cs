@@ -83,7 +83,7 @@ namespace CrossMod.Nodes
                 if (node is DirectoryNode directory)
                     directory.Open();
                 else
-                    (node as FileNode)?.Open();               
+                    openNodes.Add(Task.Run(() => (node as FileNode)?.Open()));
             }
 
             Task.WaitAll(openNodes.ToArray());
