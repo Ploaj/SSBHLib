@@ -4,13 +4,12 @@ using System.Windows;
 namespace CrossModGui.Views
 {
     /// <summary>
-    /// Interaction logic for CameraSettingsWindow.xaml
+    /// Interaction logic for MaterialEditorWindow.xaml
     /// </summary>
-    public partial class CameraSettingsWindow : Window
+    public partial class MaterialEditorWindow : Window
     {
-        private readonly CameraSettingsWindowViewModel viewModel;
-
-        public CameraSettingsWindow(CameraSettingsWindowViewModel viewModel)
+        private readonly MaterialEditorWindowViewModel viewModel;
+        public MaterialEditorWindow(MaterialEditorWindowViewModel viewModel)
         {
             this.viewModel = viewModel;
             DataContext = this.viewModel;

@@ -8,12 +8,12 @@ namespace CrossModGui.Views
     /// </summary>
     public partial class RenderSettingsWindow : Window
     {
-        public RenderSettingsWindowViewModel ViewModel { get; }
+        private readonly RenderSettingsWindowViewModel viewModel;
 
         public RenderSettingsWindow(RenderSettingsWindowViewModel viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = ViewModel;
+            this.viewModel = viewModel;
+            DataContext = this.viewModel;
             InitializeComponent();
         }
     }

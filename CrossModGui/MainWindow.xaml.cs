@@ -1,5 +1,6 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
+using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.ViewModels;
 using CrossModGui.Views;
@@ -13,7 +14,7 @@ namespace CrossModGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindowViewModel ViewModel { get; }
+        private readonly MainWindowViewModel viewModel;
 
         private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
         private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
@@ -22,18 +23,18 @@ namespace CrossModGui
         {
             InitializeComponent();
 
-            ViewModel = viewModel;
-            ViewModel.Renderer = new ViewportRenderer(glViewport);
+            this.viewModel = viewModel;
+            this.viewModel.Renderer = new ViewportRenderer(glViewport);
             DataContext = viewModel;
 
             // Link view models to models.
             renderSettingsViewModel = RenderSettings.Instance;
             renderSettingsViewModel.PropertyChanged += (s, e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
 
-            cameraSettingsViewModel = ViewModel.Renderer.Camera;
+            cameraSettingsViewModel = this.viewModel.Renderer.Camera;
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
 
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            this.viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -41,7 +42,7 @@ namespace CrossModGui
             // Ensure animations update the viewport.
             if (e.PropertyName == nameof(MainWindowViewModel.IsPlayingAnimation))
             {
-                if (ViewModel.IsPlayingAnimation)
+                if (viewModel.IsPlayingAnimation)
                     glViewport.RestartRendering();
                 else
                     glViewport.PauseRendering();
@@ -58,19 +59,19 @@ namespace CrossModGui
             switch (e.PropertyName)
             {
                 case nameof(CameraSettingsWindowViewModel.RotationXDegrees):
-                    ViewModel.Renderer.Camera.RotationXDegrees = cameraSettingsViewModel.RotationXDegrees;
+                    viewModel.Renderer.Camera.RotationXDegrees = cameraSettingsViewModel.RotationXDegrees;
                     break;
                 case nameof(CameraSettingsWindowViewModel.RotationYDegrees):
-                    ViewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
+                    viewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
                     break;
                 case nameof(CameraSettingsWindowViewModel.PositionX):
-                    ViewModel.Renderer.Camera.TranslationX = cameraSettingsViewModel.PositionX;
+                    viewModel.Renderer.Camera.TranslationX = cameraSettingsViewModel.PositionX;
                     break;
                 case nameof(CameraSettingsWindowViewModel.PositionY):
-                    ViewModel.Renderer.Camera.TranslationY = cameraSettingsViewModel.PositionY;
+                    viewModel.Renderer.Camera.TranslationY = cameraSettingsViewModel.PositionY;
                     break;
                 case nameof(CameraSettingsWindowViewModel.PositionZ):
-                    ViewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
+                    viewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
                     break;
             }
         }
@@ -78,35 +79,48 @@ namespace CrossModGui
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
         {
             // TODO: Script node.
-            ViewModel.Renderer.RenderNodes(null);
+            viewModel.Renderer.RenderNodes(null);
         }
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
-            // Start automatic frame updates instead of making the window have to refresh the viewport.
-            var wasRendering = glViewport.IsRendering;
-            glViewport.RestartRendering();
-
-            var window = new RenderSettingsWindow(renderSettingsViewModel);
-            window.Show();
-
-            window.Closed += (s, e2) =>
-            {
-                if (!wasRendering)
-                    glViewport.PauseRendering();
-            };
+            CreateDisplayEditorWindow(new RenderSettingsWindow(renderSettingsViewModel));
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
+        {
+            // Make sure the window has current values.
+            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
+            CreateDisplayEditorWindow(new CameraSettingsWindow(cameraSettingsViewModel));
+        }
+
+        private void MaterialEditor_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = new MaterialEditorWindowViewModel();
+
+            // TODO: Get actual data from matl and sync to material used for rendering.
+            viewModel.MaterialNames.Add("material1");
+            viewModel.MaterialNames.Add("material2");
+            viewModel.PossibleTextureNames.Add("texture1");
+            viewModel.PossibleTextureNames.Add("texture2");
+            viewModel.PossibleTextureNames.Add("#replace_cubemap");
+            viewModel.BooleanParams.Add(new MaterialEditorWindowViewModel.BooleanParam { Name = "CustomBoolean0", Value = false });
+            viewModel.BooleanParams.Add(new MaterialEditorWindowViewModel.BooleanParam { Name = "CustomBoolean1", Value = true });
+            viewModel.FloatParams.Add(new MaterialEditorWindowViewModel.FloatParam { Name = "CustomFloat0", Value = 1 });
+            viewModel.FloatParams.Add(new MaterialEditorWindowViewModel.FloatParam { Name = "CustomFloat1", Value = 2.5f });
+            viewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param { Name = "CustomVector0", Value1 = 1, Value2 = 2, Value3 = 3, Value4 = 4 });
+            viewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param { Name = "CustomVector1", Value1 = 5, Value2 = 6, Value3 = 7, Value4 = 8 });
+            viewModel.TextureParams.Add(new MaterialEditorWindowViewModel.TextureParam { Name = "Texture0", Value = "texture1" });
+            viewModel.TextureParams.Add(new MaterialEditorWindowViewModel.TextureParam { Name = "Texture1", Value = "texture2" });
+            CreateDisplayEditorWindow(new MaterialEditorWindow(viewModel));
+        }
+
+        private void CreateDisplayEditorWindow(Window window)
         {
             // Start automatic frame updates instead of making the window have to refresh the viewport.
             var wasRendering = glViewport.IsRendering;
             glViewport.RestartRendering();
 
-            // Make sure the window has current values.
-            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
-
-            var window = new CameraSettingsWindow(cameraSettingsViewModel);
             window.Show();
 
             window.Closed += (s, e2) =>
@@ -120,14 +134,14 @@ namespace CrossModGui
         {
             if (FileTools.TryOpenFolderDialog(out string folderPath))
             {
-                ViewModel.PopulateFileTree(folderPath);
+                viewModel.PopulateFileTree(folderPath);
             }
         }
 
         private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Clear();
-            ViewModel.Renderer.ClearRenderableNodes();
+            viewModel.Clear();
+            viewModel.Renderer.ClearRenderableNodes();
         }
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -143,7 +157,7 @@ namespace CrossModGui
             }
 
             // Update the current viewport item.
-            ViewModel.UpdateCurrentRenderableNode(item);
+            viewModel.UpdateCurrentRenderableNode(item);
             RenderFrameIfNeeded();
         }
 
@@ -160,37 +174,37 @@ namespace CrossModGui
 
         private void glViewport_Resize(object sender, EventArgs e)
         {
-            ViewModel.Renderer.Camera.RenderWidth = glViewport.Width;
-            ViewModel.Renderer.Camera.RenderHeight = glViewport.Height;
+            viewModel.Renderer.Camera.RenderWidth = glViewport.Width;
+            viewModel.Renderer.Camera.RenderHeight = glViewport.Height;
 
             RenderFrameIfNeeded();
         }
 
         private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            ViewModel.Renderer.UpdateCameraFromMouse();
-            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+            viewModel.Renderer.UpdateCameraFromMouse();
+            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
 
             RenderFrameIfNeeded();
         }
 
         private void FrameModel_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Renderer.FrameRenderableModels();
-            cameraSettingsViewModel.SetValues(ViewModel.Renderer.Camera);
+            viewModel.Renderer.FrameRenderableModels();
+            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
 
             RenderFrameIfNeeded();
         }
 
         private void ClearViewport_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Renderer.ClearRenderableNodes();
+            viewModel.Renderer.ClearRenderableNodes();
             RenderFrameIfNeeded();
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsPlayingAnimation = !ViewModel.IsPlayingAnimation;
+            viewModel.IsPlayingAnimation = !viewModel.IsPlayingAnimation;
         }
 
         private void RenderFrameIfNeeded()
@@ -208,7 +222,7 @@ namespace CrossModGui
         private void ReloadShaders_Click(object sender, RoutedEventArgs e)
         {
             // Force the shaders to be generated again.
-            ViewModel.Renderer.ReloadShaders();
+            viewModel.Renderer.ReloadShaders();
         }
 
         private void ReloadScripts_Click(object sender, RoutedEventArgs e)
@@ -218,27 +232,27 @@ namespace CrossModGui
 
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
-            BatchRendering.RenderModels(ViewModel.Renderer);
+            BatchRendering.RenderModels(viewModel.Renderer);
         }
 
         private void NextFrame_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CurrentFrame++;
+            viewModel.CurrentFrame++;
         }
 
         private void LastFrame_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CurrentFrame = ViewModel.TotalFrames;
+            viewModel.CurrentFrame = viewModel.TotalFrames;
         }
 
         private void PreviousFrame_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CurrentFrame--;
+            viewModel.CurrentFrame--;
         }
 
         private void FirstFrame_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CurrentFrame = 0f;
+            viewModel.CurrentFrame = 0f;
         }
     }
 }
