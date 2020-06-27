@@ -248,7 +248,7 @@ namespace CrossMod
         {
             if (e.Node is DirectoryNode node)
             {
-                node.OpenChildNodes();
+                node.OpenFileNodes();
             }
         }
 

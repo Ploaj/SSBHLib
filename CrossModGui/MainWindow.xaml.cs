@@ -149,11 +149,11 @@ namespace CrossModGui
             if (!(e.NewValue is FileNode item))
                 return;
 
-            // TODO: Use some form of binding to the directory's expanded event?
-            // Assume only directory nodes have children.
+            // Open all files in the folder when the folder is selected.
+            // TODO: This could be moved to the expanded event instead.
             if (item.Parent is DirectoryNode dir)
             {
-                dir.OpenChildNodes();
+                dir.OpenFileNodes();
             }
 
             // Update the current viewport item.

@@ -60,12 +60,10 @@ namespace CrossModGui.ViewModels
 
         public void PopulateFileTree(string folderPath)
         {
-            // TODO: Populate subnodes after expanding the directory node.
             var rootNode = new DirectoryNode(folderPath);
 
-            // TODO: Combine these two methods?
             rootNode.Open();
-            rootNode.OpenChildNodes();
+            rootNode.OpenFileNodes();
 
             FileTreeItems.Clear();
             FileTreeItems.Add(rootNode);

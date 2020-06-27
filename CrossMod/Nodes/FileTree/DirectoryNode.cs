@@ -14,6 +14,7 @@ namespace CrossMod.Nodes
     public class DirectoryNode : FileNode
     {
         private bool isOpened = false;
+        private bool hasOpenedFiles = false;
         private bool isNestedOpened = false;
 
         // Convert to list to avoid evaluating the LINQ more than once.
@@ -54,6 +55,7 @@ namespace CrossMod.Nodes
                 {
                     var dirNode = new DirectoryNode(name, isRoot: false);
                     Nodes.Add(dirNode);
+                    dirNode.Open();
                 }
                 else
                 {
@@ -65,29 +67,24 @@ namespace CrossMod.Nodes
         }
 
         /// <summary>
-        /// Opens all nodes. Make sure to call after <see cref="Open"/>.
-        /// Repeated executions result in a no-op.
+        /// Opens all files in this directory.
+        /// Repeated calls are ignored.
         /// </summary>
-        public void OpenChildNodes()
+        public void OpenFileNodes()
         {
-            if (isNestedOpened)
-            {
+            if (hasOpenedFiles)
                 return;
-            }
 
             // Some nodes take a while to open, so use a threadpool to save time.
             var openNodes = new List<Task>();
             foreach (var node in Nodes)
             {
-                // Don't modify UI elements from other threads.
-                if (node is DirectoryNode directory)
-                    directory.Open();
-                else
-                    openNodes.Add(Task.Run(() => (node as FileNode)?.Open()));
+                if (node is FileNode file)
+                    openNodes.Add(Task.Run(() => file.Open()));
             }
 
             Task.WaitAll(openNodes.ToArray());
-            isNestedOpened = true;
+            hasOpenedFiles = true;
         }
 
         /// <summary>
