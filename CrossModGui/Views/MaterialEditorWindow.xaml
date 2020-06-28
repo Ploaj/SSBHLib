@@ -5,72 +5,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="MaterialEditorWindow" Height="450" Width="800">
-    <StackPanel>
-        <Grid>
+        Title="Material Editor" Height="450" Width="800">
+    <DockPanel Margin="10" LastChildFill="True">
+        <Grid DockPanel.Dock="Top" Margin="0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0">Material Name</TextBlock>
+            <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0">Material Name</TextBlock>
             <ComboBox Grid.Column="1" ItemsSource="{Binding MaterialNames}"></ComboBox>
         </Grid>
-        <Expander Header="CustomBoolean Params">
-            <ItemsControl ItemsSource="{Binding BooleanParams}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <CheckBox IsChecked="{Binding Value}">
-                            <TextBlock Text="{Binding Name}"></TextBlock>
-                        </CheckBox>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Expander>
-        <Expander Header="CustomFloat Params">
-            <ItemsControl ItemsSource="{Binding FloatParams}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}"></TextBlock>
-                            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Expander>
-        <Expander Header="CustomVector Params">
-            <ItemsControl ItemsSource="{Binding Vec4Params}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <GroupBox Header="{Binding Name}">
-                            <StackPanel>
-                                <TextBox Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                <TextBox Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                <TextBox Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                <TextBox Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                            </StackPanel>
-                        </GroupBox>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Expander>
-        <Expander Header="Texture Params">
-            <ItemsControl ItemsSource="{Binding TextureParams}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Name}"></TextBlock>
-                            <ComboBox Grid.Column="1" 
+        <GroupBox DockPanel.Dock="Bottom">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Expander Header="CustomBoolean Params">
+                        <ItemsControl ItemsSource="{Binding BooleanParams}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Value}">
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                    <Expander Header="CustomFloat Params">
+                        <ItemsControl ItemsSource="{Binding FloatParams}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                    <Expander Header="CustomVector Params">
+                        <ItemsControl ItemsSource="{Binding Vec4Params}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <GroupBox Header="{Binding Name}">
+                                        <StackPanel>
+                                            <TextBox Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                    <Expander Header="Texture Params">
+                        <ItemsControl ItemsSource="{Binding TextureParams}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}"></TextBlock>
+                                        <ComboBox Grid.Column="1" 
                                       ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}" DataContext=""
                                       SelectedValue="{Binding Value}" SelectedValuePath="Value"></ComboBox>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Expander>
-    </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+    </DockPanel>
 </Window>

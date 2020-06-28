@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
         Title="Render Settings" Height="450" Width="800">
-    <StackPanel>
+    <StackPanel Margin="10">
         <Expander Header="Render Passes">
             <StackPanel>
                 <CheckBox IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
@@ -43,7 +43,7 @@
             </StackPanel>
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
-            <StackPanel>
+            <StackPanel Height="auto">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -55,10 +55,10 @@
                         ItemsSource="{Binding DescriptionByRenderMode}" 
                         DisplayMemberPath="Value" 
                         SelectedValuePath="Key"
-                        SelectedValue="{Binding SelectedRenderMode}">
+                        SelectedValue="{Binding SelectedRenderMode}" SelectionChanged="RenderMode_SelectionChanged">
                     </ComboBox>
                 </Grid>
-                <GroupBox Header="Channel Toggles">
+                <GroupBox Header="Channel Toggles" Name="channelTogglesGroupBox">
                     <StackPanel>
                         <CheckBox IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
                         <CheckBox IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
@@ -66,14 +66,14 @@
                         <CheckBox IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="Material Param Debug Shading">
+                <GroupBox Header="Material Param Debug Shading" x:Name="materialParamDebugGroupBox">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0">Param Name</Label>
-                        <TextBox Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <Label Grid.Column="0" Content="Param Name"/>
+                        <TextBox Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </GroupBox>
             </StackPanel>

@@ -1,5 +1,6 @@
 ﻿using CrossModGui.ViewModels;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CrossModGui.Views
 {
@@ -12,9 +13,19 @@ namespace CrossModGui.Views
 
         public RenderSettingsWindow(RenderSettingsWindowViewModel viewModel)
         {
+            InitializeComponent();
+
             this.viewModel = viewModel;
             DataContext = this.viewModel;
-            InitializeComponent();
+        }
+
+        private void RenderMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO: How to properly check the text?
+            // TODO: Associate this info with the render mode?
+            var selected = (sender as ComboBox)?.SelectedItem.ToString();
+            materialParamDebugGroupBox.IsEnabled = (selected.ToLower().Contains("param"));
+            channelTogglesGroupBox.IsEnabled = !(selected.ToLower().Contains("shaded"));
         }
     }
 }
