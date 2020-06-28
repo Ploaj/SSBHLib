@@ -104,7 +104,7 @@ namespace SSBHLib.IO
 <#              if (propElementType == typeof(byte)) { #>
                 result.<#=prop.Name#> = parser.ReadBytes((int)elementCount);
 <#              } else if (IsBlittable(prop.PropertyType)) { #>
-                result.<#=prop.Name#> = parser.ByteToType<<#=propElementTypeFullName#>>((int)elementCount);
+                result.<#=prop.Name#> = parser.ReadStructs<<#=propElementTypeFullName#>>((int)elementCount);
 <#              } else { #> 
                 result.<#=prop.Name#> = new <#=propElementTypeFullName#>[elementCount];
                 for (int i = 0; i < elementCount; i++)

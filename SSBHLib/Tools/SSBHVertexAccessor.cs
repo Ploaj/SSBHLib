@@ -1,7 +1,8 @@
-﻿using System;
-using System.IO;
-using SSBHLib.Formats.Meshes;
+﻿using SSBHLib.Formats.Meshes;
+using SSBHLib.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SSBHLib.Tools
 {
@@ -10,6 +11,9 @@ namespace SSBHLib.Tools
     /// </summary>
     public class SsbhVertexAccessor
     {
+        // TODO: Add separate types for byte, vec2, vec3, etc.
+        // Shaders pad attributes to vec4, but this is not related to the mesh format itself.
+
         private readonly Mesh meshFile;
 
         /// <summary>
@@ -82,28 +86,27 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         public uint[] ReadIndices(int startPosition, int count, MeshObject meshObject)
         {
-            uint[] indices = new uint[count];
-            using (var indexBuffer = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
+            // TODO: Add option to not convert smaller types to larger types.
+            using (var indexReader = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
-                indexBuffer.BaseStream.Position = meshObject.ElementOffset + startPosition * (meshObject.DrawElementType == 1 ? 4 : 2);
+                // TODO: merge conditional check with below.
+                indexReader.BaseStream.Position = meshObject.ElementOffset + startPosition * (meshObject.DrawElementType == 1 ? 4 : 2);
 
                 if (meshObject.DrawElementType == 1)
                 {
-                    for (int i = 0; i < count; i++)
-                    {
-                        indices[i] = indexBuffer.ReadUInt32();
-                    }
+                    return indexReader.ReadStructs<uint>(count);
                 }
                 else
                 {
+                    uint[] indices = new uint[count];
                     for (int i = 0; i < count; i++)
                     {
-                        indices[i] = indexBuffer.ReadUInt16();
+                        indices[i] = indexReader.ReadUInt16();
                     }
+                    return indices;
                 }
             }
 
-            return indices;
         }
 
         /// <summary>
@@ -179,6 +182,8 @@ namespace SSBHLib.Tools
 
             string attributeName = attr.AttributeStrings[0].Name;
 
+            // TODO: Move binary reader into read methods and just pass a reference to the array.
+            // TODO: Why are there multiple buffers, if only one is used?
             var buffers = new BinaryReader[meshFile.VertexBuffers.Length];
             for (int i = 0; i < meshFile.VertexBuffers.Length; i++)
             {
@@ -187,6 +192,8 @@ namespace SSBHLib.Tools
 
             BinaryReader selectedBuffer = buffers[attr.BufferIndex];
 
+            // TODO: There are optimizations possible for reading if the data is tighly packed.
+            // The stride may not allow this.
             int offset = meshObject.VertexOffset;
             int stride = meshObject.Stride;
             if (attr.BufferIndex == 1)
@@ -200,16 +207,16 @@ namespace SSBHLib.Tools
             switch (attributeLength)
             {
                 case 1:
-                    attributes = ReadAttributeScalar(attr, position, count, attributeName, selectedBuffer, offset, stride);
+                    attributes = ReadAttributeScalar(attr, position, count, selectedBuffer, offset, stride);
                     break;
                 case 2:
-                    attributes = ReadAttributeVec2(attr, position, count, attributeName, selectedBuffer, offset, stride);
+                    attributes = ReadAttributeVec2(attr, position, count, selectedBuffer, offset, stride);
                     break;
                 case 3:
-                    attributes = ReadAttributeVec3(attr, position, count, attributeName, selectedBuffer, offset, stride);
+                    attributes = ReadAttributeVec3(attr, position, count, selectedBuffer, offset, stride);
                     break;
                 case 4:
-                    attributes = ReadAttributeVec4(attr, position, count, attributeName, selectedBuffer, offset, stride);
+                    attributes = ReadAttributeVec4(attr, position, count, selectedBuffer, offset, stride);
                     break;
             }
 
@@ -223,7 +230,7 @@ namespace SSBHLib.Tools
         }
 
         // TODO: It may be better to convert bytes to floating point by diving by 255.0f.
-        private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, string attributeName, BinaryReader buffer, int offset, int stride)
+        private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
@@ -232,8 +239,10 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
+                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
+                    // TODO: Add option to not convert smaller types to larger types.
                     case SsbVertexAttribFormat.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), 0, 0, 0);
                         break;
@@ -252,7 +261,7 @@ namespace SSBHLib.Tools
             return attributes;
         }
 
-        private SsbhVertexAttribute[] ReadAttributeVec2(MeshAttribute attr, int position, int count, string attributeName, BinaryReader buffer, int offset, int stride)
+        private SsbhVertexAttribute[] ReadAttributeVec2(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
@@ -261,8 +270,10 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
+                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
+                    // TODO: Add option to not convert smaller types to larger types.
                     case SsbVertexAttribFormat.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), 0, 0);
                         break;
@@ -281,7 +292,7 @@ namespace SSBHLib.Tools
             return attributes;
         }
 
-        private SsbhVertexAttribute[] ReadAttributeVec3(MeshAttribute attr, int position, int count, string attributeName, BinaryReader buffer, int offset, int stride)
+        private SsbhVertexAttribute[] ReadAttributeVec3(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
@@ -290,8 +301,10 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
+                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
+                    // TODO: Add option to not convert smaller types to larger types.
                     case SsbVertexAttribFormat.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), 0);
                         break;
@@ -310,7 +323,7 @@ namespace SSBHLib.Tools
             return attributes;
         }
 
-        private SsbhVertexAttribute[] ReadAttributeVec4(MeshAttribute attr, int position, int count, string attributeName, BinaryReader buffer, int offset, int stride)
+        private SsbhVertexAttribute[] ReadAttributeVec4(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
@@ -319,8 +332,10 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
+                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
+                    // TODO: Add option to not convert smaller types to larger types.
                     case SsbVertexAttribFormat.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte());
                         break;
@@ -347,29 +362,6 @@ namespace SSBHLib.Tools
             if (attributeName.Equals("map1") || attributeName.Equals("bake1") || attributeName.Contains("uvSet"))
                 attributeSize = 2;
             return attributeSize;
-        }
-
-        /// <summary>
-        /// Reads attribute from buffer with given data type
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        private float ReadAttribute(BinaryReader buffer, SsbVertexAttribFormat format)
-        {
-            switch (format)
-            {
-                case SsbVertexAttribFormat.Byte:
-                    return buffer.ReadByte();
-                case SsbVertexAttribFormat.Float:
-                    return buffer.ReadSingle();
-                case SsbVertexAttribFormat.HalfFloat:
-                    return ReadHalfFloat(buffer);
-                case SsbVertexAttribFormat.HalfFloat2:
-                    return ReadHalfFloat(buffer);
-                default:
-                    return buffer.ReadByte();
-            }
         }
 
         private float ReadHalfFloat(BinaryReader reader)

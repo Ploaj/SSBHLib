@@ -101,7 +101,7 @@ namespace SSBHLib.Tools
             List<object> output = new List<object>();
 
             uint dataOffset = (uint)reader.BaseStream.Position;
-            SsbhAnimCompressedHeader header = reader.ByteToType<SsbhAnimCompressedHeader>();
+            SsbhAnimCompressedHeader header = reader.ReadStruct<SsbhAnimCompressedHeader>();
 
             if (CheckFlag(flags, 0x00FF, AnimTrackFlags.Boolean))
             {
@@ -169,7 +169,7 @@ namespace SSBHLib.Tools
             List<float[]> transforms = new List<float[]>(header.FrameCount);
 
             // PreProcess
-            SsbhAnimCompressedItem[] items = parser.ByteToType<SsbhAnimCompressedItem>(valueCount);
+            SsbhAnimCompressedItem[] items = parser.ReadStructs<SsbhAnimCompressedItem>(valueCount);
 
             parser.Seek(dataOffset + header.DefaultDataOffset);
 
@@ -233,7 +233,7 @@ namespace SSBHLib.Tools
             AnimTrackTransform[] transforms = new AnimTrackTransform[header.FrameCount];
 
             // PreProcess
-            SsbhAnimCompressedItem[] items = parser.ByteToType<SsbhAnimCompressedItem>(9);
+            SsbhAnimCompressedItem[] items = parser.ReadStructs<SsbhAnimCompressedItem>(9);
             
             parser.Seek(dataOffset + header.DefaultDataOffset);
 

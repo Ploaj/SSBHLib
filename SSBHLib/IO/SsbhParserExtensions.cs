@@ -56,7 +56,7 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                result.List1 = parser.ByteToType<System.Int32>((int)elementCount);
+                result.List1 = parser.ReadStructs<System.Int32>((int)elementCount);
  
                 if (!inline)
                     parser.Seek(previousPosition); 
@@ -69,7 +69,7 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                result.List2 = parser.ByteToType<System.Int32>((int)elementCount);
+                result.List2 = parser.ReadStructs<System.Int32>((int)elementCount);
  
                 if (!inline)
                     parser.Seek(previousPosition); 
@@ -661,7 +661,7 @@
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
-                result.BufferSizes = parser.ByteToType<System.Int32>((int)elementCount);
+                result.BufferSizes = parser.ReadStructs<System.Int32>((int)elementCount);
  
                 if (!inline)
                     parser.Seek(previousPosition); 

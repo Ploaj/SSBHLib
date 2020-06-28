@@ -241,15 +241,6 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, ReadBytes((int)size));
         }
 
-        private void SetArrayPropertyIssbh<T>(object targetObject, PropertyInfo prop, long size) where T : SsbhFile
-        {
-            var array = new T[size];
-            for (int i = 0; i < size; i++)
-                array[i] = Parse<T>();
-
-            prop.SetValue(targetObject, array);
-        }
-
         private long GetElementCount<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
         {
             if (!inline)
@@ -355,32 +346,6 @@ namespace SSBHLib.IO
             }
             
             return value;
-        }
-
-        public T[] ByteToType<T>(int count) where T : struct
-        {
-            int sizeOfT = Marshal.SizeOf(typeof(T));
-
-            var buffer = ReadBytes(sizeOfT * count);
-
-            T[] result = new T[count];
-
-            var pinnedHandle = GCHandle.Alloc(result, GCHandleType.Pinned);
-            Marshal.Copy(buffer, 0, pinnedHandle.AddrOfPinnedObject(), buffer.Length);
-            pinnedHandle.Free();
-
-            return result;
-        }
-
-        public T ByteToType<T>() where T : struct
-        {
-            byte[] bytes = ReadBytes(Marshal.SizeOf(typeof(T)));
-
-            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            T theStructure = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            handle.Free();
-
-            return theStructure;
         }
     }
 }

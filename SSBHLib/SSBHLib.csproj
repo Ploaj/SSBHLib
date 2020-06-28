@@ -68,6 +68,7 @@
     <Compile Include="Formats\SkelBoneEntry.cs" />
     <Compile Include="Formats\SkelMatrix.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
+    <Compile Include="IO\BinaryReaderExtensions.cs" />
     <Compile Include="IO\ParseTag.cs" />
     <Compile Include="IO\SSBHExporter.cs" />
     <Compile Include="IO\SSBHOffset.cs" />
