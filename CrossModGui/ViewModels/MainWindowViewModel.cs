@@ -101,7 +101,7 @@ namespace CrossModGui.ViewModels
 
             if (item is NuanimNode animation)
             {
-                Renderer.RenderableAnimation = (IRenderableAnimation)animation.GetRenderableNode();
+                Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
             }
         }

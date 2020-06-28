@@ -81,7 +81,7 @@ namespace CrossMod
             }
             else if (fileTree.SelectedNode is NuanimNode animation)
             {
-                modelViewport.RenderableAnimation = (IRenderableAnimation)animation.GetRenderableNode();
+                modelViewport.RenderableAnimation = animation.GetRenderableAnimation();
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿
 namespace CrossMod.Rendering
 {
-    public interface IRenderableAnimation : IRenderable
+    public interface IRenderableAnimation
     {
         int GetFrameCount();
 

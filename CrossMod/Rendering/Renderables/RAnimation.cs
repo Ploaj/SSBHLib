@@ -97,10 +97,6 @@ namespace CrossMod.Rendering
                     b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
-
-        public void Render(Camera camera)
-        {
-        }
     }
 
     public class RMaterialAnimation

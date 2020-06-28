@@ -53,7 +53,7 @@ namespace CrossMod.Nodes
             }
         }
 
-        public IRenderable GetRenderableNode()
+        public IRenderableAnimation GetRenderableAnimation()
         {
             if (animation == null)
                 return null;
