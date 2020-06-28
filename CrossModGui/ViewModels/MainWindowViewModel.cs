@@ -91,6 +91,10 @@ namespace CrossModGui.ViewModels
 
         public void UpdateCurrentRenderableNode(FileNode item)
         {
+            // Make sure GL objects are created on the UI thread.
+            var wasRendering = Renderer.IsRendering;
+            Renderer.PauseRendering();
+
             ResetAnimation();
 
             if (item is IRenderableNode node)
@@ -104,6 +108,9 @@ namespace CrossModGui.ViewModels
                 Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
             }
+
+            if (wasRendering)
+                Renderer.RestartRendering();
         }
 
         private void ResetAnimation()
