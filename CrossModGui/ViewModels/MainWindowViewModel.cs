@@ -71,6 +71,9 @@ namespace CrossModGui.ViewModels
 
         public void UpdateMeshesAndBones(IRenderable newNode)
         {
+            MeshListItems.Clear();
+            BoneTreeItems.Clear();
+
             if (newNode == null)
                 return;
 
@@ -88,8 +91,6 @@ namespace CrossModGui.ViewModels
 
         public void UpdateCurrentRenderableNode(FileNode item)
         {
-            BoneTreeItems.Clear();
-            MeshListItems.Clear();
             ResetAnimation();
 
             if (item is IRenderableNode node)
