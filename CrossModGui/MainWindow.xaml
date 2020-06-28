@@ -3,12 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:CrossModGui.Converters"
         xmlns:sfcontrol="clr-namespace:SFGraphics.Controls;assembly=SFGraphics.Controls"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         Title="Cross Mod" Height="454" Width="809">
     <Window.Resources>
+        <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>
@@ -58,6 +60,7 @@
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}"></Image>
                             <TextBlock Text="{Binding Text}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
