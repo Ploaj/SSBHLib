@@ -70,15 +70,15 @@ namespace CrossMod.Nodes
         private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
-            var vertexIndices = vertexAccessor.ReadIndices(0, meshObject.IndexCount, meshObject);
+            var vertexIndices = vertexAccessor.ReadIndices(meshObject);
 
             System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
 
-            var vertices = CreateVertices(skeleton, meshObject, vertexAccessor, vertexIndices);
+            var vertices = CreateVertices(skeleton, meshObject, vertexAccessor);
             return new RenderMesh(vertices, vertexIndices);
         }
 
-        private CustomVertex[] CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor, uint[] vertexIndices)
+        private CustomVertex[] CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
         {
             SsbhVertexAttribute[] positionValues = ReadAttributeOrSetZero("Position0", meshObject, vertexAccessor);
             var normalValues = ReadAttributeOrSetZero("Normal0", meshObject, vertexAccessor);
@@ -121,7 +121,7 @@ namespace CrossMod.Nodes
             SsbhVertexAccessor vertexAccessor)
         {
             // Accessors return length 0 when the attribute isn't present.
-            var result = vertexAccessor.ReadAttribute(name, 0, meshObject.VertexCount, meshObject);
+            var result = vertexAccessor.ReadAttribute(name, meshObject);
             if (result.Length == 0)
                 result = new SsbhVertexAttribute[meshObject.VertexCount];
             return result;
@@ -131,7 +131,7 @@ namespace CrossMod.Nodes
             SsbhVertexAccessor vertexAccessor, float defaultValue)
         {
             // Accessors return length 0 when the attribute isn't present.
-            var result = vertexAccessor.ReadAttribute(name, 0, meshObject.VertexCount, meshObject);
+            var result = vertexAccessor.ReadAttribute(name, meshObject);
             if (result.Length == 0)
             {
                 result = new SsbhVertexAttribute[meshObject.VertexCount];

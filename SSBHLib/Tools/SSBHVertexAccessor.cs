@@ -11,28 +11,7 @@ namespace SSBHLib.Tools
     /// </summary>
     public class SsbhVertexAccessor
     {
-        // TODO: Add separate types for byte, vec2, vec3, etc.
-        // Shaders pad attributes to vec4, but this is not related to the mesh format itself.
-
         private readonly Mesh meshFile;
-
-        /// <summary>
-        /// Creates a vertex accessor from given MESH filepath
-        /// </summary>
-        /// <param name="FilePath"></param>
-        public SsbhVertexAccessor(string meshFilePath)
-        {
-            if (Ssbh.TryParseSsbhFile(meshFilePath, out SsbhFile file))
-            {
-                if (file == null)
-                    throw new FileNotFoundException("File was null");
-
-                if (file is Mesh mesh)
-                    meshFile = mesh;
-                else
-                    throw new FormatException("Given file was not a MESH file");
-            }
-        }
 
         /// <summary>
         /// Creates a new vertex accessor for given mesh file
@@ -68,10 +47,10 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads the triangle indices from the given mesh object.
+        /// Reads all the triangle indices from the given mesh object.
         /// </summary>
-        /// <param name="meshObject"></param>
-        /// <returns></returns>
+        /// <param name="meshObject">The mesh containing the indices</param>
+        /// <returns>All the triangle indices from the given mesh object</returns>
         public uint[] ReadIndices(MeshObject meshObject)
         {
             return ReadIndices(0, meshObject.IndexCount, meshObject);
@@ -80,24 +59,23 @@ namespace SSBHLib.Tools
         /// <summary>
         /// Reads the triangle indices from the given mesh object starting from <paramref name="startPosition"/>.
         /// </summary>
-        /// <param name="startPosition"></param>
-        /// <param name="count"></param>
-        /// <param name="meshObject"></param>
-        /// <returns></returns>
+        /// <param name="startPosition">The offset in number of elements to start reading from</param>
+        /// <param name="count">The number of indices to read</param>
+        /// <param name="meshObject">The mesh containing the indices</param>
+        /// <returns>All the triangle indices from the given mesh object</returns>
         public uint[] ReadIndices(int startPosition, int count, MeshObject meshObject)
         {
             // TODO: Add option to not convert smaller types to larger types.
             using (var indexReader = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
-                // TODO: merge conditional check with below.
-                indexReader.BaseStream.Position = meshObject.ElementOffset + startPosition * (meshObject.DrawElementType == 1 ? 4 : 2);
-
                 if (meshObject.DrawElementType == 1)
                 {
+                    indexReader.BaseStream.Position = meshObject.ElementOffset + (startPosition * sizeof(uint));
                     return indexReader.ReadStructs<uint>(count);
                 }
                 else
                 {
+                    indexReader.BaseStream.Position = meshObject.ElementOffset + (startPosition * sizeof(ushort));
                     uint[] indices = new uint[count];
                     for (int i = 0; i < count; i++)
                     {
@@ -110,30 +88,11 @@ namespace SSBHLib.Tools
         }
 
         /// <summary>
-        /// Reads all attributes from the given mesh object.
-        /// </summary>
-        /// <returns>A <see cref="Tuple"/> containing the attribute name and its values</returns>
-        public Tuple<string, SsbhVertexAttribute[]>[] ReadAttributes(MeshObject meshObject)
-        {
-            List<Tuple<string, SsbhVertexAttribute[]>> attrs = new List<Tuple<string, SsbhVertexAttribute[]>>(meshObject.Attributes.Length);
-
-            foreach(var attr in meshObject.Attributes)
-            {
-                foreach(var attrname in attr.AttributeStrings)
-                {
-                    attrs.Add(new Tuple<string, SsbhVertexAttribute[]>(attrname.Name, ReadAttribute(attr, meshObject)));
-                }
-            }
-
-            return attrs.ToArray();
-        }
-
-        /// <summary>
         /// Reads the vertex attribute information for the given attribute name inside of the mesh object.
         /// </summary>
         /// <param name="attributeName"></param>
         /// <param name="meshObject"></param>
-        /// <returns>null if attribute name not found</returns>
+        /// <returns>An empty array if <paramref name="attributeName"/> does not exist</returns>
         public SsbhVertexAttribute[] ReadAttribute(string attributeName, MeshObject meshObject)
         {
             return ReadAttribute(attributeName, 0, meshObject.VertexCount, meshObject);
@@ -142,22 +101,22 @@ namespace SSBHLib.Tools
         /// <summary>
         /// Reads the vertex attribute information for the given attribute name inside of the mesh object.
         /// </summary>
-        /// <param name="attributeName"></param>
-        /// <param name="meshObject"></param>
-        /// <returns>null if attribute name not found</returns>
-        public SsbhVertexAttribute[] ReadAttribute(MeshAttribute attributeName, MeshObject meshObject)
+        /// <param name="attribute">The vertex attribute to read</param>
+        /// <param name="meshObject">The mesh containing the attribute data</param>
+        /// <returns>An empty array if <paramref name="attribute"/> does not exist</returns>
+        public SsbhVertexAttribute[] ReadAttribute(MeshAttribute attribute, MeshObject meshObject)
         {
-            return ReadAttribute(attributeName, 0, meshObject.VertexCount, meshObject);
+            return ReadAttribute(attribute, 0, meshObject.VertexCount, meshObject);
         }
 
         /// <summary>
         /// Reads the attribute data from the mesh object with the given name
         /// </summary>
-        /// <param name="attributeName"></param>
+        /// <param name="attributeName">The name of the vertex attribute</param>
         /// <param name="position"></param>
-        /// <param name="count"></param>
-        /// <param name="meshObject"></param>
-        /// <returns>null if attribute name not found</returns>
+        /// <param name="count">The number of elements to read</param>
+        /// <param name="meshObject">The mesh containing the attribute data</param>
+        /// <returns>An empty array if <paramref name="attributeName"/> does not exist</returns>
         public SsbhVertexAttribute[] ReadAttribute(string attributeName, int position, int count, MeshObject meshObject)
         {
             MeshAttribute attr = GetAttribute(attributeName, meshObject);
@@ -165,14 +124,6 @@ namespace SSBHLib.Tools
             return ReadAttribute(attr, position, count, meshObject);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="attr"></param>
-        /// <param name="position"></param>
-        /// <param name="count"></param>
-        /// <param name="meshObject"></param>
-        /// <returns></returns>
         private SsbhVertexAttribute[] ReadAttribute(MeshAttribute attr, int position, int count, MeshObject meshObject)
         {
             if (attr == null)
@@ -181,16 +132,6 @@ namespace SSBHLib.Tools
             }
 
             string attributeName = attr.AttributeStrings[0].Name;
-
-            // TODO: Move binary reader into read methods and just pass a reference to the array.
-            // TODO: Why are there multiple buffers, if only one is used?
-            var buffers = new BinaryReader[meshFile.VertexBuffers.Length];
-            for (int i = 0; i < meshFile.VertexBuffers.Length; i++)
-            {
-                buffers[i] = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[i].Buffer));
-            }
-
-            BinaryReader selectedBuffer = buffers[attr.BufferIndex];
 
             // TODO: There are optimizations possible for reading if the data is tighly packed.
             // The stride may not allow this.
@@ -204,32 +145,30 @@ namespace SSBHLib.Tools
 
             SsbhVertexAttribute[] attributes = null;
             int attributeLength = GetAttributeLength(attributeName);
-            switch (attributeLength)
-            {
-                case 1:
-                    attributes = ReadAttributeScalar(attr, position, count, selectedBuffer, offset, stride);
-                    break;
-                case 2:
-                    attributes = ReadAttributeVec2(attr, position, count, selectedBuffer, offset, stride);
-                    break;
-                case 3:
-                    attributes = ReadAttributeVec3(attr, position, count, selectedBuffer, offset, stride);
-                    break;
-                case 4:
-                    attributes = ReadAttributeVec4(attr, position, count, selectedBuffer, offset, stride);
-                    break;
-            }
 
-            foreach (var buffer in buffers)
+            using (BinaryReader attributeBuffer = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[attr.BufferIndex].Buffer)))
             {
-                buffer.Close();
-                buffer.Dispose();
+                switch (attributeLength)
+                {
+                    case 1:
+                        attributes = ReadAttributeScalar(attr, position, count, attributeBuffer, offset, stride);
+                        break;
+                    case 2:
+                        attributes = ReadAttributeVec2(attr, position, count, attributeBuffer, offset, stride);
+                        break;
+                    case 3:
+                        attributes = ReadAttributeVec3(attr, position, count, attributeBuffer, offset, stride);
+                        break;
+                    case 4:
+                        attributes = ReadAttributeVec4(attr, position, count, attributeBuffer, offset, stride);
+                        break;
+                }
             }
 
             return attributes;
         }
 
-        // TODO: It may be better to convert bytes to floating point by diving by 255.0f.
+        // TODO: It may be better to convert bytes to floating point by dividing by 255.0f.
         private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
             var format = (SsbVertexAttribFormat)attr.DataType;
@@ -239,7 +178,6 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
-                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
@@ -270,7 +208,6 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
-                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
@@ -301,7 +238,6 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
-                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
@@ -332,7 +268,6 @@ namespace SSBHLib.Tools
             {
                 buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
 
-                // TODO: Move conditional outside of loop.
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
