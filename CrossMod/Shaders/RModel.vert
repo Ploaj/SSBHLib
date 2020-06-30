@@ -5,13 +5,15 @@ in vec4 Tangent0;
 in vec4 Normal0;
 
 in vec4 colorSet1;
-in uvec4 colorSet2Packed;
-in uvec4 colorSet3456Packed;
-in vec4 colorSet7;
+// in uvec4 colorSet2Packed;
+// in uvec4 colorSet3456Packed;
+// in vec4 colorSet7;
 
 in vec2 map1;
-in vec4 uvSetUvSet1;
-in vec4 uvSet2Bake1;
+in vec2 uvSet;
+in vec2 uvSet1;
+in vec2 uvSet2;
+in vec2 bake1;
 
 in ivec4 boneIndices;
 in vec4 boneWeights;
@@ -126,17 +128,17 @@ void main()
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
     geomColorSet1 = colorSet1 / 128.0;
-    geomColorSet7 = colorSet7 / 128.0;
+    geomColorSet7 = vec4(0);//colorSet7 / 128.0;
 
     // Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
-    geomColorSet2 = UnpackVec4(colorSet2Packed.x) * 2;
-    geomColorSet2_1 = UnpackVec4(colorSet2Packed.y) * 2;
-    geomColorSet2_2 = UnpackVec4(colorSet2Packed.z) * 2;
-    geomColorSet2_3 = UnpackVec4(colorSet2Packed.w) * 2;
-    geomColorSet3 = UnpackVec4(colorSet3456Packed.x) * 2;
-    geomColorSet4 = UnpackVec4(colorSet3456Packed.y) * 2;
-    geomColorSet5 = UnpackVec4(colorSet3456Packed.z) * 2;
-    geomColorSet6 = UnpackVec4(colorSet3456Packed.w) * 2;
+    geomColorSet2 =   vec4(0);//UnpackVec4(colorSet2Packed.x) * 2;
+    geomColorSet2_1 = vec4(0);//UnpackVec4(colorSet2Packed.y) * 2;
+    geomColorSet2_2 = vec4(0);//UnpackVec4(colorSet2Packed.z) * 2;
+    geomColorSet2_3 = vec4(0);//UnpackVec4(colorSet2Packed.w) * 2;
+    geomColorSet3 = vec4(0);//UnpackVec4(colorSet3456Packed.x) * 2;
+    geomColorSet4 = vec4(0);//UnpackVec4(colorSet3456Packed.y) * 2;
+    geomColorSet5 = vec4(0);//UnpackVec4(colorSet3456Packed.z) * 2;
+    geomColorSet6 = vec4(0);//UnpackVec4(colorSet3456Packed.w) * 2;
 
     geomPosition = position.xyz;
 
@@ -145,11 +147,10 @@ void main()
     if (CustomBoolean9 == 1)
         geomMap1 /= CustomVector18.xy;
 
-    // Pack uv sets together to save on attributes.
-    geomUvSet = uvSetUvSet1.xy;
-    geomUvSet1 = uvSetUvSet1.zw;
-    geomUvSet2 = uvSet2Bake1.xy;
-    geomBake1 = uvSet2Bake1.zw;
+    geomUvSet = uvSet;
+    geomUvSet1 = uvSet1;
+    geomUvSet2 = uvSet2;
+    geomBake1 = bake1;
 
     // The w component flips mirrored tangents.
     geomTangent = vec4(transformedTangent.xyz, Tangent0.w);

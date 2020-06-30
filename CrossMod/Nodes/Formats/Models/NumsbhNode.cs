@@ -2,11 +2,14 @@
 using CrossMod.Rendering.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SFGenericModel.VertexAttributes;
 using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace CrossMod.Nodes
 {
@@ -58,7 +61,7 @@ namespace CrossMod.Nodes
                     SingleBindName = meshObject.ParentBoneName,
                     BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY,
                         meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius),
-                    RenderMesh = GetRenderMesh(skeleton, meshObject),
+                    RenderMesh = CreateRenderMesh(skeleton, meshObject),
                 };
 
                 model.subMeshes.Add(rMesh);
@@ -67,20 +70,23 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private RenderMesh GetRenderMesh(RSkeleton skeleton, MeshObject meshObject)
+        private RenderMesh CreateRenderMesh(RSkeleton skeleton, MeshObject meshObject)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(meshObject);
 
             System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
 
-            var vertices = CreateVertices(skeleton, meshObject, vertexAccessor);
-            return new RenderMesh(vertices, vertexIndices);
+            var renderMesh = new RenderMesh(vertexIndices, meshObject.VertexCount);
+
+            ConfigureVertexAttributes(renderMesh, skeleton, meshObject, vertexAccessor);
+            return renderMesh;
         }
 
-        private CustomVertex[] CreateVertices(RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
+        private void ConfigureVertexAttributes(RenderMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
         {
-            SsbhVertexAttribute[] positionValues = ReadAttributeOrSetZero("Position0", meshObject, vertexAccessor);
+            // TODO: Just use the mesh buffer.
+            var positionValues = ReadAttributeOrSetZero("Position0", meshObject, vertexAccessor);
             var normalValues = ReadAttributeOrSetZero("Normal0", meshObject, vertexAccessor);
             var tangentValues = ReadAttributeOrSetZero("Tangent0", meshObject, vertexAccessor);
             var map1Values = ReadAttributeOrSetZero("map1", meshObject, vertexAccessor);
@@ -89,6 +95,8 @@ namespace CrossMod.Nodes
             var uvSet2Values = ReadAttributeOrSetZero("uvSet2", meshObject, vertexAccessor);
             var bake1Values = ReadAttributeOrSetZero("bake1", meshObject, vertexAccessor);
             var colorSet1Values = ReadAttributeOrSetDefault("colorSet1", meshObject, vertexAccessor, 128f);
+
+            // TODO: How to reduce the number of attributes if attributes are read directly from a shared mesh buffer?
             var colorSet2Values = ReadAttributeOrSetZero("colorSet2", meshObject, vertexAccessor);
             var colorSet21Values = ReadAttributeOrSetZero("colorSet2_1", meshObject, vertexAccessor);
             var colorSet22Values = ReadAttributeOrSetZero("colorSet2_2", meshObject, vertexAccessor);
@@ -99,22 +107,56 @@ namespace CrossMod.Nodes
             var colorSet6Values = ReadAttributeOrSetZero("colorSet6", meshObject, vertexAccessor);
             var colorSet7Values = ReadAttributeOrSetZero("colorSet7", meshObject, vertexAccessor);
 
+            AddAttribute("Position0", renderMesh, positionValues);
+            AddAttribute("Normal0", renderMesh, normalValues);
+            AddAttribute("Tangent0", renderMesh, tangentValues);
+            AddAttribute("map1", renderMesh, map1Values);
+            AddAttribute("uvSet", renderMesh, uvSetValues);
+            AddAttribute("uvSet1", renderMesh, uvSet1Values);
+            AddAttribute("uvSet2", renderMesh, uvSet2Values);
+            AddAttribute("bake1", renderMesh, bake1Values);
+
+            AddAttribute("colorSet1", renderMesh, colorSet1Values);
+
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
             var indexByBoneName = GetIndexByBoneName(skeleton);
 
-            GetRiggingData(positionValues, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
+            GetRiggingData(meshObject.VertexCount, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
 
-            var vertices = new CustomVertex[positionValues.Length];
-            for (int i = 0; i < positionValues.Length; i++)
+            // TODO: Add option to SFGraphics to combine these calls.
+            // TODO: Add option to skip offset and stride if the whole buffer is used.
+            renderMesh.AddBuffer("boneIndexBuffer", boneIndices);
+            renderMesh.ConfigureAttribute(new VertexIntAttribute("boneIndices", ValueCount.Four, VertexAttribIntegerType.Int), "boneIndexBuffer", 0, sizeof(int) * 4);
+
+            renderMesh.AddBuffer("boneWeightBuffer", boneWeights);
+            renderMesh.ConfigureAttribute(new VertexFloatAttribute("boneWeights", ValueCount.Four, VertexAttribPointerType.Float, false), "boneWeightBuffer", 0, sizeof(float) * 4);
+        }
+
+        private static void AddAttribute(string name, RenderMesh renderMesh, SsbhVertexAttribute[] values)
+        {
+            renderMesh.AddBuffer(name, values);
+            renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, ValueCount.Four, VertexAttribPointerType.Float, false), name, 0, Marshal.SizeOf(typeof(SsbhVertexAttribute)));
+        }
+
+        private static VertexAttribPointerType GetGlAttributeType(int attributeDataType)
+        {
+            var format = (SsbVertexAttribFormat)attributeDataType;
+
+            switch (format)
             {
-                vertices[i] = new CustomVertex(positionValues[i], normalValues[i], tangentValues[i],
-                    map1Values[i], uvSetValues[i], uvSet1Values[i], uvSet2Values[i], boneIndices[i], boneWeights[i], bake1Values[i],
-                    colorSet1Values[i], colorSet2Values[i], colorSet21Values[i], colorSet22Values[i], colorSet23Values[i],
-                    colorSet3Values[i], colorSet4Values[i], colorSet5Values[i], colorSet6Values[i], colorSet7Values[i]);
+                // TODO: Add option to not convert smaller types to larger types.
+                case SsbVertexAttribFormat.Byte:
+                    return VertexAttribPointerType.Byte;
+                case SsbVertexAttribFormat.Float:
+                    return VertexAttribPointerType.Float;
+                case SsbVertexAttribFormat.HalfFloat:
+                    return VertexAttribPointerType.HalfFloat;
+                case SsbVertexAttribFormat.HalfFloat2:
+                    return VertexAttribPointerType.HalfFloat;
+                default:
+                    throw new NotImplementedException($"{attributeDataType} is not supported");
             }
-
-            return vertices;
         }
 
         private static SsbhVertexAttribute[] ReadAttributeOrSetZero(string name, MeshObject meshObject,
@@ -157,10 +199,10 @@ namespace CrossMod.Nodes
             return indexByBoneName;
         }
 
-        private static void GetRiggingData(SsbhVertexAttribute[] positions, SsbhVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
+        private static void GetRiggingData(int vertexCount, SsbhVertexInfluence[] influences, Dictionary<string, int> indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights)
         {
-            boneIndices = new IVec4[positions.Length];
-            boneWeights = new Vector4[positions.Length];
+            boneIndices = new IVec4[vertexCount];
+            boneWeights = new Vector4[vertexCount];
             foreach (SsbhVertexInfluence influence in influences)
             {
                 // Some influences refer to bones that don't exist in the skeleton.

@@ -321,8 +321,7 @@
             <param name="offsetInBytes">The starting offset for reading</param>
             <param name="itemCount">The number of items of type <typeparamref name="T"/> to read.</param>
             <returns>An array of size <paramref name="itemCount"/></returns>
-            <exception cref="T:System.ArgumentOutOfRangeException">The specified range includes data 
-            outside the buffer's current capacity.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">The specified range includes data outside the buffer's current capacity.</exception>
         </member>
         <member name="M:SFGraphics.GLObjects.BufferObjects.BufferObject.MapBuffer(OpenTK.Graphics.OpenGL.BufferAccess)">
             <summary>
@@ -961,13 +960,19 @@
         <member name="P:SFGraphics.GLObjects.Shaders.Shader.ActiveUniformCount">
             <summary>
             The number of uniforms used by the shader. 
-            Uniforms optimized out by the compiler are unused.
+            Uniforms optimized out by the compiler are considered unused.
+            </summary>
+        </member>
+        <member name="P:SFGraphics.GLObjects.Shaders.Shader.ActiveUniformBlockCount">
+            <summary>
+            The number of uniform blocks used by the shader.
+            Uniforms optimized out by the compiler are considered unused.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Shaders.Shader.ActiveAttributeCount">
             <summary>
             The number of vertex attributes used by the shader. 
-            Attributes optimized out by the compiler are unused.
+            Attributes optimized out by the compiler are considered unused.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Shaders.Shader.LinkStatusIsOk">
@@ -1061,10 +1066,10 @@
         </member>
         <member name="M:SFGraphics.GLObjects.Shaders.Shader.GetUniformBlockIndex(System.String)">
             <summary>
-            Gets the block index of a uniform block.
+            Gets the block index the uniform block <paramref name="name"/>.
             </summary>
-            <param name="name">The name of the uniform block</param>
-            <returns>The index of <paramref name="name"/></returns>
+            <param name="name">The name of the uniform block in the shader</param>
+            <returns>The index of <paramref name="name"/> or <c>-1</c> if not found</returns>
         </member>
         <member name="M:SFGraphics.GLObjects.Shaders.Shader.UniformBlockBinding(System.String,System.Int32)">
             <summary>

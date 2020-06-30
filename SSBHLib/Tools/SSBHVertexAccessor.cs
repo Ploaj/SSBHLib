@@ -144,7 +144,7 @@ namespace SSBHLib.Tools
             }
 
             SsbhVertexAttribute[] attributes = null;
-            int attributeLength = GetAttributeLength(attributeName);
+            int attributeLength = GetAttributeComponentCount(attributeName);
 
             using (BinaryReader attributeBuffer = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[attr.BufferIndex].Buffer)))
             {
@@ -289,7 +289,7 @@ namespace SSBHLib.Tools
             return attributes;
         }
 
-        private static int GetAttributeLength(string attributeName)
+        public static int GetAttributeComponentCount(string attributeName)
         {
             int attributeSize = 3;
             if (attributeName.Contains("colorSet") || attributeName.Equals("Normal0") || attributeName.Equals("Tangent0"))

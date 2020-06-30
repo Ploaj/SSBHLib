@@ -1,16 +1,14 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using CrossMod.Rendering.GlTools;
+using OpenTK.Graphics.OpenGL;
 using SFGenericModel;
-using System.Collections.Generic;
-using System.Linq;
-using CrossMod.Rendering.GlTools;
 
 namespace CrossMod.Rendering.Models
 {
-    public class RenderMesh : GenericMesh<CustomVertex>
+    public class RenderMesh : GenericMeshNonInterleaved
     {
         private readonly SFGenericModel.RenderState.RenderSettings renderSettings = new SFGenericModel.RenderState.RenderSettings();
 
-        public RenderMesh(IList<CustomVertex> vertices, IList<uint> indices) : base(vertices.ToArray(), indices.ToArray(), PrimitiveType.Triangles)
+        public RenderMesh(uint[] indices, int vertexCount) : base(indices, PrimitiveType.Triangles, vertexCount)
         {
 
         }
