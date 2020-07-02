@@ -125,8 +125,9 @@ namespace CrossModGui.ViewModels
             if (skeleton == null)
                 return;
 
-            var root = CreateBoneTreeGetRoot(skeleton.Bones);
-            BoneTreeItems.Add(root);
+            var rootLevelNodes = CreateBoneTreeGetRootLevel(skeleton.Bones);
+            foreach (var item in rootLevelNodes)
+                BoneTreeItems.Add(item);
         }
 
         private void AddMeshesToGui(RModel model)
@@ -154,24 +155,23 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static BoneTreeItem CreateBoneTreeGetRoot(IEnumerable<RBone> bones)
+        private static IEnumerable<BoneTreeItem> CreateBoneTreeGetRootLevel(IEnumerable<RBone> bones)
         {
-            // The root bone has no parent.
             var boneItemById = bones.ToDictionary(b => b.Id, b => new BoneTreeItem { Name = b.Name });
 
-            // Find the first bone with no parent as the root.
-            // TODO: Is it safe to assume "TransN" will always exist?
-            var rootId = bones.Where(b => b.ParentId == -1).First().Id;
-            BoneTreeItem root = boneItemById[rootId];
+            var rootLevel = new List<BoneTreeItem>();
 
             // Add each bone to its parent.
+            // The root nodes will have a parent index of -1. 
             foreach (var bone in bones)
             {
                 if (bone.ParentId != -1)
                     boneItemById[bone.ParentId].Children.Add(boneItemById[bone.Id]);
+                else
+                    rootLevel.Add(boneItemById[bone.Id]);
             }
 
-            return root;
+            return rootLevel;
         }
     }
 }

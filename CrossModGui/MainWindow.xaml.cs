@@ -142,6 +142,8 @@ namespace CrossModGui
         {
             viewModel.Clear();
             viewModel.Renderer.ClearRenderableNodes();
+            // Make sure the viewport buffer clears.
+            glViewport.RenderFrame();
         }
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -253,6 +255,13 @@ namespace CrossModGui
         private void FirstFrame_Click(object sender, RoutedEventArgs e)
         {
             viewModel.CurrentFrame = 0f;
+        }
+
+        private void glViewport_MouseEnter(object sender, EventArgs e)
+        {
+            // Workaround for mouse scroll state not being updated
+            // while the mouse pointer isn't on the viewport.
+            viewModel.Renderer.UpdateMouseScroll();
         }
     }
 }

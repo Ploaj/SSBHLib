@@ -14,6 +14,7 @@ namespace CrossMod.Rendering
 {
     public class ViewportRenderer
     {
+        // TODO: Handle input somewhere else.
         // Previous mouse state.
         private Vector2 mousePosition;
         private float mouseScrollWheel;
@@ -36,6 +37,8 @@ namespace CrossMod.Rendering
         private readonly GLViewport glViewport;
 
         public Camera Camera { get; } = new Camera() { FarClipPlane = 500000 };
+
+        public void UpdateMouseScroll() => mouseScrollWheel = Mouse.GetState().WheelPrecise;
 
         public ViewportRenderer(GLViewport viewport)
         {
@@ -71,7 +74,7 @@ namespace CrossMod.Rendering
             var mouseState = Mouse.GetState();
 
             Vector2 newMousePosition = new Vector2(mouseState.X, mouseState.Y);
-            float newMouseScrollWheel = mouseState.Wheel;
+            float newMouseScrollWheel = mouseState.WheelPrecise;
 
             if (mouseState.IsButtonDown(MouseButton.Left))
             {
