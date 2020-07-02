@@ -159,14 +159,16 @@ namespace CrossModGui.ViewModels
             // The root bone has no parent.
             var boneItemById = bones.ToDictionary(b => b.Id, b => new BoneTreeItem { Name = b.Name });
 
+            // Find the first bone with no parent as the root.
+            // TODO: Is it safe to assume "TransN" will always exist?
+            var rootId = bones.Where(b => b.ParentId == -1).First().Id;
+            BoneTreeItem root = boneItemById[rootId];
+
             // Add each bone to its parent.
-            BoneTreeItem root = null;
             foreach (var bone in bones)
             {
                 if (bone.ParentId != -1)
                     boneItemById[bone.ParentId].Children.Add(boneItemById[bone.Id]);
-                else
-                    root = boneItemById[bone.Id];
             }
 
             return root;
