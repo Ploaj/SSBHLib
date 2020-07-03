@@ -12,6 +12,7 @@
         Title="Cross Mod" Height="454" Width="809">
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
+        <converters:ColorBrushConverter x:Key="colorBrushConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>
@@ -62,7 +63,7 @@
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}"></Image>
-                            <TextBlock Text="{Binding Text}" />
+                            <TextBlock Text="{Binding Text}" Foreground="{Binding Path=ForeColor, Converter={StaticResource colorBrushConverter}}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
