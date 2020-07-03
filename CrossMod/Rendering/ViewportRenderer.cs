@@ -32,7 +32,7 @@ namespace CrossMod.Rendering
      
         public IRenderableAnimation RenderableAnimation { get; set; }
 
-        public float CurrentFrame { get; set; }
+        public bool IsPlayingAnimation { get; set; }
 
         private readonly GLViewport glViewport;
 
@@ -100,7 +100,7 @@ namespace CrossMod.Rendering
             });
         }
 
-        public void RenderNodes(ScriptNode scriptNode)
+        public void RenderNodes(ScriptNode scriptNode, float currentFrame = 0)
         {
             // Ensure shaders are created before drawing anything.
             if (!ShaderContainer.HasSetUp)
@@ -108,12 +108,10 @@ namespace CrossMod.Rendering
 
             SetUpViewport();
 
-            // Don't render anything else if there is a texture.
-
             if (itemToRender is IRenderableModel model)
             {
-                RenderableAnimation?.SetFrameModel(model.GetModel(), CurrentFrame);
-                RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), CurrentFrame);
+                RenderableAnimation?.SetFrameModel(model.GetModel(), currentFrame);
+                RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), currentFrame);
             }
             itemToRender?.Render(Camera);
                 

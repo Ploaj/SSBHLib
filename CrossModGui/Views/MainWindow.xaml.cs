@@ -3,9 +3,9 @@ using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.ViewModels;
-using CrossModGui.Views;
 using System;
 using System.Windows;
+using CrossModGui;
 
 namespace CrossModGui.Views
 {
@@ -49,7 +49,7 @@ namespace CrossModGui.Views
             }
             if (e.PropertyName == nameof(MainWindowViewModel.CurrentFrame))
             {
-                glViewport.RenderFrame();
+                RenderFrameIfNeeded();
             }
         }
 
@@ -79,7 +79,7 @@ namespace CrossModGui.Views
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
         {
             // TODO: Script node.
-            viewModel.Renderer.RenderNodes(null);
+            viewModel.RenderNodes();
         }
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
@@ -207,6 +207,10 @@ namespace CrossModGui.Views
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             viewModel.IsPlayingAnimation = !viewModel.IsPlayingAnimation;
+            if (viewModel.IsPlayingAnimation)
+                viewModel.Renderer.RestartRendering();
+            else
+                viewModel.Renderer.PauseRendering();
         }
 
         private void RenderFrameIfNeeded()

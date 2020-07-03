@@ -1,9 +1,13 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using SFGraphics.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace CrossModGui.ViewModels
 {
@@ -25,20 +29,22 @@ namespace CrossModGui.ViewModels
 
         public float CurrentFrame
         {
-            get => Renderer.CurrentFrame;
+            get => currentFrame;
             set 
             {
                 if (value < 0)
-                    Renderer.CurrentFrame = 0;
+                    currentFrame = 0;
                 else if (value > TotalFrames)
-                    Renderer.CurrentFrame = TotalFrames;
+                    currentFrame = TotalFrames;
                 else
-                    Renderer.CurrentFrame = value; 
+                    currentFrame = value; 
             }
         }
+        private float currentFrame;
 
         public float TotalFrames { get; set; }
 
+        // TODO: This doesn't need to be public or set more than once.
         public ViewportRenderer Renderer { get; set; }
 
         public ObservableCollection<FileNode> FileTreeItems { get; } = new ObservableCollection<FileNode>();
@@ -47,7 +53,16 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
-        public bool IsPlayingAnimation { get; set; }
+        public bool IsPlayingAnimation
+        {
+            get => isPlayingAnimation;
+            set 
+            { 
+                isPlayingAnimation = value;
+                Renderer.IsPlayingAnimation = value;
+            }
+        }
+        private bool isPlayingAnimation;
 
         public string PlayAnimationText => IsPlayingAnimation ? "Pause" : "Play";
 
@@ -111,6 +126,15 @@ namespace CrossModGui.ViewModels
 
             if (wasRendering)
                 Renderer.RestartRendering();
+        }
+
+        public void RenderNodes()
+        {
+            Renderer.RenderNodes(null, CurrentFrame);
+            if (IsPlayingAnimation)
+            {
+                CurrentFrame++;
+            }
         }
 
         private void ResetAnimation()
