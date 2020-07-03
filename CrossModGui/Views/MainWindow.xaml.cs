@@ -7,7 +7,7 @@ using CrossModGui.Views;
 using System;
 using System.Windows;
 
-namespace CrossModGui
+namespace CrossModGui.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

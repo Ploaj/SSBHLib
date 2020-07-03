@@ -1,4 +1,5 @@
 ﻿using CrossModGui.ViewModels;
+using CrossModGui.Views;
 using System.Windows;
 
 namespace CrossModGui
