@@ -11,7 +11,7 @@ namespace CrossModGui
     {
         void App_Startup(object sender, StartupEventArgs e)
         {
-            MainWindow = new MainWindow(new MainWindowViewModel());
+            MainWindow = new MainWindow();
             MainWindow.Show();
         }
     }

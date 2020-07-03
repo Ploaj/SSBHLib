@@ -23,25 +23,40 @@ namespace CrossModGui.ViewModels
             public bool IsChecked { get; set; }
         }
 
+        public bool ShouldLoopAnimation { get; set; } = true;
+
         public float CurrentFrame
         {
             get => currentFrame;
             set 
             {
                 if (value < 0)
+                {
                     currentFrame = 0;
+                }
                 else if (value > TotalFrames)
-                    currentFrame = TotalFrames;
+                {
+                    if (ShouldLoopAnimation)
+                    {
+                        currentFrame = 0;
+                    }
+                    else
+                    {
+                        currentFrame = TotalFrames;
+                        IsPlayingAnimation = false;
+                    }
+                }
                 else
+                {
                     currentFrame = value; 
+                }
             }
         }
         private float currentFrame;
 
         public float TotalFrames { get; set; }
 
-        // TODO: This doesn't need to be public or set more than once.
-        public ViewportRenderer Renderer { get; set; }
+        public ViewportRenderer Renderer { get; }
 
         public ObservableCollection<FileNode> FileTreeItems { get; } = new ObservableCollection<FileNode>();
 
@@ -61,6 +76,11 @@ namespace CrossModGui.ViewModels
         private bool isPlayingAnimation;
 
         public string PlayAnimationText => IsPlayingAnimation ? "Pause" : "Play";
+
+        public MainWindowViewModel(ViewportRenderer renderer)
+        {
+            Renderer = renderer;
+        }
 
         public void Clear()
         {

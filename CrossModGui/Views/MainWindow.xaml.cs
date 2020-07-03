@@ -17,12 +17,12 @@ namespace CrossModGui.Views
         private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
         private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
 
-        public MainWindow(MainWindowViewModel viewModel)
+        public MainWindow()
         {
             InitializeComponent();
 
-            this.viewModel = viewModel;
-            this.viewModel.Renderer = new ViewportRenderer(glViewport);
+            DataContext = viewModel;
+            viewModel = new MainWindowViewModel(new ViewportRenderer(glViewport));
             DataContext = viewModel;
 
             // Link view models to models.
