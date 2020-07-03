@@ -1,11 +1,9 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
-using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.ViewModels;
 using System;
 using System.Windows;
-using CrossModGui;
 
 namespace CrossModGui.Views
 {
@@ -49,6 +47,8 @@ namespace CrossModGui.Views
             }
             if (e.PropertyName == nameof(MainWindowViewModel.CurrentFrame))
             {
+                // Only refresh the view if animations aren't playing.
+                // Animation playback already updates the current frame.
                 RenderFrameIfNeeded();
             }
         }

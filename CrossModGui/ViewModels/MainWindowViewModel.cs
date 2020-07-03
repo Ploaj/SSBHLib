@@ -1,13 +1,9 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
-using SFGraphics.Controls;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace CrossModGui.ViewModels
 {
