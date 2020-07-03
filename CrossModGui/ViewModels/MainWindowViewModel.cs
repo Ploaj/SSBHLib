@@ -126,6 +126,10 @@ namespace CrossModGui.ViewModels
             var wasRendering = Renderer.IsRendering;
             Renderer.PauseRendering();
 
+            // Pause animation playback until the new animation is loaded.
+            var wasPlaying = IsPlayingAnimation;
+            IsPlayingAnimation = false;
+
             ResetAnimation();
 
             if (item is IRenderableNode node)
@@ -142,6 +146,9 @@ namespace CrossModGui.ViewModels
 
             if (wasRendering)
                 Renderer.RestartRendering();
+
+            if (wasPlaying)
+                IsPlayingAnimation = true;
         }
 
         public void RenderNodes()
