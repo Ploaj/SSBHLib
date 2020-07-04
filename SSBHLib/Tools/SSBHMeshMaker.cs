@@ -274,7 +274,7 @@ namespace SSBHLib.Tools
                         buffer.Seek(bufferOffset + stride * vertexIndex + attr.BufferOffset, SeekOrigin.Begin);
                         for (int j = 0; j < size; j++)
                         {
-                            WriteType(buffer, attr.DataType, data[vertexIndex * size + j]);
+                            WriteType(buffer, (int)attr.DataType, data[vertexIndex * size + j]);
                         }
                     }
                     // seek to end just to make sure
@@ -392,35 +392,35 @@ namespace SSBHLib.Tools
             // TODO: Use enum?
             switch (GetAttributeDataType(attribute))
             {
-                case 0:
-                    return 4;
-                case 2:
-                    return 1;
-                case 5:
+                case MeshAttribute.AttributeDataType.Float:
+                    return sizeof(float);
+                case MeshAttribute.AttributeDataType.Byte:
+                    return sizeof(byte);
+                case MeshAttribute.AttributeDataType.HalfFloat:
                     return 2;
-                case 8:
+                case MeshAttribute.AttributeDataType.HalfFloat2:
                     return 2;
                 default:
-                    return 1;
+                    throw new NotImplementedException($"Data size not implemented for {attribute}");
             }
         }
 
-        private static int GetAttributeDataType(UltimateVertexAttribute attribute)
+        private static MeshAttribute.AttributeDataType GetAttributeDataType(UltimateVertexAttribute attribute)
         {
             // TODO: Use enum?
             switch (attribute)
             {
                 case UltimateVertexAttribute.Position0:
-                    return 0;
+                    return MeshAttribute.AttributeDataType.Float;
                 case UltimateVertexAttribute.Normal0:
                 case UltimateVertexAttribute.Tangent0:
-                    return 5;
+                    return MeshAttribute.AttributeDataType.HalfFloat;
                 case UltimateVertexAttribute.Map1:
                 case UltimateVertexAttribute.UvSet:
                 case UltimateVertexAttribute.UvSet1:
                 case UltimateVertexAttribute.UvSet2:
                 case UltimateVertexAttribute.Bake1:
-                    return 8;
+                    return MeshAttribute.AttributeDataType.HalfFloat2;
                 case UltimateVertexAttribute.ColorSet1:
                 case UltimateVertexAttribute.ColorSet2:
                 case UltimateVertexAttribute.ColorSet21:
@@ -431,9 +431,9 @@ namespace SSBHLib.Tools
                 case UltimateVertexAttribute.ColorSet5:
                 case UltimateVertexAttribute.ColorSet6:
                 case UltimateVertexAttribute.ColorSet7:
-                    return 2;
+                    return MeshAttribute.AttributeDataType.Byte;
                 default:
-                    return -1;
+                    throw new NotImplementedException($"Data type not implemented for {attribute}");
             }
         }
 

@@ -1,8 +1,10 @@
-﻿namespace SSBHLib.Formats.Materials
+﻿using System;
+
+namespace SSBHLib.Formats.Materials
 {
     public static class MatlEnums
     {
-        public enum ParamId
+        public enum ParamId : ulong
         {
             Diffuse,
             Specular,
@@ -372,7 +374,7 @@
             DiffuseLightingAoOffset
         }
 
-        public enum ParamDataType
+        public enum ParamDataType : ulong
         {
             Float = 0x1,
             Boolean = 0x2,

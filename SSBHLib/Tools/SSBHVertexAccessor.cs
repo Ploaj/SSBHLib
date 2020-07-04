@@ -171,7 +171,7 @@ namespace SSBHLib.Tools
         // TODO: It may be better to convert bytes to floating point by dividing by 255.0f.
         private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (SsbVertexAttribFormat)attr.DataType;
+            var format = (MeshAttribute.AttributeDataType)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -181,16 +181,16 @@ namespace SSBHLib.Tools
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
-                    case SsbVertexAttribFormat.Byte:
+                    case MeshAttribute.AttributeDataType.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), 0, 0, 0);
                         break;
-                    case SsbVertexAttribFormat.Float:
+                    case MeshAttribute.AttributeDataType.Float:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), 0, 0, 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat:
+                    case MeshAttribute.AttributeDataType.HalfFloat:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), 0, 0, 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat2:
+                    case MeshAttribute.AttributeDataType.HalfFloat2:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), 0, 0, 0);
                         break;
                 }
@@ -201,7 +201,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec2(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (SsbVertexAttribFormat)attr.DataType;
+            var format = (MeshAttribute.AttributeDataType)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -211,16 +211,16 @@ namespace SSBHLib.Tools
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
-                    case SsbVertexAttribFormat.Byte:
+                    case MeshAttribute.AttributeDataType.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), 0, 0);
                         break;
-                    case SsbVertexAttribFormat.Float:
+                    case MeshAttribute.AttributeDataType.Float:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), 0, 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat:
+                    case MeshAttribute.AttributeDataType.HalfFloat:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0, 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat2:
+                    case MeshAttribute.AttributeDataType.HalfFloat2:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0, 0);
                         break;
                 }
@@ -231,7 +231,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec3(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (SsbVertexAttribFormat)attr.DataType;
+            var format = (MeshAttribute.AttributeDataType)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -241,16 +241,16 @@ namespace SSBHLib.Tools
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
-                    case SsbVertexAttribFormat.Byte:
+                    case MeshAttribute.AttributeDataType.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), 0);
                         break;
-                    case SsbVertexAttribFormat.Float:
+                    case MeshAttribute.AttributeDataType.Float:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle(), 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat:
+                    case MeshAttribute.AttributeDataType.HalfFloat:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0);
                         break;
-                    case SsbVertexAttribFormat.HalfFloat2:
+                    case MeshAttribute.AttributeDataType.HalfFloat2:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0);
                         break;
                 }
@@ -261,7 +261,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec4(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (SsbVertexAttribFormat)attr.DataType;
+            var format = (MeshAttribute.AttributeDataType)attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -271,16 +271,16 @@ namespace SSBHLib.Tools
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
-                    case SsbVertexAttribFormat.Byte:
+                    case MeshAttribute.AttributeDataType.Byte:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte());
                         break;
-                    case SsbVertexAttribFormat.Float:
+                    case MeshAttribute.AttributeDataType.Float:
                         attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle());
                         break;
-                    case SsbVertexAttribFormat.HalfFloat:
+                    case MeshAttribute.AttributeDataType.HalfFloat:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer));
                         break;
-                    case SsbVertexAttribFormat.HalfFloat2:
+                    case MeshAttribute.AttributeDataType.HalfFloat2:
                         attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer));
                         break;
                 }

@@ -139,26 +139,6 @@ namespace CrossMod.Nodes
             renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, ValueCount.Four, VertexAttribPointerType.Float, false), name, 0, Marshal.SizeOf(typeof(SsbhVertexAttribute)));
         }
 
-        private static VertexAttribPointerType GetGlAttributeType(int attributeDataType)
-        {
-            var format = (SsbVertexAttribFormat)attributeDataType;
-
-            switch (format)
-            {
-                // TODO: Add option to not convert smaller types to larger types.
-                case SsbVertexAttribFormat.Byte:
-                    return VertexAttribPointerType.Byte;
-                case SsbVertexAttribFormat.Float:
-                    return VertexAttribPointerType.Float;
-                case SsbVertexAttribFormat.HalfFloat:
-                    return VertexAttribPointerType.HalfFloat;
-                case SsbVertexAttribFormat.HalfFloat2:
-                    return VertexAttribPointerType.HalfFloat;
-                default:
-                    throw new NotImplementedException($"{attributeDataType} is not supported");
-            }
-        }
-
         private static SsbhVertexAttribute[] ReadAttributeOrSetZero(string name, MeshObject meshObject,
             SsbhVertexAccessor vertexAccessor)
         {
@@ -238,23 +218,23 @@ namespace CrossMod.Nodes
             System.Diagnostics.Debug.WriteLine(meshObject.Name);
             foreach (var attribute in meshObject.Attributes)
             {
-                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetAttributeType(attribute)} Unk4: {attribute.Unk4} Unk5: {attribute.Unk5}");
+                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetGlAttributeType(attribute)} Unk4: {attribute.Unk4} Unk5: {attribute.Unk5}");
             }
             System.Diagnostics.Debug.WriteLine("");
         }
 
-        private static VertexAttribPointerType GetAttributeType(MeshAttribute meshAttribute)
+        private static VertexAttribPointerType GetGlAttributeType(MeshAttribute meshAttribute)
         {
             // TODO: Move this enum into SSBHLib.
             switch (meshAttribute.DataType)
             {
-                case 0:
+                case MeshAttribute.AttributeDataType.Float:
                     return VertexAttribPointerType.Float;
-                case 2:
+                case MeshAttribute.AttributeDataType.Byte:
                     return VertexAttribPointerType.Byte; // color
-                case 5:
+                case MeshAttribute.AttributeDataType.HalfFloat:
                     return VertexAttribPointerType.HalfFloat;
-                case 8:
+                case MeshAttribute.AttributeDataType.HalfFloat2:
                     return VertexAttribPointerType.HalfFloat;
                 default:
                     return VertexAttribPointerType.Float;

@@ -2,9 +2,17 @@
 {
     public class MeshAttribute : SsbhFile
     {
+        public enum AttributeDataType : uint
+        {
+            Float = 0u,
+            Byte = 2u,
+            HalfFloat = 5u,
+            HalfFloat2 = 8u,
+        }
+
         public int Index { get; set; }
         
-        public int DataType { get; set; }
+        public AttributeDataType DataType { get; set; }
         
         public int BufferIndex { get; set; }
         

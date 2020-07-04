@@ -2,14 +2,6 @@
 
 namespace SSBHLib.Formats.Meshes
 {
-    public enum SsbVertexAttribFormat
-    {
-        Float = 0,
-        Byte = 2,
-        HalfFloat = 5,
-        HalfFloat2 = 8,
-    }
-
     [SsbhFile("HSEM")]
     public class Mesh : SsbhFile
     {
