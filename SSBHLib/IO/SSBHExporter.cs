@@ -48,7 +48,7 @@ namespace SSBHLib.IO
             }
         }
 
-        private bool Skip(SsbhFile file, PropertyInfo prop)
+        private bool ShouldSkipProperty(PropertyInfo prop)
         {
             object[] attrs = prop.GetCustomAttributes(true);
             bool skip = false;
@@ -74,7 +74,7 @@ namespace SSBHLib.IO
                     continue;
 
                 // I guess?
-                if (obj is Array || obj is MaterialEntry entry && entry.Object is Formats.Materials.MatlAttribute.MatlString)
+                if (obj is Array || obj is MaterialEntry entry && entry.Object is MatlAttribute.MatlString)
                     Pad(0x8);
 
                 // not sure if 4 or 8
@@ -126,7 +126,7 @@ namespace SSBHLib.IO
         {
             foreach (var prop in file.GetType().GetProperties())
             {
-                if (Skip(file, prop))
+                if (ShouldSkipProperty(prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
@@ -184,7 +184,7 @@ namespace SSBHLib.IO
             file.PostWrite(this);
         }
 
-        public void WriteProperty(object value)
+        private void WriteProperty(object value)
         {
             Type t = value.GetType();
             if (value is MaterialEntry entry)
@@ -239,7 +239,7 @@ namespace SSBHLib.IO
                 throw new NotSupportedException($"{t} is not a supported type.");
         }
 
-        public void WriteEnum(Type enumType, object value)
+        private void WriteEnum(Type enumType, object value)
         {
             if (enumType.GetEnumUnderlyingType() == typeof(int))
                 Write((int)value);
@@ -251,7 +251,7 @@ namespace SSBHLib.IO
                 throw new NotImplementedException();
         }
 
-        public void Pad(int toSize, byte paddingValue = 0)
+        private void Pad(int toSize, byte paddingValue = 0)
         {
             while (BaseStream.Position % toSize != 0)
             {
