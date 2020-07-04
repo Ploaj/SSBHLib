@@ -50,7 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnumTests\EnumTests.cs" />
+    <Compile Include="UltimateVertexAttributeTests\GetAttributeFromName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

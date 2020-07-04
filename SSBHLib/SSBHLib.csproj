@@ -96,6 +96,7 @@
     <Compile Include="Tools\SSBHVertexAttribute.cs" />
     <Compile Include="Tools\SSBHVertexAccessor.cs" />
     <Compile Include="Tools\SSBHVertexInfluence.cs" />
+    <Compile Include="Tools\UltimateVertexAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="IO\SsbhParserExtensions.tt">

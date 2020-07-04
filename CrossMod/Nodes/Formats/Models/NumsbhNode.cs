@@ -6,7 +6,6 @@ using SFGenericModel.VertexAttributes;
 using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -27,7 +26,7 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            string adjb = System.IO.Path.GetDirectoryName(AbsolutePath) + "/model.adjb";
+            string adjb = Path.GetDirectoryName(AbsolutePath) + "/model.adjb";
             System.Console.WriteLine(adjb);
             if (File.Exists(adjb))
             {
@@ -225,13 +224,12 @@ namespace CrossMod.Nodes
 
         private static VertexAttribPointerType GetGlAttributeType(MeshAttribute meshAttribute)
         {
-            // TODO: Move this enum into SSBHLib.
             switch (meshAttribute.DataType)
             {
                 case MeshAttribute.AttributeDataType.Float:
                     return VertexAttribPointerType.Float;
                 case MeshAttribute.AttributeDataType.Byte:
-                    return VertexAttribPointerType.Byte; // color
+                    return VertexAttribPointerType.Byte; 
                 case MeshAttribute.AttributeDataType.HalfFloat:
                     return VertexAttribPointerType.HalfFloat;
                 case MeshAttribute.AttributeDataType.HalfFloat2:

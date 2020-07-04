@@ -116,7 +116,7 @@ namespace SSBHLib.Tools
 
         /// <summary>
         /// Adds new attribute data to the mesh object
-        /// Note: must call StartMeshObject first
+        /// Note: must call <see cref="StartMeshObject(string, uint[], SsbhVertexAttribute[], string, bool)"/> first.
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="inputValues"></param>
@@ -126,18 +126,20 @@ namespace SSBHLib.Tools
             if (currentMesh == null)
                 return;
 
-            int size = GetAttributeSize(attribute);
-            float[] values = new float[inputValues.Length * size];
+            int componentCount = attribute.ComponentCount;
+            float[] values = new float[inputValues.Length * componentCount];
             for (int i = 0; i < inputValues.Length; i++)
             {
-                if (size > 0)
-                    values[i * size + 0] = inputValues[i].X;
-                if (size > 1)
-                    values[i * size + 1] = inputValues[i].Y;
-                if (size > 2)
-                    values[i * size + 2] = inputValues[i].Z;
-                if (size > 3)
-                    values[i * size + 3] = inputValues[i].W;
+                // TODO: Add brackets operator to SsbhVertexAttribute.
+                // Ex: attribute[0] == attribute.X
+                if (componentCount > 0)
+                    values[i * componentCount + 0] = inputValues[i].X;
+                if (componentCount > 1)
+                    values[i * componentCount + 1] = inputValues[i].Y;
+                if (componentCount > 2)
+                    values[i * componentCount + 2] = inputValues[i].Z;
+                if (componentCount > 3)
+                    values[i * componentCount + 3] = inputValues[i].W;
             }
 
             currentMesh.VertexData.Add(attribute, values);
@@ -240,19 +242,19 @@ namespace SSBHLib.Tools
                 {
                     MeshAttribute attr = new MeshAttribute
                     {
-                        Name = keypair.Key.ToInGameString(),
-                        Index = GetAttributeIndex(keypair.Key),
-                        BufferIndex = GetBufferIndex(keypair.Key),
-                        DataType = GetAttributeDataType(keypair.Key),
-                        BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? stride1 : stride2,
-                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToInGameString() } }
+                        Name = keypair.Key.Name,
+                        Index = keypair.Key.Index,
+                        BufferIndex = keypair.Key.BufferIndex,
+                        DataType = keypair.Key.DataType,
+                        BufferOffset = keypair.Key.BufferIndex == 0 ? stride1 : stride2,
+                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.Name } }
                     };
                     mo.Attributes[attributeIndex++] = attr;
 
-                    if (GetBufferIndex(keypair.Key) == 0)
-                        stride1 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
+                    if (keypair.Key.BufferIndex == 0)
+                        stride1 += keypair.Key.ComponentCount * keypair.Key.DataType.GetSizeInBytes();
                     else
-                        stride2 += GetAttributeSize(keypair.Key) * GetAttributeDataSize(keypair.Key);
+                        stride2 += keypair.Key.ComponentCount * keypair.Key.DataType.GetSizeInBytes();
                 }
 
                 // now that strides are known...
@@ -268,13 +270,13 @@ namespace SSBHLib.Tools
                     var buffer = attr.BufferIndex == 0 ? vertexBuffer1 : vertexBuffer2;
                     int bufferOffset = (int)(attr.BufferIndex == 0 ? buffer1Start : buffer2Start);
                     int stride = (attr.BufferIndex == 0 ? stride1 : stride2);
-                    int size = GetAttributeSize(keypair.Key);
+                    int componentCount = keypair.Key.ComponentCount;
                     for (int vertexIndex = 0; vertexIndex < tempmesh.VertexCount; vertexIndex++)
                     {
                         buffer.Seek(bufferOffset + stride * vertexIndex + attr.BufferOffset, SeekOrigin.Begin);
-                        for (int j = 0; j < size; j++)
+                        for (int j = 0; j < componentCount; j++)
                         {
-                            WriteType(buffer, (int)attr.DataType, data[vertexIndex * size + j]);
+                            WriteType(buffer, attr.DataType, data[vertexIndex * componentCount + j]);
                         }
                     }
                     // seek to end just to make sure
@@ -323,149 +325,22 @@ namespace SSBHLib.Tools
             return mesh;
         }
 
-        private void WriteType(BinaryWriter writer, int type, float value)
+        private void WriteType(BinaryWriter writer, MeshAttribute.AttributeDataType type, float value)
         {
             switch (type)
             {
-                case 0:
+                case MeshAttribute.AttributeDataType.Float:
                     writer.Write(value);
                     break;
-                case 2:
+                case MeshAttribute.AttributeDataType.Byte:
                     writer.Write((byte)value);
                     break;
-                case 5:
-                    writer.Write((ushort)FromFloat(value));
-                    break;
-                case 8:
-                    writer.Write((ushort)FromFloat(value));
-                    break;
-            }
-        }
-
-        private int GetBufferIndex(UltimateVertexAttribute attribute)
-        {
-            switch (attribute)
-            {
-                case UltimateVertexAttribute.Position0:
-                case UltimateVertexAttribute.Normal0:
-                case UltimateVertexAttribute.Tangent0:
-                    return 0;
-                default:
-                    return 1;
-            }
-        }
-
-        public static int GetAttributeSize(UltimateVertexAttribute attribute)
-        {
-            switch (attribute)
-            {
-                case UltimateVertexAttribute.Position0:
-                    return 3;
-                case UltimateVertexAttribute.Normal0:
-                    return 4;
-                case UltimateVertexAttribute.Tangent0:
-                    return 4;
-                case UltimateVertexAttribute.Map1:
-                case UltimateVertexAttribute.UvSet:
-                case UltimateVertexAttribute.UvSet1:
-                case UltimateVertexAttribute.UvSet2:
-                case UltimateVertexAttribute.Bake1:
-                    return 2;
-                case UltimateVertexAttribute.ColorSet1:
-                case UltimateVertexAttribute.ColorSet2:
-                case UltimateVertexAttribute.ColorSet21:
-                case UltimateVertexAttribute.ColorSet22:
-                case UltimateVertexAttribute.ColorSet23:
-                case UltimateVertexAttribute.ColorSet3:
-                case UltimateVertexAttribute.ColorSet4:
-                case UltimateVertexAttribute.ColorSet5:
-                case UltimateVertexAttribute.ColorSet6:
-                case UltimateVertexAttribute.ColorSet7:
-                    return 4;
-                default:
-                    throw new NotImplementedException($"Size not implemented for {attribute}");
-            }
-        }
-
-        private static int GetAttributeDataSize(UltimateVertexAttribute attribute)
-        {
-            // TODO: Use enum?
-            switch (GetAttributeDataType(attribute))
-            {
-                case MeshAttribute.AttributeDataType.Float:
-                    return sizeof(float);
-                case MeshAttribute.AttributeDataType.Byte:
-                    return sizeof(byte);
                 case MeshAttribute.AttributeDataType.HalfFloat:
-                    return 2;
+                    writer.Write((ushort)FloatToHalfFloatBits(value));
+                    break;
                 case MeshAttribute.AttributeDataType.HalfFloat2:
-                    return 2;
-                default:
-                    throw new NotImplementedException($"Data size not implemented for {attribute}");
-            }
-        }
-
-        private static MeshAttribute.AttributeDataType GetAttributeDataType(UltimateVertexAttribute attribute)
-        {
-            // TODO: Use enum?
-            switch (attribute)
-            {
-                case UltimateVertexAttribute.Position0:
-                    return MeshAttribute.AttributeDataType.Float;
-                case UltimateVertexAttribute.Normal0:
-                case UltimateVertexAttribute.Tangent0:
-                    return MeshAttribute.AttributeDataType.HalfFloat;
-                case UltimateVertexAttribute.Map1:
-                case UltimateVertexAttribute.UvSet:
-                case UltimateVertexAttribute.UvSet1:
-                case UltimateVertexAttribute.UvSet2:
-                case UltimateVertexAttribute.Bake1:
-                    return MeshAttribute.AttributeDataType.HalfFloat2;
-                case UltimateVertexAttribute.ColorSet1:
-                case UltimateVertexAttribute.ColorSet2:
-                case UltimateVertexAttribute.ColorSet21:
-                case UltimateVertexAttribute.ColorSet22:
-                case UltimateVertexAttribute.ColorSet23:
-                case UltimateVertexAttribute.ColorSet3:
-                case UltimateVertexAttribute.ColorSet4:
-                case UltimateVertexAttribute.ColorSet5:
-                case UltimateVertexAttribute.ColorSet6:
-                case UltimateVertexAttribute.ColorSet7:
-                    return MeshAttribute.AttributeDataType.Byte;
-                default:
-                    throw new NotImplementedException($"Data type not implemented for {attribute}");
-            }
-        }
-
-        private static int GetAttributeIndex(UltimateVertexAttribute attribute)
-        {
-            switch (attribute)
-            {
-                case UltimateVertexAttribute.Position0:
-                    return 0;
-                case UltimateVertexAttribute.Normal0:
-                    return 1;
-                case UltimateVertexAttribute.Tangent0:
-                    return 3;
-                case UltimateVertexAttribute.Map1:
-                case UltimateVertexAttribute.UvSet:
-                case UltimateVertexAttribute.UvSet1:
-                case UltimateVertexAttribute.UvSet2:
-                case UltimateVertexAttribute.Bake1:
-                    return 4;
-                case UltimateVertexAttribute.ColorSet1:
-                case UltimateVertexAttribute.ColorSet2:
-                case UltimateVertexAttribute.ColorSet21:
-                case UltimateVertexAttribute.ColorSet22:
-                case UltimateVertexAttribute.ColorSet23:
-                case UltimateVertexAttribute.ColorSet3:
-                case UltimateVertexAttribute.ColorSet4:
-                case UltimateVertexAttribute.ColorSet5:
-                case UltimateVertexAttribute.ColorSet6:
-                case UltimateVertexAttribute.ColorSet7:
-                    return 5;
-                default:
-                    return -1;
+                    writer.Write((ushort)FloatToHalfFloatBits(value));
+                    break;
             }
         }
 
@@ -474,7 +349,7 @@ namespace SSBHLib.Tools
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        private static int FromFloat(float floatValue)
+        private static int FloatToHalfFloatBits(float floatValue)
         {
             int floatBits = SingleToInt32Bits(floatValue);
             int sign = floatBits >> 16 & 0x8000;          // sign only
