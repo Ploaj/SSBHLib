@@ -39,7 +39,7 @@ string GetParseText(Type type)
     else if (types.Contains(type))
         return $"parser.Parse{type.Name}()";
     else if (type.IsEnum)
-        return $"({typeFullName})parser.ReadUInt64()";
+        return $"({typeFullName}){parserTextByType[type.GetEnumUnderlyingType()]}";
     else
         return "default";
 }
