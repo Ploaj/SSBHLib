@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuanmbToJson", "NuanmbToJso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossModGui", "CrossModGui\CrossModGui.csproj", "{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSBHLib.Test", "SSBHLib.Test\SSBHLib.Test.csproj", "{568F562F-3527-416D-BBB5-284A647C1057}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{568F562F-3527-416D-BBB5-284A647C1057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{568F562F-3527-416D-BBB5-284A647C1057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{568F562F-3527-416D-BBB5-284A647C1057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{568F562F-3527-416D-BBB5-284A647C1057}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -240,12 +240,12 @@ namespace SSBHLib.Tools
                 {
                     MeshAttribute attr = new MeshAttribute
                     {
-                        Name = GetAttributeName(keypair.Key),
+                        Name = keypair.Key.ToInGameString(),
                         Index = GetAttributeIndex(keypair.Key),
                         BufferIndex = GetBufferIndex(keypair.Key),
                         DataType = GetAttributeDataType(keypair.Key),
                         BufferOffset = (GetBufferIndex(keypair.Key) == 0) ? stride1 : stride2,
-                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToString() } }
+                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.ToInGameString() } }
                     };
                     mo.Attributes[attributeIndex++] = attr;
 
@@ -383,18 +383,7 @@ namespace SSBHLib.Tools
                 case UltimateVertexAttribute.ColorSet7:
                     return 4;
                 default:
-                    return 3;
-            }
-        }
-
-        private static string GetAttributeName(UltimateVertexAttribute attribute)
-        {
-            switch (attribute)
-            {
-                case UltimateVertexAttribute.Tangent0:
-                    return "map1";
-                default:
-                    return attribute.ToString();
+                    throw new NotImplementedException($"Size not implemented for {attribute}");
             }
         }
 
