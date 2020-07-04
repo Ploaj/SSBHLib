@@ -137,6 +137,7 @@ namespace SSBHLib
         /// </summary>
         /// <param name="name">The in game name used in the mesh format</param>
         /// <returns>The default attribute with the given name</returns>
+        /// <exception cref="NotImplementedException"><paramref name="name"/> is not the name of a default attribute</exception>
         public static UltimateVertexAttribute GetAttributeFromName(string name)
         {
             switch (name)
