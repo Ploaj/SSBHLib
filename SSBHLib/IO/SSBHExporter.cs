@@ -208,7 +208,7 @@ namespace SSBHLib.IO
                 Pad(0x8);
             }
             else if (t.IsEnum)
-                Write((long)((int)value));
+                WriteEnum(t, value);
             else if (t == typeof(bool))
                 Write((bool)value ? (long)1 : (long)0);
             else if (t == typeof(byte))
@@ -237,6 +237,18 @@ namespace SSBHLib.IO
             }
             else
                 throw new NotSupportedException($"{t} is not a supported type.");
+        }
+
+        public void WriteEnum(Type enumType, object value)
+        {
+            if (enumType.GetEnumUnderlyingType() == typeof(int))
+                Write((int)value);
+            else if (enumType.GetEnumUnderlyingType() == typeof(uint))
+                Write((uint)value);
+            else if (enumType.GetEnumUnderlyingType() == typeof(ulong))
+                Write((ulong)value);
+            else
+                throw new NotImplementedException();
         }
 
         public void Pad(int toSize, byte paddingValue = 0)
