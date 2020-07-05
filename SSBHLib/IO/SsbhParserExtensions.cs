@@ -1058,7 +1058,7 @@
         public static Formats.Animation.AnimGroup ParseAnimGroup(this SsbhParser parser)
         {
             var result = new Formats.Animation.AnimGroup();
-            result.Type = (Formats.Animation.AnimType)parser.ReadInt32();      
+            result.Type = (Formats.Animation.AnimType)parser.ReadUInt64();      
             {
                 // TODO: Extract this code to a method?
                 bool inline = false; // TODO: Add proper check for this.

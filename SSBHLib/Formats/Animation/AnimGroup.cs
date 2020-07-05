@@ -1,11 +1,11 @@
 ﻿namespace SSBHLib.Formats.Animation
 {
-    public enum AnimType
+    public enum AnimType : ulong
     {
-        Transform = 1,
-        Visibility = 2,
-        Material = 4,
-        Camera = 5
+        Transform = 1Lu,
+        Visibility = 2Lu,
+        Material = 4Lu,
+        Camera = 5Lu
     }
 
     public class AnimGroup : SsbhFile
