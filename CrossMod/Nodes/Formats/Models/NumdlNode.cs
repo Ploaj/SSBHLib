@@ -41,6 +41,8 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
+            // TODO: Make the RNumdl properties get only.
+            // They can be initialized using a constructor.
             RNumdl renderableNode = new RNumdl
             {
                 MODL = model
@@ -57,8 +59,8 @@ namespace CrossMod.Nodes
                 else if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
-                    if (texture != null && !renderableNode.sfTextureByName.ContainsKey(nutexNode.TexName.ToLower()))
-                        renderableNode.sfTextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
+                    if (texture != null && !renderableNode.TextureByName.ContainsKey(nutexNode.TexName.ToLower()))
+                        renderableNode.TextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
                 }
                 else if (fileNode.Text.Equals(model.MeshString))
                 {

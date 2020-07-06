@@ -14,10 +14,15 @@ namespace CrossMod.Rendering
     {
         public Modl MODL;
 
-        public Dictionary<string, Texture> sfTextureByName = new Dictionary<string, Texture>();
-        public RSkeleton Skeleton;
-        public RModel Model;
-        public Matl Material;
+        public Dictionary<string, Texture> TextureByName { get; set;  } = new Dictionary<string, Texture>();
+
+        public RSkeleton Skeleton { get; set; }
+
+        public RModel Model { get; set; }
+
+        public Matl Material { get; set; }
+
+        public Dictionary<string, Material> MaterialByName { get; set; } = new Dictionary<string, Material>();
 
         public void UpdateBinds()
         {
@@ -35,11 +40,15 @@ namespace CrossMod.Rendering
             foreach (ModlEntry modlEntry in MODL.ModelEntries)
             {
                 // Find the right material and assign it to the render meshes.
-                var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialName).FirstOrDefault();
-                if (matlEntry == null)
-                    continue;
+                if (!MaterialByName.TryGetValue(modlEntry.MaterialName, out Material meshMaterial))
+                {
+                    var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialName).FirstOrDefault();
+                    if (matlEntry == null)
+                        continue;
+                    meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, DefaultTextures.Instance, TextureByName);
+                    MaterialByName.Add(meshMaterial.Name, meshMaterial);
+                }
 
-                Material meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, DefaultTextures.Instance, sfTextureByName);
                 AssignMaterialToMeshes(modlEntry, meshMaterial);
             }
         }

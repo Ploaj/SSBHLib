@@ -84,38 +84,45 @@ namespace CrossModGui.Views
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
-            CreateDisplayEditorWindow(new RenderSettingsWindow(renderSettingsViewModel));
+            DisplayEditorWindow(new RenderSettingsWindow(renderSettingsViewModel));
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
         {
             // Make sure the window has current values.
             cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
-            CreateDisplayEditorWindow(new CameraSettingsWindow(cameraSettingsViewModel));
+            DisplayEditorWindow(new CameraSettingsWindow(cameraSettingsViewModel));
         }
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = new MaterialEditorWindowViewModel();
+            var materialViewModel = new MaterialEditorWindowViewModel();
 
-            // TODO: Get actual data from matl and sync to material used for rendering.
-            viewModel.MaterialNames.Add("material1");
-            viewModel.MaterialNames.Add("material2");
-            viewModel.PossibleTextureNames.Add("texture1");
-            viewModel.PossibleTextureNames.Add("texture2");
-            viewModel.PossibleTextureNames.Add("#replace_cubemap");
-            viewModel.BooleanParams.Add(new MaterialEditorWindowViewModel.BooleanParam { Name = "CustomBoolean0", Value = false });
-            viewModel.BooleanParams.Add(new MaterialEditorWindowViewModel.BooleanParam { Name = "CustomBoolean1", Value = true });
-            viewModel.FloatParams.Add(new MaterialEditorWindowViewModel.FloatParam { Name = "CustomFloat0", Value = 1 });
-            viewModel.FloatParams.Add(new MaterialEditorWindowViewModel.FloatParam { Name = "CustomFloat1", Value = 2.5f });
-            viewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param { Name = "CustomVector0", Value1 = 1, Value2 = 2, Value3 = 3, Value4 = 4 });
-            viewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param { Name = "CustomVector1", Value1 = 5, Value2 = 6, Value3 = 7, Value4 = 8 });
-            viewModel.TextureParams.Add(new MaterialEditorWindowViewModel.TextureParam { Name = "Texture0", Value = "texture1" });
-            viewModel.TextureParams.Add(new MaterialEditorWindowViewModel.TextureParam { Name = "Texture1", Value = "texture2" });
-            CreateDisplayEditorWindow(new MaterialEditorWindow(viewModel));
+            if (viewModel.RNumdl != null)
+            {
+                foreach (var mat in viewModel.RNumdl.MaterialByName.Values)
+                {
+                    materialViewModel.MaterialNames.Add(mat.Name);
+                    foreach (var param in mat.vec4ByParamId)
+                    {
+                        materialViewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param 
+                        { 
+                            Name = param.Key.ToString(), 
+                            Value1 = param.Value.X, 
+                            Value2 = param.Value.Y,
+                            Value3 = param.Value.Z,
+                            Value4 = param.Value.W,
+                        });
+                    }
+                    // TODO: Store multiple materials in view model.
+                    break;
+                }
+            }
+
+            DisplayEditorWindow(new MaterialEditorWindow(materialViewModel));
         }
 
-        private void CreateDisplayEditorWindow(Window window)
+        private void DisplayEditorWindow(Window window)
         {
             // Start automatic frame updates instead of making the window have to refresh the viewport.
             var wasRendering = glViewport.IsRendering;

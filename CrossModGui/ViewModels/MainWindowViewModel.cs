@@ -77,6 +77,9 @@ namespace CrossModGui.ViewModels
 
         public string PlayAnimationText => IsPlayingAnimation ? "Pause" : "Play";
 
+        // TODO: Where to store this value?
+        public RNumdl RNumdl { get; set; }
+
         public MainWindowViewModel(ViewportRenderer renderer)
         {
             Renderer = renderer;
@@ -115,6 +118,7 @@ namespace CrossModGui.ViewModels
             }
             else if (newNode is IRenderableModel renderableModel)
             {
+                RNumdl = renderableModel as RNumdl;
                 AddMeshesToGui(renderableModel.GetModel());
                 AddSkeletonToGui(renderableModel.GetSkeleton());
             }
