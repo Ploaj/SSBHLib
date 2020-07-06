@@ -99,10 +99,12 @@ namespace CrossMod.Rendering
             }
         }
 
+        // TODO: Move this code somewhere else.
         private Material GetMaterial(MatlEntry currentEntry)
         {
-            // HACK: This is pretty gross.
-            // I need to rework the entire texture loading system.
+            // HACK: Why does each RMesh need a reference to the default textures.
+            // Default textures could be initialized at startup because the viewport is never destroyed.
+            // TODO: Add an Instance property to default textures
             if (RMesh.defaultTextures == null)
                 RMesh.defaultTextures = new DefaultTextures();
 

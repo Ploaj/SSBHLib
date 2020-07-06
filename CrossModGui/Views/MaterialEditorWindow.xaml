@@ -33,10 +33,19 @@
                         <ItemsControl ItemsSource="{Binding FloatParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
-                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Text="{Binding Name}"></TextBlock>
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <Slider Grid.Row="0" Grid.Column="2" Value="{Binding Value}"></Slider>
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -46,12 +55,31 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <GroupBox Header="{Binding Name}">
-                                        <StackPanel>
-                                            <TextBox Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                            <TextBox Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                            <TextBox Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                            <TextBox Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                                <ColumnDefinition Width="4*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">X</TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">Y</TextBlock>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">Z</TextBlock>
+                                            <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">W</TextBlock>
+                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <Slider Grid.Row="0" Grid.Column="2" Value="{Binding Value1}"></Slider>
+                                            <Slider Grid.Row="1" Grid.Column="2" Value="{Binding Value2}"></Slider>
+                                            <Slider Grid.Row="2" Grid.Column="2" Value="{Binding Value3}"></Slider>
+                                            <Slider Grid.Row="3" Grid.Column="2" Value="{Binding Value4}"></Slider>
+                                        </Grid>
                                     </GroupBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -63,13 +91,14 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                                            <ColumnDefinition Width="4*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}"></TextBlock>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right"></TextBlock>
                                         <ComboBox Grid.Column="1" 
-                                      ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}" DataContext=""
-                                      SelectedValue="{Binding Value}" SelectedValuePath="Value"></ComboBox>
+                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}" DataContext=""
+                                          SelectedValue="{Binding Value}" SelectedValuePath="Value">
+                                        </ComboBox>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
