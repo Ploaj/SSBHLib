@@ -1,5 +1,6 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering.GlTools;
+using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -102,7 +103,11 @@ namespace CrossMod.Rendering
 
         public void RenderNodes(ScriptNode scriptNode, float currentFrame = 0)
         {
-            // Ensure shaders are created before drawing anything.
+            // This method is called before drawing opening files, 
+            // which should ensure the resources are set up in time.
+            if (DefaultTextures.Instance == null)
+                DefaultTextures.Initialize();
+
             if (!ShaderContainer.HasSetUp)
                 ShaderContainer.SetUpShaders();
 

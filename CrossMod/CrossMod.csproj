@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
+    <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\AnimationExport.cs" />
     <Compile Include="Tools\BatchRendering.cs" />

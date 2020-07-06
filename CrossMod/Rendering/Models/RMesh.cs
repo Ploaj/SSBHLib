@@ -36,18 +36,15 @@ namespace CrossMod.Rendering.Models
                 shader.SetMatrix4x4("transform", skeleton.GetAnimationSingleBindsTransform(SingleBindIndex));
             }
 
-            // TODO: ???
+            // TODO: When is primitive restart used?
             GL.Enable(EnableCap.PrimitiveRestart);
             GL.PrimitiveRestartIndex(0xFFFFFFFF);
 
             RenderMesh?.Draw(shader);
         }
+
         public void SetMaterialUniforms(Shader shader, GenericMaterial previousMaterial)
         {
-            // TODO: Rework default texture creation.
-            if (defaultTextures == null)
-                defaultTextures = new Resources.DefaultTextures();
-
             if (genericMaterial == null)
                 genericMaterial = Material.CreateGenericMaterial();
             genericMaterial.SetShaderUniforms(shader, previousMaterial);

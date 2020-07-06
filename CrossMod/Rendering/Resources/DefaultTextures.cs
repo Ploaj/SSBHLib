@@ -8,6 +8,9 @@ namespace CrossMod.Rendering.Resources
 {
     public class DefaultTextures
     {
+        // Don't initialize yet because an OpenGL context may not be current.
+        public static DefaultTextures Instance { get; private set; }
+
         // Default textures.
         public Texture2D defaultWhite = new Texture2D();
         public Texture2D defaultNormal = new Texture2D();
@@ -26,7 +29,12 @@ namespace CrossMod.Rendering.Resources
         public TextureCubeMap specularPbr = new TextureCubeMap();
         public TextureCubeMap blackCube = new TextureCubeMap();
 
-        public DefaultTextures()
+        public static void Initialize()
+        {
+            Instance = new DefaultTextures();
+        }
+
+        private DefaultTextures()
         {
             LoadBitmap(uvPattern, "DefaultTextures/UVPattern.png");
 

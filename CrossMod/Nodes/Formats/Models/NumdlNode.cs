@@ -77,7 +77,7 @@ namespace CrossMod.Nodes
             if (modelNode != null)
                 renderableNode.Model = modelNode.GetRenderModel(renderableNode.Skeleton);
             if (renderableNode.Material != null)
-                renderableNode.UpdateMaterial();
+                renderableNode.UpdateMaterials();
             if (renderableNode.Skeleton != null)
             {
                 helperNode?.AddToRenderSkeleton(renderableNode.Skeleton);
