@@ -9,6 +9,8 @@
 <#@ assembly name="$(TargetDir)\SSBHLib.dll" #>
 <#@ import namespace="SSBHLib" #>
 <#   
+// TODO: The assembly has to be rebuilt for the template to work and reflection data may be cached.
+// TODO: Get ENVDTE working to just examine the class source files.
 var assembly = typeof(SsbhFile).Assembly;
 var types = Assembly.GetAssembly(typeof(Ssbh))
                     .GetTypes()
