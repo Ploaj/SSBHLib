@@ -12,14 +12,20 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0">Material Name</TextBlock>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding MaterialNames}"></ComboBox>
+            <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0">Current Material</TextBlock>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </Grid>
         <GroupBox DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <Expander Header="CustomBoolean Params">
-                        <ItemsControl ItemsSource="{Binding BooleanParams}">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding Value}">
@@ -30,7 +36,7 @@
                         </ItemsControl>
                     </Expander>
                     <Expander Header="CustomFloat Params">
-                        <ItemsControl ItemsSource="{Binding FloatParams}">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.FloatParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -51,7 +57,7 @@
                         </ItemsControl>
                     </Expander>
                     <Expander Header="CustomVector Params">
-                        <ItemsControl ItemsSource="{Binding Vec4Params}">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.Vec4Params}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <GroupBox Header="{Binding Name}">
@@ -86,7 +92,7 @@
                         </ItemsControl>
                     </Expander>
                     <Expander Header="Texture Params">
-                        <ItemsControl ItemsSource="{Binding TextureParams}">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>

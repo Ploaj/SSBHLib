@@ -29,10 +29,10 @@ namespace CrossModGui.Views
             renderSettingsViewModel = RenderSettings.Instance;
             renderSettingsViewModel.PropertyChanged += (s, e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
 
-            cameraSettingsViewModel = this.viewModel.Renderer.Camera;
+            cameraSettingsViewModel = viewModel.Renderer.Camera;
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
 
-            this.viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -96,30 +96,8 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            var materialViewModel = new MaterialEditorWindowViewModel();
-
-            if (viewModel.RNumdl != null)
-            {
-                foreach (var mat in viewModel.RNumdl.MaterialByName.Values)
-                {
-                    materialViewModel.MaterialNames.Add(mat.Name);
-                    foreach (var param in mat.vec4ByParamId)
-                    {
-                        materialViewModel.Vec4Params.Add(new MaterialEditorWindowViewModel.Vec4Param 
-                        { 
-                            Name = param.Key.ToString(), 
-                            Value1 = param.Value.X, 
-                            Value2 = param.Value.Y,
-                            Value3 = param.Value.Z,
-                            Value4 = param.Value.W,
-                        });
-                    }
-                    // TODO: Store multiple materials in view model.
-                    break;
-                }
-            }
-
-            DisplayEditorWindow(new MaterialEditorWindow(materialViewModel));
+            // TODO: Sync view model changes to model.
+            DisplayEditorWindow(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.RNumdl)));
         }
 
         private void DisplayEditorWindow(Window window)
