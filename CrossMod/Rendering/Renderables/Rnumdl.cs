@@ -1,4 +1,5 @@
-﻿using CrossMod.Rendering.GlTools;
+﻿using CrossMod.Nodes;
+using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.Models;
 using CrossMod.Rendering.Resources;
 using SFGraphics.Cameras;
@@ -12,32 +13,51 @@ namespace CrossMod.Rendering
 {
     public class RNumdl : IRenderableModel
     {
-        public Modl MODL;
 
-        public Dictionary<string, Texture> TextureByName { get; set;  } = new Dictionary<string, Texture>();
+        public Modl Modl { get; }
 
-        public RSkeleton Skeleton { get; set; }
+        public Dictionary<string, Texture> TextureByName { get; } = new Dictionary<string, Texture>();
 
-        public RModel Model { get; set; }
+        public RSkeleton Skeleton { get; }
 
-        public Matl Material { get; set; }
+        public RModel RenderModel { get; }
+
+        public Matl Material { get; }
 
         public Dictionary<string, Material> MaterialByName { get; set; } = new Dictionary<string, Material>();
 
-        public void UpdateBinds()
+        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, Dictionary<string, Texture> textureByName)
         {
-            if (Model != null)
+            Modl = modl;
+            Skeleton = skeleton;
+            Material = material;
+            TextureByName = textureByName;
+
+            if (meshNode != null)
+                RenderModel = meshNode.GetRenderModel(Skeleton);
+            if (Material != null)
+                UpdateMaterials();
+            if (Skeleton != null)
             {
-                foreach (RMesh m in Model.subMeshes)
+                hlpbNode?.AddToRenderSkeleton(Skeleton);
+                UpdateBinds();
+            }
+        }
+
+        private void UpdateBinds()
+        {
+            if (RenderModel != null)
+            {
+                foreach (RMesh m in RenderModel.subMeshes)
                 {
                     m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
                 }
             }
         }
 
-        public void UpdateMaterials()
+        private void UpdateMaterials()
         {
-            foreach (ModlEntry modlEntry in MODL.ModelEntries)
+            foreach (ModlEntry modlEntry in Modl.ModelEntries)
             {
                 // Find the right material and assign it to the render meshes.
                 if (!MaterialByName.TryGetValue(modlEntry.MaterialName, out Material meshMaterial))
@@ -58,9 +78,9 @@ namespace CrossMod.Rendering
             int subIndex = 0;
             string prevMesh = "";
 
-            if (Model != null)
+            if (RenderModel != null)
             {
-                foreach (RMesh mesh in Model.subMeshes)
+                foreach (RMesh mesh in RenderModel.subMeshes)
                 {
                     if (prevMesh.Equals(mesh.Name))
                         subIndex++;
@@ -78,9 +98,9 @@ namespace CrossMod.Rendering
 
         public void Render(Camera camera)
         {
-            if (Model != null)
+            if (RenderModel != null)
             {
-                Model.Render(camera, Skeleton);
+                RenderModel.Render(camera, Skeleton);
             }
 
             // Render skeleton on top.
@@ -90,7 +110,7 @@ namespace CrossMod.Rendering
 
         public RModel GetModel()
         {
-            return Model;
+            return RenderModel;
         }
 
         public RSkeleton GetSkeleton()

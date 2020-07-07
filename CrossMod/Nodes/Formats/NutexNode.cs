@@ -126,7 +126,7 @@ namespace CrossMod.Nodes
                 // HACK: Nutex loading doesn't always work.
                 try
                 {
-                    renderableTexture.renderTexture = surface.GetRenderTexture();
+                    renderableTexture.RenderTexture = surface.GetRenderTexture();
                 }
                 catch (Exception)
                 {
@@ -176,7 +176,7 @@ namespace CrossMod.Nodes
 
         public void SaveTexturePNG(string fileName)
         {
-            System.Drawing.Bitmap texture = ((RTexture)GetRenderableNode()).renderTexture.GetBitmap(0);
+            System.Drawing.Bitmap texture = ((RTexture)GetRenderableNode()).RenderTexture.GetBitmap(0);
             texture.Save(fileName);
             texture.Dispose();
         }

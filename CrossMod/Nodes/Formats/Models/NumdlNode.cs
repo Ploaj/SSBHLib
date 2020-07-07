@@ -41,52 +41,43 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
-            // TODO: Make the RNumdl properties get only.
-            // They can be initialized using a constructor.
-            RNumdl renderableNode = new RNumdl
-            {
-                MODL = model
-            };
+            NumsbhNode meshNode = null;
+            NuhlpbNode hlpbNode = null;
+            RSkeleton skeleton = null;
+            Matl material = null;
+            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture>();
 
-            NumsbhNode modelNode = null;
-            NuhlpbNode helperNode = null;
+            GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, textureByName);
+
+            return new RNumdl(model, skeleton, material, meshNode, hlpbNode, textureByName);
+        }
+
+        private void GetNodesForRendering(ref NumsbhNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, Dictionary<string, SFGraphics.GLObjects.Textures.Texture> textureByName)
+        {
             foreach (FileNode fileNode in Parent.Nodes)
             {
                 if (fileNode is NuhlpbNode node)
                 {
-                    helperNode = node;
+                    hlpbNode = node;
                 }
                 else if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
-                    if (texture != null && !renderableNode.TextureByName.ContainsKey(nutexNode.TexName.ToLower()))
-                        renderableNode.TextureByName.Add(nutexNode.TexName.ToLower(), texture.renderTexture);
+                    textureByName[nutexNode.TexName.ToLower()] = texture.RenderTexture;
                 }
                 else if (fileNode.Text.Equals(model.MeshString))
                 {
-                    modelNode = (NumsbhNode)fileNode;
+                    meshNode = (NumsbhNode)fileNode;
                 }
                 else if (fileNode.Text.Equals(model.SkeletonFileName))
                 {
-                    renderableNode.Skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
+                    skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
                 }
                 else if (fileNode.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
                 {
-                    renderableNode.Material = ((MatlNode)fileNode).Material;
+                    material = ((MatlNode)fileNode).Material;
                 }
             }
-
-            if (modelNode != null)
-                renderableNode.Model = modelNode.GetRenderModel(renderableNode.Skeleton);
-            if (renderableNode.Material != null)
-                renderableNode.UpdateMaterials();
-            if (renderableNode.Skeleton != null)
-            {
-                helperNode?.AddToRenderSkeleton(renderableNode.Skeleton);
-                renderableNode.UpdateBinds();
-            }
-
-            return renderableNode;
         }
 
         public override void Open()

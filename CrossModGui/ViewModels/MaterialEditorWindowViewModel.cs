@@ -1,4 +1,5 @@
 ﻿using CrossMod.Rendering;
+using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
 
 namespace CrossModGui.ViewModels
@@ -61,44 +62,76 @@ namespace CrossModGui.ViewModels
             if (rnumdl == null)
                 return;
 
-            foreach (var mat in rnumdl.MaterialByName.Values)
+            foreach (var name in rnumdl.TextureByName.Keys)
+                PossibleTextureNames.Add(name);
+
+            foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
-                var material = new Material { Name = mat.Name };
+                var material = new Material { Name = glMaterial.Name };
 
-                foreach (var param in mat.boolByParamId)
-                {
-                    material.BooleanParams.Add(new BooleanParam
-                    {
-                        Name = param.Key.ToString(),
-                        Value = param.Value
-                    });
-                }
+                AddBooleanParams(glMaterial, material);
+                AddFloatParams(glMaterial, material);
+                AddVec4Params(glMaterial, material);
+                AddTextureParams(glMaterial, rnumdl, material);
 
-                foreach (var param in mat.floatByParamId)
+                // TODO: The materials are only created once for performance reasons.
+                // This prevents any updates from being displayed.
+                material.BooleanParams.CollectionChanged += (s, e) =>
                 {
-                    material.FloatParams.Add(new FloatParam
+                    foreach (BooleanParam item in e.NewItems)
                     {
-                        Name = param.Key.ToString(),
-                        Value = param.Value
-                    });
-                }
-
-                foreach (var param in mat.vec4ByParamId)
-                {
-                    material.Vec4Params.Add(new Vec4Param
-                    {
-                        Name = param.Key.ToString(),
-                        Value1 = param.Value.X,
-                        Value2 = param.Value.Y,
-                        Value3 = param.Value.Z,
-                        Value4 = param.Value.W,
-                    });
-                }
-                // TODO: Texture params.
-                // TODO: Possible texture names from rnumdl?
-                // This may require reworking how textures are stored/loaded.
+                        // Assume the naming is consistent between strings and enum names.
+                        System.Enum.TryParse(item.Name, out MatlEnums.ParamId paramId);
+                        glMaterial.boolByParamId[paramId] = item.Value;
+                    }
+                };
 
                 Materials.Add(material);
+            }
+        }
+
+        private static void AddTextureParams(CrossMod.Rendering.GlTools.Material mat, RNumdl rnumdl, Material material)
+        {
+            // TODO: Get param ID and texture name from material.
+            // TODO: Rework how textures are stored in the material.
+        }
+
+        private static void AddVec4Params(CrossMod.Rendering.GlTools.Material mat, Material material)
+        {
+            foreach (var param in mat.vec4ByParamId)
+            {
+                material.Vec4Params.Add(new Vec4Param
+                {
+                    Name = param.Key.ToString(),
+                    Value1 = param.Value.X,
+                    Value2 = param.Value.Y,
+                    Value3 = param.Value.Z,
+                    Value4 = param.Value.W,
+                });
+            }
+        }
+
+        private static void AddFloatParams(CrossMod.Rendering.GlTools.Material mat, Material material)
+        {
+            foreach (var param in mat.floatByParamId)
+            {
+                material.FloatParams.Add(new FloatParam
+                {
+                    Name = param.Key.ToString(),
+                    Value = param.Value
+                });
+            }
+        }
+
+        private static void AddBooleanParams(CrossMod.Rendering.GlTools.Material mat, Material material)
+        {
+            foreach (var param in mat.boolByParamId)
+            {
+                material.BooleanParams.Add(new BooleanParam
+                {
+                    Name = param.Key.ToString(),
+                    Value = param.Value
+                });
             }
         }
     }
