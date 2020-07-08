@@ -40,22 +40,20 @@ namespace CrossMod.Rendering
             {
                 if(m.Material != null)
                 {
-                    m.Material.MaterialAnimation.Clear();
+                    m.Material.Vec4ParamsMaterialAnimation.Clear();
                     m.Material.CurrentFrame = frame;
                 }
             }
 
             foreach (RMaterialAnimation a in MaterialNodes)
             {
-                //System.Diagnostics.Debug.WriteLine($"Animation: {a.AttributeName} {a.Keys.GetValue(frame)}");
-
                 foreach (Models.RMesh m in model.subMeshes)
                 {
                     if (m.Material != null && m.Material.Name.Equals(a.MaterialName))
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
-                            m.Material.MaterialAnimation.Add(paramId, a.Keys.GetValue(frame));
+                            m.Material.Vec4ParamsMaterialAnimation[paramId] =  a.Keys.GetValue(frame);
                         }
                     }
                 }

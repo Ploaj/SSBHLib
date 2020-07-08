@@ -82,6 +82,7 @@ namespace CrossModGui.ViewModels
         {
             // TODO: Get param ID and texture name from material.
             // TODO: Rework how textures are stored in the material.
+            // TODO: Also add dummy texture as an option (#replace_cubemap, etc).
         }
 
         private static void AddVec4Params(CrossMod.Rendering.GlTools.Material mat, Material material)

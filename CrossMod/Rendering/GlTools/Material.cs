@@ -111,7 +111,7 @@ namespace CrossMod.Rendering.GlTools
             shouldUpdateUniformBlock = true;
         }
 
-        public Dictionary<MatlEnums.ParamId, Vector4> MaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
+        public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
         public Material()
         {
@@ -334,9 +334,9 @@ namespace CrossMod.Rendering.GlTools
             if (isDebug)
                 name = "vec4Param";
 
-            if (MaterialAnimation.ContainsKey(paramId))
+            if (Vec4ParamsMaterialAnimation.ContainsKey(paramId))
             {
-                var value = MaterialAnimation[paramId];
+                var value = Vec4ParamsMaterialAnimation[paramId];
                 uniformBlock.SetValue(name, value);
             }
             else if (vec4ByParamId.ContainsKey(paramId))
