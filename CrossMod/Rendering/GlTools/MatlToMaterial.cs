@@ -49,9 +49,6 @@ namespace CrossMod.Rendering.GlTools
                 {
                     case MatlEnums.ParamDataType.String:
                         SetTextureParameter(meshMaterial, attribute, textureByName);
-                        // Just render as white if texture is present.
-                        // TODO: Add proper debug rendering of textures
-                        meshMaterial.floatByParamId[attribute.ParamId] = 1;
                         break;
                     case MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MatlAttribute.MatlVector4)attribute.DataObject;

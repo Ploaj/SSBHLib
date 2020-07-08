@@ -74,18 +74,6 @@ namespace CrossModGui.ViewModels
                 AddVec4Params(glMaterial, material);
                 AddTextureParams(glMaterial, rnumdl, material);
 
-                // TODO: The materials are only created once for performance reasons.
-                // This prevents any updates from being displayed.
-                material.BooleanParams.CollectionChanged += (s, e) =>
-                {
-                    foreach (BooleanParam item in e.NewItems)
-                    {
-                        // Assume the naming is consistent between strings and enum names.
-                        System.Enum.TryParse(item.Name, out MatlEnums.ParamId paramId);
-                        glMaterial.boolByParamId[paramId] = item.Value;
-                    }
-                };
-
                 Materials.Add(material);
             }
         }
@@ -100,14 +88,23 @@ namespace CrossModGui.ViewModels
         {
             foreach (var param in mat.vec4ByParamId)
             {
-                material.Vec4Params.Add(new Vec4Param
+                var vec4Param = new Vec4Param
                 {
                     Name = param.Key.ToString(),
                     Value1 = param.Value.X,
                     Value2 = param.Value.Y,
                     Value3 = param.Value.Z,
                     Value4 = param.Value.W,
-                });
+                };
+
+                // Update the material for rendering.
+                vec4Param.PropertyChanged += (s, e) => 
+                {
+                    var sender = (s as Vec4Param);
+                    mat.UpdateVec4(param.Key, new OpenTK.Vector4(sender.Value1, sender.Value2, sender.Value3, sender.Value4));
+                };
+
+                material.Vec4Params.Add(vec4Param);
             }
         }
 
@@ -115,11 +112,16 @@ namespace CrossModGui.ViewModels
         {
             foreach (var param in mat.floatByParamId)
             {
-                material.FloatParams.Add(new FloatParam
+                var floatParam = new FloatParam
                 {
                     Name = param.Key.ToString(),
                     Value = param.Value
-                });
+                };
+
+                // Update the material for rendering.
+                floatParam.PropertyChanged += (s, e) => mat.UpdateFloat(param.Key, (s as FloatParam).Value);
+
+                material.FloatParams.Add(floatParam);
             }
         }
 
@@ -127,11 +129,16 @@ namespace CrossModGui.ViewModels
         {
             foreach (var param in mat.boolByParamId)
             {
-                material.BooleanParams.Add(new BooleanParam
+                var boolParam = new BooleanParam
                 {
                     Name = param.Key.ToString(),
                     Value = param.Value
-                });
+                };
+
+                // Update the material for rendering.
+                boolParam.PropertyChanged += (s, e) => mat.UpdateBoolean(param.Key, (s as BooleanParam).Value);
+
+                material.BooleanParams.Add(boolParam);
             }
         }
     }

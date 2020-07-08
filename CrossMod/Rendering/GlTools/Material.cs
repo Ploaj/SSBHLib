@@ -88,6 +88,29 @@ namespace CrossMod.Rendering.GlTools
         public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
         public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
 
+        // Add a flag to ensure the uniforms get updated for rendering.
+        // TODO: Updating the uniform block from the update methods doesn't work.
+        // TODO: The performance impact is negligible, but not all uniforms need to be updated at once
+        private bool shouldUpdateUniformBlock = false;
+
+        public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
+        {
+            vec4ByParamId[paramId] = value;
+            shouldUpdateUniformBlock = true;
+        }
+
+        public void UpdateFloat(MatlEnums.ParamId paramId, float value)
+        {
+            floatByParamId[paramId] = value;
+            shouldUpdateUniformBlock = true;
+        }
+
+        public void UpdateBoolean(MatlEnums.ParamId paramId, bool value)
+        {
+            boolByParamId[paramId] = value;
+            shouldUpdateUniformBlock = true;
+        }
+
         public Dictionary<MatlEnums.ParamId, Vector4> MaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
         public Material()
@@ -115,16 +138,24 @@ namespace CrossMod.Rendering.GlTools
             // TODO: The uniform block and generic material should also be updated when the uniform values are changed.
             if (genericMaterial == null)
                 genericMaterial = CreateGenericMaterial();
-            genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
 
             if (uniformBlock == null)
             {
                 uniformBlock = new UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
                 SetMaterialParams(uniformBlock);
             }
+
+            if (shouldUpdateUniformBlock)
+            {
+                SetMaterialParams(uniformBlock);
+                shouldUpdateUniformBlock = false;
+            }
+
             // This needs to be updated more than once.
             AddDebugParams(uniformBlock);
-
+            
+            // TODO: The above code could be moved to the constructor.
+            genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
             uniformBlock.BindBlock(shader);
         }
 
@@ -268,31 +299,31 @@ namespace CrossMod.Rendering.GlTools
             genericMaterial.AddTexture("specularPbrCube", specularCubeMap);
         }
 
-        private void SetBool(UniformBlock genericMaterial, MatlEnums.ParamId paramId, bool defaultValue)
+        private void SetBool(UniformBlock uniformBlock, MatlEnums.ParamId paramId, bool defaultValue)
         {
             var name = paramId.ToString();
             if (boolByParamId.ContainsKey(paramId))
             {
                 var value = boolByParamId[paramId];
-                genericMaterial.SetValue(name, value ? 1 : 0);
+                uniformBlock.SetValue(name, value ? 1 : 0);
             }
             else
             {
-                genericMaterial.SetValue(name, defaultValue ? 1 : 0);
+                uniformBlock.SetValue(name, defaultValue ? 1 : 0);
             }
         }
 
-        private void SetFloat(UniformBlock genericMaterial, MatlEnums.ParamId paramId, float defaultValue)
+        private void SetFloat(UniformBlock uniformBlock, MatlEnums.ParamId paramId, float defaultValue)
         {
             var name = paramId.ToString();
             if (floatByParamId.ContainsKey(paramId))
             {
                 var value = floatByParamId[paramId];
-                genericMaterial.SetValue(name, value);
+                uniformBlock.SetValue(name, value);
             }
             else
             {
-                genericMaterial.SetValue(name, defaultValue);
+                uniformBlock.SetValue(name, defaultValue);
             }
         }
 
