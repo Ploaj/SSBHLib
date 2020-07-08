@@ -128,6 +128,20 @@ namespace CrossMod.Rendering.GlTools
             uniformBlock.BindBlock(shader);
         }
 
+        public void SetRenderState()
+        {
+            var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, BlendSrc, BlendDst, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
+            SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(alphaBlendSettings);
+
+            // Meshes with screen door transparency enable this OpenGL extension.
+            if (RenderSettings.Instance.EnableExperimental && UseAlphaSampleCoverage)
+                GL.Enable(EnableCap.SampleAlphaToCoverage);
+            else
+                GL.Disable(EnableCap.SampleAlphaToCoverage);
+
+            SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(true, CullMode));
+        }
+
         private GenericMaterial CreateGenericMaterial()
         {
             // Don't use the default texture unit.

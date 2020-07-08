@@ -69,20 +69,20 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private RenderMesh CreateRenderMesh(RSkeleton skeleton, MeshObject meshObject)
+        private UltimateMesh CreateRenderMesh(RSkeleton skeleton, MeshObject meshObject)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(meshObject);
 
             System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
 
-            var renderMesh = new RenderMesh(vertexIndices, meshObject.VertexCount);
+            var renderMesh = new UltimateMesh(vertexIndices, meshObject.VertexCount);
 
             ConfigureVertexAttributes(renderMesh, skeleton, meshObject, vertexAccessor);
             return renderMesh;
         }
 
-        private void ConfigureVertexAttributes(RenderMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
+        private void ConfigureVertexAttributes(UltimateMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
         {
             // TODO: Just use the mesh buffer.
             var positionValues = ReadAttributeOrSetZero("Position0", meshObject, vertexAccessor);
@@ -132,7 +132,7 @@ namespace CrossMod.Nodes
             renderMesh.ConfigureAttribute(new VertexFloatAttribute("boneWeights", ValueCount.Four, VertexAttribPointerType.Float, false), "boneWeightBuffer", 0, sizeof(float) * 4);
         }
 
-        private static void AddAttribute(string name, RenderMesh renderMesh, SsbhVertexAttribute[] values)
+        private static void AddAttribute(string name, UltimateMesh renderMesh, SsbhVertexAttribute[] values)
         {
             renderMesh.AddBuffer(name, values);
             renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, ValueCount.Four, VertexAttribPointerType.Float, false), name, 0, Marshal.SizeOf(typeof(SsbhVertexAttribute)));

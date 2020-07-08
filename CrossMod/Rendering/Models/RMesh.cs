@@ -10,7 +10,7 @@ namespace CrossMod.Rendering.Models
     {
         public static Resources.DefaultTextures defaultTextures = null;
 
-        public RenderMesh RenderMesh { get; set; } = null;
+        public UltimateMesh RenderMesh { get; set; } = null;
 
         public string Name { get; set; }
 

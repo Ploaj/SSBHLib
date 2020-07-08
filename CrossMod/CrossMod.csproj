@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
+    <Compile Include="Rendering\Models\IVec4.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\AnimationExport.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
@@ -155,8 +156,7 @@
     <Compile Include="Rendering\Collision.cs" />
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
     <Compile Include="Rendering\GlTools\MatlToGl.cs" />
-    <Compile Include="Rendering\Models\CustomVertex.cs" />
-    <Compile Include="Rendering\Models\RenderMesh.cs" />
+    <Compile Include="Rendering\Models\UltimateMesh.cs" />
     <Compile Include="Rendering\ShapeMeshes\PrimBonePrism.cs" />
     <Compile Include="Rendering\Renderables\RAnimation.cs" />
     <Compile Include="Rendering\GlTools\ShaderContainer.cs" />
