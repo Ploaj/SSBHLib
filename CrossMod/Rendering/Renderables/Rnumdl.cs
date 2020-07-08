@@ -65,7 +65,7 @@ namespace CrossMod.Rendering
                     var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialName).FirstOrDefault();
                     if (matlEntry == null)
                         continue;
-                    meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, DefaultTextures.Instance, TextureByName);
+                    meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, TextureByName);
                     MaterialByName.Add(meshMaterial.Name, meshMaterial);
                 }
 

@@ -33,9 +33,9 @@ namespace CrossMod.Rendering.GlTools
             EmiSampler = 0x71
         }
 
-        public static Material CreateMaterial(MatlEntry currentEntry, DefaultTextures defaultTextures, Dictionary<string, Texture> textureByName)
+        public static Material CreateMaterial(MatlEntry currentEntry, Dictionary<string, Texture> textureByName)
         {
-            Material meshMaterial = new Material(defaultTextures)
+            Material meshMaterial = new Material()
             {
                 Name = currentEntry.MaterialLabel
             };
@@ -222,7 +222,7 @@ namespace CrossMod.Rendering.GlTools
 
             // TODO: Find a better way to handle this case.
             if (((long)a.ParamId == (long)TextureParams.SpecularCubeMap) && textureName == "#replace_cubemap")
-                meshMaterial.specularCubeMap = meshMaterial.defaultTextures.specularPbr;
+                meshMaterial.specularCubeMap = DefaultTextures.Instance.SpecularPbr;
         }
     }
 }

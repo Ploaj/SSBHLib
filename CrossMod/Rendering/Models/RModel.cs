@@ -46,7 +46,7 @@ namespace CrossMod.Rendering.Models
             }
             boneUniformBuffer.SetValues("transforms", boneBinds);
 
-            DrawMeshes(camera, Skeleton, shader);
+            DrawMeshes(Skeleton, shader);
         }
 
         private static void SetCameraUniforms(Camera Camera, Shader currentShader)
@@ -91,7 +91,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
         }
 
-        private void DrawMeshes(Camera Camera, RSkeleton Skeleton, Shader currentShader)
+        private void DrawMeshes(RSkeleton skeleton, Shader currentShader)
         {
             var opaque = new List<RMesh>();
             var transparentDepthSorted = new List<RMesh>();
@@ -108,29 +108,27 @@ namespace CrossMod.Rendering.Models
             //transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
 
             // Models often share a material, so skip redundant and costly state changes.
-            string previousMaterialName = "";
-            GenericMaterial previousUniforms = null;
+            Material previousMaterial = null;
 
             foreach (RMesh m in opaque)
             {
-                DrawMesh(m, Skeleton, currentShader, previousMaterialName, previousUniforms);
-                previousMaterialName = m.Material.Name;
-                previousUniforms = m.genericMaterial;
+                DrawMesh(m, skeleton, currentShader, previousMaterial);
+                previousMaterial = m.Material;
             }
 
             // Draw transparent meshes last for proper alpha blending.
             foreach (RMesh m in transparentDepthSorted)
             {
-                DrawMesh(m, Skeleton, currentShader, previousMaterialName, previousUniforms);
-                previousMaterialName = m.Material.Name;
-                previousUniforms = m.genericMaterial;
+                DrawMesh(m, skeleton, currentShader, previousMaterial);
+                previousMaterial = m.Material;
             }
         }
-        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, string previousMaterialName, GenericMaterial previousUniforms)
+        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, Material previousMaterial)
         {
-            if (m.Material != null && m.Material.Name != previousMaterialName)
+            // Check if the uniform values have already been set for this shader.
+            if (previousMaterial == null || (m.Material != null && m.Material.Name != previousMaterial.Name))
             {
-                m.SetMaterialUniforms(currentShader, previousUniforms);
+                m.Material.SetMaterialUniforms(currentShader, previousMaterial);
                 m.RenderMesh.SetRenderState(m.Material);
             }
 

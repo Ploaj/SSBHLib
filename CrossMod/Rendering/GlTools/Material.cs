@@ -5,6 +5,8 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SSBHLib.Formats.Materials;
 using SFGraphics.GLObjects.Samplers;
+using CrossMod.Rendering.Resources;
+using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -12,9 +14,10 @@ namespace CrossMod.Rendering.GlTools
     {
         public string Name { get; set; }
 
-        public float CurrentFrame { get; set; } = 0;
+        private GenericMaterial genericMaterial = null;
+        private UniformBlock uniformBlock = null;
 
-        public Resources.DefaultTextures defaultTextures;
+        public float CurrentFrame { get; set; } = 0;
 
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
 
@@ -80,36 +83,52 @@ namespace CrossMod.Rendering.GlTools
 
         public float DepthBias { get; set; } = 0.0f;
 
+        // TODO: Just expose public get/update methods to simplify keeping track of changes.
         public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
         public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
         public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
 
         public Dictionary<MatlEnums.ParamId, Vector4> MaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public Material(Resources.DefaultTextures defaultTextures)
+        public Material()
         {
-            // TODO: Don't store another reference.
-            this.defaultTextures = defaultTextures;
-
             // Ensure the textures are never null, so we can modify their state later.
-            col = defaultTextures.defaultWhite;
-            col2 = defaultTextures.defaultWhite;
-            proj = defaultTextures.defaultBlack;
-            nor = defaultTextures.defaultNormal;
-            inkNor = defaultTextures.defaultWhite;
-            prm = defaultTextures.defaultPrm;
-            emi = defaultTextures.defaultBlack;
-            emi2 = defaultTextures.defaultBlack;
-            bakeLit = defaultTextures.defaultWhite;
-            gao = defaultTextures.defaultWhite;
-            specularCubeMap = defaultTextures.blackCube;
-            difCube = defaultTextures.blackCube;
-            dif = defaultTextures.defaultWhite;
-            dif2 = defaultTextures.defaultWhite;
-            dif3 = defaultTextures.defaultWhite;
+            col = DefaultTextures.Instance.DefaultWhite;
+            col2 = DefaultTextures.Instance.DefaultWhite;
+            proj = DefaultTextures.Instance.DefaultBlack;
+            nor = DefaultTextures.Instance.DefaultNormal;
+            inkNor = DefaultTextures.Instance.DefaultWhite;
+            prm = DefaultTextures.Instance.DefaultPrm;
+            emi = DefaultTextures.Instance.DefaultBlack;
+            emi2 = DefaultTextures.Instance.DefaultBlack;
+            bakeLit = DefaultTextures.Instance.DefaultWhite;
+            gao = DefaultTextures.Instance.DefaultWhite;
+            specularCubeMap = DefaultTextures.Instance.BlackCube;
+            difCube = DefaultTextures.Instance.BlackCube;
+            dif = DefaultTextures.Instance.DefaultWhite;
+            dif2 = DefaultTextures.Instance.DefaultWhite;
+            dif3 = DefaultTextures.Instance.DefaultWhite;
         }
 
-        public GenericMaterial CreateGenericMaterial()
+        public void SetMaterialUniforms(Shader shader, Material previousMaterial)
+        {
+            // TODO: The uniform block and generic material should also be updated when the uniform values are changed.
+            if (genericMaterial == null)
+                genericMaterial = CreateGenericMaterial();
+            genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
+
+            if (uniformBlock == null)
+            {
+                uniformBlock = new UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
+                SetMaterialParams(uniformBlock);
+            }
+            // This needs to be updated more than once.
+            AddDebugParams(uniformBlock);
+
+            uniformBlock.BindBlock(shader);
+        }
+
+        private GenericMaterial CreateGenericMaterial()
         {
             // Don't use the default texture unit.
             var genericMaterial = new GenericMaterial(1);
@@ -143,50 +162,48 @@ namespace CrossMod.Rendering.GlTools
         private void AddTextures(GenericMaterial genericMaterial)
         {
             AddMaterialTextures(genericMaterial);
-
             AddImageBasedLightingTextures(genericMaterial);
-
             AddRenderModeTextures(genericMaterial);
         }
 
-        public void AddDebugParams(UniformBlock uniformBlock)
+        private void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
             // TODO: Check if this cast is safe.
-            AddVec4(uniformBlock, (MatlEnums.ParamId)RenderSettings.Instance.ParamId, new Vector4(0), true);
+            SetVec4(uniformBlock, (MatlEnums.ParamId)RenderSettings.Instance.ParamId, new Vector4(0), true);
         }
 
-        public void AddMaterialParams(UniformBlock uniformBlock)
+        private void SetMaterialParams(UniformBlock uniformBlock)
         {
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, Vector4.Zero);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, Vector4.One);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector6, new Vector4(1, 1, 0, 0));
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, Vector4.One);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, Vector4.Zero);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, Vector4.One);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, Vector4.One);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, Vector4.One);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, Vector4.Zero);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector31, new Vector4(1, 1, 0, 0));
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector32, new Vector4(1, 1, 0, 0));
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, Vector4.Zero);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, Vector4.Zero);
-            AddVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, Vector4.One);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector6, new Vector4(1, 1, 0, 0));
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, Vector4.One);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, Vector4.One);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, Vector4.One);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, Vector4.One);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector31, new Vector4(1, 1, 0, 0));
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector32, new Vector4(1, 1, 0, 0));
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, Vector4.Zero);
+            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, Vector4.Zero);
 
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean3, true);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean4, true);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean5, false);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, false);
-            AddBool(uniformBlock, MatlEnums.ParamId.CustomBoolean11, true);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean3, true);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean4, true);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean5, false);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, false);
+            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean11, true);
 
-            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat1, 0.0f);
-            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
-            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
-            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
-            AddFloat(uniformBlock, MatlEnums.ParamId.CustomFloat19, 0.0f);
+            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat1, 0.0f);
+            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
+            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
+            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
+            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat19, 0.0f);
 
             uniformBlock.SetValue("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
             uniformBlock.SetValue("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
@@ -228,16 +245,16 @@ namespace CrossMod.Rendering.GlTools
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("uvPattern", defaultTextures.uvPattern);
+            genericMaterial.AddTexture("uvPattern", DefaultTextures.Instance.UvPattern);
         }
 
         private void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("diffusePbrCube", defaultTextures.diffusePbr);
+            genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.DiffusePbr);
             genericMaterial.AddTexture("specularPbrCube", specularCubeMap);
         }
 
-        private void AddBool(UniformBlock genericMaterial, MatlEnums.ParamId paramId, bool defaultValue)
+        private void SetBool(UniformBlock genericMaterial, MatlEnums.ParamId paramId, bool defaultValue)
         {
             var name = paramId.ToString();
             if (boolByParamId.ContainsKey(paramId))
@@ -251,7 +268,7 @@ namespace CrossMod.Rendering.GlTools
             }
         }
 
-        private void AddFloat(UniformBlock genericMaterial, MatlEnums.ParamId paramId, float defaultValue)
+        private void SetFloat(UniformBlock genericMaterial, MatlEnums.ParamId paramId, float defaultValue)
         {
             var name = paramId.ToString();
             if (floatByParamId.ContainsKey(paramId))
@@ -265,7 +282,7 @@ namespace CrossMod.Rendering.GlTools
             }
         }
 
-        private void AddVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue, bool isDebug = false)
+        private void SetVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue, bool isDebug = false)
         {
             // Convert parameters into colors for easier visualization.
             var name = paramId.ToString();

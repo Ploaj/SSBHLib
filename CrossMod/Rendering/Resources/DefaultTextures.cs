@@ -12,22 +12,22 @@ namespace CrossMod.Rendering.Resources
         public static DefaultTextures Instance { get; private set; }
 
         // Default textures.
-        public Texture2D defaultWhite = new Texture2D();
-        public Texture2D defaultNormal = new Texture2D();
-        public Texture2D defaultBlack = new Texture2D();
-        public Texture2D defaultPrm = new Texture2D();
+        public Texture2D DefaultWhite { get; } = new Texture2D();
+        public Texture2D DefaultNormal { get; } = new Texture2D();
+        public Texture2D DefaultBlack { get; } = new Texture2D();
+        public Texture2D DefaultPrm { get; } = new Texture2D();
 
         // Render modes.
-        public Texture2D uvPattern = new Texture2D()
+        public Texture2D UvPattern { get; } = new Texture2D()
         {
             TextureWrapS = TextureWrapMode.Repeat,
             TextureWrapT = TextureWrapMode.Repeat
         };
 
         // PBR image based lighting.
-        public TextureCubeMap diffusePbr = new TextureCubeMap();
-        public TextureCubeMap specularPbr = new TextureCubeMap();
-        public TextureCubeMap blackCube = new TextureCubeMap();
+        public TextureCubeMap DiffusePbr { get; } = new TextureCubeMap();
+        public TextureCubeMap SpecularPbr { get; } = new TextureCubeMap();
+        public TextureCubeMap BlackCube { get; } = new TextureCubeMap();
 
         public static void Initialize()
         {
@@ -36,15 +36,15 @@ namespace CrossMod.Rendering.Resources
 
         private DefaultTextures()
         {
-            LoadBitmap(uvPattern, "DefaultTextures/UVPattern.png");
+            LoadBitmap(UvPattern, "DefaultTextures/UVPattern.png");
 
-            LoadBitmap(defaultWhite, "DefaultTextures/default_White.png");
-            LoadBitmap(defaultPrm, "DefaultTextures/default_Params.tif");
-            LoadBitmap(defaultNormal, "DefaultTextures/default_normal.tif");
-            LoadBitmap(defaultBlack, "DefaultTextures/default_black.png");
+            LoadBitmap(DefaultWhite, "DefaultTextures/default_White.png");
+            LoadBitmap(DefaultPrm, "DefaultTextures/default_Params.tif");
+            LoadBitmap(DefaultNormal, "DefaultTextures/default_normal.tif");
+            LoadBitmap(DefaultBlack, "DefaultTextures/default_black.png");
 
             using (var bmp = new Bitmap("DefaultTextures/default_cube_black.png"))
-                blackCube.LoadImageData(bmp, 8);
+                BlackCube.LoadImageData(bmp, 8);
 
             LoadDiffusePbr();
             LoadSpecularPbr();
@@ -59,8 +59,6 @@ namespace CrossMod.Rendering.Resources
 
         private void LoadDiffusePbr()
         {
-            diffusePbr = new TextureCubeMap();
-
             var surfaceData = new List<List<byte[]>>();
 
             AddIrrFace(surfaceData, "x+");
@@ -72,11 +70,11 @@ namespace CrossMod.Rendering.Resources
 
 
             var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float);
-            diffusePbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
+            DiffusePbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
 
             // Don't Use mipmaps.
-            diffusePbr.MagFilter = TextureMagFilter.Linear;
-            diffusePbr.MinFilter = TextureMinFilter.Linear;
+            DiffusePbr.MagFilter = TextureMagFilter.Linear;
+            DiffusePbr.MinFilter = TextureMinFilter.Linear;
         }
 
         private static void AddIrrFace(List<List<byte[]>> surfaceData, string surface)
@@ -87,7 +85,6 @@ namespace CrossMod.Rendering.Resources
 
         private void LoadSpecularPbr()
         {
-            specularPbr = new TextureCubeMap();
             var surfaceData = new List<List<byte[]>>();
 
             AddCubeMipmaps(surfaceData, "x+");
@@ -98,7 +95,7 @@ namespace CrossMod.Rendering.Resources
             AddCubeMipmaps(surfaceData, "z-");
 
             var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float);
-            specularPbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
+            SpecularPbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
         }
 
         private static void AddCubeMipmaps(List<List<byte[]>> surfaceData, string surface)

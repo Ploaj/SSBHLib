@@ -23,9 +23,6 @@ namespace CrossMod.Rendering.Models
 
         public bool Visible { get; set; } = true;
 
-        public GenericMaterial genericMaterial = null;
-        private UniformBlock uniformBlock = null;
-
         public void Draw(Shader shader, RSkeleton skeleton)
         {
             if (!Visible)
@@ -41,23 +38,6 @@ namespace CrossMod.Rendering.Models
             GL.PrimitiveRestartIndex(0xFFFFFFFF);
 
             RenderMesh?.Draw(shader);
-        }
-
-        public void SetMaterialUniforms(Shader shader, GenericMaterial previousMaterial)
-        {
-            if (genericMaterial == null)
-                genericMaterial = Material.CreateGenericMaterial();
-            genericMaterial.SetShaderUniforms(shader, previousMaterial);
-
-            if (uniformBlock == null)
-            {
-                uniformBlock = new UniformBlock(shader, "MaterialParams") { BlockBinding = 1 };
-                Material.AddMaterialParams(uniformBlock);
-            }
-            // This needs to be updated more than once.
-            Material.AddDebugParams(uniformBlock);
-
-            uniformBlock.BindBlock(shader);
         }
     }
 }
