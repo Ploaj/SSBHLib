@@ -236,7 +236,7 @@ namespace CrossMod.GUI
             {
                 meshList.Items.Clear();
 
-                foreach (var mesh in model.subMeshes)
+                foreach (var mesh in model.SubMeshes)
                 {
                     ListViewItem item = new ListViewItem
                     {

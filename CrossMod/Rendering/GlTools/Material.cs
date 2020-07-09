@@ -10,6 +10,9 @@ using SFGraphics.GLObjects.Shaders;
 
 namespace CrossMod.Rendering.GlTools
 {
+    /// <summary>
+    /// Stores <see cref="MatlEntry"/> material values as OpenGL uniforms and render state.
+    /// </summary>
     public class Material
     {
         public string Name { get; set; }

@@ -10,11 +10,10 @@ namespace CrossMod.Rendering.Models
     public class RModel : IRenderable
     {
         public Vector4 BoundingSphere { get; set; }
+        public List<RMesh> SubMeshes { get; } = new List<RMesh>();
 
-        Matrix4[] boneBinds = new Matrix4[200];
-        public UniformBlock boneUniformBuffer;
-
-        public List<RMesh> subMeshes = new List<RMesh>();
+        private Matrix4[] boneBinds = new Matrix4[200];
+        private readonly UniformBlock boneUniformBuffer;
 
         public RModel()
         {
@@ -96,7 +95,7 @@ namespace CrossMod.Rendering.Models
             var opaque = new List<RMesh>();
             var transparentDepthSorted = new List<RMesh>();
 
-            foreach (RMesh m in subMeshes)
+            foreach (RMesh m in SubMeshes)
             {
                 if (m.Material.IsTransparent)
                     transparentDepthSorted.Add(m);

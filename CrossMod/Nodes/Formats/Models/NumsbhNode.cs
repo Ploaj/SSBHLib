@@ -63,7 +63,7 @@ namespace CrossMod.Nodes
                     RenderMesh = CreateRenderMesh(skeleton, meshObject),
                 };
 
-                model.subMeshes.Add(rMesh);
+                model.SubMeshes.Add(rMesh);
             }
 
             return model;

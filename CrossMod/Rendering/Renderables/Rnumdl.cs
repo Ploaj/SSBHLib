@@ -49,7 +49,7 @@ namespace CrossMod.Rendering
         {
             if (RenderModel != null)
             {
-                foreach (RMesh m in RenderModel.subMeshes)
+                foreach (RMesh m in RenderModel.SubMeshes)
                 {
                     m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
                 }
@@ -81,7 +81,7 @@ namespace CrossMod.Rendering
 
             if (RenderModel != null)
             {
-                foreach (RMesh mesh in RenderModel.subMeshes)
+                foreach (RMesh mesh in RenderModel.SubMeshes)
                 {
                     if (prevMesh.Equals(mesh.Name))
                         subIndex++;

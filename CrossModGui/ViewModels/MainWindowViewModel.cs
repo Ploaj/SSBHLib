@@ -186,7 +186,7 @@ namespace CrossModGui.ViewModels
             if (model == null)
                 return;
 
-            foreach (var mesh in model.subMeshes)
+            foreach (var mesh in model.SubMeshes)
             {
                 var newItem = new MeshListItem
                 {

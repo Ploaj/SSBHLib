@@ -25,7 +25,7 @@ namespace CrossMod.Rendering
             // Visibility
             foreach(RVisibilityAnimation a in VisibilityNodes)
             {
-                foreach (Models.RMesh m in model.subMeshes)
+                foreach (Models.RMesh m in model.SubMeshes)
                 {
                     // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))
@@ -36,7 +36,7 @@ namespace CrossMod.Rendering
             }
 
             // Material
-            foreach (Models.RMesh m in model.subMeshes)
+            foreach (Models.RMesh m in model.SubMeshes)
             {
                 if(m.Material != null)
                 {
@@ -47,7 +47,7 @@ namespace CrossMod.Rendering
 
             foreach (RMaterialAnimation a in MaterialNodes)
             {
-                foreach (Models.RMesh m in model.subMeshes)
+                foreach (Models.RMesh m in model.SubMeshes)
                 {
                     if (m.Material != null && m.Material.Name.Equals(a.MaterialName))
                     {
