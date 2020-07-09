@@ -1,4 +1,5 @@
 ﻿using CrossMod.Rendering;
+using SFGraphics.GLObjects.Textures;
 using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
@@ -76,7 +77,7 @@ namespace CrossModGui.ViewModels
                 AddBooleanParams(glMaterial, material);
                 AddFloatParams(glMaterial, material);
                 AddVec4Params(glMaterial, material);
-                AddTextureParams(glMaterial, rnumdl, material);
+                AddTextureParams(glMaterial, material);
 
                 Materials.Add(material);
             }
@@ -111,17 +112,27 @@ namespace CrossModGui.ViewModels
                         var value = material.vec4ByParamId[attribute.ParamId];
                         attribute.DataObject = new MatlAttribute.MatlVector4 { X = value.X, Y = value.Y, Z = value.Z, W = value.W };
                     }
+                    else if (material.textureNameByParamId.ContainsKey(attribute.ParamId))
+                    {
+                        attribute.DataObject = new MatlAttribute.MatlString { Text = material.textureNameByParamId[attribute.ParamId] };
+                    }
                 }
             }
 
             Ssbh.TrySaveSsbhFile(outputPath, rnumdl.Material);
         }
 
-        private static void AddTextureParams(CrossMod.Rendering.GlTools.Material mat, RNumdl rnumdl, Material material)
+        private static void AddTextureParams(CrossMod.Rendering.GlTools.Material mat, Material material)
         {
-            // TODO: Get param ID and texture name from material.
-            // TODO: Rework how textures are stored in the material.
-            // TODO: Also add dummy texture as an option (#replace_cubemap, etc).
+            foreach (var param in mat.textureNameByParamId)
+            {
+                var textureParam = new TextureParam { Name = param.Key.ToString(), Value = param.Value };
+
+                // Update the material for rendering.
+                textureParam.PropertyChanged += (s, e) => mat.UpdateTexture(param.Key, (s as TextureParam).Value);
+
+                material.TextureParams.Add(textureParam);
+            }
         }
 
         private static void AddVec4Params(CrossMod.Rendering.GlTools.Material mat, Material material)

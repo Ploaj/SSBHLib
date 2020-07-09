@@ -66,7 +66,7 @@ namespace CrossMod.Rendering.GlTools
         public bool HasEmi => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture5);
         public bool HasEmi2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture14);
 
-        // TODO: Just expose public get/update methods to simplify keeping track of changes.
+        // TODO: Make these private to ensure changes are updated in the viewport.
         public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
         public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
         public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
@@ -78,11 +78,18 @@ namespace CrossMod.Rendering.GlTools
         // TODO: Updating the uniform block from the update methods doesn't work.
         // TODO: The performance impact is negligible, but not all uniforms need to be updated at once
         private bool shouldUpdateUniformBlock = false;
+        private bool shouldUpdateTextures = false;
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
         {
             vec4ByParamId[paramId] = value;
             shouldUpdateUniformBlock = true;
+        }
+
+        public void UpdateTexture(MatlEnums.ParamId paramId, string value)
+        {
+            textureNameByParamId[paramId] = value;
+            shouldUpdateTextures = true;
         }
 
         public void UpdateFloat(MatlEnums.ParamId paramId, float value)
@@ -106,9 +113,12 @@ namespace CrossMod.Rendering.GlTools
 
         public void SetMaterialUniforms(Shader shader, Material previousMaterial)
         {
-            // TODO: The uniform block and generic material should also be updated when the uniform values are changed.
-            if (genericMaterial == null)
+            // TODO: This code could be moved to the constructor.
+            if (genericMaterial == null || shouldUpdateTextures)
+            {
                 genericMaterial = CreateGenericMaterial();
+                shouldUpdateTextures = true;
+            }
 
             if (uniformBlock == null)
             {
@@ -125,7 +135,7 @@ namespace CrossMod.Rendering.GlTools
             // This needs to be updated more than once.
             AddDebugParams(uniformBlock);
             
-            // TODO: The above code could be moved to the constructor.
+            // Update the uniform values.
             genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
             uniformBlock.BindBlock(shader);
         }

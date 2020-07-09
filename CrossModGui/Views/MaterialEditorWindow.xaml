@@ -118,8 +118,8 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right"></TextBlock>
                                         <ComboBox Grid.Column="1" 
-                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}" DataContext=""
-                                          SelectedValue="{Binding Value}" SelectedValuePath="Value">
+                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
+                                          SelectedItem="{Binding Value}">
                                         </ComboBox>
                                     </Grid>
                                 </DataTemplate>
