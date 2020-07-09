@@ -1,4 +1,5 @@
-﻿using CrossModGui.ViewModels;
+﻿using CrossMod.Tools;
+using CrossModGui.ViewModels;
 using System.Windows;
 
 namespace CrossModGui.Views
@@ -18,7 +19,8 @@ namespace CrossModGui.Views
 
         private void ExportMatl_Click(object sender, RoutedEventArgs e)
         {
-
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Ultimate Material (*.numatb)|*.", "model.numatb"))
+                viewModel.SaveMatl(fileName);
         }
     }
 }

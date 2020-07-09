@@ -4,6 +4,7 @@ using CrossMod.Rendering.Models;
 using CrossMod.Rendering.Resources;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Textures;
+using SSBHLib;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;

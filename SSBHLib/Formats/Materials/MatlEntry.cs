@@ -6,6 +6,7 @@
 
         public MatlAttribute[] Attributes { get; set; }
 
+        // TODO: This name is confusing and should probably be changed to ShaderName/ShaderLabel
         public string MaterialName { get; set; }
     }
 }

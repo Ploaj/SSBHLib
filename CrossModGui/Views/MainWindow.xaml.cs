@@ -55,7 +55,6 @@ namespace CrossModGui.Views
 
         private void CameraSettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            // TODO: Do this with less code using reactiveui?
             switch (e.PropertyName)
             {
                 case nameof(CameraSettingsWindowViewModel.RotationXDegrees):
@@ -96,7 +95,6 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Sync view model changes to model.
             DisplayEditorWindow(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.RNumdl)));
         }
 

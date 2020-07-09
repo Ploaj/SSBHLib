@@ -1,6 +1,9 @@
 ﻿using CrossMod.Rendering;
+using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows.Ink;
 
 namespace CrossModGui.ViewModels
 {
@@ -52,19 +55,20 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
-        public MaterialEditorWindowViewModel()
-        {
-
-        }
+        // TODO: Does this reference need to be in the view model?
+        private readonly RNumdl rnumdl;
 
         public MaterialEditorWindowViewModel(RNumdl rnumdl)
         {
             if (rnumdl == null)
                 return;
 
+            this.rnumdl = rnumdl;
+
             foreach (var name in rnumdl.TextureByName.Keys)
                 PossibleTextureNames.Add(name);
 
+            // TODO: Allow for editing all matl entries and not just materials assigned to meshes.
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
                 var material = new Material { Name = glMaterial.Name };
@@ -76,6 +80,41 @@ namespace CrossModGui.ViewModels
 
                 Materials.Add(material);
             }
+        }
+
+        public void SaveMatl(string outputPath)
+        {
+            // TODO: This probably doesn't need to be part of the viewmodel.
+            if (rnumdl == null || rnumdl.Material == null)
+                return;
+
+            foreach (var entry in rnumdl.Material.Entries)
+            {
+                // TODO: This only checks materials that are already assigned to a mesh.
+                if (!rnumdl.MaterialByName.ContainsKey(entry.MaterialLabel))
+                    continue;
+
+                var material = rnumdl.MaterialByName[entry.MaterialLabel];
+                foreach (var attribute in entry.Attributes)
+                {
+                    // The data type isn't known, so check each type.
+                    if (material.floatByParamId.ContainsKey(attribute.ParamId))
+                    {
+                        attribute.DataObject = material.floatByParamId[attribute.ParamId];
+                    }
+                    else if (material.boolByParamId.ContainsKey(attribute.ParamId))
+                    {
+                        attribute.DataObject = material.boolByParamId[attribute.ParamId];
+                    }
+                    else if (material.vec4ByParamId.ContainsKey(attribute.ParamId))
+                    {
+                        var value = material.vec4ByParamId[attribute.ParamId];
+                        attribute.DataObject = new MatlAttribute.MatlVector4 { X = value.X, Y = value.Y, Z = value.Z, W = value.W };
+                    }
+                }
+            }
+
+            Ssbh.TrySaveSsbhFile(outputPath, rnumdl.Material);
         }
 
         private static void AddTextureParams(CrossMod.Rendering.GlTools.Material mat, RNumdl rnumdl, Material material)
