@@ -43,8 +43,8 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" TextAlignment="Right" Margin="10,0"></TextBlock>
-                                        <CheckBox Grid.Column="1" IsChecked="{Binding Value}">
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" TextAlignment="Right" Margin="5,2"></TextBlock>
+                                        <CheckBox Grid.Column="1" IsChecked="{Binding Value}" Margin="5,2">
                                         </CheckBox>
                                     </Grid>
                                 </DataTemplate>
@@ -64,9 +64,9 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Text="{Binding Name}" Margin="10,0"></TextBlock>
-                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="0" Grid.Column="2" Value="{Binding Value}"></Slider>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding Name}"></TextBlock>
+                                        <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" Value="{Binding Value}"></Slider>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -89,19 +89,19 @@
                                             <RowDefinition Height="*"></RowDefinition>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="10,5" Text="{Binding Name}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="10,5">X/Red</TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="10,5">Y/Green</TextBlock>
-                                        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="10,5">Z/Blue</TextBlock>
-                                        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="10,5">W/Alpha</TextBlock>
-                                        <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5" Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="2" Grid.Column="1" Margin="5,5" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="3" Grid.Column="1" Margin="5,5" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="4" Grid.Column="1" Margin="5,5" Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="1" Grid.Column="2" Margin="5,5" Value="{Binding Value1}"></Slider>
-                                        <Slider Grid.Row="2" Grid.Column="2" Margin="5,5" Value="{Binding Value2}"></Slider>
-                                        <Slider Grid.Row="3" Grid.Column="2" Margin="5,5" Value="{Binding Value3}"></Slider>
-                                        <Slider Grid.Row="4" Grid.Column="2" Margin="5,5" Value="{Binding Value4}"></Slider>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="5,5" Text="{Binding Name}"></TextBlock>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">X/Red</TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">Y/Green</TextBlock>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">Z/Blue</TextBlock>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">W/Alpha</TextBlock>
+                                        <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2" Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <TextBox Grid.Row="3" Grid.Column="1" Margin="5,2" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <TextBox Grid.Row="4" Grid.Column="1" Margin="5,2" Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                        <Slider Grid.Row="1" Grid.Column="2" Margin="5,2" Value="{Binding Value1}"></Slider>
+                                        <Slider Grid.Row="2" Grid.Column="2" Margin="5,2" Value="{Binding Value2}"></Slider>
+                                        <Slider Grid.Row="3" Grid.Column="2" Margin="5,2" Value="{Binding Value3}"></Slider>
+                                        <Slider Grid.Row="4" Grid.Column="2" Margin="5,2" Value="{Binding Value4}"></Slider>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -116,10 +116,10 @@
                                             <ColumnDefinition Width="120"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right" Margin="10,5"></TextBlock>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right" Margin="5,2"></TextBlock>
                                         <ComboBox Grid.Column="1" 
                                           ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
-                                          SelectedItem="{Binding Value}" Margin="10,5">
+                                          SelectedItem="{Binding Value}" Margin="5,2">
                                         </ComboBox>
                                     </Grid>
                                 </DataTemplate>

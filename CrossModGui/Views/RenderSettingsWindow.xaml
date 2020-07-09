@@ -5,45 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="Render Settings" Height="450" Width="800">
+        Title="Render Settings" Height="462.188" Width="504.688">
     <StackPanel Margin="10">
-        <Expander Header="Render Passes">
+        <Expander Header="Render Passes" IsExpanded="True">
             <StackPanel>
-                <CheckBox IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
-                <CheckBox IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
-                <CheckBox IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
             </StackPanel>
         </Expander>
-        <Expander Header="Lighting">
+        <Expander Header="Lighting" IsExpanded="True">
             <StackPanel>
                 <Grid >
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="0">Direct Light Intensity</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="2" Value="{Binding DirectLightIntensity}"></Slider>
-                    <Label Grid.Row="1" Grid.Column="0" >Indirect Light Intensity</Label>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="1" Grid.Column="2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="10,2" TextAlignment="Right">Direct Light Intensity</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="10,2" Text="{Binding DirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="0" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding DirectLightIntensity}"></Slider>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,2" TextAlignment="Right">Indirect Light Intensity</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="1" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
                 </Grid>
             </StackPanel>
         </Expander>
-        <Expander Header="Materials">
+        <Expander Header="Materials" IsExpanded="True">
             <StackPanel>
-                <CheckBox IsChecked="{Binding EnableNormalMaps}">Enable Normal Maps</CheckBox>
-                <CheckBox IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
-                <CheckBox IsChecked="{Binding EnableEdgeTint}">Enable Edge Tint</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableNormalMaps}">Enable Normal Maps</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableEdgeTint}">Enable Edge Tint</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
-            <StackPanel Height="auto">
+            <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -58,29 +58,20 @@
                         SelectedValue="{Binding SelectedRenderMode}" SelectionChanged="RenderMode_SelectionChanged">
                     </ComboBox>
                 </Grid>
-                <GroupBox Header="Channel Toggles" Name="channelTogglesGroupBox">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
-                        <CheckBox IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
-                        <CheckBox IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
-                        <CheckBox IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Header="Material Param Debug Shading" x:Name="materialParamDebugGroupBox">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="Param Name"/>
-                        <TextBox Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-                </GroupBox>
-            </StackPanel>
-        </Expander>
-        <Expander Header="Hit Collision">
-            <StackPanel>
-                <Label>TODO</Label>
+                <StackPanel>
+                    <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
+                    <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
+                    <CheckBox Name="blueCheckBox" Margin="10,2" IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
+                    <CheckBox Name="alphaCheckBox" Margin="10,2" IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Name="paramDebugLabel" Margin="10,2" Grid.Column="0" Text="Param Name" TextAlignment="Right"/>
+                    <TextBox Name="paramDebugText" Margin="10,2" Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
             </StackPanel>
         </Expander>
     </StackPanel>

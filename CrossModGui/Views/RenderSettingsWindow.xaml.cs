@@ -24,8 +24,16 @@ namespace CrossModGui.Views
             // TODO: How to properly check the text?
             // TODO: Associate this info with the render mode?
             var selected = (sender as ComboBox)?.SelectedItem.ToString();
-            materialParamDebugGroupBox.IsEnabled = (selected.ToLower().Contains("param"));
-            channelTogglesGroupBox.IsEnabled = !(selected.ToLower().Contains("shaded"));
+
+            var isParam = selected.ToLower().Contains("param");
+            paramDebugLabel.Visibility = isParam ? Visibility.Visible : Visibility.Collapsed;
+            paramDebugText.Visibility = isParam ? Visibility.Visible : Visibility.Collapsed;
+
+            var hasChannels = !selected.ToLower().Contains("shaded");
+            redCheckBox.Visibility = hasChannels ? Visibility.Visible : Visibility.Collapsed;
+            greenCheckBox.Visibility = hasChannels ? Visibility.Visible : Visibility.Collapsed;
+            blueCheckBox.Visibility = hasChannels ? Visibility.Visible : Visibility.Collapsed;
+            alphaCheckBox.Visibility = hasChannels ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
