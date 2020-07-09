@@ -15,5 +15,10 @@ namespace CrossModGui.Views
             DataContext = this.viewModel;
             InitializeComponent();
         }
+
+        private void ExportMatl_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
