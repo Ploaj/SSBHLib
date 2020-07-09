@@ -113,13 +113,13 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                                            <ColumnDefinition Width="120"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right"></TextBlock>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right" Margin="10,5"></TextBlock>
                                         <ComboBox Grid.Column="1" 
                                           ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
-                                          SelectedItem="{Binding Value}">
+                                          SelectedItem="{Binding Value}" Margin="10,5">
                                         </ComboBox>
                                     </Grid>
                                 </DataTemplate>
