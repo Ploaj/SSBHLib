@@ -217,11 +217,6 @@ namespace CrossModGui.Views
             viewModel.Renderer.ReloadShaders();
         }
 
-        private void ReloadScripts_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO:
-        }
-
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
             BatchRendering.RenderModels(viewModel.Renderer);

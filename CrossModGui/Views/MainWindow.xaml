@@ -29,14 +29,12 @@
                 <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
                 <Separator></Separator>
-                <MenuItem Header="Reload Scripts" Click="ReloadScripts_Click"/>
                 <MenuItem Header="Reload Shaders" Click="ReloadShaders_Click"/>
             </MenuItem>
             <MenuItem Header="Menu">
                 <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
                 <MenuItem Header="Camera" Click="Camera_Click"/>
                 <MenuItem Header="Material Editor" Click="MaterialEditor_Click"></MenuItem>
-                <MenuItem Header="Hitbox/Hurtbox Selector"/>
             </MenuItem>
             <MenuItem Header="Viewport">
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>
@@ -44,11 +42,6 @@
             </MenuItem>
             <MenuItem Header="Experimental">
                 <MenuItem Header="Batch Render Models" Click="BatchRenderModels_Click"/>
-            </MenuItem>
-            <MenuItem Header="Animation">
-                <MenuItem Header="Export Animation to Gif"/>
-                <MenuItem Header="Export Animation to Folder"/>
-                <MenuItem Header="Export Current Frame to Bitmmap"/>
             </MenuItem>
         </Menu>
         <Grid>
