@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace CrossMod.Rendering.GlTools
 {
+    // TODO: This class could just be part of the material class.
     public static class MatlToMaterial
     {
         public enum TextureParams
@@ -37,7 +38,8 @@ namespace CrossMod.Rendering.GlTools
         {
             Material meshMaterial = new Material()
             {
-                Name = currentEntry.MaterialLabel
+                Name = currentEntry.MaterialLabel,
+                TextureByName = textureByName
             };
 
             foreach (MatlAttribute attribute in currentEntry.Attributes)
@@ -85,40 +87,25 @@ namespace CrossMod.Rendering.GlTools
         }
         private static void SetSamplerInformation(Material material, MatlAttribute a)
         {
-            // TODO: This could be cleaner.
-            SamplerObject sampler = null;
-            switch ((long)a.ParamId)
+            var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
+
+            SamplerObject sampler = new SamplerObject
             {
-                case (long)TextureParams.ColSampler:
-                    sampler = material.colSampler;
-                    break;
-                case (long)TextureParams.NorSampler:
-                    sampler = material.norSampler;
-                    break;
-                case (long)TextureParams.PrmSampler:
-                    sampler = material.prmSampler;
-                    break;
-                case (long)TextureParams.EmiSampler:
-                    sampler = material.emiSampler;
-                    break;
-            }
+                TextureWrapS = MatlToGl.GetWrapMode(samplerStruct.WrapS),
+                TextureWrapT = MatlToGl.GetWrapMode(samplerStruct.WrapT),
+                TextureWrapR = MatlToGl.GetWrapMode(samplerStruct.WrapR),
+                MagFilter = MatlToGl.GetMagFilter(samplerStruct.MagFilter),
+                MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter)
+            };
 
-            if (sampler != null)
-            {
-                var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
-                sampler.TextureWrapS = MatlToGl.GetWrapMode(samplerStruct.WrapS);
-                sampler.TextureWrapT = MatlToGl.GetWrapMode(samplerStruct.WrapT);
-                sampler.TextureWrapR = MatlToGl.GetWrapMode(samplerStruct.WrapR);
-                sampler.MagFilter = MatlToGl.GetMagFilter(samplerStruct.MagFilter);
-                sampler.MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter);
+            GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureLodBias, samplerStruct.LodBias);
 
-                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureLodBias, samplerStruct.LodBias);
+            if (samplerStruct.Unk6 == 2 && RenderSettings.Instance.EnableExperimental)
+                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, (float)samplerStruct.MaxAnisotropy);
+            else
+                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, 1.0f);
 
-                if (samplerStruct.Unk6 == 2 && RenderSettings.Instance.EnableExperimental)
-                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, (float)samplerStruct.MaxAnisotropy);
-                else
-                    GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, 1.0f);
-            }
+            material.samplerByParamId[a.ParamId] = sampler;
         }
 
         private static void SetRasterizerState(Material meshMaterial, MatlAttribute a)
@@ -155,71 +142,7 @@ namespace CrossMod.Rendering.GlTools
         {
             // Don't make texture names case sensitive.
             var textureName = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();
-
-            if (textureByName.TryGetValue(textureName, out Texture texture))
-            {
-                switch ((long)a.ParamId)
-                {
-                    case (long)TextureParams.ColMap:
-                        meshMaterial.HasCol = true;
-                        meshMaterial.col = texture;
-                        break;
-                    case (long)TextureParams.SpecularCubeMap:
-                        meshMaterial.specularCubeMap = texture;
-                        break;
-                    case (long)TextureParams.GaoMap:
-                        meshMaterial.gao = texture;
-                        break;
-                    case (long)TextureParams.ColMap2:
-                        meshMaterial.col2 = texture;
-                        meshMaterial.HasCol2 = true;
-                        break;
-                    case (long)TextureParams.NorMap:
-                        meshMaterial.nor = texture;
-                        break;
-                    case (long)TextureParams.ProjMap:
-                        meshMaterial.proj = texture;
-                        break;
-                    case (long)TextureParams.DifCubeMap:
-                        meshMaterial.difCube = texture;
-                        meshMaterial.HasDifCube = true;
-                        break;
-                    case (long)TextureParams.PrmMap:
-                        meshMaterial.prm = texture;
-                        break;
-                    case (long)TextureParams.EmiMap:
-                        meshMaterial.emi = texture;
-                        meshMaterial.HasEmi = true;
-                        break;
-                    case (long)TextureParams.EmiMap2:
-                        meshMaterial.emi2 = texture;
-                        meshMaterial.HasEmi2 = true;
-                        break;
-                    case (long)TextureParams.BakeLitMap:
-                        meshMaterial.bakeLit = texture;
-                        break;
-                    case (long)TextureParams.InkNorMap:
-                        meshMaterial.HasInkNorMap = true;
-                        meshMaterial.inkNor = texture;
-                        break;
-                    case (long)TextureParams.DiffuseMap:
-                        meshMaterial.dif = texture;
-                        meshMaterial.HasDiffuse = true;
-                        break;
-                    case (long)TextureParams.DiffuseMap2:
-                        meshMaterial.dif2 = texture;
-                        meshMaterial.HasDiffuse2 = true;
-                        break;
-                    case (long)TextureParams.DiffuseMap3:
-                        meshMaterial.dif3 = texture;
-                        meshMaterial.HasDiffuse3 = true;
-                        break;
-                }
-            }
-
-            // TODO: Find a better way to handle this case.
-            if (((long)a.ParamId == (long)TextureParams.SpecularCubeMap) && textureName == "#replace_cubemap")
-                meshMaterial.specularCubeMap = DefaultTextures.Instance.SpecularPbr;
+            meshMaterial.textureNameByParamId[a.ParamId] = textureName;
         }
     }
 }

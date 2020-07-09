@@ -45,7 +45,7 @@ namespace CrossMod.Nodes
             NuhlpbNode hlpbNode = null;
             RSkeleton skeleton = null;
             Matl material = null;
-            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture>();
+            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture> { { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr } };
 
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, textureByName);
 

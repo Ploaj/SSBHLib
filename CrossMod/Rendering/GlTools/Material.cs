@@ -20,6 +20,30 @@ namespace CrossMod.Rendering.GlTools
         private GenericMaterial genericMaterial = null;
         private UniformBlock uniformBlock = null;
 
+        private readonly Dictionary<MatlEnums.ParamId, Texture> defaultTextureByParamId = new Dictionary<MatlEnums.ParamId, Texture>
+        {
+            { MatlEnums.ParamId.Texture0, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture1, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture3, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture4, DefaultTextures.Instance.DefaultNormal },
+            { MatlEnums.ParamId.Texture5, DefaultTextures.Instance.DefaultBlack },
+            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultPrm },
+            { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.BlackCube },
+            { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.BlackCube },
+            { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture10, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture11, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture12, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture13, DefaultTextures.Instance.DefaultBlack },
+            { MatlEnums.ParamId.Texture14, DefaultTextures.Instance.DefaultBlack },
+            { MatlEnums.ParamId.Texture16, DefaultTextures.Instance.DefaultWhite },
+        };
+
+        // The parameters don't matter because the default texture are solid color.
+        private readonly SamplerObject defaultSampler = new SamplerObject();
+
+        public Dictionary<string, Texture> TextureByName { get; set; } = new Dictionary<string, Texture>();
+
         public float CurrentFrame { get; set; } = 0;
 
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
@@ -30,66 +54,25 @@ namespace CrossMod.Rendering.GlTools
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
 
-        public SamplerObject colSampler = new SamplerObject();
-        public Texture col;
-        public bool HasCol { get; set; } = false;
-
-        public SamplerObject col2Sampler = new SamplerObject();
-        public Texture col2;
-        public bool HasCol2 { get; set; } = false;
-
-        public SamplerObject difSampler;
-        public Texture dif;
-        public bool HasDiffuse { get; set; } = false;
-
-        public SamplerObject dif2Sampler = new SamplerObject();
-        public Texture dif2;
-        public bool HasDiffuse2 { get; set; } = false;
-
-        public SamplerObject dif3Sampler = new SamplerObject();
-        public Texture dif3 = null;
-        public bool HasDiffuse3 { get; set; } = false;
-
-        public SamplerObject norSampler = new SamplerObject();
-        public Texture nor = null;
-
-        public SamplerObject prmSampler = new SamplerObject();
-        public Texture prm = null;
-
-        public SamplerObject emiSampler = new SamplerObject();
-        public Texture emi = null;
-        public bool HasEmi { get; set; } = false;
-
-        public SamplerObject emi2Sampler = new SamplerObject();
-        public Texture emi2 = null;
-        public bool HasEmi2 { get; set; } = false;
-
-        public SamplerObject bakeLitSampler = new SamplerObject();
-        public Texture bakeLit = null;
-
-        public SamplerObject projSampler = new SamplerObject();
-        public Texture proj = null;
-
-        public SamplerObject gaoSampler = new SamplerObject();
-        public Texture gao = null;
-
-        public SamplerObject difCubeSampler = new SamplerObject();
-        public Texture difCube = null;
-        public bool HasDifCube { get; set; } = false;
-
-        public SamplerObject inkNorSampler = new SamplerObject();
-        public Texture inkNor = null;
-        public bool HasInkNorMap { get; set; } = false;
-
-        public SamplerObject specualrCubeSampler = new SamplerObject();
-        public Texture specularCubeMap = null;
-
         public float DepthBias { get; set; } = 0.0f;
+
+        public bool HasCol => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture0);
+        public bool HasCol2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture1);
+        public bool HasInkNorMap => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture16);
+        public bool HasDifCube => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture8);
+        public bool HasDiffuse => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture10);
+        public bool HasDiffuse2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture11);
+        public bool HasDiffuse3 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture12);
+        public bool HasEmi => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture5);
+        public bool HasEmi2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture14);
 
         // TODO: Just expose public get/update methods to simplify keeping track of changes.
         public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
         public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
         public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
+
+        public Dictionary<MatlEnums.ParamId, string> textureNameByParamId = new Dictionary<MatlEnums.ParamId, string>();
+        public Dictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new Dictionary<MatlEnums.ParamId, SamplerObject>();
 
         // Add a flag to ensure the uniforms get updated for rendering.
         // TODO: Updating the uniform block from the update methods doesn't work.
@@ -118,22 +101,7 @@ namespace CrossMod.Rendering.GlTools
 
         public Material()
         {
-            // Ensure the textures are never null, so we can modify their state later.
-            col = DefaultTextures.Instance.DefaultWhite;
-            col2 = DefaultTextures.Instance.DefaultWhite;
-            proj = DefaultTextures.Instance.DefaultBlack;
-            nor = DefaultTextures.Instance.DefaultNormal;
-            inkNor = DefaultTextures.Instance.DefaultWhite;
-            prm = DefaultTextures.Instance.DefaultPrm;
-            emi = DefaultTextures.Instance.DefaultBlack;
-            emi2 = DefaultTextures.Instance.DefaultBlack;
-            bakeLit = DefaultTextures.Instance.DefaultWhite;
-            gao = DefaultTextures.Instance.DefaultWhite;
-            specularCubeMap = DefaultTextures.Instance.BlackCube;
-            difCube = DefaultTextures.Instance.BlackCube;
-            dif = DefaultTextures.Instance.DefaultWhite;
-            dif2 = DefaultTextures.Instance.DefaultWhite;
-            dif3 = DefaultTextures.Instance.DefaultWhite;
+
         }
 
         public void SetMaterialUniforms(Shader shader, Material previousMaterial)
@@ -275,22 +243,44 @@ namespace CrossMod.Rendering.GlTools
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("colMap", col, colSampler);
-            genericMaterial.AddTexture("col2Map", col2, col2Sampler);
-            genericMaterial.AddTexture("prmMap", prm, prmSampler);
-            genericMaterial.AddTexture("norMap", nor, norSampler);
-            genericMaterial.AddTexture("inkNorMap", inkNor, inkNorSampler);
-            genericMaterial.AddTexture("emiMap", emi, emiSampler);
-            genericMaterial.AddTexture("emi2Map", emi2, emi2Sampler);
-            genericMaterial.AddTexture("bakeLitMap", bakeLit, bakeLitSampler);
-            genericMaterial.AddTexture("gaoMap", gao, gaoSampler);
-            genericMaterial.AddTexture("projMap", proj, projSampler);
-            genericMaterial.AddTexture("difCubeMap", difCube, difCubeSampler);
-            genericMaterial.AddTexture("difMap", dif, difSampler);
-            genericMaterial.AddTexture("dif2Map", dif2, dif2Sampler);
-            genericMaterial.AddTexture("dif3Map", dif3, dif3Sampler);
+            genericMaterial.AddTexture("colMap", GetTexture(MatlEnums.ParamId.Texture0), GetSampler(MatlEnums.ParamId.Sampler0));
+            genericMaterial.AddTexture("col2Map", GetTexture(MatlEnums.ParamId.Texture1), GetSampler(MatlEnums.ParamId.Sampler1));
+            genericMaterial.AddTexture("prmMap", GetTexture(MatlEnums.ParamId.Texture6), GetSampler(MatlEnums.ParamId.Sampler6));
+            genericMaterial.AddTexture("norMap", GetTexture(MatlEnums.ParamId.Texture4), GetSampler(MatlEnums.ParamId.Sampler4));
+            genericMaterial.AddTexture("inkNorMap", GetTexture(MatlEnums.ParamId.Texture16), GetSampler(MatlEnums.ParamId.Sampler16));
+            genericMaterial.AddTexture("emiMap", GetTexture(MatlEnums.ParamId.Texture5), GetSampler(MatlEnums.ParamId.Sampler5));
+            genericMaterial.AddTexture("emi2Map", GetTexture(MatlEnums.ParamId.Texture14), GetSampler(MatlEnums.ParamId.Sampler14));
+            genericMaterial.AddTexture("bakeLitMap", GetTexture(MatlEnums.ParamId.Texture9), GetSampler(MatlEnums.ParamId.Sampler9));
+            genericMaterial.AddTexture("gaoMap", GetTexture(MatlEnums.ParamId.Texture3), GetSampler(MatlEnums.ParamId.Sampler3));
+            genericMaterial.AddTexture("projMap", GetTexture(MatlEnums.ParamId.Texture13), GetSampler(MatlEnums.ParamId.Sampler13));
+            genericMaterial.AddTexture("difCubeMap", GetTexture(MatlEnums.ParamId.Texture8), GetSampler(MatlEnums.ParamId.Sampler8));
+            genericMaterial.AddTexture("difMap", GetTexture(MatlEnums.ParamId.Texture10), GetSampler(MatlEnums.ParamId.Sampler10));
+            genericMaterial.AddTexture("dif2Map", GetTexture(MatlEnums.ParamId.Texture11), GetSampler(MatlEnums.ParamId.Sampler11));
+            genericMaterial.AddTexture("dif3Map", GetTexture(MatlEnums.ParamId.Texture12), GetSampler(MatlEnums.ParamId.Sampler12));
         }
 
+        public SamplerObject GetSampler(MatlEnums.ParamId paramId)
+        {
+            if (!samplerByParamId.ContainsKey(paramId))
+                return defaultSampler;
+
+            return samplerByParamId[paramId];
+        }
+
+        private Texture GetTexture(MatlEnums.ParamId paramId)
+        {
+            // Set a default to avoid unnecessary conditionals in the shader.
+            if (!textureNameByParamId.ContainsKey(paramId))
+                return defaultTextureByParamId[paramId];
+
+            // TODO: Add the missing default textures.
+            // TODO: The texture colors can be determined using an OpenGL debugger.
+            if (!TextureByName.ContainsKey(textureNameByParamId[paramId]))
+                return defaultTextureByParamId[paramId];
+
+            return TextureByName[textureNameByParamId[paramId]];
+        }
+   
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("uvPattern", DefaultTextures.Instance.UvPattern);
@@ -299,7 +289,7 @@ namespace CrossMod.Rendering.GlTools
         private void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.DiffusePbr);
-            genericMaterial.AddTexture("specularPbrCube", specularCubeMap);
+            genericMaterial.AddTexture("specularPbrCube", GetTexture(MatlEnums.ParamId.Texture7));
         }
 
         private void SetBool(UniformBlock uniformBlock, MatlEnums.ParamId paramId, bool defaultValue)

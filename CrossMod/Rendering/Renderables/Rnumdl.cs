@@ -17,7 +17,7 @@ namespace CrossMod.Rendering
 
         public Modl Modl { get; }
 
-        public Dictionary<string, Texture> TextureByName { get; } = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> TextureByName { get; }
 
         public RSkeleton Skeleton { get; }
 
