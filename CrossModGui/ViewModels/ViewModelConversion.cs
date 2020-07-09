@@ -1,4 +1,5 @@
 ﻿using SFGraphics.Cameras;
+using SSBHLib.Formats.Materials;
 
 namespace CrossModGui.ViewModels
 {
@@ -19,6 +20,8 @@ namespace CrossModGui.ViewModels
             settings.RenderNormalMaps = vm.EnableNormalMaps;
             settings.DirectLightIntensity = vm.DirectLightIntensity;
             settings.IblIntensity = vm.IndirectLightIntensity;
+            if (System.Enum.TryParse(vm.ParamName, out MatlEnums.ParamId paramId))
+                settings.ParamId = (uint)paramId;
         }
 
         public static void SetValues(this Camera camera, CameraSettingsWindowViewModel vm)

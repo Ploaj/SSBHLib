@@ -118,6 +118,7 @@ namespace CrossMod.Rendering
 
         public OpenTK.Vector4 renderChannels = new OpenTK.Vector4(1);
 
+        // TODO: Make this an enum.
         [EditInfo("Param ID", ValueEnums.ValueType.UintFlag, "Debug Shading")]
         public uint ParamId { get; set; } = 0;
 
