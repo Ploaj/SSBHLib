@@ -99,7 +99,7 @@ namespace SSBHLib
         public static UltimateVertexAttribute Bake1 { get; } = new UltimateVertexAttribute("bake1", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
-        /// The in game name used in the MESH format.
+        /// The name used for the <see cref="MeshAttributeString"/> and shader attributes.
         /// </summary>
         public string Name { get; }
 
@@ -135,7 +135,7 @@ namespace SSBHLib
         /// <summary>
         /// Finds a default attribute with in game name <paramref name="name"/>.
         /// </summary>
-        /// <param name="name">The in game name used in the mesh format</param>
+        /// <param name="name">The name used for the <see cref="MeshAttributeString"/>.</param>
         /// <returns>The default attribute with the given name</returns>
         /// <exception cref="NotImplementedException"><paramref name="name"/> is not the name of a default attribute</exception>
         public static UltimateVertexAttribute GetAttributeFromName(string name)

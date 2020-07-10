@@ -22,6 +22,9 @@
         
         public int Unk5 { get; set; } // usually 0 padding?
 
+        /// <summary>
+        /// The name of the attribute, which may not be the same as the name in <see cref="AttributeStrings"/>.
+        /// </summary>
         public string Name { get; set; }
         
         public MeshAttributeString[] AttributeStrings { get; set; }

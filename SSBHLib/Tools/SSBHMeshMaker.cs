@@ -240,9 +240,14 @@ namespace SSBHLib.Tools
                 int attributeIndex = 0;
                 foreach (var keypair in tempmesh.VertexData)
                 {
+                    // For some reason the attribute string doesn't match the attribute's name for Tangent0.
+                    var attributeName = keypair.Key.Name;
+                    if (keypair.Key.Name == "Tangent0")
+                        attributeName = "map1";
+
                     MeshAttribute attr = new MeshAttribute
                     {
-                        Name = keypair.Key.Name,
+                        Name = attributeName,
                         Index = keypair.Key.Index,
                         BufferIndex = keypair.Key.BufferIndex,
                         DataType = keypair.Key.DataType,
