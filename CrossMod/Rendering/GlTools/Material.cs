@@ -283,11 +283,6 @@ namespace CrossMod.Rendering.GlTools
             if (!textureNameByParamId.ContainsKey(paramId))
                 return defaultTextureByParamId[paramId];
 
-            // TODO: Add the missing default textures.
-            // TODO: The texture colors can be determined using an OpenGL debugger.
-            if (!TextureByName.ContainsKey(textureNameByParamId[paramId]))
-                return defaultTextureByParamId[paramId];
-
             return TextureByName[textureNameByParamId[paramId]];
         }
    

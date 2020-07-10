@@ -69,12 +69,14 @@ namespace CrossMod.Tools
                 {
                     renderer.ClearRenderableNodes();
                 }
-
-                System.Diagnostics.Debug.WriteLine($"Rendered {sourceFolder}");
             }
 
             isBatchRendering = false;
             saveImages.Wait();
+
+            // Clear the viewport.
+            renderer.RenderNodes(null);
+            renderer.SwapBuffers();
 
             if (viewportWasRendering)
                 renderer.RestartRendering();

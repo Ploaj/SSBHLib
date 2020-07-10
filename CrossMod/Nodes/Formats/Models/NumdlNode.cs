@@ -45,7 +45,16 @@ namespace CrossMod.Nodes
             NuhlpbNode hlpbNode = null;
             RSkeleton skeleton = null;
             Matl material = null;
-            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture> { { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr } };
+            // TODO: Add remaining default textures.
+            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture> 
+            { 
+                { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr },
+                { "/common/shader/sfxpbs/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal },
+                { "/common/shader/sfxpbs/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultPrm },
+                { "/common/shader/sfxpbs/default_black", Rendering.Resources.DefaultTextures.Instance.DefaultBlack },
+                { "/common/shader/sfxpbs/default_white", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
+                { "/common/shader/sfxpbs/default_color", Rendering.Resources.DefaultTextures.Instance.DefaultWhite }
+            };
 
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, textureByName);
 

@@ -27,7 +27,6 @@ namespace CrossMod.Nodes
         public override void Open()
         {
             string adjb = Path.GetDirectoryName(AbsolutePath) + "/model.adjb";
-            System.Console.WriteLine(adjb);
             if (File.Exists(adjb))
             {
                 ExtendedMesh = new Adjb();
@@ -52,7 +51,7 @@ namespace CrossMod.Nodes
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
-                PrintAttributeInformation(meshObject);
+                //PrintAttributeInformation(meshObject);
 
                 var rMesh = new RMesh
                 {
@@ -73,8 +72,6 @@ namespace CrossMod.Nodes
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(meshObject);
-
-            System.Diagnostics.Debug.WriteLine($"Vertex Count: {vertexIndices.Length}");
 
             var renderMesh = new UltimateMesh(vertexIndices, meshObject.VertexCount);
 
