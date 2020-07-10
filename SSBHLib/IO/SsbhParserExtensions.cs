@@ -373,7 +373,7 @@
             var result = new Formats.ModlEntry();
             result.MeshName = parser.ReadOffsetReadString();
             result.SubIndex = parser.ReadInt64();      
-            result.MaterialName = parser.ReadOffsetReadString();
+            result.MaterialLabel = parser.ReadOffsetReadString();
 
             long temp = parser.Position;
             result.PostProcess(parser);
@@ -965,7 +965,7 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-            result.MaterialName = parser.ReadOffsetReadString();
+            result.ShaderLabel = parser.ReadOffsetReadString();
 
             long temp = parser.Position;
             result.PostProcess(parser);

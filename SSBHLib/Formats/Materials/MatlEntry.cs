@@ -2,11 +2,16 @@
 {
     public class MatlEntry : SsbhFile
     {
+        /// <summary>
+        /// The unique identifier for this entry.
+        /// </summary>
         public string MaterialLabel { get; set; }
 
         public MatlAttribute[] Attributes { get; set; }
 
-        // TODO: This name is confusing and should probably be changed to ShaderName/ShaderLabel
-        public string MaterialName { get; set; }
+        /// <summary>
+        /// Determines what shader is used to render this material.
+        /// </summary>
+        public string ShaderLabel { get; set; }
     }
 }

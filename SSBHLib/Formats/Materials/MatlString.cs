@@ -2,6 +2,9 @@
 {
     public partial class MatlAttribute
     {
+        /// <summary>
+        /// Stores texture names or text values.
+        /// </summary>
         public class MatlString : SsbhFile
         {
             public string Text { get; set; }

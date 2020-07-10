@@ -98,7 +98,7 @@ namespace MatLab
                 MatlEntry entry = new MatlEntry
                 {
                     MaterialLabel = library.material[i].label,
-                    MaterialName = library.material[i].name,
+                    ShaderLabel = library.material[i].name,
                     Attributes = new MatlAttribute[library.material[i].param.Length]
                 };
 
@@ -129,7 +129,7 @@ namespace MatLab
             foreach (var entry in matlFile.Entries)
             {
                 Material mat = new Material();
-                mat.name = entry.MaterialName;
+                mat.name = entry.ShaderLabel;
                 mat.label = entry.MaterialLabel;
 
                 mat.param = new MatlXmlAttribute[entry.Attributes.Length];

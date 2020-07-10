@@ -15,7 +15,8 @@ namespace SSBHLib.Formats.Materials
 
         // not part of the entry
         [ParseTag(Ignore = true)]
-        public object DataObject {
+        public object DataObject
+        {
             get => dataObject;
             set
             {
@@ -27,7 +28,7 @@ namespace SSBHLib.Formats.Materials
         private object dataObject;
 
         [ParseTag(Ignore = true)]
-        private static Dictionary<Type, MatlEnums.ParamDataType> typeToParamType = new Dictionary<Type, MatlEnums.ParamDataType>()
+        private static readonly Dictionary<Type, ParamDataType> typeToParamType = new Dictionary<Type, ParamDataType>()
             {
             { typeof(float), ParamDataType.Float},
             { typeof(bool), ParamDataType.Boolean},
@@ -43,22 +44,33 @@ namespace SSBHLib.Formats.Materials
         {
             parser.Seek(OffsetToData);
 
-            if (DataType == MatlEnums.ParamDataType.Float)
-                DataObject = parser.ReadSingle();
-            else if (DataType == MatlEnums.ParamDataType.Boolean)
-                DataObject = parser.ReadUInt32() == 1; // should this just be > 0?
-            else if (DataType == MatlEnums.ParamDataType.Vector4)
-                DataObject = parser.ParseMatlVector4();
-            else if (DataType == MatlEnums.ParamDataType.String)
-                DataObject = parser.ParseMatlString();
-            else if (DataType == MatlEnums.ParamDataType.Sampler)
-                DataObject = parser.ParseMatlSampler();
-            else if (DataType == MatlEnums.ParamDataType.UvTransform)
-                DataObject = parser.ParseMatlUvTransform();
-            else if (DataType == MatlEnums.ParamDataType.BlendState)
-                DataObject = parser.ParseMatlBlendState();
-            else if (DataType == MatlEnums.ParamDataType.RasterizerState)
-                DataObject = parser.ParseMatlRasterizerState();
+            switch (DataType)
+            {
+                case ParamDataType.Float:
+                    DataObject = parser.ReadSingle();
+                    break;
+                case ParamDataType.Boolean:
+                    DataObject = parser.ReadUInt32() == 1; // should this just be > 0?
+                    break;
+                case ParamDataType.Vector4:
+                    DataObject = parser.ParseMatlVector4();
+                    break;
+                case ParamDataType.String:
+                    DataObject = parser.ParseMatlString();
+                    break;
+                case ParamDataType.Sampler:
+                    DataObject = parser.ParseMatlSampler();
+                    break;
+                case ParamDataType.UvTransform:
+                    DataObject = parser.ParseMatlUvTransform();
+                    break;
+                case ParamDataType.BlendState:
+                    DataObject = parser.ParseMatlBlendState();
+                    break;
+                case ParamDataType.RasterizerState:
+                    DataObject = parser.ParseMatlRasterizerState();
+                    break;
+            }
         }
 
         private static string GetPropertyValues(Type type, object obj)

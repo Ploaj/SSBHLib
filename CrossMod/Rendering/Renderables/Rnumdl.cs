@@ -61,9 +61,9 @@ namespace CrossMod.Rendering
             foreach (ModlEntry modlEntry in Modl.ModelEntries)
             {
                 // Find the right material and assign it to the render meshes.
-                if (!MaterialByName.TryGetValue(modlEntry.MaterialName, out Material meshMaterial))
+                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out Material meshMaterial))
                 {
-                    var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialName).FirstOrDefault();
+                    var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialLabel).FirstOrDefault();
                     if (matlEntry == null)
                         continue;
                     meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, TextureByName);

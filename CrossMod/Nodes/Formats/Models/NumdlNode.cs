@@ -129,10 +129,10 @@ namespace CrossMod.Nodes
                 int materialIndex = 0;
                 foreach (var entry in materialFile.Entries)
                 {
-                    materialNameToIndex.Add(entry.MaterialLabel, materialIndex++);
+                    materialNameToIndex.Add(entry.ShaderLabel, materialIndex++);
                     IOMaterial material = new IOMaterial
                     {
-                        Name = entry.MaterialLabel
+                        Name = entry.ShaderLabel
                     };
                     outModel.Materials.Add(material);
 
@@ -170,7 +170,7 @@ namespace CrossMod.Nodes
                             {
                                 if (entry.MeshName.Equals(obj.Name) && entry.SubIndex == obj.SubMeshIndex)
                                 {
-                                    outMesh.MaterialIndex = materialNameToIndex[entry.MaterialName];
+                                    outMesh.MaterialIndex = materialNameToIndex[entry.MaterialLabel];
                                     break;
                                 }
                             }

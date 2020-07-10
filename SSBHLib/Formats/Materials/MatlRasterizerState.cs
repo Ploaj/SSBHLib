@@ -2,15 +2,15 @@
 {
     public enum MatlFillMode
     {
-        Line,
-        Solid
+        Line = 0,
+        Solid = 1
     }
 
     public enum MatlCullMode
     {
-        Back,
-        Front,
-        FrontAndBack
+        Back = 0,
+        Front = 1,
+        FrontAndBack = 2
     }
 
     public partial class MatlAttribute

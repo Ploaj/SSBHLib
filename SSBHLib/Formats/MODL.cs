@@ -33,6 +33,9 @@
         
         public long SubIndex { get; set; }
         
-        public string MaterialName { get; set; }
+        /// <summary>
+        /// Assigns the material with matching <see cref="Materials.MatlEntry.MaterialLabel"/> to this entry.
+        /// </summary>
+        public string MaterialLabel { get; set; }
     }
 }
