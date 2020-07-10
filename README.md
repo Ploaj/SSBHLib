@@ -16,4 +16,4 @@ A simple program for converting .numatb files to .xml and .xml files to .numatb.
 `MatLab.exe <input> [output]`  
 
 # Building
-Compile in Visual Studio 2017 or later on Windows. Requires .NET Framework 4.6.1.
+Compile in Visual Studio 2019 or later on Windows. Requires .NET Framework 4.6.1.
