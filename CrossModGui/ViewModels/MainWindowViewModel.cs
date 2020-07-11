@@ -32,13 +32,13 @@ namespace CrossModGui.ViewModels
             {
                 if (value < 0)
                 {
-                    currentFrame = 0;
+                    SetCurrentFrameToStart();
                 }
                 else if (value > TotalFrames)
                 {
                     if (ShouldLoopAnimation)
                     {
-                        currentFrame = 0;
+                        SetCurrentFrameToStart();
                     }
                     else
                     {
@@ -50,8 +50,17 @@ namespace CrossModGui.ViewModels
                 {
                     currentFrame = value; 
                 }
+
+                Renderer?.ScriptNode?.Update(CurrentFrame);
             }
         }
+
+        private void SetCurrentFrameToStart()
+        {
+            currentFrame = 0;
+            Renderer?.ScriptNode?.Start();
+        }
+
         private float currentFrame;
 
         public float TotalFrames { get; set; }
@@ -136,16 +145,34 @@ namespace CrossModGui.ViewModels
 
             ResetAnimation();
 
-            if (item is IRenderableNode node)
+            if (item is IRenderableNode renderableNode)
             {
-                UpdateMeshesAndBones(node.GetRenderableNode());
-                Renderer.ItemToRender = node.GetRenderableNode();
+                UpdateMeshesAndBones(renderableNode.GetRenderableNode());
+                Renderer.ItemToRender = renderableNode.GetRenderableNode();
             }
-
-            if (item is NuanimNode animation)
+            else if (item is NuanimNode animation)
             {
                 Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
+                if (Renderer.ScriptNode != null)
+                    Renderer.ScriptNode.CurrentAnimationName = animation.Text;
+            }
+
+            // TODO: ScriptNode.MotionRate?
+
+             // TODO: The script node should probably be stored with the model somehow.
+             // Having to find the node each time seems redundant.
+            var scriptNode = FindSiblingOfType<ScriptNode>(item);
+            if (scriptNode != null)
+            {
+                // Load hitboxes.
+                var skelNode = FindSiblingOfType<SkelNode>(item);
+                if (skelNode != null)
+                {
+                    scriptNode.SkelNode = skelNode;
+                    Renderer.ScriptNode = scriptNode;
+                    ParamNodeContainer.SkelNode = skelNode;
+                }
             }
 
             if (wasRendering)
@@ -155,9 +182,22 @@ namespace CrossModGui.ViewModels
                 IsPlayingAnimation = true;
         }
 
+        private static T FindSiblingOfType<T>(FileNode item) where T : FileNode
+        {
+            foreach (var node in item.Parent.Nodes)
+            {
+                if (node is T tNode)
+                {
+                    return tNode;
+                }
+            }
+
+            return null;
+        }
+
         public void RenderNodes()
         {
-            Renderer.RenderNodes(null, CurrentFrame);
+            Renderer.RenderNodes(CurrentFrame);
             if (IsPlayingAnimation)
             {
                 CurrentFrame++;

@@ -75,7 +75,7 @@ namespace CrossMod.Tools
             saveImages.Wait();
 
             // Clear the viewport.
-            renderer.RenderNodes(null);
+            renderer.RenderNodes();
             renderer.SwapBuffers();
 
             if (viewportWasRendering)
@@ -92,7 +92,7 @@ namespace CrossMod.Tools
                 renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
 
             renderer.ItemToRender = nodes[0].GetRenderableNode();
-            renderer.RenderNodes(null);
+            renderer.RenderNodes();
             renderer.SwapBuffers();
         }
 

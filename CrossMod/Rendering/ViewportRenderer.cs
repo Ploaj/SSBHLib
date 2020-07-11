@@ -33,6 +33,8 @@ namespace CrossMod.Rendering
      
         public IRenderableAnimation RenderableAnimation { get; set; }
 
+        public ScriptNode ScriptNode { get; set; }
+
         public bool IsPlayingAnimation { get; set; }
 
         private readonly GLViewport glViewport;
@@ -101,7 +103,7 @@ namespace CrossMod.Rendering
             });
         }
 
-        public void RenderNodes(ScriptNode scriptNode, float currentFrame = 0)
+        public void RenderNodes(float currentFrame = 0)
         {
             // This method is called before drawing opening files, 
             // which should ensure the resources are set up in time.
@@ -121,7 +123,7 @@ namespace CrossMod.Rendering
             itemToRender?.Render(Camera);
                 
             ParamNodeContainer.Render(Camera);
-            scriptNode?.Render(Camera);
+            ScriptNode?.Render(Camera);
         }
 
         public System.Drawing.Bitmap GetScreenshot()

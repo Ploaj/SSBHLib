@@ -27,7 +27,12 @@ namespace CrossMod.GUI
         public ScriptNode ScriptNode
         {
             get => animationBar.ScriptNode;
-            set => animationBar.ScriptNode = value;
+            set
+            {
+                Renderer.ScriptNode = value;
+                animationBar.ScriptNode = value; 
+            }
+
         }
 
         public ModelViewport()
@@ -225,7 +230,7 @@ namespace CrossMod.GUI
 
         private void RenderNodes(object sender, EventArgs e)
         {
-            Renderer.RenderNodes(ScriptNode);
+            Renderer.RenderNodes();
         }
 
         private void AddMeshesToGui(RModel model)
