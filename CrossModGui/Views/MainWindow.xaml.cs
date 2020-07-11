@@ -73,6 +73,8 @@ namespace CrossModGui.Views
                     viewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
                     break;
             }
+
+            viewModel.Renderer.UpdateCameraFromMouse();
         }
 
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
