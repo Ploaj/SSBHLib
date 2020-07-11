@@ -1,10 +1,7 @@
 ﻿using CrossMod.Rendering;
-using SFGraphics.GLObjects.Textures;
 using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Ink;
 
 namespace CrossModGui.ViewModels
 {
@@ -20,14 +17,27 @@ namespace CrossModGui.ViewModels
         {
             public string Name { get; set; }
             public float Value { get; set; }
+            public float Min { get; set; } = 0.0f;
+            public float Max { get; set; } = 1.0f;
         }
 
         public class Vec4Param : ViewModelBase
         {
             public string Name { get; set; }
+            public float Min1 { get; set; } = 0.0f;
+            public float Max1 { get; set; } = 1.0f;
             public float Value1 { get; set; }
+
+            public float Min2 { get; set; } = 0.0f;
+            public float Max2 { get; set; } = 1.0f;
             public float Value2 { get; set; }
+
+            public float Min3 { get; set; } = 0.0f;
+            public float Max3 { get; set; } = 1.0f;
             public float Value3 { get; set; }
+
+            public float Min4 { get; set; } = 0.0f;
+            public float Max4 { get; set; } = 1.0f;
             public float Value4 { get; set; }
         }
 

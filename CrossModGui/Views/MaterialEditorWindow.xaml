@@ -9,7 +9,10 @@
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Export Matl" Click="ExportMatl_Click">
+                <MenuItem Header="Export Matl" Click="ExportMatl_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Material Reference (Github)" Click="MaterialReference_Click">
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -66,7 +69,8 @@
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding Name}"></TextBlock>
                                         <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" Value="{Binding Value}"></Slider>
+                                        <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" 
+                                                Value="{Binding Value}" Minimum="{Binding Min}" Maximum="{Binding Max}"></Slider>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -98,10 +102,10 @@
                                         <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                         <TextBox Grid.Row="3" Grid.Column="1" Margin="5,2" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                         <TextBox Grid.Row="4" Grid.Column="1" Margin="5,2" Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="1" Grid.Column="2" Margin="5,2" Value="{Binding Value1}"></Slider>
-                                        <Slider Grid.Row="2" Grid.Column="2" Margin="5,2" Value="{Binding Value2}"></Slider>
-                                        <Slider Grid.Row="3" Grid.Column="2" Margin="5,2" Value="{Binding Value3}"></Slider>
-                                        <Slider Grid.Row="4" Grid.Column="2" Margin="5,2" Value="{Binding Value4}"></Slider>
+                                        <Slider Grid.Row="1" Grid.Column="2" Margin="5,2" Value="{Binding Value1}" Minimum="{Binding Min1}" Maximum="{Binding Max1}"></Slider>
+                                        <Slider Grid.Row="2" Grid.Column="2" Margin="5,2" Value="{Binding Value2}" Minimum="{Binding Min2}" Maximum="{Binding Max2}"></Slider>
+                                        <Slider Grid.Row="3" Grid.Column="2" Margin="5,2" Value="{Binding Value3}" Minimum="{Binding Min3}" Maximum="{Binding Max3}"></Slider>
+                                        <Slider Grid.Row="4" Grid.Column="2" Margin="5,2" Value="{Binding Value4}" Minimum="{Binding Min4}" Maximum="{Binding Max4}"></Slider>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

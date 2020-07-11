@@ -1,5 +1,6 @@
 ﻿using CrossMod.Tools;
 using CrossModGui.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 
 namespace CrossModGui.Views
@@ -21,6 +22,11 @@ namespace CrossModGui.Views
         {
             if (FileTools.TryOpenSaveFileDialog(out string fileName, "Ultimate Material (*.numatb)|*.", "model.numatb"))
                 viewModel.SaveMatl(fileName);
+        }
+
+        private void MaterialReference_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/ScanMountGoat/Smush-Material-Research/blob/master/Material%20Parameters.md"));
         }
     }
 }
