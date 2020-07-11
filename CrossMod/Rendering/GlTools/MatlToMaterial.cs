@@ -39,6 +39,7 @@ namespace CrossMod.Rendering.GlTools
             Material meshMaterial = new Material()
             {
                 Name = currentEntry.MaterialLabel,
+                ShaderLabel = currentEntry.ShaderLabel,
                 TextureByName = textureByName
             };
 

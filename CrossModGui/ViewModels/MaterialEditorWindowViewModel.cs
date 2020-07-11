@@ -51,6 +51,8 @@ namespace CrossModGui.ViewModels
         {
             public string Name { get; set; }
 
+            public string ShaderLabel { get; set; }
+
             public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 
             public ObservableCollection<FloatParam> FloatParams { get; } = new ObservableCollection<FloatParam>();
@@ -82,7 +84,7 @@ namespace CrossModGui.ViewModels
             // TODO: Allow for editing all matl entries and not just materials assigned to meshes.
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
-                var material = new Material { Name = glMaterial.Name };
+                var material = new Material { Name = glMaterial.Name, ShaderLabel = glMaterial.ShaderLabel };
 
                 AddBooleanParams(glMaterial, material);
                 AddFloatParams(glMaterial, material);

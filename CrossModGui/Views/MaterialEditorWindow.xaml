@@ -16,19 +16,25 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <Grid DockPanel.Dock="Top" Margin="0,5">
+        <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0">Current Material</TextBlock>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Current Material</TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2,0,2" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"></TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,2" IsEnabled="False" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
         <GroupBox DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">

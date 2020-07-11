@@ -16,6 +16,7 @@ namespace CrossMod.Rendering.GlTools
     public class Material
     {
         public string Name { get; set; }
+        public string ShaderLabel { get; set; }
 
         private GenericMaterial genericMaterial = null;
         private UniformBlock uniformBlock = null;
