@@ -4,6 +4,7 @@ using CrossMod.Tools;
 using CrossModGui.ViewModels;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CrossModGui.Views
 {
@@ -248,6 +249,16 @@ namespace CrossModGui.Views
             // Workaround for mouse scroll state not being updated
             // while the mouse pointer isn't on the viewport.
             viewModel.Renderer.UpdateMouseScroll();
+        }
+
+        private void FileTreeMenu_Click(object sender, RoutedEventArgs e)
+        {
+            fileTreeView.Visibility = (sender as MenuItem).IsChecked ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void MeshBoneTabMenu_Click(object sender, RoutedEventArgs e)
+        {
+            meshBoneTabControl.Visibility = (sender as MenuItem).IsChecked ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

@@ -9,7 +9,9 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
-        Title="Cross Mod" Height="454" Width="809">
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Title="Cross Mod" Height="490.024" Width="1034.305">
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
         <converters:ColorBrushConverter x:Key="colorBrushConverter" />
@@ -40,17 +42,16 @@
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>
                 <MenuItem Header="Clear Viewport" Click="ClearViewport_Click"/>
             </MenuItem>
+            <MenuItem Header="Window">
+                <MenuItem IsCheckable="True" Header="File Tree" IsChecked="True" Click="FileTreeMenu_Click"></MenuItem>
+                <MenuItem IsCheckable="True" Header="Mesh Bone Tabs" IsChecked="True" Click="MeshBoneTabMenu_Click"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Experimental">
                 <MenuItem Header="Batch Render Models" Click="BatchRenderModels_Click"/>
             </MenuItem>
         </Menu>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <TreeView Name="fileTreeView" Grid.Column="0" ItemsSource="{Binding FileTreeItems}" 
+        <DockPanel LastChildFill="True">
+            <TreeView Name="fileTreeView" DockPanel.Dock="Left" Width="300" ItemsSource="{Binding FileTreeItems}" 
                       SelectedItemChanged="FileTreeView_SelectedItemChanged">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
@@ -66,7 +67,31 @@
                     </Style>
                 </TreeView.ItemContainerStyle>
             </TreeView>
-            <Grid Grid.Column="1">
+            <TabControl Name="meshBoneTabControl" DockPanel.Dock="Right" Width="300">
+                <TabItem Header="Meshes">
+                    <ListView ItemsSource="{Binding MeshListItems}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsChecked}" Click="MeshListCheckBox_Click">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </CheckBox.Content>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="Bones">
+                    <TreeView ItemsSource="{Binding BoneTreeItems}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </TabItem>
+            </TabControl>
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="70"></RowDefinition>
@@ -104,30 +129,6 @@
                     <Button Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
                 </Grid>
             </Grid>
-            <TabControl Grid.Column="2">
-                <TabItem Header="Meshes">
-                    <ListView ItemsSource="{Binding MeshListItems}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked}" Click="MeshListCheckBox_Click">
-                                    <CheckBox.Content>
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
-                                    </CheckBox.Content>
-                                </CheckBox>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </TabItem>
-                <TabItem Header="Bones">
-                    <TreeView ItemsSource="{Binding BoneTreeItems}">
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <TextBlock Text="{Binding Name}"></TextBlock>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                </TabItem>
-            </TabControl>
-        </Grid>
+        </DockPanel>
     </DockPanel>
 </Window>
