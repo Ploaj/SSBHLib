@@ -13,6 +13,9 @@
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Material Reference (Github)" Click="MaterialReference_Click">
+                    <MenuItem.Icon>
+                        <Rectangle Fill="{StaticResource statusHelpIco}"></Rectangle>
+                    </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>

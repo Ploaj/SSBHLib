@@ -55,8 +55,8 @@
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}"></Image>
-                            <TextBlock Text="{Binding Text}" Foreground="{Binding Path=ForeColor, Converter={StaticResource colorBrushConverter}}"/>
+                            <Image Margin="2,0" Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}"></Image>
+                            <TextBlock Margin="2,0" Name="fileItemText" Text="{Binding Text}" Foreground="{Binding Path=ForeColor, Converter={StaticResource colorBrushConverter}}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
