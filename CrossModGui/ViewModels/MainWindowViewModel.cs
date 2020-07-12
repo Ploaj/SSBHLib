@@ -188,6 +188,9 @@ namespace CrossModGui.ViewModels
 
         private static T FindSiblingOfType<T>(FileNode item) where T : FileNode
         {
+            if (item == null || item.Parent == null)
+                return null;
+
             foreach (var node in item.Parent.Nodes)
             {
                 if (node is T tNode)
