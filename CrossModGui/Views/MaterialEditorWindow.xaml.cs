@@ -20,7 +20,7 @@ namespace CrossModGui.Views
 
         private void ExportMatl_Click(object sender, RoutedEventArgs e)
         {
-            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Ultimate Material (*.numatb)|*.", "model.numatb"))
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "Ultimate Material (*.numatb)|*.*", "model.numatb"))
                 viewModel.SaveMatl(fileName);
         }
 
