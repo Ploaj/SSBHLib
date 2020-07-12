@@ -462,6 +462,7 @@ namespace CrossMod.Nodes
 
                 private int IntParse(string word)
                 {
+                    // TODO: Cache these results.
                     if (word.StartsWith("0x"))
                         return int.Parse(word.Substring(2), NumberStyles.HexNumber);
                     return int.Parse(word);
@@ -469,6 +470,7 @@ namespace CrossMod.Nodes
 
                 private ulong HashParse(string word)
                 {
+                    // TODO: Cache these results.
                     if (word.StartsWith("0x"))
                         return ulong.Parse(word.Substring(2), NumberStyles.HexNumber);
                     return Hash40Util.StringToHash40(word);

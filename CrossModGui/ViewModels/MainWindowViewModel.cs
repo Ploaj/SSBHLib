@@ -32,13 +32,13 @@ namespace CrossModGui.ViewModels
             {
                 if (value < 0)
                 {
-                    SetCurrentFrameToStart();
+                    currentFrame = 0;
                 }
                 else if (value > TotalFrames)
                 {
                     if (ShouldLoopAnimation)
                     {
-                        SetCurrentFrameToStart();
+                        currentFrame = 0;
                     }
                     else
                     {
@@ -51,14 +51,18 @@ namespace CrossModGui.ViewModels
                     currentFrame = value; 
                 }
 
-                Renderer?.ScriptNode?.Update(CurrentFrame);
+                if (Renderer.ScriptNode != null)
+                {
+                    // Workaround for not being able to play scripts backwards.
+                    // TODO: The redundant string parsing in the script node makes this slow.
+                    // Most of the parsing could be cached.
+                    Renderer.ScriptNode.Start();
+                    for (int i = 0; i < CurrentFrame; i++)
+                    {
+                        Renderer.ScriptNode.Update(i);
+                    }
+                }
             }
-        }
-
-        private void SetCurrentFrameToStart()
-        {
-            currentFrame = 0;
-            Renderer?.ScriptNode?.Start();
         }
 
         private float currentFrame;

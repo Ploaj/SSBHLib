@@ -79,7 +79,6 @@ namespace CrossModGui.Views
 
         private void GlViewport_OnRenderFrame(object sender, EventArgs e)
         {
-            // TODO: Script node.
             viewModel.RenderNodes();
         }
 
