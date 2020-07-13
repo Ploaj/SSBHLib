@@ -95,12 +95,6 @@ uniform MaterialParams
     int emissionOverride;
 };
 
-vec4 UnpackVec4(uint val) 
-{
-    // RGBA 32 bits
-    // TODO: Increase the OpenGL version to 4.0 and just unpackUnorm4x8.
-    return vec4(((val >> 24) & 0xFFu) / 255.0, ((val >> 16) & 0xFFu) / 255.0, ((val >> 8) & 0xFFu) / 255.0, ((val >> 0) & 0xFFu) / 255.0);
-}
 
 void main()
 {
@@ -128,17 +122,17 @@ void main()
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
     geomColorSet1 = colorSet1 / 128.0;
-    geomColorSet7 = vec4(0);//colorSet7 / 128.0;
 
-    // Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
-    geomColorSet2 =   vec4(0);//UnpackVec4(colorSet2Packed.x) * 2;
-    geomColorSet2_1 = vec4(0);//UnpackVec4(colorSet2Packed.y) * 2;
-    geomColorSet2_2 = vec4(0);//UnpackVec4(colorSet2Packed.z) * 2;
-    geomColorSet2_3 = vec4(0);//UnpackVec4(colorSet2Packed.w) * 2;
-    geomColorSet3 = vec4(0);//UnpackVec4(colorSet3456Packed.x) * 2;
-    geomColorSet4 = vec4(0);//UnpackVec4(colorSet3456Packed.y) * 2;
-    geomColorSet5 = vec4(0);//UnpackVec4(colorSet3456Packed.z) * 2;
-    geomColorSet6 = vec4(0);//UnpackVec4(colorSet3456Packed.w) * 2;
+    // TODO: Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
+    geomColorSet2 =   vec4(0);
+    geomColorSet2_1 = vec4(0);
+    geomColorSet2_2 = vec4(0);
+    geomColorSet2_3 = vec4(0);
+    geomColorSet3 = vec4(0);
+    geomColorSet4 = vec4(0);
+    geomColorSet5 = vec4(0);
+    geomColorSet6 = vec4(0);
+    geomColorSet7 = vec4(0);
 
     geomPosition = position.xyz;
 
