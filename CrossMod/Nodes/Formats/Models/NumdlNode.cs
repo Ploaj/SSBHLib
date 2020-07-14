@@ -45,15 +45,20 @@ namespace CrossMod.Nodes
             NuhlpbNode hlpbNode = null;
             RSkeleton skeleton = null;
             Matl material = null;
+
             // TODO: Add remaining default textures.
+            // The other default textures may still work, even if they aren't used in game.
+            // TODO: Move these defaults to another class.
             var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture> 
             { 
                 { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr },
                 { "/common/shader/sfxpbs/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal },
-                { "/common/shader/sfxpbs/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultPrm },
+                { "/common/shader/sfxpbs/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
                 { "/common/shader/sfxpbs/default_black", Rendering.Resources.DefaultTextures.Instance.DefaultBlack },
                 { "/common/shader/sfxpbs/default_white", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
-                { "/common/shader/sfxpbs/default_color", Rendering.Resources.DefaultTextures.Instance.DefaultWhite }
+                { "/common/shader/sfxpbs/default_color", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
+                { "/common/shader/sfxpbs/fighter/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
+                { "/common/shader/sfxpbs/fighter/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal }
             };
 
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, textureByName);

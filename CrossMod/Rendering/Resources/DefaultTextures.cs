@@ -15,7 +15,7 @@ namespace CrossMod.Rendering.Resources
         public Texture2D DefaultWhite { get; } = new Texture2D();
         public Texture2D DefaultNormal { get; } = new Texture2D();
         public Texture2D DefaultBlack { get; } = new Texture2D();
-        public Texture2D DefaultPrm { get; } = new Texture2D();
+        public Texture2D DefaultParams { get; } = new Texture2D();
 
         // Render modes.
         public Texture2D UvPattern { get; } = new Texture2D()
@@ -38,8 +38,8 @@ namespace CrossMod.Rendering.Resources
         {
             LoadBitmap(UvPattern, "DefaultTextures/UVPattern.png");
 
-            LoadBitmap(DefaultWhite, "DefaultTextures/default_White.png");
-            LoadBitmap(DefaultPrm, "DefaultTextures/default_Params.tif");
+            LoadBitmap(DefaultWhite, "DefaultTextures/default_white.png");
+            LoadBitmap(DefaultParams, "DefaultTextures/default_Params.tif");
             LoadBitmap(DefaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(DefaultBlack, "DefaultTextures/default_black.png");
 

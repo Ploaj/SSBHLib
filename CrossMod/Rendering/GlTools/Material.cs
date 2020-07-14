@@ -28,7 +28,7 @@ namespace CrossMod.Rendering.GlTools
             { MatlEnums.ParamId.Texture3, DefaultTextures.Instance.DefaultWhite },
             { MatlEnums.ParamId.Texture4, DefaultTextures.Instance.DefaultNormal },
             { MatlEnums.ParamId.Texture5, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultPrm },
+            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultParams },
             { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.BlackCube },
             { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.BlackCube },
             { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultWhite },
