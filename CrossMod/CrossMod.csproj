@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F9AA9734-A74E-4E28-BA16-6E97A063DD20}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>CrossMod</RootNamespace>
     <AssemblyName>CrossMod</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -30,6 +30,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AnimatedGif, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -103,45 +106,8 @@
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
     <Compile Include="Rendering\Models\IVec4.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
-    <Compile Include="Tools\AnimationExport.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
-    <Compile Include="GUI\AnimationBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\AnimationBar.Designer.cs">
-      <DependentUpon>AnimationBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\CameraControl.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\CameraControl.Designer.cs">
-      <DependentUpon>CameraControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\ColorSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\ColorSelector.Designer.cs">
-      <DependentUpon>ColorSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\ProgressViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\ProgressViewer.Designer.cs">
-      <DependentUpon>ProgressViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IO\ColladaSchema.cs" />
-    <Compile Include="IO\DAEWriter.cs" />
-    <Compile Include="IO\IOAnimation.cs" />
-    <Compile Include="IO\IOMaterial.cs" />
-    <Compile Include="IO\IO_DAE.cs" />
-    <Compile Include="IO\IO_MayaANIM.cs" />
-    <Compile Include="IO\IO_OBJ.cs" />
-    <Compile Include="IO\IO_PLY.cs" />
-    <Compile Include="IO\IO_SEANIM.cs" />
-    <Compile Include="IO\IO_SMD.cs" />
     <Compile Include="Nodes\FileTree\DirectoryNode.cs" />
-    <Compile Include="Nodes\Interfaces\IExportableAnimationNode.cs" />
-    <Compile Include="Nodes\Interfaces\IExportableTextureNode.cs" />
     <Compile Include="Nodes\Formats\NuanimNode.cs" />
     <Compile Include="Nodes\Formats\NuhlpbNode.cs" />
     <Compile Include="Nodes\Formats\Params\ParamNode.cs" />
@@ -163,39 +129,17 @@
     <Compile Include="Rendering\SsbhVertexAttributeExtensions.cs" />
     <Compile Include="Tools\CrossMath.cs" />
     <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="GUI\ModelViewport.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\ModelViewport.Designer.cs">
-      <DependentUpon>ModelViewport.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUI\OpenFolderDialog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="GUI\RenderSettingsMenu.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\RenderSettingsMenu.Designer.cs">
-      <DependentUpon>RenderSettingsMenu.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IO\IOMesh.cs" />
-    <Compile Include="IO\IOModel.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Nodes\FileTree\FileTypeAttribute.cs" />
     <Compile Include="Nodes\FileTree\FileNode.cs" />
-    <Compile Include="Nodes\Interfaces\IExportableModelNode.cs" />
     <Compile Include="Nodes\Interfaces\IRenderableNode.cs" />
     <Compile Include="Nodes\Formats\MatlNode.cs" />
     <Compile Include="Nodes\Formats\Models\NumdlNode.cs" />
     <Compile Include="Nodes\Formats\Models\NumsbhNode.cs" />
     <Compile Include="Nodes\Formats\NutexNode.cs" />
     <Compile Include="Nodes\Formats\SkelNode.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Resources\DefaultTextures.cs" />
     <Compile Include="Rendering\Interfaces\IRenderable.cs" />
@@ -213,27 +157,6 @@
     <Compile Include="Tools\SwitchSwizzler.cs" />
     <Compile Include="Tools\TextureFormatInfo.cs" />
     <Compile Include="Tools\WorkSpaceTools.cs" />
-    <EmbeddedResource Include="GUI\AnimationBar.resx">
-      <DependentUpon>AnimationBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\CameraControl.resx">
-      <DependentUpon>CameraControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\ColorSelector.resx">
-      <DependentUpon>ColorSelector.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\ModelViewport.resx">
-      <DependentUpon>ModelViewport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\ProgressViewer.resx">
-      <DependentUpon>ProgressViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\RenderSettingsMenu.resx">
-      <DependentUpon>RenderSettingsMenu.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -244,150 +167,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="DefaultTextures\irr x+.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\irr x-.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\irr y+.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\irr y-.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\irr z+.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\irr z-.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x+ 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec x- 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y+ 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec y- 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z+ 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 0.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 1.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 3.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 4.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 5.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="DefaultTextures\spec z- 6.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -397,86 +176,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Shaders\Capsule.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Gamma.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Line.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\NormalMap.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModel.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModel.geom">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModel.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModelDebug.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Bone.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Bone.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModelUV.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\RModelUV.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\SolidColor.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Sphere.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Texture.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Texture.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\TextureLayers.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\Wireframe.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Shaders\Binary\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DefaultTextures\default_black.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DefaultTextures\default_cube_black.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DefaultTextures\default_normal.tif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DefaultTextures\default_Params.tif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DefaultTextures\default_White.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DefaultTextures\UVPattern.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Lib\AnimatedGif.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -518,17 +223,6 @@
     <Content Include="Lib\SFShapes.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Shaders\Polygon.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\ico_unknown.png" />
-    <None Include="Resources\ico_texture.png" />
-    <None Include="Resources\ico_skeleton.png" />
-    <None Include="Resources\ico_model.png" />
-    <None Include="Resources\ico_mesh.png" />
-    <None Include="Resources\ico_material.png" />
-    <None Include="Resources\ico_folder.png" />
-    <None Include="Resources\ico_animation.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">

@@ -418,24 +418,24 @@
     <Resource Include="Resources\ico_unknown.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="DefaultTextures\default_black.png">
+    <None Include="DefaultTextures\default_black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="DefaultTextures\default_cube_black.png">
+    </None>
+    <None Include="DefaultTextures\default_cube_black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="DefaultTextures\default_normal.tif">
+    </None>
+    <None Include="DefaultTextures\default_normal.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="DefaultTextures\default_Params.tif">
+    </None>
+    <None Include="DefaultTextures\default_Params.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="DefaultTextures\default_White.png">
+    </None>
+    <None Include="DefaultTextures\default_White.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="DefaultTextures\UVPattern.png">
+    </None>
+    <None Include="DefaultTextures\UVPattern.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Shaders\Binary\" />

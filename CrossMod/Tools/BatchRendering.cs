@@ -1,5 +1,4 @@
-﻿using CrossMod.GUI;
-using CrossMod.Nodes;
+﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using System;
 using System.Collections.Concurrent;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CrossMod.Tools
 {

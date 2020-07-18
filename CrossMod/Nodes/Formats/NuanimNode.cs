@@ -3,13 +3,12 @@ using SSBHLib;
 using SSBHLib.Tools;
 using OpenTK;
 using SSBHLib.Formats.Animation;
-using CrossMod.IO;
 using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nuanmb")]
-    public class NuanimNode : FileNode, IExportableAnimationNode
+    public class NuanimNode : FileNode
     {
         private Anim animation;
 
@@ -219,52 +218,6 @@ namespace CrossMod.Nodes
             return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) *
                 Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
                 Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
-        }
-
-        public IOAnimation GetIOAnimation()
-        {
-            IOAnimation anim = new IOAnimation
-            {
-                Name = Text,
-                FrameCount = animation.FrameCount,
-                RotationType = IORotationType.Quaternion
-            };
-
-            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
-
-            foreach (AnimGroup animGroup in animation.Animations)
-            {
-                // Bone Animations
-                if (animGroup.Type == AnimType.Transform)
-                {
-                    foreach (AnimNode animNode in animGroup.Nodes)
-                    {
-                        foreach (AnimTrack track in animNode.Tracks)
-                        {
-                            if (track.Name.Equals("Transform"))
-                            {
-                                object[] transform = decoder.ReadTrack(track);
-                                for (int i = 0; i < transform.Length; i++)
-                                {
-                                    AnimTrackTransform t = (AnimTrackTransform)transform[i];
-                                    anim.AddKey(animNode.Name, IOTrackType.POSX, i, t.X);
-                                    anim.AddKey(animNode.Name, IOTrackType.POSY, i, t.Y);
-                                    anim.AddKey(animNode.Name, IOTrackType.POSZ, i, t.Z);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTX, i, t.Rx);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTY, i, t.Ry);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTZ, i, t.Rz);
-                                    anim.AddKey(animNode.Name, IOTrackType.ROTW, i, t.Rw);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAX, i, t.Sx);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAY, i, t.Sy);
-                                    anim.AddKey(animNode.Name, IOTrackType.SCAZ, i, t.Sz);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return anim;
         }
     }
 }

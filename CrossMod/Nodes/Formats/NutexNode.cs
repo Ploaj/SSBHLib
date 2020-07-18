@@ -1,18 +1,17 @@
-﻿using System;
-using CrossMod.Rendering;
+﻿using CrossMod.Rendering;
 using CrossMod.Tools;
 using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using CrossMod.Rendering.Resources;
 
 // Classes ported from StudioSB
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE
 namespace CrossMod.Nodes
 {
     [FileTypeAttribute(".nutexb")]
-    public class NutexNode : FileNode, IRenderableNode, IExportableTextureNode
+    public class NutexNode : FileNode, IRenderableNode
     {
         public string TexName { get; private set; }
 
@@ -176,7 +175,7 @@ namespace CrossMod.Nodes
 
         public void SaveTexturePNG(string fileName)
         {
-            System.Drawing.Bitmap texture = ((RTexture)GetRenderableNode()).RenderTexture.GetBitmap(0);
+            var texture = ((RTexture)GetRenderableNode()).RenderTexture.GetBitmap(0);
             texture.Save(fileName);
             texture.Dispose();
         }

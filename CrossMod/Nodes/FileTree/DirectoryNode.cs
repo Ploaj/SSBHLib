@@ -15,7 +15,6 @@ namespace CrossMod.Nodes
     {
         private bool isOpened = false;
         private bool hasOpenedFiles = false;
-        private bool isNestedOpened = false;
 
         // Convert to list to avoid evaluating the LINQ more than once.
         private static readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -59,7 +58,7 @@ namespace CrossMod.Nodes
                 }
                 else
                 {
-                    Nodes.Add(CreateFileNode(fileNodeTypes, name));
+                    Nodes.Add(CreateFileNode(name));
                 }
             }
 
@@ -79,6 +78,7 @@ namespace CrossMod.Nodes
             var openNodes = new List<Task>();
             foreach (var node in Nodes)
             {
+                // TODO: Catch exceptions from separate threads.
                 if (node is FileNode file)
                     openNodes.Add(Task.Run(() => file.Open()));
             }
@@ -90,10 +90,9 @@ namespace CrossMod.Nodes
         /// <summary>
         /// Internal helper to open a file entry.
         /// </summary>
-        /// <param name="Types"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private FileNode CreateFileNode(IEnumerable<Type> Types, string file)
+        private FileNode CreateFileNode(string file)
         {
             // TODO: Possible separation of concerns improvement: IFileLoader injected into DirectoryNode.
 
@@ -109,7 +108,7 @@ namespace CrossMod.Nodes
                 fileNode = new FileNode(file);
 
             // Change style of unrenderable nodes
-            if (!(fileNode is IRenderableNode) && !(fileNode is IExportableAnimationNode))
+            if (!(fileNode is IRenderableNode) && !(fileNode is NuanimNode))
             {
                 fileNode.ForeColor = Color.Gray;
             }

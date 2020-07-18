@@ -49,6 +49,7 @@ namespace CrossMod.Rendering.Resources
             LoadDiffusePbr();
             LoadSpecularPbr();
         }
+
         private void LoadBitmap(Texture2D texture, string path)
         {
             using (var bmp = new Bitmap(path))
