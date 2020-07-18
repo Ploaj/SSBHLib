@@ -233,6 +233,10 @@ namespace CrossModGui.ViewModels
             if (model == null)
                 return;
 
+            // Make fighters less painful to look at.
+            // No one wants to see all those faces at once.
+            model.HideExpressionMeshes();
+
             foreach (var mesh in model.SubMeshes)
             {
                 var newItem = new MeshListItem

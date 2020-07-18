@@ -21,6 +21,34 @@ namespace CrossMod.Rendering.Models
             if (shader.LinkStatusIsOk)
                 boneUniformBuffer = new UniformBlock(shader, "Bones");
         }
+
+        public void HideExpressionMeshes()
+        {
+            // TODO: Compile regex patterns and use that instead?
+            string[] expressionPatterns = { "Blink", "Attack", "Ouch", "Talk",
+                "Capture", "Ottotto", "Escape", "Half",
+                "Pattern", "Result", "Harf", "Hot", "Heavy",
+                "Voice", "Fura", "Catch", "Cliff", "FLIP",
+                "Bound", "Down", "Final", "Result", "StepPose",
+                "Sorori", "Fall", "Appeal", "Damage", "CameraHit", "laugh",
+                "breath", "swell", "_low", "_bink", "inkMesh" };
+
+            // TODO: This is probably not a very efficient way of doing this.
+            foreach (var mesh in SubMeshes)
+            {
+                var meshName = mesh.Name.ToLower();
+                foreach (var pattern in expressionPatterns)
+                {
+                    if (meshName.Contains("openblink") || meshName.Contains("belly_low") || meshName.Contains("facen"))
+                        continue;
+
+                    if (meshName.Contains(pattern.ToLower()))
+                    {
+                        mesh.Visible = false;
+                    }
+                }
+            }
+        }
         public void Render(Camera camera)
         {
             Render(camera, null);
