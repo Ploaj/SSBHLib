@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Shaders;
+using System;
 
 namespace CrossMod.Rendering.Models
 {
@@ -21,7 +22,19 @@ namespace CrossMod.Rendering.Models
 
         public Material Material { get; set; } = null;
 
-        public bool Visible { get; set; } = true;
+        public bool Visible 
+        { 
+            get => visible; 
+            set
+            {
+                if (value != visible)
+                    VisibilityChanged?.Invoke(this, value);
+                visible = value;
+            }
+        }
+        private bool visible = true;
+
+        public event EventHandler<bool> VisibilityChanged;
 
         public void Draw(Shader shader, RSkeleton skeleton)
         {

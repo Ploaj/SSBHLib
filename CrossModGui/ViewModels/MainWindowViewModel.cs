@@ -240,7 +240,8 @@ namespace CrossModGui.ViewModels
                     Name = mesh.Name,
                     IsChecked = mesh.Visible
                 };
-                // TODO: Sync in the other direction to support animations/expression hiding?
+
+                // Sync in both directions to support expression hiding.
                 newItem.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == nameof(MeshListItem.IsChecked))
@@ -248,6 +249,7 @@ namespace CrossModGui.ViewModels
                     else if (e.PropertyName == nameof(MeshListItem.Name))
                         mesh.Name = newItem.Name;
                 };
+                mesh.VisibilityChanged += (s, e) => newItem.IsChecked = e;
 
                 MeshListItems.Add(newItem);
             }
