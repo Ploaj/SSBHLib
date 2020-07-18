@@ -23,7 +23,6 @@ namespace CrossMod.Nodes
             {
                 Skel = value.GetRenderableNode() as RSkeleton;
                 BoneIDs.Clear();
-                // TODO: Adding "top" creates a duplicate key for some models.
                 BoneIDs.Add(Hash.Hash40("top"), 0);
                 for (int i = 0; i < Skel.Bones.Count; i++)
                     BoneIDs[Hash.Hash40(Skel.Bones[i].Name)] = i;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CrossMod.Nodes
@@ -17,8 +18,7 @@ namespace CrossMod.Nodes
         private bool hasOpenedFiles = false;
 
         // Convert to list to avoid evaluating the LINQ more than once.
-        private static readonly List<Type> fileNodeTypes = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                                                            from assemblyType in domainAssembly.GetTypes()
+        private static readonly List<Type> fileNodeTypes = (from assemblyType in Assembly.GetAssembly(typeof(NuanimNode)).GetTypes()
                                                             where typeof(FileNode).IsAssignableFrom(assemblyType)
                                                             select assemblyType).ToList();
 
@@ -94,19 +94,16 @@ namespace CrossMod.Nodes
         /// <returns></returns>
         private FileNode CreateFileNode(string file)
         {
-            // TODO: Possible separation of concerns improvement: IFileLoader injected into DirectoryNode.
-
             FileNode fileNode = null;
 
-            string extension = Path.GetExtension(file);
-
-            var type = GetType(extension);
+            var type = GetType(Path.GetExtension(file));
             if (type != null)
                 fileNode = (FileNode)Activator.CreateInstance(type, file);
 
             if (fileNode == null)
                 fileNode = new FileNode(file);
 
+            // TODO: Set a boolean instead of converting the color.
             // Change style of unrenderable nodes
             if (!(fileNode is IRenderableNode) && !(fileNode is NuanimNode))
             {
@@ -120,7 +117,6 @@ namespace CrossMod.Nodes
         private static Type GetType(string extension)
         {
             // Cache results to avoid doing lots of lookups.
-            // TODO: Hard code the common types into the dictionary initialization.
             if (typeByExtension.ContainsKey(extension))
             {
                 return typeByExtension[extension];
