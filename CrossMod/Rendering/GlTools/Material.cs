@@ -303,9 +303,8 @@ namespace CrossMod.Rendering.GlTools
 
             if (DefaultTexturesByName.ContainsKey(textureName))
                 return DefaultTexturesByName[textureName];
-
-            // An unimplemented default texture or the nutex file is missing from the directory.
-            throw new NotImplementedException($"The texture  {textureName} is not a valid texture name");
+            else
+                return DefaultTextures.Instance.DefaultWhite;
         }
    
         private void AddRenderModeTextures(GenericMaterial genericMaterial)

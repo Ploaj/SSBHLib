@@ -134,8 +134,6 @@ void main()
     geomColorSet6 = vec4(0);
     geomColorSet7 = vec4(0);
 
-    geomPosition = position.xyz;
-
     // Sprite sheet uvs.
     geomMap1 = map1;
     if (CustomBoolean9 == 1)
@@ -149,4 +147,6 @@ void main()
     // The w component flips mirrored tangents.
     geomTangent = vec4(transformedTangent.xyz, Tangent0.w);
     gl_Position = mvp * vec4(position.xyz, 1);
+
+    geomPosition = gl_Position.xyz;
 }

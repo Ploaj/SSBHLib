@@ -283,6 +283,17 @@ float RoughnessToLod(float roughness)
     return gpr1;
 }
 
+// A very useful function...
+vec3 GetInvalidShaderLabelColor()
+{
+    // TODO: Account for screen resolution and use the values from in game for scaling.
+    vec3 screenPosition = gl_FragCoord.xyz;
+    float checkSize = 0.2;
+    float checkerBoard = mod(floor(screenPosition.x * checkSize) + floor(screenPosition.y * checkSize), 2);
+    float checkerBoardFinal = max(sign(checkerBoard), 0.0);
+    return vec3(checkerBoardFinal, 0, 0);
+}
+
 void main()
 {
     fragColor = vec4(0, 0, 0, 1);
