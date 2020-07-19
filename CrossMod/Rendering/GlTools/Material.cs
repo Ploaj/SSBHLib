@@ -7,6 +7,7 @@ using SSBHLib.Formats.Materials;
 using SFGraphics.GLObjects.Samplers;
 using CrossMod.Rendering.Resources;
 using SFGraphics.GLObjects.Shaders;
+using System;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -38,6 +39,18 @@ namespace CrossMod.Rendering.GlTools
             { MatlEnums.ParamId.Texture13, DefaultTextures.Instance.DefaultBlack },
             { MatlEnums.ParamId.Texture14, DefaultTextures.Instance.DefaultBlack },
             { MatlEnums.ParamId.Texture16, DefaultTextures.Instance.DefaultWhite },
+        };
+
+        private readonly Dictionary<string, Texture> DefaultTexturesByName = new Dictionary<string, Texture>
+        {
+            { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr },
+            { "/common/shader/sfxpbs/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal },
+            { "/common/shader/sfxpbs/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/default_black", Rendering.Resources.DefaultTextures.Instance.DefaultBlack },
+            { "/common/shader/sfxpbs/default_white", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
+            { "/common/shader/sfxpbs/default_color", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
+            { "/common/shader/sfxpbs/fighter/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/fighter/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal }
         };
 
         // The parameters don't matter because the default texture are solid color.
@@ -284,7 +297,15 @@ namespace CrossMod.Rendering.GlTools
             if (!textureNameByParamId.ContainsKey(paramId))
                 return defaultTextureByParamId[paramId];
 
-            return TextureByName[textureNameByParamId[paramId]];
+            var textureName = textureNameByParamId[paramId];
+            if (TextureByName.ContainsKey(textureName))
+                return TextureByName[textureName];
+
+            if (DefaultTexturesByName.ContainsKey(textureName))
+                return DefaultTexturesByName[textureName];
+
+            // An unimplemented default texture or the nutex file is missing from the directory.
+            throw new NotImplementedException($"The texture  {textureName} is not a valid texture name");
         }
    
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
