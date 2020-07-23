@@ -6,9 +6,10 @@
     <members>
         <member name="T:SFGraphics.Controls.GLViewport">
             <summary>
-            Provides functionality similar to <see cref="T:OpenTK.GameWindow"/> for <see cref="T:OpenTK.GLControl"/>.
+            Adds a dedicated rendering thread to <see cref="T:OpenTK.GLControl"/>.
             <para></para><para></para>
-            Frame timing can be handled manually or with a dedicated thread using <see cref="M:SFGraphics.Controls.GLViewport.RestartRendering"/>.
+            Add rendering code to <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/>. Frames can be rendered on the rendering thread with 
+            <see cref="M:SFGraphics.Controls.GLViewport.RestartRendering"/> or on the calling thread with <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/>.
             </summary>
         </member>
         <member name="F:SFGraphics.Controls.GLViewport.defaultGraphicsMode">
@@ -16,16 +17,10 @@
             The default graphics mode for rendering. Enables depth/stencil buffers and anti-aliasing. 
             </summary>
         </member>
-        <member name="T:SFGraphics.Controls.GLViewport.OnRenderFrameEventHandler">
+        <member name="E:SFGraphics.Controls.GLViewport.FrameRendering">
             <summary>
-            Describes the arguments used for a rendered frame. 
-            </summary>
-            <param name="sender">The control rendering the frame</param>
-            <param name="e">information about the rendered frame</param>
-        </member>
-        <member name="E:SFGraphics.Controls.GLViewport.OnRenderFrame">
-            <summary>
-            Occurs after frame setup and before the front and back buffer are swapped. To render a frame, use <see cref="M:SFGraphics.Controls.GLViewport.SetUpAndRenderFrame(System.Boolean)"/>.
+            Occurs after frame and context setup and before the front and back buffer are swapped. 
+            This effects <see cref="M:SFGraphics.Controls.GLViewport.RenderFrame"/> and the dedicated render thread.
             </summary>
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
@@ -54,9 +49,14 @@
             Frees resources if the user forgets to call <see cref="M:SFGraphics.Controls.GLViewport.Dispose"/>.
             </summary>
         </member>
+        <member name="M:SFGraphics.Controls.GLViewport.OnNextFrameSetUp">
+            <summary>
+            Raises the <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> event.
+            </summary>
+        </member>
         <member name="M:SFGraphics.Controls.GLViewport.RenderFrame">
             <summary>
-            Renders and displays a frame on the current thread. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.OnRenderFrame"/> to add custom rendering code.
+            Renders and displays a frame on the current thread. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> to add custom rendering code.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.RestartRendering">

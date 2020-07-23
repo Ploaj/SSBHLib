@@ -664,32 +664,42 @@
         </member>
         <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.MinFilter">
             <summary>
-            Updates the SamplerParameter when set.
+            Updates the SamplerParameter.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.MagFilter">
             <summary>
-            Updates the SamplerParameter when set.
+            Updates the SamplerParameter.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.TextureWrapS">
             <summary>
-            Updates the SamplerParameter when set.
+            Updates the SamplerParameter.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.TextureWrapT">
             <summary>
-            Updates the SamplerParameter when set.
+            Updates the SamplerParameter.
             </summary>
         </member>
         <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.TextureWrapR">
             <summary>
-            Updates the SamplerParameter when set.
+            Updates the SamplerParameter.
+            </summary>
+        </member>
+        <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.TextureMaxAnisotropy">
+            <summary>
+            Updates the SamplerParameter.
+            </summary>
+        </member>
+        <member name="P:SFGraphics.GLObjects.Samplers.SamplerObject.TextureLodBias">
+            <summary>
+            Updates the SamplerParameter.
             </summary>
         </member>
         <member name="M:SFGraphics.GLObjects.Samplers.SamplerObject.#ctor">
             <summary>
-            Creates an unitialized sampler object. 
+            Creates an unitialized sampler.
             </summary>
         </member>
         <member name="M:SFGraphics.GLObjects.Samplers.SamplerObject.Bind(System.Int32)">
@@ -697,7 +707,7 @@
             Binds the Id to <paramref name="textureUnit"/>.
             This sampler's state will override the state of the bound texture.
             </summary>
-            <param name="textureUnit"></param>
+            <param name="textureUnit">The target texture unit for binding</param>
         </member>
         <member name="T:SFGraphics.GLObjects.Shaders.ShaderEventArgs.LinkStatusEventArgs">
             <summary>
@@ -990,40 +1000,18 @@
             This should be checked at runtime and only for debugging purposes.
             </summary>
         </member>
-        <member name="T:SFGraphics.GLObjects.Shaders.Shader.InvalidUniformSetEventHandler">
-            <summary>
-            Handles invalid uniforms.
-            </summary>
-            <param name="sender">The shader that generated the error</param>
-            <param name="e">The arguments used to set the uniform</param>
-        </member>
-        <member name="T:SFGraphics.GLObjects.Shaders.Shader.InvalidTextureSetEventHandler">
-            <summary>
-            Handles incorrect texture sets.
-            </summary>
-            <param name="sender">The shader that generated the error</param>
-            <param name="e">The arguments used to set the uniform</param>
-        </member>
-        <member name="T:SFGraphics.GLObjects.Shaders.Shader.LinkStatusChangedEventHandler">
-            <summary>
-            Handles changes to the link status.
-            </summary>
-            <param name="sender">The shader that generated the event</param>
-            <param name="e">Information about the previous shader program linking. 
-            <c>true</c> when linking was successful</param>
-        </member>
-        <member name="E:SFGraphics.GLObjects.Shaders.Shader.OnInvalidUniformSet">
+        <member name="E:SFGraphics.GLObjects.Shaders.Shader.InvalidUniformSet">
             <summary>
             Occurs when arguments for setting a uniform don't match the shader.
             </summary>
         </member>
-        <member name="E:SFGraphics.GLObjects.Shaders.Shader.OnTextureUnitTypeMismatch">
+        <member name="E:SFGraphics.GLObjects.Shaders.Shader.TextureUnitTypeMismatched">
             <summary>
             Occurs when a call to <see cref="M:SFGraphics.GLObjects.Shaders.Shader.SetTexture(System.String,SFGraphics.GLObjects.Textures.Texture,System.Int32)"/>
             is made to a previously used texture unit but with a different sampler type.
             </summary>
         </member>
-        <member name="E:SFGraphics.GLObjects.Shaders.Shader.OnLinkStatusChanged">
+        <member name="E:SFGraphics.GLObjects.Shaders.Shader.LinkStatusChanged">
             <summary>
             Occurs when the value of <see cref="P:SFGraphics.GLObjects.Shaders.Shader.LinkStatusIsOk"/> changes.
             </summary>
@@ -1107,7 +1095,7 @@
             <summary>
             Creates and compiles a shader object from <paramref name="shaderSource"/>.
             </summary>
-            <param name="shaderSource">The shader's source code</param>
+            <param name="shaderSource">The shader's GLSL source code</param>
             <param name="shaderType">determines which shader stage this shader will be used for when linking the program.</param>
         </member>
         <member name="M:SFGraphics.GLObjects.Shaders.ShaderObject.GetShaderSource">

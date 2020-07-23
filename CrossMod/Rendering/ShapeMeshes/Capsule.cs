@@ -6,6 +6,7 @@ using SFGraphics.GLObjects.Shaders;
 using SFShapes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CrossMod.Rendering.ShapeMeshes
 {
@@ -20,7 +21,7 @@ namespace CrossMod.Rendering.ShapeMeshes
                 new VertexFloatAttribute("point", ValueCount.Four, VertexAttribPointerType.Float, false)
             };
 
-            List<Vector3> baseSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
+            List<Vector3> baseSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1.ToList();
             var capsule = new List<Vector4>();
             foreach (var v in baseSphere)
             {

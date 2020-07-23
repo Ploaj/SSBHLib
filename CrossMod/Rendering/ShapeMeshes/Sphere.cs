@@ -5,12 +5,13 @@ using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
 using SFShapes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CrossMod.Rendering.ShapeMeshes
 {
     public class Sphere : GenericMesh<Vector3>
     {
-        private static readonly List<Vector3> UnitSphere;
+        private static readonly Vector3[] UnitSphere;
 
         static Sphere()
         {
@@ -21,7 +22,7 @@ namespace CrossMod.Rendering.ShapeMeshes
             UnitSphere = ShapeGenerator.GetSpherePositions(Vector3.Zero, 1, 30).Item1;
         }
 
-        public Sphere() : base(UnitSphere.ToArray(), PrimitiveType.TriangleStrip) { }
+        public Sphere() : base(UnitSphere, PrimitiveType.TriangleStrip) { }
 
         public void Render(Shader shader, float size, Vector3 offset, Matrix4 bone, Matrix4 mvp, Vector4 color)
         {

@@ -6,8 +6,8 @@
     <members>
         <member name="T:SFGenericModel.GenericMeshBase">
             <summary>
-            Contains the basic functionality for drawing indexed vertex data with OpenGL.
-            Derived classes should configure their own implemenation for storing and configuring vertex data.
+            Contains the basic functionality for drawing indexed vertex data with OpenGL, including the element array buffer.
+            Derived classes should configure their own implemenation for vertex array buffers.
             </summary>
         </member>
         <member name="P:SFGenericModel.GenericMeshBase.VertexIndexCount">
@@ -26,13 +26,34 @@
             Specifies the data type of the index values.
             </summary>
         </member>
-        <member name="M:SFGenericModel.GenericMeshBase.#ctor(OpenTK.Graphics.OpenGL.PrimitiveType,OpenTK.Graphics.OpenGL.DrawElementsType,System.Int32)">
+        <member name="M:SFGenericModel.GenericMeshBase.#ctor(System.Int32,OpenTK.Graphics.OpenGL.PrimitiveType)">
             <summary>
-            
+            Initializes the index buffer for a mesh with unsigned indices.
+            A total of <paramref name="vertexCount"/> unique indices are generated to initialize the index buffer.
             </summary>
-            <param name="primitiveType"></param>
-            <param name="drawElementsType"></param>
-            <param name="vertexCount">The number of vertices in this mesh</param>
+            <param name="vertexCount">The number of vertices</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
+        </member>
+        <member name="M:SFGenericModel.GenericMeshBase.#ctor(System.UInt32[],OpenTK.Graphics.OpenGL.PrimitiveType)">
+            <summary>
+            Initializes the index buffer for a mesh with unsigned indices.
+            </summary>
+            <param name="vertexIndices">The vertex indices used for drawing</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
+        </member>
+        <member name="M:SFGenericModel.GenericMeshBase.#ctor(System.UInt16[],OpenTK.Graphics.OpenGL.PrimitiveType)">
+            <summary>
+            Initializes the index buffer for a mesh with unsigned indices.
+            </summary>
+            <param name="vertexIndices">The vertex indices used for drawing</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
+        </member>
+        <member name="M:SFGenericModel.GenericMeshBase.#ctor(System.Byte[],OpenTK.Graphics.OpenGL.PrimitiveType)">
+            <summary>
+            Initializes the index buffer for a mesh with unsigned indices.
+            </summary>
+            <param name="vertexIndices">The vertex indices used for drawing</param>
+            <param name="primitiveType">Determines how primitives will be constructed from the vertex data</param>
         </member>
         <member name="M:SFGenericModel.GenericMeshBase.Draw(SFGraphics.GLObjects.Shaders.Shader,System.Int32,System.Int32)">
             <summary>
@@ -54,6 +75,7 @@
             The appropriate buffers should be bound and appropriate calls to GL.VertexAttribPointer(...) and GL.VertexAttribIPointer should be made.
             <para></para><para></para>
             The <see cref="F:SFGenericModel.GenericMeshBase.vertexArrayObject"/> is bound and unbound before and after calling this method, respectively.
+            This class handles the creation and binding of the index buffer.
             </summary>
             <param name="shader">The shader queried to get vertex attribute information</param>
         </member>
@@ -146,8 +168,8 @@
         </member>
         <member name="T:SFGenericModel.Materials.UniformBlock">
             <summary>
-            Stores a collection of uniforms in a buffer to improve performance and allow sharing uniforms
-            between shader programs.
+            Stores a collection of uniforms in a <see cref="T:SFGraphics.GLObjects.BufferObjects.BufferObject"/>. 
+            Uniforms are set all at once using <see cref="M:SFGenericModel.Materials.UniformBlock.BindBlock(SFGraphics.GLObjects.Shaders.Shader)"/>, which has better performance than setting uniforms individually.
             </summary>
         </member>
         <member name="P:SFGenericModel.Materials.UniformBlock.UniformBlockName">
@@ -158,11 +180,12 @@
         <member name="P:SFGenericModel.Materials.UniformBlock.BlockBinding">
             <summary>
             The binding point index for the uniform block.
+            This should not be shared with other <see cref="T:SFGenericModel.Materials.UniformBlock"/> instances.
             </summary>
         </member>
         <member name="M:SFGenericModel.Materials.UniformBlock.#ctor(SFGraphics.GLObjects.Shaders.Shader,System.String)">
             <summary>
-            Initializes the uniform buffer based on the layout of <paramref name="uniformBlockName"/> in <paramref name="shader"/>.
+            Initializes the buffer's storage capacity based on the declaration of <paramref name="uniformBlockName"/> in <paramref name="shader"/>.
             </summary>
             <param name="shader">The shader containing the uniform block</param>
             <param name="uniformBlockName">The name of the uniform block in <paramref name="shader"/></param>
@@ -180,6 +203,7 @@
             </summary>
             <param name="uniformName">The name of the uniform inside the uniform block</param>
             <param name="value">The new value for the uniform</param>
+            <returns><c>true</c> if <paramref name="uniformName"/> was set successfully</returns>
         </member>
         <member name="M:SFGenericModel.Materials.UniformBlock.SetValues``1(System.String,``0[])">
             <summary>
@@ -187,6 +211,7 @@
             </summary>
             <param name="uniformName">The name of the uniform inside the uniform block</param>
             <param name="values">The new value for the uniform</param>
+            <returns><c>true</c> if <paramref name="uniformName"/> was set successfully</returns>
         </member>
         <member name="T:SFGenericModel.Materials.GenericMaterial">
             <summary>
@@ -1213,18 +1238,16 @@
             </summary>
             <typeparam name="T">The struct used to define vertex data</typeparam>
         </member>
-        <member name="T:SFGenericModel.GenericMesh`1.InvalidAttribSetEventHandler">
-            <summary>
-            Contains information about the arguments used to set a vertex attribute.
-            </summary>
-            <param name="sender">The <see cref="!:"/> 
-            instance that generated the error</param>
-            <param name="e">The vertex attribute information</param>
-        </member>
-        <member name="E:SFGenericModel.GenericMesh`1.OnInvalidAttribSet">
+        <member name="E:SFGenericModel.GenericMesh`1.InvalidAttribSet">
             <summary>
             Occurs when specified vertex attribute information does not match the shader.
             </summary>
+        </member>
+        <member name="M:SFGenericModel.GenericMesh`1.OnInvalidAttribSet(SFGenericModel.MeshEventArgs.AttribSetEventArgs)">
+            <summary>
+            Raises the <see cref="E:SFGenericModel.GenericMesh`1.InvalidAttribSet"/> event with the specified args.
+            </summary>
+            <param name="e">The vertex attribut information</param>
         </member>
         <member name="F:SFGenericModel.GenericMesh`1.vertexAttributes">
             <summary>

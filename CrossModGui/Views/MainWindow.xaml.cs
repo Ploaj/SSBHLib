@@ -151,7 +151,7 @@ namespace CrossModGui.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Don't start rendering here to save CPU usage.
-            glViewport.OnRenderFrame += GlViewport_OnRenderFrame;
+            glViewport.FrameRendering += GlViewport_OnRenderFrame;
             // Render twice to ensure the background is updated.
             glViewport.RenderFrame();
             glViewport.RenderFrame();
