@@ -437,9 +437,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Shaders\Binary\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Lib\AnimatedGif.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
