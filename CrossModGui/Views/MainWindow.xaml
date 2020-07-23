@@ -7,7 +7,6 @@
         xmlns:sfcontrol="clr-namespace:SFGraphics.Controls;assembly=SFGraphics.Controls"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Loaded="Window_Loaded"
         Closed="Window_Closed"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"

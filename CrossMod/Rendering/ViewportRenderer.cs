@@ -105,14 +105,6 @@ namespace CrossMod.Rendering
 
         public void RenderNodes(float currentFrame = 0)
         {
-            // This method is called before drawing opening files, 
-            // which should ensure the resources are set up in time.
-            if (DefaultTextures.Instance == null)
-                DefaultTextures.Initialize();
-
-            if (!ShaderContainer.HasSetUp)
-                ShaderContainer.SetUpShaders();
-
             SetUpViewport();
 
             if (itemToRender is IRenderableModel model)

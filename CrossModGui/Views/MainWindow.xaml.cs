@@ -2,6 +2,7 @@
 using CrossMod.Rendering;
 using CrossMod.Tools;
 using CrossModGui.ViewModels;
+using SELib.Utilities;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,6 +35,17 @@ namespace CrossModGui.Views
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
 
             viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            glViewport.HandleCreated += GlViewport_HandleCreated;
+        }
+
+        private void GlViewport_HandleCreated(object sender, EventArgs e)
+        {
+            // The context is created after the handle is created,
+            // so do any setup here before rendering starts.
+            glViewport.FrameRendering += GlViewport_OnRenderFrame;
+
+            CrossMod.Rendering.Resources.DefaultTextures.Initialize();
+            CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders();
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -146,15 +158,6 @@ namespace CrossModGui.Views
             // Update the current viewport item.
             viewModel.UpdateCurrentRenderableNode(item);
             RenderFrameIfNeeded();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Don't start rendering here to save CPU usage.
-            glViewport.FrameRendering += GlViewport_OnRenderFrame;
-            // Render twice to ensure the background is updated.
-            glViewport.RenderFrame();
-            glViewport.RenderFrame();
         }
 
         private void Window_Closed(object sender, EventArgs e)
