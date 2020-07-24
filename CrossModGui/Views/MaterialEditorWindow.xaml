@@ -102,11 +102,16 @@
                                             <RowDefinition Height="*"></RowDefinition>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="5,5" Text="{Binding Name}"></TextBlock>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">X/Red</TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">Y/Green</TextBlock>
-                                        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">Z/Blue</TextBlock>
-                                        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2">W/Alpha</TextBlock>
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                                            <Rectangle Width="{Binding ActualHeight, ElementName=xValText}" 
+                                                       Height="{Binding ActualHeight, ElementName=xValText}" 
+                                                       Fill="{Binding ColorBrush}" Stroke="Black"></Rectangle>
+                                            <TextBlock  HorizontalAlignment="Right" Margin="5,5" Text="{Binding Name}"></TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Name="xValText" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label1}"></TextBlock>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label2}"></TextBlock>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label3}"></TextBlock>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label4}"></TextBlock>
                                         <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2" Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                         <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                         <TextBox Grid.Row="3" Grid.Column="1" Margin="5,2" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>

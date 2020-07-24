@@ -2,7 +2,6 @@
 using CrossMod.Rendering;
 using CrossMod.Tools;
 using CrossModGui.ViewModels;
-using SELib.Utilities;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,6 +121,7 @@ namespace CrossModGui.Views
 
             window.Closed += (s, e2) =>
             {
+                // TODO: Safe handle was disposed?
                 if (!wasRendering)
                     glViewport.PauseRendering();
             };

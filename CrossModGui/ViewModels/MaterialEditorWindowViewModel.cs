@@ -2,6 +2,7 @@
 using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 
 namespace CrossModGui.ViewModels
 {
@@ -23,22 +24,76 @@ namespace CrossModGui.ViewModels
 
         public class Vec4Param : ViewModelBase
         {
+
             public string Name { get; set; }
+            public Brush ColorBrush { get; set; }
+
+            public string Label1 { get; set; } = "X";
             public float Min1 { get; set; } = 0.0f;
             public float Max1 { get; set; } = 1.0f;
-            public float Value1 { get; set; }
+            public float Value1
+            {
+                get => value1;
+                set
+                {
+                    value1 = value;
+                    UpdateColor();
+                }
+            }
+            private float value1;
 
+            public string Label2 { get; set; } = "Y";
             public float Min2 { get; set; } = 0.0f;
             public float Max2 { get; set; } = 1.0f;
-            public float Value2 { get; set; }
+            public float Value2
+            {
+                get => value2;
+                set
+                {
+                    value2 = value;
+                    UpdateColor();
+                }
+            }
+            private float value2;
 
+            public string Label3 { get; set; } = "Z";
             public float Min3 { get; set; } = 0.0f;
             public float Max3 { get; set; } = 1.0f;
-            public float Value3 { get; set; }
+            public float Value3
+            {
+                get => value3;
+                set
+                {
+                    value3 = value;
+                    UpdateColor();
+                }
+            }
+            private float value3;
 
+            public string Label4 { get; set; } = "W";
             public float Min4 { get; set; } = 0.0f;
             public float Max4 { get; set; } = 1.0f;
-            public float Value4 { get; set; }
+            public float Value4
+            {
+                get => value4; 
+                set 
+                { 
+                    value4 = value; 
+                    UpdateColor(); 
+                } 
+            }
+            private float value4;
+
+            private void UpdateColor()
+            {
+                // TODO: The linear -> srgb conversion should be handled by a library.
+                var gamma = 0.4545;
+                var red = (float)System.Math.Pow(Value1, gamma);
+                var green = (float)System.Math.Pow(Value2, gamma);
+                var blue = (float)System.Math.Pow(Value3, gamma);
+                var Color = SFGraphics.Utils.ColorUtils.GetColor(red, green, blue);
+                ColorBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, Color.R, Color.G, Color.B));
+            }
         }
 
         public class TextureParam : ViewModelBase
@@ -161,10 +216,20 @@ namespace CrossModGui.ViewModels
                 };
 
                 // Update the material for rendering.
-                vec4Param.PropertyChanged += (s, e) => 
+                vec4Param.PropertyChanged += (s, e) =>
                 {
-                    var sender = (s as Vec4Param);
-                    mat.UpdateVec4(param.Key, new OpenTK.Vector4(sender.Value1, sender.Value2, sender.Value3, sender.Value4));
+                    switch (e.PropertyName)
+                    {
+                        case nameof(Vec4Param.Value1):
+                        case nameof(Vec4Param.Value2):
+                        case nameof(Vec4Param.Value3):
+                        case nameof(Vec4Param.Value4):
+                            var sender = (s as Vec4Param);
+                            mat.UpdateVec4(param.Key, new OpenTK.Vector4(sender.Value1, sender.Value2, sender.Value3, sender.Value4));
+                            break;
+                        default:
+                            break;
+                    }
                 };
 
                 material.Vec4Params.Add(vec4Param);
