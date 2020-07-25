@@ -41,16 +41,16 @@ namespace CrossMod.Rendering.GlTools
             { MatlEnums.ParamId.Texture16, DefaultTextures.Instance.DefaultWhite },
         };
 
-        private readonly Dictionary<string, Texture> DefaultTexturesByName = new Dictionary<string, Texture>
+        public static readonly Dictionary<string, Texture> DefaultTexturesByName = new Dictionary<string, Texture>
         {
-            { "#replace_cubemap", Rendering.Resources.DefaultTextures.Instance.SpecularPbr },
-            { "/common/shader/sfxpbs/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal },
-            { "/common/shader/sfxpbs/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
-            { "/common/shader/sfxpbs/default_black", Rendering.Resources.DefaultTextures.Instance.DefaultBlack },
-            { "/common/shader/sfxpbs/default_white", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
-            { "/common/shader/sfxpbs/default_color", Rendering.Resources.DefaultTextures.Instance.DefaultWhite },
-            { "/common/shader/sfxpbs/fighter/default_params", Rendering.Resources.DefaultTextures.Instance.DefaultParams },
-            { "/common/shader/sfxpbs/fighter/default_normal", Rendering.Resources.DefaultTextures.Instance.DefaultNormal }
+            { "#replace_cubemap", DefaultTextures.Instance.SpecularPbr },
+            { "/common/shader/sfxpbs/default_normal", DefaultTextures.Instance.DefaultNormal },
+            { "/common/shader/sfxpbs/default_params", DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/default_black", DefaultTextures.Instance.DefaultBlack },
+            { "/common/shader/sfxpbs/default_white", DefaultTextures.Instance.DefaultWhite },
+            { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.DefaultWhite },
+            { "/common/shader/sfxpbs/fighter/default_params", DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/fighter/default_normal", DefaultTextures.Instance.DefaultNormal }
         };
 
         // The parameters don't matter because the default texture are solid color.

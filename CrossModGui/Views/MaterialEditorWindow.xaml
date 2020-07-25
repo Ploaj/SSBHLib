@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="Material Editor" Height="450" Width="1000">
+        Title="Material Editor" Height="800" Width="500">
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
