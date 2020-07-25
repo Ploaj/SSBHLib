@@ -126,7 +126,8 @@ namespace CrossMod.Nodes
                 try
                 {
                     renderableTexture.SfTexture = surface.GetRenderTexture();
-                    renderableTexture.BitmapImageData = renderableTexture.SfTexture.GetImageDataBgra();
+                    // TODO: Getting the BGRA data can randomly cause access violation exceptions.
+                    //renderableTexture.BitmapImageData = renderableTexture.SfTexture.GetImageDataBgra();
                 }
                 catch (Exception)
                 {
