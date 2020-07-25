@@ -125,7 +125,8 @@ namespace CrossMod.Nodes
                 // HACK: Nutex loading doesn't always work.
                 try
                 {
-                    renderableTexture.RenderTexture = surface.GetRenderTexture();
+                    renderableTexture.SfTexture = surface.GetRenderTexture();
+                    renderableTexture.BitmapImageData = renderableTexture.SfTexture.GetImageDataBgra();
                 }
                 catch (Exception)
                 {
@@ -171,13 +172,6 @@ namespace CrossMod.Nodes
                 writer.Write((short)1); // version major
                 writer.Write((short)2); // version minor
             }
-        }
-
-        public void SaveTexturePNG(string fileName)
-        {
-            var texture = ((RTexture)GetRenderableNode()).RenderTexture.GetBitmap(0);
-            texture.Save(fileName);
-            texture.Dispose();
         }
 
         private static string ReadTexName(BinaryReader reader)

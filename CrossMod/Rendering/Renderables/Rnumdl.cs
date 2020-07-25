@@ -17,7 +17,7 @@ namespace CrossMod.Rendering
 
         public Modl Modl { get; }
 
-        public Dictionary<string, Texture> TextureByName { get; }
+        public Dictionary<string, RTexture> TextureByName { get; }
 
         public RSkeleton Skeleton { get; }
 
@@ -27,7 +27,7 @@ namespace CrossMod.Rendering
 
         public Dictionary<string, Material> MaterialByName { get; set; } = new Dictionary<string, Material>();
 
-        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, Dictionary<string, Texture> textureByName)
+        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;
             Skeleton = skeleton;

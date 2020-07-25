@@ -45,13 +45,14 @@ namespace CrossMod.Nodes
             RSkeleton skeleton = null;
             Matl material = null;
 
-            var textureByName = new Dictionary<string, SFGraphics.GLObjects.Textures.Texture>();
+            var textureByName = new Dictionary<string, RTexture>();
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, textureByName);
 
             return new RNumdl(model, skeleton, material, meshNode, hlpbNode, textureByName);
         }
 
-        private void GetNodesForRendering(ref NumsbhNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, Dictionary<string, SFGraphics.GLObjects.Textures.Texture> textureByName)
+        private void GetNodesForRendering(ref NumsbhNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, 
+            Dictionary<string, RTexture> textureByName)
         {
             foreach (FileNode fileNode in Parent.Nodes)
             {
@@ -62,7 +63,7 @@ namespace CrossMod.Nodes
                 else if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
-                    textureByName[nutexNode.TexName.ToLower()] = texture.RenderTexture;
+                    textureByName[nutexNode.TexName.ToLower()] = texture;
                 }
                 else if (fileNode.Text.Equals(model.MeshString))
                 {

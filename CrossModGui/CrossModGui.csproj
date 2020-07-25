@@ -123,6 +123,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BitmapToWpfBitmap.cs" />
     <Compile Include="Converters\ColorBrushConverter.cs" />
     <Compile Include="Converters\ImageKeyImageConverter.cs" />
     <Compile Include="Tools\MaterialParamDescriptions.cs" />

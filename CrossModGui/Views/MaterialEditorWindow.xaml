@@ -55,7 +55,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" TextAlignment="Right" Margin="5,2"></TextBlock>
+                                        <TextBlock Grid.Column="0" Text="{Binding ParamId}" TextAlignment="Right" Margin="5,2"></TextBlock>
                                         <CheckBox Grid.Column="1" IsChecked="{Binding Value}" Margin="5,2">
                                         </CheckBox>
                                     </Grid>
@@ -76,7 +76,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding Name}"></TextBlock>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding ParamId}"></TextBlock>
                                         <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                         <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" 
                                                 Value="{Binding Value}" Minimum="{Binding Min}" Maximum="{Binding Max}"></Slider>
@@ -106,7 +106,7 @@
                                             <Rectangle Width="{Binding ActualHeight, ElementName=xValText}" 
                                                        Height="{Binding ActualHeight, ElementName=xValText}" 
                                                        Fill="{Binding ColorBrush}" Stroke="Black"></Rectangle>
-                                            <TextBlock  HorizontalAlignment="Right" Margin="5,5" Text="{Binding Name}"></TextBlock>
+                                            <TextBlock  HorizontalAlignment="Right" Margin="5,5" Text="{Binding ParamId}"></TextBlock>
                                         </StackPanel>
                                         <TextBlock Name="xValText" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label1}"></TextBlock>
                                         <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label2}"></TextBlock>
@@ -131,11 +131,15 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
+                                            <!--<ColumnDefinition Width="auto"></ColumnDefinition>-->
                                             <ColumnDefinition Width="120"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Right" Margin="5,2"></TextBlock>
-                                        <ComboBox Grid.Column="1" 
+                                        <!--<Image Grid.Column="0" Source="{Binding Image, TargetNullValue={x:Null}}" 
+                                               Width="{Binding ActualHeight, ElementName=textureComboBox}" 
+                                               Height="{Binding ActualHeight, ElementName=textureComboBox}"/>-->
+                                        <TextBlock Name="textureLabel" Grid.Column="0" Text="{Binding ParamId}" HorizontalAlignment="Right" Margin="5,2"></TextBlock>
+                                        <ComboBox Name="textureComboBox" Grid.Column="1" 
                                           ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
                                           SelectedItem="{Binding Value}" Margin="5,2">
                                         </ComboBox>

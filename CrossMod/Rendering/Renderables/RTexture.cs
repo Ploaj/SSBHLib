@@ -9,8 +9,10 @@ namespace CrossMod.Rendering
     {
         private static ScreenTriangle triangle = null;
 
-        // TODO: These propeties should not be mutable.
-        public Texture RenderTexture { get; set; } = null;
+        // TODO: RTexture properties should not be mutable.
+        public Texture SfTexture { get; set; } = null;
+
+        public byte[] BitmapImageData { get; set; }
 
         public bool IsSrgb { get; set; } = false;
 
@@ -22,8 +24,8 @@ namespace CrossMod.Rendering
             // Texture unit 0 should be reserved for image preview.
             var shader = ShaderContainer.GetShader("RTexture");
             shader.UseProgram();
-            if (RenderTexture != null)
-                shader.SetTexture("image", RenderTexture, 0);
+            if (SfTexture != null)
+                shader.SetTexture("image", SfTexture, 0);
 
             // The colors need to be converted back to sRGB gamma.
             shader.SetBoolToInt("isSrgb", IsSrgb);

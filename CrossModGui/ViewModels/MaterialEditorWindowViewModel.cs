@@ -4,6 +4,7 @@ using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace CrossModGui.ViewModels
 {
@@ -11,13 +12,13 @@ namespace CrossModGui.ViewModels
     {
         public class BooleanParam : ViewModelBase
         {
-            public string Name { get; set; }
+            public string ParamId { get; set; }
             public bool Value { get; set; }
         }
 
         public class FloatParam : ViewModelBase
         {
-            public string Name { get; set; }
+            public string ParamId { get; set; }
             public float Value { get; set; }
             public float Min { get; set; } = 0.0f;
             public float Max { get; set; } = 1.0f;
@@ -26,7 +27,7 @@ namespace CrossModGui.ViewModels
         public class Vec4Param : ViewModelBase
         {
 
-            public string Name { get; set; }
+            public string ParamId { get; set; }
             public Brush ColorBrush { get; set; }
 
             public string Label1 { get; set; } = "X";
@@ -99,8 +100,9 @@ namespace CrossModGui.ViewModels
 
         public class TextureParam : ViewModelBase
         {
-            public string Name { get; set; }
+            public string ParamId { get; set; }
             public string Value { get; set; }
+            public ImageSource Image { get; set; }
         }
 
         public class Material : ViewModelBase
@@ -197,7 +199,11 @@ namespace CrossModGui.ViewModels
         {
             foreach (var param in mat.textureNameByParamId)
             {
-                var textureParam = new TextureParam { Name = param.Key.ToString(), Value = param.Value };
+                // TODO: Don't create a new bitmap every time.
+                // Create a thumbnail icon.
+                //var image = GetPreviewImage(mat, param.Key);
+
+                var textureParam = new TextureParam { ParamId = param.Key.ToString(), Value = param.Value };
 
                 // Update the material for rendering.
                 textureParam.PropertyChanged += (s, e) => mat.UpdateTexture(param.Key, (s as TextureParam).Value);
@@ -206,13 +212,26 @@ namespace CrossModGui.ViewModels
             }
         }
 
+        private static WriteableBitmap GetPreviewImage(CrossMod.Rendering.GlTools.Material mat, MatlEnums.ParamId paramId)
+        {
+            // null values will be replaced with a default image in the view.
+            if (!mat.textureNameByParamId.ContainsKey(paramId))
+                return null;
+            if (!mat.TextureByName.ContainsKey(mat.textureNameByParamId[paramId]))
+                return null;
+
+            var rTexture = mat.TextureByName[mat.textureNameByParamId[paramId]];
+            var image = Converters.BitmapToWpfBitmap.CreateBitmapImage(rTexture.SfTexture.Width, rTexture.SfTexture.Height, rTexture.BitmapImageData);
+            return image;
+        }
+
         private static void AddVec4Params(CrossMod.Rendering.GlTools.Material mat, Material material)
         {
             foreach (var param in mat.vec4ByParamId)
             {
                 var vec4Param = new Vec4Param
                 {
-                    Name = param.Key.ToString(),
+                    ParamId = param.Key.ToString(),
                     Value1 = param.Value.X,
                     Value2 = param.Value.Y,
                     Value3 = param.Value.Z,
@@ -244,7 +263,7 @@ namespace CrossModGui.ViewModels
 
         private static void TryAssignValuesFromDescription(Vec4Param vec4Param)
         {
-            if (MaterialParamDescriptions.Instance.ParamDescriptionsByName.TryGetValue(vec4Param.Name,
+            if (MaterialParamDescriptions.Instance.ParamDescriptionsByName.TryGetValue(vec4Param.ParamId,
                 out MaterialParamDescriptions.ParamDescription description))
             {
                 vec4Param.Label1 = description.Label1 ?? "Unused";
@@ -271,7 +290,7 @@ namespace CrossModGui.ViewModels
             {
                 var floatParam = new FloatParam
                 {
-                    Name = param.Key.ToString(),
+                    ParamId = param.Key.ToString(),
                     Value = param.Value
                 };
 
@@ -288,7 +307,7 @@ namespace CrossModGui.ViewModels
             {
                 var boolParam = new BooleanParam
                 {
-                    Name = param.Key.ToString(),
+                    ParamId = param.Key.ToString(),
                     Value = param.Value
                 };
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -37,7 +38,6 @@ namespace CrossModGui.Converters
 				case "texture":
 					return textureIco;
 			}
-
 			return unknownIco;
 		}
 

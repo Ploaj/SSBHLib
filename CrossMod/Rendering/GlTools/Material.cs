@@ -56,7 +56,7 @@ namespace CrossMod.Rendering.GlTools
         // The parameters don't matter because the default texture are solid color.
         private readonly SamplerObject defaultSampler = new SamplerObject();
 
-        public Dictionary<string, Texture> TextureByName { get; set; } = new Dictionary<string, Texture>();
+        public Dictionary<string, RTexture> TextureByName { get; set; } = new Dictionary<string, RTexture>();
 
         public float CurrentFrame { get; set; } = 0;
 
@@ -299,7 +299,7 @@ namespace CrossMod.Rendering.GlTools
 
             var textureName = textureNameByParamId[paramId];
             if (TextureByName.ContainsKey(textureName))
-                return TextureByName[textureName];
+                return TextureByName[textureName].SfTexture;
 
             if (DefaultTexturesByName.ContainsKey(textureName))
                 return DefaultTexturesByName[textureName];

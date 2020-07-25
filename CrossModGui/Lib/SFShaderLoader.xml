@@ -27,6 +27,8 @@
             <param name="name">A unique name for the shader program</param>
             <param name="sourceNames">A collection of shader object names/></param>
             <returns><c>true</c> if the shader was added and linked successfully</returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">A key in <paramref name="sourceNames"/> 
+            does not refer to an available shader source</exception>
         </member>
         <member name="M:SFShaderLoader.ShaderLoader.AddShader(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})">
             <summary>

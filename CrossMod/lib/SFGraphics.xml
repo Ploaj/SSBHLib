@@ -1513,17 +1513,18 @@
             <param name="attachment">The attachment point</param>
             <param name="target">The target framebuffer for attachment</param>
         </member>
-        <member name="M:SFGraphics.GLObjects.Textures.Texture.GetImageData(System.Int32)">
+        <member name="M:SFGraphics.GLObjects.Textures.Texture.GetImageDataRgba(System.Int32)">
             <summary>
             Gets the image data for <paramref name="mipLevel"/>
-            in an RGBA unsigned byte format.
+            converted to an RGBA unsigned byte format.
             </summary>
             <param name="mipLevel">The mip level to read</param>
             <returns>The image data for <paramref name="mipLevel"/></returns>
         </member>
-        <member name="M:SFGraphics.GLObjects.Textures.Texture.GetBitmap(System.Int32)">
+        <member name="M:SFGraphics.GLObjects.Textures.Texture.GetImageDataBgra(System.Int32)">
             <summary>
-            Gets the image data for <paramref name="mipLevel"/> in an unsigned byte format.
+            Gets the image data for <paramref name="mipLevel"/> 
+            converted to a BGRA unsigned byte format used for Bitmaps (PNG).
             </summary>
             <param name="mipLevel">The mip level to read</param>
             <returns>The image data for <paramref name="mipLevel"/></returns>

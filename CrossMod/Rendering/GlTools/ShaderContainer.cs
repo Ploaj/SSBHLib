@@ -93,8 +93,8 @@ namespace CrossMod.Rendering.GlTools
         private static void CreateTextureShader()
         {
             shaderLoader.AddShader("RTexture",
-                "Texture.vert",
-                "Shaders/Texture.frag",
+                "texture.vert",
+                "texture.frag",
                 "Gamma.frag"
             );
         }

@@ -1,8 +1,6 @@
-﻿using CrossMod.Rendering.Resources;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Samplers;
-using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 
@@ -34,7 +32,7 @@ namespace CrossMod.Rendering.GlTools
             EmiSampler = 0x71
         }
 
-        public static Material CreateMaterial(MatlEntry currentEntry, Dictionary<string, Texture> textureByName)
+        public static Material CreateMaterial(MatlEntry currentEntry, Dictionary<string, RTexture> textureByName)
         {
             Material meshMaterial = new Material()
             {
@@ -51,7 +49,7 @@ namespace CrossMod.Rendering.GlTools
                 switch (attribute.DataType)
                 {
                     case MatlEnums.ParamDataType.String:
-                        SetTextureParameter(meshMaterial, attribute, textureByName);
+                        SetTextureParameter(meshMaterial, attribute);
                         break;
                     case MatlEnums.ParamDataType.Vector4:
                         var vec4 = (MatlAttribute.MatlVector4)attribute.DataObject;
@@ -139,7 +137,7 @@ namespace CrossMod.Rendering.GlTools
             meshMaterial.UseAlphaSampleCoverage = blendState.Unk7 == 1 || blendState.Unk8 == 1;
         }
 
-        private static void SetTextureParameter(Material meshMaterial, MatlAttribute a, Dictionary<string, Texture> textureByName)
+        private static void SetTextureParameter(Material meshMaterial, MatlAttribute a)
         {
             // Don't make texture names case sensitive.
             var textureName = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();
