@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="Material Editor" Height="450" Width="800">
+        Title="Material Editor" Height="450" Width="1000">
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
@@ -49,7 +49,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="80"></ColumnDefinition>
+                                            <ColumnDefinition Width="100"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
@@ -70,7 +70,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="80"></ColumnDefinition>
+                                            <ColumnDefinition Width="100"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
@@ -92,7 +92,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="80"></ColumnDefinition>
+                                            <ColumnDefinition Width="100"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
