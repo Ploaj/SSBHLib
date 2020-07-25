@@ -121,8 +121,8 @@ namespace CrossModGui.Views
 
             window.Closed += (s, e2) =>
             {
-                // TODO: Safe handle was disposed?
-                if (!wasRendering)
+                // The main window may close first, so make sure the viewport still exists.
+                if (!glViewport.IsDisposed && !wasRendering)
                     glViewport.PauseRendering();
             };
         }
