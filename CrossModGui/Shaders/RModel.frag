@@ -432,5 +432,6 @@ void main()
         fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
     }
 
+    // TODO ???:
     //gl_FragDepth = gl_FragCoord.z + depthBias;
 }

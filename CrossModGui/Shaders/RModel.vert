@@ -1,6 +1,6 @@
 #version 330
 
-in vec4 Position0;
+in vec3 Position0;
 in vec4 Tangent0;
 in vec4 Normal0;
 
@@ -121,7 +121,7 @@ void main()
 
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
-    geomColorSet1 = colorSet1 / 128.0;
+    geomColorSet1 = colorSet1 * 2;
 
     // TODO: Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
     geomColorSet2 =   vec4(0);

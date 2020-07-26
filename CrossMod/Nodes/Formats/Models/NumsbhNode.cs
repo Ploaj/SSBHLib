@@ -3,12 +3,12 @@ using CrossMod.Rendering.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
+using SFGraphics.GLObjects.BufferObjects;
 using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace CrossMod.Nodes
 {
@@ -49,17 +49,23 @@ namespace CrossMod.Nodes
                 BoundingSphere = new Vector4(mesh.BoundingSphereX, mesh.BoundingSphereY, mesh.BoundingSphereZ, mesh.BoundingSphereRadius)
             };
 
+            // Use a shared buffer to improve performance.
+            // The render meshes will keep references to these objects.
+            var vertexBuffer0 = new BufferObject(BufferTarget.ArrayBuffer);
+            vertexBuffer0.SetData(mesh.VertexBuffers[0].Buffer, BufferUsageHint.StaticDraw);
+
+            var vertexBuffer1 = new BufferObject(BufferTarget.ArrayBuffer);
+            vertexBuffer1.SetData(mesh.VertexBuffers[1].Buffer, BufferUsageHint.StaticDraw);
+
             foreach (MeshObject meshObject in mesh.Objects)
             {
-                //PrintAttributeInformation(meshObject);
-
                 var rMesh = new RMesh
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
                     BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY,
                         meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius),
-                    RenderMesh = CreateRenderMesh(skeleton, meshObject),
+                    RenderMesh = CreateRenderMesh(skeleton, meshObject, vertexBuffer0, vertexBuffer1),
                 };
 
                 model.SubMeshes.Add(rMesh);
@@ -68,97 +74,99 @@ namespace CrossMod.Nodes
             return model;
         }
 
-        private UltimateMesh CreateRenderMesh(RSkeleton skeleton, MeshObject meshObject)
+        private UltimateMesh CreateRenderMesh(RSkeleton skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(meshObject);
 
             var renderMesh = new UltimateMesh(vertexIndices, meshObject.VertexCount);
 
-            ConfigureVertexAttributes(renderMesh, skeleton, meshObject, vertexAccessor);
+            ConfigureVertexAttributes(renderMesh, skeleton, meshObject, vertexBuffer0, vertexBuffer1);
             return renderMesh;
         }
 
-        private void ConfigureVertexAttributes(UltimateMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, SsbhVertexAccessor vertexAccessor)
+        private void ConfigureVertexAttributes(UltimateMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
         {
-            // TODO: Just use the mesh buffer.
-            var positionValues = ReadAttributeOrSetZero("Position0", meshObject, vertexAccessor);
-            var normalValues = ReadAttributeOrSetZero("Normal0", meshObject, vertexAccessor);
-            var tangentValues = ReadAttributeOrSetZero("Tangent0", meshObject, vertexAccessor);
-            var map1Values = ReadAttributeOrSetZero("map1", meshObject, vertexAccessor);
-            var uvSetValues = ReadAttributeOrSetZero("uvSet", meshObject, vertexAccessor);
-            var uvSet1Values = ReadAttributeOrSetZero("uvSet1", meshObject, vertexAccessor);
-            var uvSet2Values = ReadAttributeOrSetZero("uvSet2", meshObject, vertexAccessor);
-            var bake1Values = ReadAttributeOrSetZero("bake1", meshObject, vertexAccessor);
-            var colorSet1Values = ReadAttributeOrSetDefault("colorSet1", meshObject, vertexAccessor, 128f);
-
-            // TODO: How to reduce the number of attributes if attributes are read directly from a shared mesh buffer?
-            var colorSet2Values = ReadAttributeOrSetZero("colorSet2", meshObject, vertexAccessor);
-            var colorSet21Values = ReadAttributeOrSetZero("colorSet2_1", meshObject, vertexAccessor);
-            var colorSet22Values = ReadAttributeOrSetZero("colorSet2_2", meshObject, vertexAccessor);
-            var colorSet23Values = ReadAttributeOrSetZero("colorSet2_3", meshObject, vertexAccessor);
-            var colorSet3Values = ReadAttributeOrSetZero("colorSet3", meshObject, vertexAccessor);
-            var colorSet4Values = ReadAttributeOrSetZero("colorSet4", meshObject, vertexAccessor);
-            var colorSet5Values = ReadAttributeOrSetZero("colorSet5", meshObject, vertexAccessor);
-            var colorSet6Values = ReadAttributeOrSetZero("colorSet6", meshObject, vertexAccessor);
-            var colorSet7Values = ReadAttributeOrSetZero("colorSet7", meshObject, vertexAccessor);
-
-            AddAttribute("Position0", renderMesh, positionValues);
-            AddAttribute("Normal0", renderMesh, normalValues);
-            AddAttribute("Tangent0", renderMesh, tangentValues);
-            AddAttribute("map1", renderMesh, map1Values);
-            AddAttribute("uvSet", renderMesh, uvSetValues);
-            AddAttribute("uvSet1", renderMesh, uvSet1Values);
-            AddAttribute("uvSet2", renderMesh, uvSet2Values);
-            AddAttribute("bake1", renderMesh, bake1Values);
-
-            AddAttribute("colorSet1", renderMesh, colorSet1Values);
-
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
             var indexByBoneName = GetIndexByBoneName(skeleton);
 
+            // TODO: Optimize reading/configuring rigging buffer?
             GetRiggingData(meshObject.VertexCount, influences, indexByBoneName, out IVec4[] boneIndices, out Vector4[] boneWeights);
 
-            // TODO: Add option to SFGraphics to combine these calls.
-            // TODO: Add option to skip offset and stride if the whole buffer is used.
             renderMesh.AddBuffer("boneIndexBuffer", boneIndices);
             renderMesh.ConfigureAttribute(new VertexIntAttribute("boneIndices", ValueCount.Four, VertexAttribIntegerType.Int), "boneIndexBuffer", 0, sizeof(int) * 4);
 
             renderMesh.AddBuffer("boneWeightBuffer", boneWeights);
             renderMesh.ConfigureAttribute(new VertexFloatAttribute("boneWeights", ValueCount.Four, VertexAttribPointerType.Float, false), "boneWeightBuffer", 0, sizeof(float) * 4);
-        }
 
-        private static void AddAttribute(string name, UltimateMesh renderMesh, SsbhVertexAttribute[] values)
-        {
-            renderMesh.AddBuffer(name, values);
-            renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, ValueCount.Four, VertexAttribPointerType.Float, false), name, 0, Marshal.SizeOf(typeof(SsbhVertexAttribute)));
-        }
+            // Shared vertex buffers for all mesh objects.
+            renderMesh.AddBuffer($"vertexBuffer0", vertexBuffer0);
+            renderMesh.AddBuffer($"vertexBuffer1", vertexBuffer1);
 
-        private static SsbhVertexAttribute[] ReadAttributeOrSetZero(string name, MeshObject meshObject,
-            SsbhVertexAccessor vertexAccessor)
-        {
-            // Accessors return length 0 when the attribute isn't present.
-            var result = vertexAccessor.ReadAttribute(name, meshObject);
-            if (result.Length == 0)
-                result = new SsbhVertexAttribute[meshObject.VertexCount];
-            return result;
-        }
-
-        private static SsbhVertexAttribute[] ReadAttributeOrSetDefault(string name, MeshObject meshObject,
-            SsbhVertexAccessor vertexAccessor, float defaultValue)
-        {
-            // Accessors return length 0 when the attribute isn't present.
-            var result = vertexAccessor.ReadAttribute(name, meshObject);
-            if (result.Length == 0)
+            var usedAttributes = new HashSet<string>();
+            foreach (var attribute in meshObject.Attributes)
             {
-                result = new SsbhVertexAttribute[meshObject.VertexCount];
-                for (int i = 0; i < result.Length; i++)
-                {
-                    result[i] = new SsbhVertexAttribute(defaultValue, defaultValue, defaultValue, defaultValue);
-                }
+                var name = ConfigureAttribute(renderMesh, meshObject, attribute);
+                usedAttributes.Add(name);
             }
-            return result;
+
+            // Configure unused attributes to just use black.
+            Vector4[] defaultColorSet = CreateDefaultColorSetBuffer(meshObject);
+
+            renderMesh.AddBuffer("defaultBlack", new Vector4[meshObject.VertexCount]);
+            renderMesh.AddBuffer("defaultColorSet", defaultColorSet);
+
+            if (!usedAttributes.Contains("Normal0"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("Normal0", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("Tangent0"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("Tangent0", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("map1"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("map1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("uvSet"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("uvSet1"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("uvSet2"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet2", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("bake1"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("bake1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+
+            if (!usedAttributes.Contains("colorSet1"))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute("colorSet1", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultColorSet", 0, sizeof(float) * 4);
+        }
+
+        private static Vector4[] CreateDefaultColorSetBuffer(MeshObject meshObject)
+        {
+            var defaultColorSet = new Vector4[meshObject.VertexCount];
+            for (int i = 0; i < defaultColorSet.Length; i++)
+            {
+                defaultColorSet[i] = new Vector4(0.5f);
+            }
+
+            return defaultColorSet;
+        }
+
+        private static string ConfigureAttribute(UltimateMesh renderMesh, MeshObject meshObject, MeshAttribute attribute)
+        {
+            var name = attribute.AttributeStrings[0].Name;
+            var valueCount = (ValueCount)UltimateVertexAttribute.GetAttributeFromName(name).ComponentCount;
+            var type = GetGlAttributeType(attribute);
+            var bufferName = $"vertexBuffer{attribute.BufferIndex}";
+            var offset = (attribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + attribute.BufferOffset;
+            var stride = attribute.BufferIndex == 0 ? meshObject.Stride : meshObject.Stride2;
+
+            // Convert colors to floating point.
+            var normalized = attribute.DataType == MeshAttribute.AttributeDataType.Byte;
+
+            renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, valueCount, type, normalized), bufferName, offset, stride);
+            return name;
         }
 
         private static Dictionary<string, int> GetIndexByBoneName(RSkeleton skeleton)
@@ -209,24 +217,15 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static void PrintAttributeInformation(MeshObject meshObject)
-        {
-            System.Diagnostics.Debug.WriteLine(meshObject.Name);
-            foreach (var attribute in meshObject.Attributes)
-            {
-                System.Diagnostics.Debug.WriteLine($"{attribute.Name} {attribute.AttributeStrings[0].Name} {GetGlAttributeType(attribute)} Unk4: {attribute.Unk4} Unk5: {attribute.Unk5}");
-            }
-            System.Diagnostics.Debug.WriteLine("");
-        }
-
         private static VertexAttribPointerType GetGlAttributeType(MeshAttribute meshAttribute)
         {
+            // Render bytes as unsigned because of attribute normalization.
             switch (meshAttribute.DataType)
             {
                 case MeshAttribute.AttributeDataType.Float:
                     return VertexAttribPointerType.Float;
                 case MeshAttribute.AttributeDataType.Byte:
-                    return VertexAttribPointerType.Byte; 
+                    return VertexAttribPointerType.UnsignedByte; 
                 case MeshAttribute.AttributeDataType.HalfFloat:
                     return VertexAttribPointerType.HalfFloat;
                 case MeshAttribute.AttributeDataType.HalfFloat2:
