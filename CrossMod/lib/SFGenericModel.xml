@@ -108,6 +108,15 @@
             <param name="bufferData">The data used to initialize the buffer</param>
             <exception cref="T:System.ArgumentException"><paramref name="bufferName"/> has already been added</exception>
         </member>
+        <member name="M:SFGenericModel.GenericMeshNonInterleaved.AddBuffer(System.String,SFGraphics.GLObjects.BufferObjects.BufferObject)">
+            <summary>
+            Creates and stores a new <see cref="T:SFGraphics.GLObjects.BufferObjects.BufferObject"/> called <paramref name="bufferName"/> with data <paramref name="buffer"/>.
+            Attributes can be associated with this buffer using <see cref="M:SFGenericModel.GenericMeshNonInterleaved.ConfigureAttribute(SFGenericModel.VertexAttributes.VertexAttribute,System.String,System.Int32,System.Int32)"/>.
+            </summary>
+            <param name="bufferName">The name to associate with this buffer</param>
+            <param name="buffer">The buffer containing the vertex data</param>
+            <exception cref="T:System.ArgumentException"><paramref name="bufferName"/> has already been added</exception>
+        </member>
         <member name="M:SFGenericModel.GenericMeshNonInterleaved.ConfigureAttribute(SFGenericModel.VertexAttributes.VertexAttribute,System.String,System.Int32,System.Int32)">
             <summary>
             Configures the data source for a floating point vertex attribute.

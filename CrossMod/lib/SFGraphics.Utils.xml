@@ -50,6 +50,20 @@
             <param name="bufferCapacityInBytes">The buffer's total storage amount in bytes</param>
             <returns><c>true</c> if the access will not exceed the buffer's storage</returns>
         </member>
+        <member name="M:SFGraphics.Utils.BufferValidation.IsValidAccess(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Validates accesses to regions of a portion of contiguous memory.
+            <para></para><para></para>
+            If <paramref name="strideInBytes"/> bytes are read for each element, use <see cref="M:SFGraphics.Utils.BufferValidation.IsValidAccess(System.Int32,System.Int32,System.Int32,System.Int32)"/>
+            or set <paramref name="elementSizeInBytes"/> to <paramref name="strideInBytes"/>.
+            </summary>
+            <param name="offsetInBytes">The start position for the access in bytes</param>
+            <param name="strideInBytes">The stride in bytes or the size of each element if tightly packed</param>
+            <param name="elementSizeInBytes">The size of each element in bytes</param>
+            <param name="elementCount">The number of elements to access</param>
+            <param name="bufferCapacityInBytes">The buffer's total storage amount in bytes</param>
+            <returns><c>true</c> if the access will not exceed the buffer's storage</returns>
+        </member>
         <member name="T:SFGraphics.Utils.ColorUtils">
             <summary>
             Conversion methods for HSV, RGB, color temperature, and system Colors using floats or OpenTK vectors.
