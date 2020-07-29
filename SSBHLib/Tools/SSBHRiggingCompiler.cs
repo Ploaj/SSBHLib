@@ -21,8 +21,8 @@ namespace SSBHLib.Tools
         {
             var group = new MeshRiggingGroup
             {
-                Name = meshName,
-                SubMeshIndex = meshIndex
+                MeshName = meshName,
+                MeshSubIndex = meshIndex
             };
 
             Dictionary<string, List<byte>> boneNameToData = new Dictionary<string, List<byte>>();

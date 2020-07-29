@@ -54,6 +54,7 @@
     <Compile Include="Formats\Meshes\MeshAttribute.cs" />
     <Compile Include="Formats\Meshes\MeshAttributeString.cs" />
     <Compile Include="Formats\Meshes\MeshBoneBuffer.cs" />
+    <Compile Include="Formats\Meshes\MeshBoneInfluence.cs" />
     <Compile Include="Formats\Meshes\MeshBuffer.cs" />
     <Compile Include="Formats\Meshes\MeshObject.cs" />
     <Compile Include="Formats\Meshes\MeshRiggingGroup.cs" />

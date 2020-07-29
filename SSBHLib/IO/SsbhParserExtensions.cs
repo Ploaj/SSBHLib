@@ -799,6 +799,19 @@
             return result;
         }
 
+        public static Formats.Meshes.MeshBoneInfluence ParseMeshBoneInfluence(this SsbhParser parser)
+        {
+            var result = new Formats.Meshes.MeshBoneInfluence();
+            result.VertexIndex = parser.ReadUInt16();      
+            result.Weight = parser.ReadSingle();      
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+
+            return result;
+        }
+
         public static Formats.Meshes.MeshBuffer ParseMeshBuffer(this SsbhParser parser)
         {
             var result = new Formats.Meshes.MeshBuffer();
@@ -827,7 +840,7 @@
         {
             var result = new Formats.Meshes.MeshObject();
             result.Name = parser.ReadOffsetReadString();
-            result.SubMeshIndex = parser.ReadInt64();      
+            result.SubIndex = parser.ReadInt64();      
             result.ParentBoneName = parser.ReadOffsetReadString();
             result.VertexCount = parser.ReadInt32();      
             result.IndexCount = parser.ReadInt32();      
@@ -900,8 +913,8 @@
         public static Formats.Meshes.MeshRiggingGroup ParseMeshRiggingGroup(this SsbhParser parser)
         {
             var result = new Formats.Meshes.MeshRiggingGroup();
-            result.Name = parser.ReadOffsetReadString();
-            result.SubMeshIndex = parser.ReadInt64();      
+            result.MeshName = parser.ReadOffsetReadString();
+            result.MeshSubIndex = parser.ReadInt64();      
             result.Flags = parser.ReadInt64();      
             {
                 // TODO: Extract this code to a method?

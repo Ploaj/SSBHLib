@@ -48,7 +48,7 @@ namespace SSBHLib.Tools
             List<Tuple<string, int, SsbhVertexInfluence[]>> o = new List<Tuple<string, int, SsbhVertexInfluence[]>>(meshFile.Objects.Length);
             foreach (var meshObject in meshFile.Objects)
             {
-                o.Add(new Tuple<string, int, SsbhVertexInfluence[]>(meshObject.Name, (int)meshObject.SubMeshIndex, ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex)));
+                o.Add(new Tuple<string, int, SsbhVertexInfluence[]>(meshObject.Name, (int)meshObject.SubIndex, ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubIndex)));
             }
             return o.ToArray();
         }
@@ -78,6 +78,7 @@ namespace SSBHLib.Tools
                         influences.Add(new SsbhVertexInfluence()
                         {
                             BoneName = boneBuffer.BoneName,
+                            // TODO: Read an array of influence structs and store the string separately?
                             VertexIndex = r.ReadUInt16(),
                             Weight = r.ReadSingle()
                         });
@@ -100,7 +101,7 @@ namespace SSBHLib.Tools
 
             foreach (MeshRiggingGroup g in meshFile.RiggingBuffers)
             {
-                if (g.Name.Equals(meshName) && g.SubMeshIndex == subIndex)
+                if (g.MeshName.Equals(meshName) && g.MeshSubIndex == subIndex)
                 {
                     riggingGroup = g;
                     break;

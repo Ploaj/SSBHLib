@@ -9,6 +9,7 @@ using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CrossMod.Nodes
 {
@@ -88,7 +89,7 @@ namespace CrossMod.Nodes
         private void ConfigureVertexAttributes(UltimateMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
         {
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
-            var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubMeshIndex);
+            var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubIndex);
             var indexByBoneName = GetIndexByBoneName(skeleton);
 
             // TODO: Optimize reading/configuring rigging buffer?
@@ -189,11 +190,13 @@ namespace CrossMod.Nodes
             boneWeights = new Vector4[vertexCount];
             foreach (SsbhVertexInfluence influence in influences)
             {
-                // Some influences refer to bones that don't exist in the skeleton.
+                // TODO: Some influences refer to bones that don't exist in the skeleton.
                 // _eff bones?
                 if (!indexByBoneName.ContainsKey(influence.BoneName))
                     continue;
 
+
+                // HACK: Weird workaround to only select the first 4 influences per vertex.
                 if (boneWeights[influence.VertexIndex].X == 0.0)
                 {
                     boneIndices[influence.VertexIndex].X = indexByBoneName[influence.BoneName];

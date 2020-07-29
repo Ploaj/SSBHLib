@@ -186,7 +186,7 @@ namespace SSBHLib.Tools
                 else
                     meshGroups.Add(mo.Name, 0);
 
-                mo.SubMeshIndex = meshGroups[mo.Name];
+                mo.SubIndex = meshGroups[mo.Name];
                 mo.BoundingSphereX = tempmesh.BoundingSphere.X;
                 mo.BoundingSphereY = tempmesh.BoundingSphere.Y;
                 mo.BoundingSphereZ = tempmesh.BoundingSphere.Z;
@@ -219,7 +219,7 @@ namespace SSBHLib.Tools
 
 
                 // Create Rigging
-                riggingGroups.Add(SsbhRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubMeshIndex, tempmesh.Influences.ToArray()));
+                riggingGroups.Add(SsbhRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubIndex, tempmesh.Influences.ToArray()));
 
                 // set object
                 mesh.Objects[meshIndex++] = mo;
@@ -321,7 +321,7 @@ namespace SSBHLib.Tools
                 new MeshBuffer { Buffer = new byte[0] }
             };
 
-            mesh.RiggingBuffers = riggingGroups.ToArray().OrderBy(o => o.Name, StringComparer.Ordinal).ToArray();
+            mesh.RiggingBuffers = riggingGroups.ToArray().OrderBy(o => o.MeshName, StringComparer.Ordinal).ToArray();
 
             vertexBuffer1.Close();
             vertexBuffer2.Close();
