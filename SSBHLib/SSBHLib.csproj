@@ -49,6 +49,7 @@
     <Compile Include="Formats\Materials\MatlString.cs" />
     <Compile Include="Formats\Materials\MatlUvTransform.cs" />
     <Compile Include="Formats\Materials\MatlVector4.cs" />
+    <Compile Include="Formats\Matrix3x3.cs" />
     <Compile Include="Formats\Meshes\Mesh.cs" />
     <Compile Include="Formats\Materials\Matl.cs" />
     <Compile Include="Formats\Meshes\MeshAttribute.cs" />
@@ -68,8 +69,10 @@
     <Compile Include="Formats\Rendering\ShdrShader.cs" />
     <Compile Include="Formats\Skel.cs" />
     <Compile Include="Formats\SkelBoneEntry.cs" />
-    <Compile Include="Formats\SkelMatrix.cs" />
+    <Compile Include="Formats\Matrix4x4.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
+    <Compile Include="Formats\Vector3.cs" />
+    <Compile Include="Formats\Vector4.cs" />
     <Compile Include="IO\BinaryReaderExtensions.cs" />
     <Compile Include="IO\ParseTag.cs" />
     <Compile Include="IO\SSBHExporter.cs" />

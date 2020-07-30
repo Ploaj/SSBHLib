@@ -11,12 +11,12 @@
 
         public SkelBoneEntry[] BoneEntries { get; set; }
 
-        public SkelMatrix[] WorldTransform { get; set; }
+        public Matrix4x4[] WorldTransform { get; set; }
 
-        public SkelMatrix[] InvWorldTransform { get; set; }
+        public Matrix4x4[] InvWorldTransform { get; set; }
 
-        public SkelMatrix[] Transform { get; set; }
+        public Matrix4x4[] Transform { get; set; }
 
-        public SkelMatrix[] InvTransform { get; set; }
+        public Matrix4x4[] InvTransform { get; set; }
     }
 }

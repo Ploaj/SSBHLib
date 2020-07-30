@@ -58,12 +58,12 @@ namespace CrossMod.Nodes
             return skeleton;
         }
 
-        private static Matrix4 SkelToTkMatrix(SkelMatrix sm)
+        private static Matrix4 SkelToTkMatrix(Matrix4x4 sm)
         {
-            return new Matrix4(sm.M11, sm.M12, sm.M13, sm.M14,
-                sm.M21, sm.M22, sm.M23, sm.M24,
-                sm.M31, sm.M32, sm.M33, sm.M34,
-                sm.M41, sm.M42, sm.M43, sm.M44);
+            return new Matrix4(sm.Row1.X, sm.Row1.Y, sm.Row1.Z, sm.Row1.W,
+                sm.Row2.X, sm.Row2.Y, sm.Row2.Z, sm.Row2.W,
+                sm.Row3.X, sm.Row3.Y, sm.Row3.Z, sm.Row3.W,
+                sm.Row4.X, sm.Row4.Y, sm.Row4.Z, sm.Row4.W);
         }
     }
 }

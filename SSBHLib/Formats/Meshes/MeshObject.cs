@@ -66,36 +66,18 @@
         // TODO: UnkBounding0
         public float UnkBounding0 { get; set; }
 
-        public float BoundingSphereX { get; set; }
-        public float BoundingSphereY { get; set; }
-        public float BoundingSphereZ { get; set; }
+        public Vector3 BoundingSphereCenter { get; set; }
         public float BoundingSphereRadius { get; set; }
         
-        public float MinBoundingBoxX { get; set; }
-        public float MinBoundingBoxY { get; set; }
-        public float MinBoundingBoxZ { get; set; }
+        public Vector3 BoundingBoxMin { get; set; }
 
-        public float MaxBoundingBoxX { get; set; }
-        public float MaxBoundingBoxY { get; set; }
-        public float MaxBoundingBoxZ { get; set; }
+        public Vector3 BoundingBoxMax { get; set; }
         
-        public float ObbCenterX { get; set; }
-        public float ObbCenterY { get; set; }
-        public float ObbCenterZ { get; set; }
+        public Vector3 ObbCenter { get; set; }
 
-        public float M11 { get; set; }
-        public float M12 { get; set; }
-        public float M13 { get; set; }
-        public float M21 { get; set; }
-        public float M22 { get; set; }
-        public float M23 { get; set; }
-        public float M31 { get; set; }
-        public float M32 { get; set; }
-        public float M33 { get; set; }
+        public Matrix3x3 Matrix { get; set; }
 
-        public float ObbSizeX { get; set; }
-        public float ObbSizeY { get; set; }
-        public float ObbSizeZ { get; set; }
+        public Vector3 ObbSize { get; set; }
 
         public MeshAttribute[] Attributes { get; set; }
     }

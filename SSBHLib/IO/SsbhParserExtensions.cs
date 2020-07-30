@@ -156,6 +156,20 @@
             return result;
         }
 
+        public static Formats.Matrix3x3 ParseMatrix3x3(this SsbhParser parser)
+        {
+            var result = new Formats.Matrix3x3();
+            result.Row1 = parser.ParseVector3();      
+            result.Row2 = parser.ParseVector3();      
+            result.Row3 = parser.ParseVector3();      
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+
+            return result;
+        }
+
         public static Formats.Skel ParseSkel(this SsbhParser parser)
         {
             var result = new Formats.Skel();
@@ -189,10 +203,10 @@
                 parser.Seek(absoluteOffset);
 
  
-                result.WorldTransform = new Formats.SkelMatrix[elementCount];
+                result.WorldTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.WorldTransform[i] = parser.ParseSkelMatrix();
+                    result.WorldTransform[i] = parser.ParseMatrix4x4();
                 }
  
                 if (!inline)
@@ -207,10 +221,10 @@
                 parser.Seek(absoluteOffset);
 
  
-                result.InvWorldTransform = new Formats.SkelMatrix[elementCount];
+                result.InvWorldTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.InvWorldTransform[i] = parser.ParseSkelMatrix();
+                    result.InvWorldTransform[i] = parser.ParseMatrix4x4();
                 }
  
                 if (!inline)
@@ -225,10 +239,10 @@
                 parser.Seek(absoluteOffset);
 
  
-                result.Transform = new Formats.SkelMatrix[elementCount];
+                result.Transform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.Transform[i] = parser.ParseSkelMatrix();
+                    result.Transform[i] = parser.ParseMatrix4x4();
                 }
  
                 if (!inline)
@@ -243,10 +257,10 @@
                 parser.Seek(absoluteOffset);
 
  
-                result.InvTransform = new Formats.SkelMatrix[elementCount];
+                result.InvTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.InvTransform[i] = parser.ParseSkelMatrix();
+                    result.InvTransform[i] = parser.ParseMatrix4x4();
                 }
  
                 if (!inline)
@@ -275,25 +289,42 @@
             return result;
         }
 
-        public static Formats.SkelMatrix ParseSkelMatrix(this SsbhParser parser)
+        public static Formats.Matrix4x4 ParseMatrix4x4(this SsbhParser parser)
         {
-            var result = new Formats.SkelMatrix();
-            result.M11 = parser.ReadSingle();      
-            result.M12 = parser.ReadSingle();      
-            result.M13 = parser.ReadSingle();      
-            result.M14 = parser.ReadSingle();      
-            result.M21 = parser.ReadSingle();      
-            result.M22 = parser.ReadSingle();      
-            result.M23 = parser.ReadSingle();      
-            result.M24 = parser.ReadSingle();      
-            result.M31 = parser.ReadSingle();      
-            result.M32 = parser.ReadSingle();      
-            result.M33 = parser.ReadSingle();      
-            result.M34 = parser.ReadSingle();      
-            result.M41 = parser.ReadSingle();      
-            result.M42 = parser.ReadSingle();      
-            result.M43 = parser.ReadSingle();      
-            result.M44 = parser.ReadSingle();      
+            var result = new Formats.Matrix4x4();
+            result.Row1 = parser.ParseVector4();      
+            result.Row2 = parser.ParseVector4();      
+            result.Row3 = parser.ParseVector4();      
+            result.Row4 = parser.ParseVector4();      
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+
+            return result;
+        }
+
+        public static Formats.Vector3 ParseVector3(this SsbhParser parser)
+        {
+            var result = new Formats.Vector3();
+            result.X = parser.ReadSingle();      
+            result.Y = parser.ReadSingle();      
+            result.Z = parser.ReadSingle();      
+
+            long temp = parser.Position;
+            result.PostProcess(parser);
+            parser.Seek(temp);
+
+            return result;
+        }
+
+        public static Formats.Vector4 ParseVector4(this SsbhParser parser)
+        {
+            var result = new Formats.Vector4();
+            result.X = parser.ReadSingle();      
+            result.Y = parser.ReadSingle();      
+            result.Z = parser.ReadSingle();      
+            result.W = parser.ReadSingle();      
 
             long temp = parser.Position;
             result.PostProcess(parser);
@@ -622,15 +653,7 @@
             result.ObbCenterX = parser.ReadSingle();      
             result.ObbCenterY = parser.ReadSingle();      
             result.ObbCenterZ = parser.ReadSingle();      
-            result.M11 = parser.ReadSingle();      
-            result.M12 = parser.ReadSingle();      
-            result.M13 = parser.ReadSingle();      
-            result.M21 = parser.ReadSingle();      
-            result.M22 = parser.ReadSingle();      
-            result.M23 = parser.ReadSingle();      
-            result.M31 = parser.ReadSingle();      
-            result.M32 = parser.ReadSingle();      
-            result.M33 = parser.ReadSingle();      
+            result.Matrix = parser.ParseMatrix3x3();      
             result.ObbSizeX = parser.ReadSingle();      
             result.ObbSizeY = parser.ReadSingle();      
             result.ObbSizeZ = parser.ReadSingle();      
@@ -859,31 +882,13 @@
             result.HasRigging = parser.ReadInt32();      
             result.Unk11 = parser.ReadInt32();      
             result.UnkBounding0 = parser.ReadSingle();      
-            result.BoundingSphereX = parser.ReadSingle();      
-            result.BoundingSphereY = parser.ReadSingle();      
-            result.BoundingSphereZ = parser.ReadSingle();      
+            result.BoundingSphereCenter = parser.ParseVector3();      
             result.BoundingSphereRadius = parser.ReadSingle();      
-            result.MinBoundingBoxX = parser.ReadSingle();      
-            result.MinBoundingBoxY = parser.ReadSingle();      
-            result.MinBoundingBoxZ = parser.ReadSingle();      
-            result.MaxBoundingBoxX = parser.ReadSingle();      
-            result.MaxBoundingBoxY = parser.ReadSingle();      
-            result.MaxBoundingBoxZ = parser.ReadSingle();      
-            result.ObbCenterX = parser.ReadSingle();      
-            result.ObbCenterY = parser.ReadSingle();      
-            result.ObbCenterZ = parser.ReadSingle();      
-            result.M11 = parser.ReadSingle();      
-            result.M12 = parser.ReadSingle();      
-            result.M13 = parser.ReadSingle();      
-            result.M21 = parser.ReadSingle();      
-            result.M22 = parser.ReadSingle();      
-            result.M23 = parser.ReadSingle();      
-            result.M31 = parser.ReadSingle();      
-            result.M32 = parser.ReadSingle();      
-            result.M33 = parser.ReadSingle();      
-            result.ObbSizeX = parser.ReadSingle();      
-            result.ObbSizeY = parser.ReadSingle();      
-            result.ObbSizeZ = parser.ReadSingle();      
+            result.BoundingBoxMin = parser.ParseVector3();      
+            result.BoundingBoxMax = parser.ParseVector3();      
+            result.ObbCenter = parser.ParseVector3();      
+            result.Matrix = parser.ParseMatrix3x3();      
+            result.ObbSize = parser.ParseVector3();      
             {
                 // TODO: Extract this code to a method?
                 bool inline = false; // TODO: Add proper check for this.

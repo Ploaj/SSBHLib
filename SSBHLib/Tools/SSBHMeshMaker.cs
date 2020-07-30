@@ -187,35 +187,24 @@ namespace SSBHLib.Tools
                     meshGroups.Add(mo.Name, 0);
 
                 mo.SubIndex = meshGroups[mo.Name];
-                mo.BoundingSphereX = tempmesh.BoundingSphere.X;
-                mo.BoundingSphereY = tempmesh.BoundingSphere.Y;
-                mo.BoundingSphereZ = tempmesh.BoundingSphere.Z;
+                mo.BoundingSphereCenter = new Formats.Vector3 { X = tempmesh.BoundingSphere.X, Y = tempmesh.BoundingSphere.Y, Z = tempmesh.BoundingSphere.Z };
                 mo.BoundingSphereRadius = tempmesh.BoundingSphere.W;
 
-                mo.MaxBoundingBoxX = tempmesh.BbMax.X;
-                mo.MaxBoundingBoxY = tempmesh.BbMax.Y;
-                mo.MaxBoundingBoxZ = tempmesh.BbMax.Z;
-                mo.MinBoundingBoxX = tempmesh.BbMin.X;
-                mo.MinBoundingBoxY = tempmesh.BbMin.Y;
-                mo.MinBoundingBoxZ = tempmesh.BbMin.Z;
+                mo.BoundingBoxMax = new Formats.Vector3 { X = tempmesh.BbMax.X, Y = tempmesh.BbMax.Y, Z = tempmesh.BbMax.Z };
+                mo.BoundingBoxMin = new Formats.Vector3 { X = tempmesh.BbMin.X, Y = tempmesh.BbMin.Y, Z = tempmesh.BbMin.Z };
+                mo.ObbCenter = new Formats.Vector3 { X = tempmesh.ObbCenter.X, Y = tempmesh.ObbCenter.Y, Z = tempmesh.ObbCenter.Z };
 
-                mo.ObbCenterX = tempmesh.ObbCenter.X;
-                mo.ObbCenterY = tempmesh.ObbCenter.Y;
-                mo.ObbCenterZ = tempmesh.ObbCenter.Z;
+                mo.ObbSize = new Formats.Vector3 { X = tempmesh.ObbSize.X, Y = tempmesh.ObbSize.Y, Z = tempmesh.ObbSize.Z };
 
-                mo.ObbSizeX = tempmesh.ObbSize.X;
-                mo.ObbSizeY = tempmesh.ObbSize.Y;
-                mo.ObbSizeZ = tempmesh.ObbSize.Z;
-
-                mo.M11 = tempmesh.ObbMatrix3X3[0];
-                mo.M12 = tempmesh.ObbMatrix3X3[1];
-                mo.M13 = tempmesh.ObbMatrix3X3[2];
-                mo.M21 = tempmesh.ObbMatrix3X3[3];
-                mo.M22 = tempmesh.ObbMatrix3X3[4];
-                mo.M23 = tempmesh.ObbMatrix3X3[5];
-                mo.M31 = tempmesh.ObbMatrix3X3[6];
-                mo.M32 = tempmesh.ObbMatrix3X3[7];
-                mo.M33 = tempmesh.ObbMatrix3X3[8];
+                mo.Matrix.Row1.X = tempmesh.ObbMatrix3X3[0];
+                mo.Matrix.Row1.Y = tempmesh.ObbMatrix3X3[1];
+                mo.Matrix.Row1.Z = tempmesh.ObbMatrix3X3[2];
+                mo.Matrix.Row2.X = tempmesh.ObbMatrix3X3[3];
+                mo.Matrix.Row2.Y = tempmesh.ObbMatrix3X3[4];
+                mo.Matrix.Row2.Z = tempmesh.ObbMatrix3X3[5];
+                mo.Matrix.Row3.X = tempmesh.ObbMatrix3X3[6];
+                mo.Matrix.Row3.Y = tempmesh.ObbMatrix3X3[7];
+                mo.Matrix.Row3.Z = tempmesh.ObbMatrix3X3[8];
 
 
                 // Create Rigging

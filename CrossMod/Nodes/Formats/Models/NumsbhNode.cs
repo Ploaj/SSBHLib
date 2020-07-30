@@ -64,8 +64,8 @@ namespace CrossMod.Nodes
                 {
                     Name = meshObject.Name,
                     SingleBindName = meshObject.ParentBoneName,
-                    BoundingSphere = new Vector4(meshObject.BoundingSphereX, meshObject.BoundingSphereY,
-                        meshObject.BoundingSphereZ, meshObject.BoundingSphereRadius),
+                    BoundingSphere = new Vector4(meshObject.BoundingSphereCenter.X, meshObject.BoundingSphereCenter.Y,
+                        meshObject.BoundingSphereCenter.Z, meshObject.BoundingSphereRadius),
                     RenderMesh = CreateRenderMesh(skeleton, meshObject, vertexBuffer0, vertexBuffer1),
                 };
 

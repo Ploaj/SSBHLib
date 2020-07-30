@@ -55,7 +55,7 @@ namespace SSBHLib.IO
             { typeof(MeshRiggingGroup), (parser) => parser.ParseMeshRiggingGroup() },
             { typeof(MeshBoneBuffer), (parser) => parser.ParseMeshBoneBuffer() },
             { typeof(SkelBoneEntry), (parser) => parser.ParseSkelBoneEntry() },
-            { typeof(SkelMatrix), (parser) => parser.ParseSkelMatrix() }
+            { typeof(Matrix4x4), (parser) => parser.ParseMatrix4x4() }
         };
 
         public SsbhParser(Stream stream) : base(stream)

@@ -30,15 +30,7 @@ namespace SSBHLib.Formats.Meshes
         public float ObbCenterY { get; set; }
         public float ObbCenterZ { get; set; }
 
-        public float M11 { get; set; }
-        public float M12 { get; set; }
-        public float M13 { get; set; }
-        public float M21 { get; set; }
-        public float M22 { get; set; }
-        public float M23 { get; set; }
-        public float M31 { get; set; }
-        public float M32 { get; set; }
-        public float M33 { get; set; }
+        public Matrix3x3 Matrix { get; set; }
 
         public float ObbSizeX { get; set; }
         public float ObbSizeY { get; set; }
