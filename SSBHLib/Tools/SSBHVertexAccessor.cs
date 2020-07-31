@@ -68,7 +68,7 @@ namespace SSBHLib.Tools
             // TODO: Add option to not convert smaller types to larger types.
             using (var indexReader = new BinaryReader(new MemoryStream(meshFile.PolygonBuffer)))
             {
-                if (meshObject.DrawElementType == 1)
+                if (meshObject.DrawElementType == DrawElementType.UnsignedInt)
                 {
                     indexReader.BaseStream.Position = meshObject.ElementOffset + (startPosition * sizeof(uint));
                     return indexReader.ReadStructs<uint>(count);

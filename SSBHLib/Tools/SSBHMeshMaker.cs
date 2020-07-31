@@ -192,19 +192,19 @@ namespace SSBHLib.Tools
 
                 mo.BoundingBoxMax = new Formats.Vector3 { X = tempmesh.BbMax.X, Y = tempmesh.BbMax.Y, Z = tempmesh.BbMax.Z };
                 mo.BoundingBoxMin = new Formats.Vector3 { X = tempmesh.BbMin.X, Y = tempmesh.BbMin.Y, Z = tempmesh.BbMin.Z };
-                mo.ObbCenter = new Formats.Vector3 { X = tempmesh.ObbCenter.X, Y = tempmesh.ObbCenter.Y, Z = tempmesh.ObbCenter.Z };
+                mo.OrientedBoundingBoxCenter = new Formats.Vector3 { X = tempmesh.ObbCenter.X, Y = tempmesh.ObbCenter.Y, Z = tempmesh.ObbCenter.Z };
 
-                mo.ObbSize = new Formats.Vector3 { X = tempmesh.ObbSize.X, Y = tempmesh.ObbSize.Y, Z = tempmesh.ObbSize.Z };
+                mo.OrientedBoundingBoxSize = new Formats.Vector3 { X = tempmesh.ObbSize.X, Y = tempmesh.ObbSize.Y, Z = tempmesh.ObbSize.Z };
 
-                mo.Matrix.Row1.X = tempmesh.ObbMatrix3X3[0];
-                mo.Matrix.Row1.Y = tempmesh.ObbMatrix3X3[1];
-                mo.Matrix.Row1.Z = tempmesh.ObbMatrix3X3[2];
-                mo.Matrix.Row2.X = tempmesh.ObbMatrix3X3[3];
-                mo.Matrix.Row2.Y = tempmesh.ObbMatrix3X3[4];
-                mo.Matrix.Row2.Z = tempmesh.ObbMatrix3X3[5];
-                mo.Matrix.Row3.X = tempmesh.ObbMatrix3X3[6];
-                mo.Matrix.Row3.Y = tempmesh.ObbMatrix3X3[7];
-                mo.Matrix.Row3.Z = tempmesh.ObbMatrix3X3[8];
+                mo.OrientedBoundingBoxTransform.Row1.X = tempmesh.ObbMatrix3X3[0];
+                mo.OrientedBoundingBoxTransform.Row1.Y = tempmesh.ObbMatrix3X3[1];
+                mo.OrientedBoundingBoxTransform.Row1.Z = tempmesh.ObbMatrix3X3[2];
+                mo.OrientedBoundingBoxTransform.Row2.X = tempmesh.ObbMatrix3X3[3];
+                mo.OrientedBoundingBoxTransform.Row2.Y = tempmesh.ObbMatrix3X3[4];
+                mo.OrientedBoundingBoxTransform.Row2.Z = tempmesh.ObbMatrix3X3[5];
+                mo.OrientedBoundingBoxTransform.Row3.X = tempmesh.ObbMatrix3X3[6];
+                mo.OrientedBoundingBoxTransform.Row3.Y = tempmesh.ObbMatrix3X3[7];
+                mo.OrientedBoundingBoxTransform.Row3.Z = tempmesh.ObbMatrix3X3[8];
 
 
                 // Create Rigging
@@ -287,7 +287,7 @@ namespace SSBHLib.Tools
                 // write index buffer
                 if (tempmesh.VertexCount > ushort.MaxValue)
                 {
-                    mo.DrawElementType = 1;
+                    mo.DrawElementType = DrawElementType.UnsignedInt;
                     foreach (var i in tempmesh.Indices)
                         indexBuffer.Write(i);
                 }

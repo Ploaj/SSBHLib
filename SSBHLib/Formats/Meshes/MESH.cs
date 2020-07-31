@@ -36,7 +36,7 @@ namespace SSBHLib.Formats.Meshes
         public float ObbSizeY { get; set; }
         public float ObbSizeZ { get; set; }
 
-        public float UnkBounding0 { get; set; }
+        public float Unk1 { get; set; }
         
         public MeshObject[] Objects { get; set; }
         

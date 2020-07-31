@@ -657,7 +657,7 @@
             result.ObbSizeX = parser.ReadSingle();      
             result.ObbSizeY = parser.ReadSingle();      
             result.ObbSizeZ = parser.ReadSingle();      
-            result.UnkBounding0 = parser.ReadSingle();      
+            result.Unk1 = parser.ReadSingle();      
             {
                 // TODO: Extract this code to a method?
                 bool inline = false; // TODO: Add proper check for this.
@@ -878,17 +878,17 @@
             result.Unk7 = parser.ReadInt32();      
             result.ElementOffset = parser.ReadUInt32();      
             result.Unk8 = parser.ReadInt32();      
-            result.DrawElementType = parser.ReadInt32();      
+            result.DrawElementType = (Formats.Meshes.DrawElementType)parser.ReadInt32();      
             result.HasRigging = parser.ReadInt32();      
             result.Unk11 = parser.ReadInt32();      
-            result.UnkBounding0 = parser.ReadSingle();      
+            result.Unk12 = parser.ReadInt32();      
             result.BoundingSphereCenter = parser.ParseVector3();      
             result.BoundingSphereRadius = parser.ReadSingle();      
             result.BoundingBoxMin = parser.ParseVector3();      
             result.BoundingBoxMax = parser.ParseVector3();      
-            result.ObbCenter = parser.ParseVector3();      
-            result.Matrix = parser.ParseMatrix3x3();      
-            result.ObbSize = parser.ParseVector3();      
+            result.OrientedBoundingBoxCenter = parser.ParseVector3();      
+            result.OrientedBoundingBoxTransform = parser.ParseMatrix3x3();      
+            result.OrientedBoundingBoxSize = parser.ParseVector3();      
             {
                 // TODO: Extract this code to a method?
                 bool inline = false; // TODO: Add proper check for this.

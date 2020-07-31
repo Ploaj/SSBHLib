@@ -1,5 +1,11 @@
 ﻿namespace SSBHLib.Formats.Meshes
 {
+    public enum DrawElementType : int
+    {
+        UnsignedShort = 0,
+        UnsignedInt = 1
+    }
+
     public class MeshObject : SsbhFile
     {
         /// <summary>
@@ -13,6 +19,9 @@
         /// </summary>
         public long SubIndex { get; set; }
 
+        /// <summary>
+        /// The name of the bone used for single binding.
+        /// </summary>
         public string ParentBoneName { get; set; } = "";
         
         /// <summary>
@@ -28,17 +37,30 @@
         // TODO: Unk2
         public uint Unk2 { get; set; } = 3; //usually 3? maybe means triangles?
         
+        /// <summary>
+        /// The offset in bytes for the start of the data in the first buffer for <see cref="Mesh.VertexBuffers"/>.
+        /// </summary>
         public int VertexOffset { get; set; }
-        
+
+        /// <summary>
+        /// The offset in bytes for the start of the data in the second buffer for <see cref="Mesh.VertexBuffers"/>.
+        /// </summary>
         public int VertexOffset2 { get; set; }
         
+        // TODO: FinalBufferOffset?
         public int FinalBufferOffset { get; set; }
         
         // TODO: BufferIndex
         public int BufferIndex { get; set; } //??
-        
+
+        /// <summary>
+        /// The stride in bytes for each element in the first buffer for <see cref="Mesh.VertexBuffers"/>.
+        /// </summary>
         public int Stride { get; set; }
-        
+
+        /// <summary>
+        /// The stride in bytes for each element in the second buffer for <see cref="Mesh.VertexBuffers"/>.
+        /// </summary>
         public int Stride2 { get; set; }
         
         // TODO: Unk6
@@ -48,23 +70,26 @@
         public int Unk7 { get; set; } // usually 0 long with above?
 
         /// <summary>
-        /// The offset in bytes for the <see cref="Mesh.PolygonBuffer"/>.
+        /// The offset in bytes for the start of the data in <see cref="Mesh.PolygonBuffer"/>.
         /// </summary>
         public uint ElementOffset { get; set; }
 
         // TODO: Unk8
         public int Unk8 { get; set; } = 4;// usually 4? maybe something to do with the final buffer offset?
     
-        // TODO: DrawElementType can be an enum.
-        public int DrawElementType { get; set; } // 1 for uint and 0 for ushort
+        /// <summary>
+        /// The data type of each element in <see cref="Mesh.PolygonBuffer"/>.
+        /// </summary>
+        public DrawElementType DrawElementType { get; set; }
         
         // TODO: HasRigging can be an enum.
         public int HasRigging { get; set; } // 0 for single bind 1 otherwise?
         
+        // TODO: Unk11?
         public int Unk11 { get; set; } // usually 0 long with above?
 
-        // TODO: UnkBounding0
-        public float UnkBounding0 { get; set; }
+        // TODO: Some sort of flags. Values are 0, 1, 256, 257
+        public int Unk12 { get; set; }
 
         public Vector3 BoundingSphereCenter { get; set; }
         public float BoundingSphereRadius { get; set; }
@@ -73,11 +98,12 @@
 
         public Vector3 BoundingBoxMax { get; set; }
         
-        public Vector3 ObbCenter { get; set; }
+        public Vector3 OrientedBoundingBoxCenter { get; set; }
 
-        public Matrix3x3 Matrix { get; set; }
+        // TODO: What does this matrix do?
+        public Matrix3x3 OrientedBoundingBoxTransform { get; set; }
 
-        public Vector3 ObbSize { get; set; }
+        public Vector3 OrientedBoundingBoxSize { get; set; }
 
         public MeshAttribute[] Attributes { get; set; }
     }
