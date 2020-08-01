@@ -34,6 +34,8 @@ namespace CrossModGui.Views
             cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
 
             viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            glViewport.VSync = true;
             glViewport.HandleCreated += GlViewport_HandleCreated;
         }
 
