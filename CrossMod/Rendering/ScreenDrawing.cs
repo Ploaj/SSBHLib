@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.ShapeMeshes;
+using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Textures;
 
 namespace CrossMod.Rendering
@@ -8,18 +9,36 @@ namespace CrossMod.Rendering
     {
         private static ScreenTriangle triangle = null;
 
-        public static void Render(Texture texture)
+        public static void DrawTexture(Texture texture)
         {
             if (triangle == null)
                 triangle = new ScreenTriangle();
 
-            var shader = ShaderContainer.GetShader("RTexture");
+            var shader = ShaderContainer.GetShader("ScreenTexture");
             shader.UseProgram();
-            if (texture != null)
-                shader.SetTexture("image", texture, 0);
 
-            // The colors need to be converted back to sRGB gamma.
-            shader.SetBoolToInt("isSrgb", false);
+            // TODO: Add a sampler to this class and use that instead.
+            // TODO: Samplers are bound from the previous model drawing.
+            GL.BindSampler(0, 0);
+            shader.SetTexture("image", texture, 0);
+
+            triangle.Draw(shader);
+        }
+
+        public static void DrawBloomCombined(Texture colorTex, Texture colorBrightTex)
+        {
+            if (triangle == null)
+                triangle = new ScreenTriangle();
+
+            var shader = ShaderContainer.GetShader("ScreenBloomCombined");
+            shader.UseProgram();
+
+            // TODO: Samplers are bound from the previous model drawing.
+            GL.BindSampler(0, 0);
+            GL.BindSampler(1, 0);
+
+            shader.SetTexture("colorTex", colorTex, 0);
+            shader.SetTexture("colorBrightTex", colorBrightTex, 1);
 
             triangle.Draw(shader);
         }

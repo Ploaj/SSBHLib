@@ -112,7 +112,8 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform vec3 cameraPos;
 
-out vec4 fragColor;
+layout (location = 0) out vec4 fragColor0;
+layout (location = 1) out vec4 fragColor1;
 
 uniform float directLightIntensity;
 uniform float iblIntensity;
@@ -296,7 +297,8 @@ vec3 GetInvalidShaderLabelColor()
 
 void main()
 {
-    fragColor = vec4(0, 0, 0, 1);
+    fragColor0 = vec4(0, 0, 0, 1);
+    fragColor1 = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, map1).xyzw;
     if (hasInkNorMap == 1)
@@ -340,10 +342,10 @@ void main()
     if (hasCustomVector47 == 1)
         prmColor = CustomVector47;
 
-    fragColor.a = max(albedoColor.a * emissionColor.a, CustomVector0.x);
+    fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector0.x);
     // Alpha testing.
     // TODO: Not all shaders have this.
-    if (fragColor.a < 0.5)
+    if (fragColor0.a < 0.5)
         discard;
 
     float roughness = prmColor.g;
@@ -386,51 +388,57 @@ void main()
     vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
 
     if (renderDiffuse == 1)
-        fragColor.rgb += diffusePass * diffuseLight * kDiffuse;
+        fragColor0.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
-        fragColor.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
+        fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
 
     // Emission
     if (renderEmission == 1)
-        fragColor.rgb += EmissionTerm(emissionColor);
+        fragColor0.rgb += EmissionTerm(emissionColor);
 
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
-        fragColor.rgb *= colorSet1.rgb; 
+        fragColor0.rgb *= colorSet1.rgb; 
 
     // TODO: Experimental refraction.
     if (CustomFloat19 > 0.0)
-        fragColor.rgb += refractionIbl * renderExperimental;
+        fragColor0.rgb += refractionIbl * renderExperimental;
 
     // Final color multiplier.
-    fragColor.rgb *= CustomVector8.rgb;
+    fragColor0.rgb *= CustomVector8.rgb;
 
+    // TODO: Move this to post-processing.
     // Gamma correction.
-    fragColor.rgb = GetSrgb(fragColor.rgb);
+    fragColor0.rgb = GetSrgb(fragColor0.rgb);
 
     // Alpha calculations
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
-        fragColor.a *= colorSet1.a;
+        fragColor0.a *= colorSet1.a;
 
     // TODO: Meshes with refraction have some sort of angle fade.
     float f0Refract = GetF0(CustomFloat19 + 1.0);
     vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
     if (CustomFloat19 > 0 && renderExperimental == 1)
-        fragColor.a = transmissionAlpha.x;
+        fragColor0.a = transmissionAlpha.x;
 
     // Premultiplied alpha. 
-    fragColor.a = clamp(fragColor.a, 0, 1); // TODO: krool???
-    fragColor.rgb *= fragColor.a;
+    fragColor0.a = clamp(fragColor0.a, 0, 1); // TODO: krool???
+    fragColor0.rgb *= fragColor0.a;
 
     if (renderWireframe == 1)
     {
         vec3 edgeColor = vec3(1);
         float intensity = WireframeIntensity(edgeDistance);
-        fragColor.rgb = mix(fragColor.rgb, edgeColor, intensity);
+        fragColor0.rgb = mix(fragColor0.rgb, edgeColor, intensity);
     }
+
+    // TODO: Bloom threshold?
+    float luminance = dot(fragColor0.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if (luminance > 1)
+        fragColor1.rgb = fragColor0.rgb;
 
     // TODO ???:
     //gl_FragDepth = gl_FragCoord.z + depthBias;

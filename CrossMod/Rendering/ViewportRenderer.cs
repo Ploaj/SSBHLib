@@ -21,6 +21,7 @@ namespace CrossMod.Rendering
         private float mouseScrollWheel;
 
         private Framebuffer colorHdrFbo;
+        private Framebuffer colorBrightHdrFbo0;
 
         public IRenderable ItemToRender
         {
@@ -110,18 +111,29 @@ namespace CrossMod.Rendering
             // TODO: Resize framebuffers.
             if (colorHdrFbo == null)
                 colorHdrFbo = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height, PixelInternalFormat.Rgba16f, 2);
+            if (colorBrightHdrFbo0 == null)
+                colorBrightHdrFbo0 = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width / 4, glViewport.Height / 4, PixelInternalFormat.Rgba16f);
+
             // WIP Bloom.
             // TODO: The color passes fbos could be organized better.
             colorHdrFbo.Bind();
 
-            SetUpViewportDrawBackground();
+            SetUpViewport();
             DrawItemToRender(currentFrame);
 
             // TODO: This should be included in texture/screen drawing.
             GL.Disable(EnableCap.DepthTest);
 
+            // Render the brighter portions into a smaller buffer.
+            // TODO: Investigate if Ultimate does any blurring.
+            colorBrightHdrFbo0.Bind();
+            GL.Viewport(0, 0, colorBrightHdrFbo0.Width, colorBrightHdrFbo0.Height);
+            ScreenDrawing.DrawTexture(colorHdrFbo.Attachments[1] as Texture2D);
+
+            // TODO: Why does this required so many casts?
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            ScreenDrawing.Render(colorHdrFbo.Attachments[0] as Texture2D);
+            GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
+            ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorBrightHdrFbo0.Attachments[0] as Texture2D);
 
             ParamNodeContainer.Render(Camera);
             ScriptNode?.Render(Camera);
@@ -163,7 +175,7 @@ namespace CrossMod.Rendering
                 glViewport.RestartRendering();
         }
 
-        private static void SetUpViewportDrawBackground()
+        private static void SetUpViewport()
         {
             DrawBackgroundClearBuffers();
             SetRenderState();
@@ -173,7 +185,7 @@ namespace CrossMod.Rendering
         {
             // TODO: Clearing can be skipped if there is a background to draw.
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
+            GL.ClearColor(0, 0, 0, 0);
         }
 
         private static void SetRenderState()
