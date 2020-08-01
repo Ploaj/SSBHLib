@@ -152,9 +152,12 @@ namespace SSBHLib.IO
 
             ParseObjectProperties(tObject);
 
-            long temp = Position;
-            tObject.PostProcess(this);
-            Seek(temp);
+            if (tObject is MatlAttribute attribute)
+            {
+                long temp = Position;
+                attribute.PostProcess(this);
+                Seek(temp);
+            }
 
             return tObject;
         }

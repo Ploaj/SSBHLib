@@ -127,12 +127,18 @@ namespace SSBHLib.IO
             <#=fullAssignmentText#>      
 <#          } #>
 <#      } #>
+<# 
+        if (type == typeof(SSBHLib.Formats.Materials.MatlAttribute))
+        {
+#>
 
-            // TODO: This only needs to be generated for MATL.
+            // This only needs to be generated for MATL attributes.
             long temp = parser.Position;
             result.PostProcess(parser);
             parser.Seek(temp);
-
+<#
+        }
+#>
             return result;
         }
 

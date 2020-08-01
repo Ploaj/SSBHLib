@@ -178,10 +178,6 @@ namespace SSBHLib.IO
                     WriteProperty(prop.GetValue(file));
                 }
             }
-
-
-            // TODO: Post Write is only used for materials.
-            file.PostWrite(this);
         }
 
         private void WriteProperty(object value)

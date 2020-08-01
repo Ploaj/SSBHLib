@@ -40,7 +40,7 @@ namespace SSBHLib.Formats.Materials
             { typeof(MatlVector4), ParamDataType.Vector4},
         };
 
-        public override void PostProcess(SsbhParser parser)
+        public void PostProcess(SsbhParser parser)
         {
             parser.Seek(OffsetToData);
 

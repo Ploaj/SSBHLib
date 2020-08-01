@@ -74,12 +74,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -115,12 +109,6 @@
             result.Unknown20 = parser.ReadSingle();      
             result.Unknown21 = parser.ReadSingle();      
             result.Unknown22 = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -150,12 +138,6 @@
             result.MaxRangeX = parser.ReadSingle();      
             result.MaxRangeY = parser.ReadSingle();      
             result.MaxRangeZ = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -165,12 +147,6 @@
             result.Row1 = parser.ParseVector3();      
             result.Row2 = parser.ParseVector3();      
             result.Row3 = parser.ParseVector3();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -270,12 +246,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -286,12 +256,6 @@
             result.Id = parser.ReadInt16();      
             result.ParentId = parser.ReadInt16();      
             result.Type = parser.ReadInt32();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -302,12 +266,6 @@
             result.Row2 = parser.ParseVector4();      
             result.Row3 = parser.ParseVector4();      
             result.Row4 = parser.ParseVector4();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -317,12 +275,6 @@
             result.X = parser.ReadSingle();      
             result.Y = parser.ReadSingle();      
             result.Z = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -333,12 +285,6 @@
             result.Y = parser.ReadSingle();      
             result.Z = parser.ReadSingle();      
             result.W = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -388,12 +334,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -401,12 +341,6 @@
         {
             var result = new Formats.ModlMaterialName();
             result.MaterialFileName = parser.ReadOffsetReadString();
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -416,12 +350,6 @@
             result.MeshName = parser.ReadOffsetReadString();
             result.SubIndex = parser.ReadInt64();      
             result.MaterialLabel = parser.ReadOffsetReadString();
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -485,12 +413,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -503,12 +425,6 @@
             result.Unk1 = parser.ReadUInt64();      
             result.Unk2 = parser.ReadUInt32();      
             result.Unk3 = parser.ReadUInt32();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -517,12 +433,6 @@
             var result = new Formats.Rendering.NrpdFrameBufferContainer();
             result.FrameBuffer = parser.ParseNrpdFrameBuffer();      
             result.Type = parser.ReadUInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -537,12 +447,6 @@
             result.UnkString = parser.ReadOffsetReadString();
             result.Type4 = parser.ReadUInt64();      
             result.Padding = parser.ReadUInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -566,12 +470,6 @@
             result.Unk14 = parser.ReadInt32();      
             result.Unk15 = parser.ReadInt32();      
             result.Unk16 = parser.ReadInt32();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -580,12 +478,6 @@
             var result = new Formats.Rendering.NrpdStateContainer();
             result.StateObject = parser.ParseNrpdSampler();      
             result.Type = parser.ReadUInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -613,12 +505,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -644,12 +530,6 @@
             result.ShaderFileSize = parser.ReadInt64();      
             result.Padding1 = parser.ReadInt64();      
             result.Padding2 = parser.ReadInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -761,12 +641,6 @@
             }
             result.UnknownOffset = parser.ReadInt64();      
             result.UnknownSize = parser.ReadInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -798,12 +672,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -811,12 +679,6 @@
         {
             var result = new Formats.Meshes.MeshAttributeString();
             result.Name = parser.ReadOffsetReadString();
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -837,12 +699,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -851,12 +707,6 @@
             var result = new Formats.Meshes.MeshBoneInfluence();
             result.VertexIndex = parser.ReadUInt16();      
             result.Weight = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -876,12 +726,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -933,12 +777,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -966,12 +804,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -982,11 +814,10 @@
             result.OffsetToData = parser.Position + parser.ReadInt64();      
             result.DataType = (Formats.Materials.MatlEnums.ParamDataType)parser.ReadUInt64();      
 
-            // TODO: This only needs to be generated for MATL.
+            // This only needs to be generated for MATL attributes.
             long temp = parser.Position;
             result.PostProcess(parser);
             parser.Seek(temp);
-
             return result;
         }
 
@@ -1013,12 +844,6 @@
                     parser.Seek(previousPosition); 
             }
             result.ShaderLabel = parser.ReadOffsetReadString();
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1046,12 +871,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1096,12 +915,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1127,12 +940,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1158,12 +965,6 @@
                 if (!inline)
                     parser.Seek(previousPosition); 
             }
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1176,12 +977,6 @@
             result.Unk3 = parser.ReadUInt32();      
             result.DataOffset = parser.ReadUInt32();      
             result.DataSize = parser.ReadInt64();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1200,12 +995,6 @@
             result.Unk10 = parser.ReadInt32();      
             result.Unk11 = parser.ReadInt32();      
             result.Unk12 = parser.ReadInt32();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1220,12 +1009,6 @@
             result.Unk6 = parser.ReadInt32();      
             result.Unk7 = parser.ReadInt32();      
             result.Unk8 = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1246,12 +1029,6 @@
             result.Unk12 = parser.ReadInt32();      
             result.LodBias = parser.ReadSingle();      
             result.MaxAnisotropy = parser.ReadInt32();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1259,12 +1036,6 @@
         {
             var result = new Formats.Materials.MatlAttribute.MatlString();
             result.Text = parser.ReadOffsetReadString();
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1276,12 +1047,6 @@
             result.Z = parser.ReadSingle();      
             result.W = parser.ReadSingle();      
             result.V = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
@@ -1292,12 +1057,6 @@
             result.Y = parser.ReadSingle();      
             result.Z = parser.ReadSingle();      
             result.W = parser.ReadSingle();      
-
-            // TODO: This only needs to be generated for MATL.
-            long temp = parser.Position;
-            result.PostProcess(parser);
-            parser.Seek(temp);
-
             return result;
         }
 
