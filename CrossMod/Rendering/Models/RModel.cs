@@ -3,6 +3,7 @@ using OpenTK;
 using SFGenericModel.Materials;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
+using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Models
@@ -121,7 +122,7 @@ namespace CrossMod.Rendering.Models
         private void DrawMeshes(RSkeleton skeleton, Shader currentShader)
         {
             // TODO: _near, _far
-            GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes);
+            GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial previousMaterial = null;
@@ -132,26 +133,48 @@ namespace CrossMod.Rendering.Models
                 previousMaterial = m.Material;
             }
 
-            // Shader labels with "_sort" get rendered in a second pass for proper alpha blending.
+            // Shader labels with _sort or _far get rendered in a second pass for proper alpha blending.
+            foreach (RMesh m in farMeshes)
+            {
+                DrawMesh(m, skeleton, currentShader, previousMaterial);
+                previousMaterial = m.Material;
+            }
+
             foreach (RMesh m in sortMeshes)
+            {
+                DrawMesh(m, skeleton, currentShader, previousMaterial);
+                previousMaterial = m.Material;
+            }
+
+            // Shader labels with _near get rendered last after post processing is done.
+            foreach (RMesh m in nearMeshes)
             {
                 DrawMesh(m, skeleton, currentShader, previousMaterial);
                 previousMaterial = m.Material;
             }
         }
 
-        private void GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes)
-        {
+        private void GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes)
+        {          
             opaqueMeshes = new List<RMesh>();
             sortMeshes = new List<RMesh>();
+            nearMeshes = new List<RMesh>();
+            farMeshes = new List<RMesh>();
 
             // Meshes are split into render passes based on the shader label.
+            // TODO: Use a setter in the material class to cache the result.
             foreach (RMesh m in SubMeshes)
             {
-                if (m.Material.HasSortLabel)
+                if (m.Material.ShaderLabel.EndsWith("_far"))
+                    farMeshes.Add(m);
+                else if (m.Material.ShaderLabel.EndsWith("_sort"))
                     sortMeshes.Add(m);
-                else
+                else if (m.Material.ShaderLabel.EndsWith("_near"))
+                    nearMeshes.Add(m);
+                else if (m.Material.ShaderLabel.EndsWith("_opaque"))
                     opaqueMeshes.Add(m);
+                else
+                    throw new NotImplementedException($"{m.Material.ShaderLabel} does not have a recognized sort modifier");
             }
         }
 
