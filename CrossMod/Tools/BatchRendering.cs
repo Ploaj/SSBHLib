@@ -1,5 +1,6 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
+using CrossMod.Rendering.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -106,7 +107,11 @@ namespace CrossMod.Tools
                 {
                     var renderable = (node as NumdlNode);
                     if (renderable != null)
+                    {
+                        var model = renderable.GetRenderableNode() as RNumdl;
+                        model?.GetModel()?.HideExpressionMeshes();
                         return new List<IRenderableNode>() { renderable };
+                    }
                 }
             }
 
