@@ -63,7 +63,7 @@ namespace CrossMod.Rendering.GlTools
 
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
-        public bool IsTransparent => ShaderLabel.EndsWith("_sort");
+        public bool HasSortLabel => ShaderLabel.EndsWith("_sort");
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
 

@@ -120,34 +120,41 @@ namespace CrossMod.Rendering.Models
 
         private void DrawMeshes(RSkeleton skeleton, Shader currentShader)
         {
-            var opaque = new List<RMesh>();
-            var transparentDepthSorted = new List<RMesh>();
+            // TODO: _near, _far
+            GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes);
 
-            // Shader labels with "_sort" get rendered in a second pass.
-            foreach (RMesh m in SubMeshes)
-            {
-                if (m.Material.IsTransparent)
-                    transparentDepthSorted.Add(m);
-                else
-                    opaque.Add(m);
-            }
-
-            // Models often share a material, so skip redundant and costly state changes.
+            // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial previousMaterial = null;
 
-            foreach (RMesh m in opaque)
+            foreach (RMesh m in opaqueMeshes)
             {
                 DrawMesh(m, skeleton, currentShader, previousMaterial);
                 previousMaterial = m.Material;
             }
 
-            // Draw transparent meshes last for proper alpha blending.
-            foreach (RMesh m in transparentDepthSorted)
+            // Shader labels with "_sort" get rendered in a second pass for proper alpha blending.
+            foreach (RMesh m in sortMeshes)
             {
                 DrawMesh(m, skeleton, currentShader, previousMaterial);
                 previousMaterial = m.Material;
             }
         }
+
+        private void GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes)
+        {
+            opaqueMeshes = new List<RMesh>();
+            sortMeshes = new List<RMesh>();
+
+            // Meshes are split into render passes based on the shader label.
+            foreach (RMesh m in SubMeshes)
+            {
+                if (m.Material.HasSortLabel)
+                    sortMeshes.Add(m);
+                else
+                    opaqueMeshes.Add(m);
+            }
+        }
+
         private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, RMaterial previousMaterial)
         {
             // Check if the uniform values have already been set for this shader.
