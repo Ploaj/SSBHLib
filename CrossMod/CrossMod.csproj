@@ -105,6 +105,7 @@
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
     <Compile Include="Rendering\Models\IVec4.cs" />
+    <Compile Include="Rendering\ScreenDrawing.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
     <Compile Include="Nodes\FileTree\DirectoryNode.cs" />

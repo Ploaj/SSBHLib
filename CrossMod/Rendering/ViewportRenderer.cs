@@ -8,8 +8,8 @@ using SFGraphics.Cameras;
 using SFGraphics.Controls;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
+using SFGraphics.GLObjects.Textures;
 using System;
-using System.Linq;
 
 namespace CrossMod.Rendering
 {
@@ -19,6 +19,8 @@ namespace CrossMod.Rendering
         // Previous mouse state.
         private Vector2 mousePosition;
         private float mouseScrollWheel;
+
+        private Framebuffer colorHdrFbo;
 
         public IRenderable ItemToRender
         {
@@ -105,17 +107,34 @@ namespace CrossMod.Rendering
 
         public void RenderNodes(float currentFrame = 0)
         {
-            SetUpViewport();
+            // TODO: Resize framebuffers.
+            if (colorHdrFbo == null)
+                colorHdrFbo = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height, PixelInternalFormat.Rgba16f, 2);
+            // WIP Bloom.
+            // TODO: The color passes fbos could be organized better.
+            colorHdrFbo.Bind();
 
+            SetUpViewportDrawBackground();
+            DrawItemToRender(currentFrame);
+
+            // TODO: This should be included in texture/screen drawing.
+            GL.Disable(EnableCap.DepthTest);
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            ScreenDrawing.Render(colorHdrFbo.Attachments[0] as Texture2D);
+
+            ParamNodeContainer.Render(Camera);
+            ScriptNode?.Render(Camera);
+        }
+
+        private void DrawItemToRender(float currentFrame)
+        {
             if (itemToRender is IRenderableModel model)
             {
                 RenderableAnimation?.SetFrameModel(model.GetModel(), currentFrame);
                 RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), currentFrame);
             }
             itemToRender?.Render(Camera);
-                
-            ParamNodeContainer.Render(Camera);
-            ScriptNode?.Render(Camera);
         }
 
         public System.Drawing.Bitmap GetScreenshot()
@@ -144,7 +163,7 @@ namespace CrossMod.Rendering
                 glViewport.RestartRendering();
         }
 
-        private static void SetUpViewport()
+        private static void SetUpViewportDrawBackground()
         {
             DrawBackgroundClearBuffers();
             SetRenderState();
