@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossModGui", "CrossModGui\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSBHLib.Test", "SSBHLib.Test\SSBHLib.Test.csproj", "{568F562F-3527-416D-BBB5-284A647C1057}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSBHBatchProcess", "SSBHBatchProcess\SSBHBatchProcess.csproj", "{E26070CE-DC5C-49E9-9AFB-B5DB7B883DC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{568F562F-3527-416D-BBB5-284A647C1057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{568F562F-3527-416D-BBB5-284A647C1057}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{568F562F-3527-416D-BBB5-284A647C1057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E26070CE-DC5C-49E9-9AFB-B5DB7B883DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E26070CE-DC5C-49E9-9AFB-B5DB7B883DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E26070CE-DC5C-49E9-9AFB-B5DB7B883DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E26070CE-DC5C-49E9-9AFB-B5DB7B883DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
