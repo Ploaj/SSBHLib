@@ -49,7 +49,7 @@ namespace CrossMod.Rendering
             {
                 foreach (Models.RMesh m in model.SubMeshes)
                 {
-                    if (m.Material != null && m.Material.Name.Equals(a.MaterialName))
+                    if (m.Material != null && m.Material.MaterialLabel.Equals(a.MaterialName))
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {

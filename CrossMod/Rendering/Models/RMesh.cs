@@ -20,7 +20,7 @@ namespace CrossMod.Rendering.Models
         public string SingleBindName { get; set; } = "";
         public int SingleBindIndex { get; set; } = -1;
 
-        public Material Material { get; set; } = null;
+        public RMaterial Material { get; set; } = null;
 
         public bool Visible 
         { 

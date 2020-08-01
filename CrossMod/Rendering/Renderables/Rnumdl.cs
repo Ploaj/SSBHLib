@@ -25,7 +25,7 @@ namespace CrossMod.Rendering
 
         public Matl Material { get; }
 
-        public Dictionary<string, Material> MaterialByName { get; set; } = new Dictionary<string, Material>();
+        public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
         public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, Dictionary<string, RTexture> textureByName)
         {
@@ -61,20 +61,20 @@ namespace CrossMod.Rendering
             foreach (ModlEntry modlEntry in Modl.ModelEntries)
             {
                 // Find the right material and assign it to the render meshes.
-                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out Material meshMaterial))
+                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial meshMaterial))
                 {
                     var matlEntry = Material.Entries.Where(e => e.MaterialLabel == modlEntry.MaterialLabel).FirstOrDefault();
                     if (matlEntry == null)
                         continue;
                     meshMaterial = MatlToMaterial.CreateMaterial(matlEntry, TextureByName);
-                    MaterialByName.Add(meshMaterial.Name, meshMaterial);
+                    MaterialByName.Add(meshMaterial.MaterialLabel, meshMaterial);
                 }
 
                 AssignMaterialToMeshes(modlEntry, meshMaterial);
             }
         }
 
-        private void AssignMaterialToMeshes(ModlEntry modlEntry, Material meshMaterial)
+        private void AssignMaterialToMeshes(ModlEntry modlEntry, RMaterial meshMaterial)
         {
             int subIndex = 0;
             string prevMesh = "";

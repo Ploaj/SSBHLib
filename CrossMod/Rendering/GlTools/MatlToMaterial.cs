@@ -32,11 +32,11 @@ namespace CrossMod.Rendering.GlTools
             EmiSampler = 0x71
         }
 
-        public static Material CreateMaterial(MatlEntry currentEntry, Dictionary<string, RTexture> textureByName)
+        public static RMaterial CreateMaterial(MatlEntry currentEntry, Dictionary<string, RTexture> textureByName)
         {
-            Material meshMaterial = new Material()
+            RMaterial meshMaterial = new RMaterial()
             {
-                Name = currentEntry.MaterialLabel,
+                MaterialLabel = currentEntry.MaterialLabel,
                 ShaderLabel = currentEntry.ShaderLabel,
                 TextureByName = textureByName
             };
@@ -84,7 +84,7 @@ namespace CrossMod.Rendering.GlTools
 
             return meshMaterial;
         }
-        private static void SetSamplerInformation(Material material, MatlAttribute a)
+        private static void SetSamplerInformation(RMaterial material, MatlAttribute a)
         {
             var samplerStruct = (MatlAttribute.MatlSampler)a.DataObject;
 
@@ -107,14 +107,14 @@ namespace CrossMod.Rendering.GlTools
             material.samplerByParamId[a.ParamId] = sampler;
         }
 
-        private static void SetRasterizerState(Material meshMaterial, MatlAttribute a)
+        private static void SetRasterizerState(RMaterial meshMaterial, MatlAttribute a)
         {
             var rasterizerState = (MatlAttribute.MatlRasterizerState)a.DataObject;
 
             meshMaterial.DepthBias = rasterizerState.DepthBias;
             meshMaterial.CullMode = MatlToGl.GetCullMode(rasterizerState.CullMode);
         }
-        private static void SetBlendState(Material meshMaterial, MatlAttribute a)
+        private static void SetBlendState(RMaterial meshMaterial, MatlAttribute a)
         {
             // TODO: Add enums for matl type fields that can only have a few values.
             var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
@@ -131,13 +131,11 @@ namespace CrossMod.Rendering.GlTools
             else if (blendState.BlendFactor2 == 6)
                 meshMaterial.BlendDst = BlendingFactor.OneMinusSrcAlpha;
 
-            meshMaterial.IsTransparent = blendState.BlendFactor1 != 0 || blendState.BlendFactor2 != 0;
-
             // TODO: Do both need to be set?
             meshMaterial.UseAlphaSampleCoverage = blendState.Unk7 == 1 || blendState.Unk8 == 1;
         }
 
-        private static void SetTextureParameter(Material meshMaterial, MatlAttribute a)
+        private static void SetTextureParameter(RMaterial meshMaterial, MatlAttribute a)
         {
             // Don't make texture names case sensitive.
             var textureName = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();

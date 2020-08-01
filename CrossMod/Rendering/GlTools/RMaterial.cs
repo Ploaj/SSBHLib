@@ -1,22 +1,21 @@
-﻿using System.Collections.Generic;
-using SFGraphics.GLObjects.Textures;
-using SFGenericModel.Materials;
+﻿using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using SSBHLib.Formats.Materials;
+using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Samplers;
-using CrossMod.Rendering.Resources;
 using SFGraphics.GLObjects.Shaders;
-using System;
+using SFGraphics.GLObjects.Textures;
+using SSBHLib.Formats.Materials;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering.GlTools
 {
     /// <summary>
     /// Stores <see cref="MatlEntry"/> material values as OpenGL uniforms and render state.
     /// </summary>
-    public class Material
+    public class RMaterial
     {
-        public string Name { get; set; }
+        public string MaterialLabel { get; set; }
         public string ShaderLabel { get; set; }
 
         private GenericMaterial genericMaterial = null;
@@ -64,7 +63,7 @@ namespace CrossMod.Rendering.GlTools
 
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
-        public bool IsTransparent { get; set; } = false;
+        public bool IsTransparent => ShaderLabel.EndsWith("_sort");
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
 
@@ -120,12 +119,12 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public Material()
+        public RMaterial()
         {
 
         }
 
-        public void SetMaterialUniforms(Shader shader, Material previousMaterial)
+        public void SetMaterialUniforms(Shader shader, RMaterial previousMaterial)
         {
             // TODO: This code could be moved to the constructor.
             if (genericMaterial == null || shouldUpdateTextures)

@@ -139,13 +139,13 @@ namespace CrossModGui.ViewModels
             foreach (var name in rnumdl.TextureByName.Keys)
                 PossibleTextureNames.Add(name);
             // TODO: Restrict the textures used for cube maps.
-            foreach (var name in CrossMod.Rendering.GlTools.Material.DefaultTexturesByName.Keys)
+            foreach (var name in CrossMod.Rendering.GlTools.RMaterial.DefaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
             // TODO: Allow for editing all matl entries and not just materials assigned to meshes.
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
-                var material = new Material { Name = glMaterial.Name, ShaderLabel = glMaterial.ShaderLabel };
+                var material = new Material { Name = glMaterial.MaterialLabel, ShaderLabel = glMaterial.ShaderLabel };
 
                 AddBooleanParams(glMaterial, material);
                 AddFloatParams(glMaterial, material);
@@ -195,7 +195,7 @@ namespace CrossModGui.ViewModels
             Ssbh.TrySaveSsbhFile(outputPath, rnumdl.Material);
         }
 
-        private static void AddTextureParams(CrossMod.Rendering.GlTools.Material mat, Material material)
+        private static void AddTextureParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
         {
             foreach (var param in mat.textureNameByParamId)
             {
@@ -212,7 +212,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static WriteableBitmap GetPreviewImage(CrossMod.Rendering.GlTools.Material mat, MatlEnums.ParamId paramId)
+        private static WriteableBitmap GetPreviewImage(CrossMod.Rendering.GlTools.RMaterial mat, MatlEnums.ParamId paramId)
         {
             // null values will be replaced with a default image in the view.
             if (!mat.textureNameByParamId.ContainsKey(paramId))
@@ -225,7 +225,7 @@ namespace CrossModGui.ViewModels
             return image;
         }
 
-        private static void AddVec4Params(CrossMod.Rendering.GlTools.Material mat, Material material)
+        private static void AddVec4Params(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
         {
             foreach (var param in mat.vec4ByParamId)
             {
@@ -284,7 +284,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static void AddFloatParams(CrossMod.Rendering.GlTools.Material mat, Material material)
+        private static void AddFloatParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
         {
             foreach (var param in mat.floatByParamId)
             {
@@ -301,7 +301,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static void AddBooleanParams(CrossMod.Rendering.GlTools.Material mat, Material material)
+        private static void AddBooleanParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
         {
             foreach (var param in mat.boolByParamId)
             {

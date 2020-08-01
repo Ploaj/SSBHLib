@@ -123,6 +123,7 @@ namespace CrossMod.Rendering.Models
             var opaque = new List<RMesh>();
             var transparentDepthSorted = new List<RMesh>();
 
+            // Shader labels with "_sort" get rendered in a second pass.
             foreach (RMesh m in SubMeshes)
             {
                 if (m.Material.IsTransparent)
@@ -131,11 +132,8 @@ namespace CrossMod.Rendering.Models
                     opaque.Add(m);
             }
 
-            // TODO: Investigate how sorting works in game.
-            //transparentDepthSorted = transparentDepthSorted.OrderBy(m => (Camera.TransformedPosition - m.BoundingSphere.Xyz).Length + m.BoundingSphere.W).ToList();
-
             // Models often share a material, so skip redundant and costly state changes.
-            Material previousMaterial = null;
+            RMaterial previousMaterial = null;
 
             foreach (RMesh m in opaque)
             {
@@ -150,10 +148,10 @@ namespace CrossMod.Rendering.Models
                 previousMaterial = m.Material;
             }
         }
-        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, Material previousMaterial)
+        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, RMaterial previousMaterial)
         {
             // Check if the uniform values have already been set for this shader.
-            if (previousMaterial == null || (m.Material != null && m.Material.Name != previousMaterial.Name))
+            if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
                 m.Material.SetMaterialUniforms(currentShader, previousMaterial);
                 m.Material.SetRenderState();

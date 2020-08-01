@@ -145,7 +145,7 @@
     <Compile Include="Rendering\Interfaces\IRenderable.cs" />
     <Compile Include="Rendering\Interfaces\IRenderableAnimation.cs" />
     <Compile Include="Rendering\Interfaces\IRenderableModel.cs" />
-    <Compile Include="Rendering\GlTools\Material.cs" />
+    <Compile Include="Rendering\GlTools\RMaterial.cs" />
     <Compile Include="Rendering\RenderSettings.cs" />
     <Compile Include="Rendering\Models\RMesh.cs" />
     <Compile Include="Rendering\Models\RModel.cs" />
