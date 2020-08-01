@@ -4,6 +4,7 @@ using CrossMod.Rendering.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Media;
 
 namespace CrossModGui.ViewModels
 {
@@ -28,44 +29,18 @@ namespace CrossModGui.ViewModels
         public float CurrentFrame
         {
             get => currentFrame;
-            set 
+            set
             {
-                if (value < 0)
-                {
-                    currentFrame = 0;
-                }
-                else if (value > TotalFrames)
-                {
-                    if (ShouldLoopAnimation)
-                    {
-                        currentFrame = 0;
-                    }
-                    else
-                    {
-                        currentFrame = TotalFrames;
-                        IsPlayingAnimation = false;
-                    }
-                }
-                else
-                {
-                    currentFrame = value; 
-                }
-
-                if (Renderer.ScriptNode != null)
-                {
-                    // Workaround for not being able to play scripts backwards.
-                    // TODO: The redundant string parsing in the script node makes this slow.
-                    // Most of the parsing could be cached.
-                    Renderer.ScriptNode.Start();
-                    for (int i = 0; i < CurrentFrame; i++)
-                    {
-                        Renderer.ScriptNode.Update(i);
-                    }
-                }
+                UpdateCurrentFrame(ref currentFrame, value);
+                // Make sure the value is updated when starting playback.
+                renderFrame = currentFrame;
             }
         }
-
         private float currentFrame;
+
+        // The dispatching needed to update the viewmodel from the render thread messes with the framerate. 
+        // Make another field and just updated the viewmodel when starting/stopping playback.
+        private float renderFrame = 0;
 
         public float TotalFrames { get; set; }
 
@@ -84,6 +59,10 @@ namespace CrossModGui.ViewModels
             { 
                 isPlayingAnimation = value;
                 Renderer.IsPlayingAnimation = value;
+
+                // Update the values after stopping animation.
+                if (!IsPlayingAnimation)
+                    CurrentFrame = renderFrame;
             }
         }
         private bool isPlayingAnimation;
@@ -204,10 +183,10 @@ namespace CrossModGui.ViewModels
 
         public void RenderNodes()
         {
-            Renderer.RenderNodes(CurrentFrame);
+            Renderer.RenderNodes(renderFrame);
             if (IsPlayingAnimation)
             {
-                CurrentFrame++;
+                UpdateCurrentFrame(ref renderFrame, renderFrame + 1);
             }
         }
 
@@ -276,6 +255,43 @@ namespace CrossModGui.ViewModels
             }
 
             return rootLevel;
+        }
+
+        // TODO: Move frame logic to another class.
+        private void UpdateCurrentFrame(ref float currentValue, float newValue)
+        {
+            if (newValue < 0)
+            {
+                currentValue = 0;
+            }
+            else if (newValue > TotalFrames)
+            {
+                if (ShouldLoopAnimation)
+                {
+                    currentValue = 0;
+                }
+                else
+                {
+                    currentValue = TotalFrames;
+                    IsPlayingAnimation = false;
+                }
+            }
+            else
+            {
+                currentValue = newValue;
+            }
+
+            if (Renderer.ScriptNode != null)
+            {
+                // Workaround for not being able to play scripts backwards.
+                // TODO: The redundant string parsing in the script node makes this slow.
+                // Most of the parsing could be cached.
+                Renderer.ScriptNode.Start();
+                for (int i = 0; i < CurrentFrame; i++)
+                {
+                    Renderer.ScriptNode.Update(i);
+                }
+            }
         }
     }
 }

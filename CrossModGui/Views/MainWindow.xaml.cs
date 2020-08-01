@@ -35,7 +35,9 @@ namespace CrossModGui.Views
 
             viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
+            // TODO: Enabling vsync results in lower framerates on some CPUs/GPUs.
             glViewport.VSync = true;
+            glViewport.RenderFrameInterval = 16;
             glViewport.HandleCreated += GlViewport_HandleCreated;
         }
 
