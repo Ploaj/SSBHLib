@@ -17,9 +17,9 @@
     {
         public class MatlRasterizerState : SsbhFile
         {
-            public int FillMode { get; set; }
+            public MatlFillMode FillMode { get; set; }
 
-            public int CullMode { get; set; }
+            public MatlCullMode CullMode { get; set; }
 
             public float DepthBias { get; set; }
 

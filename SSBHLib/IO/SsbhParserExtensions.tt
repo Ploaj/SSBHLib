@@ -9,8 +9,12 @@
 <#@ assembly name="$(TargetDir)\SSBHLib.dll" #>
 <#@ import namespace="SSBHLib" #>
 <#   
-// TODO: The assembly has to be rebuilt for the template to work and reflection data may be cached.
-// TODO: Get ENVDTE working to just examine the class source files.
+// TODO: The assembly has to be rebuilt for the template to work.
+// Reflection data may be cached.
+// Workaround for changing types of properties:
+// 1. Comment out the property initialization.
+// 2. Rebuild the assembly.
+// 3. Regenerate the code from this template and build again.
 var assembly = typeof(SsbhFile).Assembly;
 var types = Assembly.GetAssembly(typeof(Ssbh))
                     .GetTypes()
@@ -124,6 +128,7 @@ namespace SSBHLib.IO
 <#          } #>
 <#      } #>
 
+            // TODO: This only needs to be generated for MATL.
             long temp = parser.Position;
             result.PostProcess(parser);
             parser.Seek(temp);

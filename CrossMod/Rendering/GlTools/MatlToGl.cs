@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using SSBHLib.Formats.Materials;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -28,27 +29,30 @@ namespace CrossMod.Rendering.GlTools
             return TextureMinFilter.LinearMipmapLinear;
         }
 
-        public static TextureWrapMode GetWrapMode(int wrapMode)
+        public static TextureWrapMode GetWrapMode(MatlWrapMode wrapMode)
         {
-            if (wrapMode == 0)
+            if (wrapMode == MatlWrapMode.Repeat)
                 return TextureWrapMode.Repeat;
-            if (wrapMode == 1)
+
+            if (wrapMode == MatlWrapMode.ClampToEdge)
                 return TextureWrapMode.ClampToEdge;
-            if (wrapMode == 2)
+
+            if (wrapMode == MatlWrapMode.MirroredRepeat)
                 return TextureWrapMode.MirroredRepeat;
-            if (wrapMode == 3)
+
+            if (wrapMode == MatlWrapMode.ClampToBorder)
                 return TextureWrapMode.ClampToBorder;
 
             return TextureWrapMode.ClampToEdge;
         }
 
-        public static CullFaceMode GetCullMode(int cullMode)
+        public static CullFaceMode GetCullMode(MatlCullMode cullMode)
         {
-            if (cullMode == 0)
+            if (cullMode == MatlCullMode.Back)
                 return CullFaceMode.Back;
-            if (cullMode == 1)
+            if (cullMode == MatlCullMode.Front)
                 return CullFaceMode.Front;
-            if (cullMode == 2)
+            if (cullMode == MatlCullMode.FrontAndBack)
                 return CullFaceMode.FrontAndBack;
 
             return CullFaceMode.Back;

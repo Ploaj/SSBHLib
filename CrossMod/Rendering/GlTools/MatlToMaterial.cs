@@ -114,9 +114,9 @@ namespace CrossMod.Rendering.GlTools
             meshMaterial.DepthBias = rasterizerState.DepthBias;
             meshMaterial.CullMode = MatlToGl.GetCullMode(rasterizerState.CullMode);
         }
+
         private static void SetBlendState(RMaterial meshMaterial, MatlAttribute a)
         {
-            // TODO: Add enums for matl type fields that can only have a few values.
             var blendState = (MatlAttribute.MatlBlendState)a.DataObject;
 
             // TODO: Does "src factor" toggle something in the shader?

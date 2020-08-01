@@ -1,12 +1,20 @@
 ﻿namespace SSBHLib.Formats.Materials
 {
+    public enum MatlWrapMode : int
+    {
+        Repeat = 0,
+        ClampToEdge = 1,
+        MirroredRepeat = 2,
+        ClampToBorder = 3
+    }
+
     public partial class MatlAttribute
     {
         public class MatlSampler : SsbhFile
         {
-            public int WrapS { get; set; }
-            public int WrapT { get; set; }
-            public int WrapR { get; set; }
+            public MatlWrapMode WrapS { get; set; }
+            public MatlWrapMode WrapT { get; set; }
+            public MatlWrapMode WrapR { get; set; }
             public int MinFilter { get; set; }
             public int MagFilter { get; set; }
             public int Unk6 { get; set; }
