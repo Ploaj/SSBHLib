@@ -114,13 +114,14 @@ namespace CrossMod.Rendering
             if (colorBrightHdrFbo0 == null)
                 colorBrightHdrFbo0 = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width / 4, glViewport.Height / 4, PixelInternalFormat.Rgba16f);
 
+            SetUpViewport();
+
             var usePostProcessing = RenderSettings.Instance.ShadingMode == RenderSettings.RenderMode.Shaded;
             // WIP Bloom.
             // TODO: The color passes fbos could be organized better.
             if (usePostProcessing)
                 colorHdrFbo.Bind();
 
-            SetUpViewport();
             DrawItemToRender(currentFrame);
 
             if (usePostProcessing)
@@ -180,17 +181,24 @@ namespace CrossMod.Rendering
                 glViewport.RestartRendering();
         }
 
-        private static void SetUpViewport()
+        private void SetUpViewport()
         {
-            DrawBackgroundClearBuffers();
+            ClearBuffers();
             SetRenderState();
         }
 
-        private static void DrawBackgroundClearBuffers()
+        private void ClearBuffers()
         {
-            // TODO: Clearing can be skipped if there is a background to draw.
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(0, 0, 0, 0);
+
+            colorHdrFbo.Bind();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            colorBrightHdrFbo0.Bind();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         private static void SetRenderState()

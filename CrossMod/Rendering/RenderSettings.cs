@@ -27,7 +27,7 @@ namespace CrossMod.Rendering
         public static RenderSettings Instance { get; } = new RenderSettings();
 
         public bool EnableBloom { get; set; } = true;
-        public float BloomIntensity { get; set; } = 0.01f;
+        public float BloomIntensity { get; set; } = 0.1f;
 
         public bool UseDebugShading { get => ShadingMode != 0; }
 
