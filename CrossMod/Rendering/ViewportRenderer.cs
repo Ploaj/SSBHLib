@@ -133,7 +133,7 @@ namespace CrossMod.Rendering
             // TODO: Why does this required so many casts?
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
-            ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorBrightHdrFbo0.Attachments[0] as Texture2D);
+            ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorHdrFbo.Attachments[1] as Texture2D);
 
             ParamNodeContainer.Render(Camera);
             ScriptNode?.Render(Camera);

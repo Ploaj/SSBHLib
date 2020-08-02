@@ -124,9 +124,6 @@ float WireframeIntensity(vec3 distanceToEdges);
 // Defined in NormalMap.frag.
 vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
 
-// Defined in Gamma.frag.
-vec3 GetSrgb(vec3 linear);
-
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
@@ -411,7 +408,7 @@ void main()
 
     // TODO: Move this to post-processing.
     // Gamma correction.
-    fragColor0.rgb = GetSrgb(fragColor0.rgb);
+    //fragColor0.rgb = GetSrgb(fragColor0.rgb);
 
     // Alpha calculations
     // HACK: Some models have black vertex color for some reason.
@@ -435,10 +432,12 @@ void main()
         fragColor0.rgb = mix(fragColor0.rgb, edgeColor, intensity);
     }
 
-    // TODO: Bloom threshold?
-    float luminance = dot(fragColor0.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if (luminance > 1)
-        fragColor1.rgb = fragColor0.rgb;
+    // Ported bloom code.
+    // TODO: Where do the uniform buffer values come from?
+    float componentMax = max(max(fragColor0.r, max(fragColor0.g, fragColor0.b)), 0.001);
+    float scale = 1 / componentMax;
+    float scale2 = max(0.925 * -0.5 + componentMax, 0);
+    fragColor1.rgb = fragColor0.rgb * scale * scale2 * 6;
 
     // TODO ???:
     //gl_FragDepth = gl_FragCoord.z + depthBias;
