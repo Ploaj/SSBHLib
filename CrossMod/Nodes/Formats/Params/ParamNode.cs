@@ -9,8 +9,16 @@ namespace CrossMod.Nodes
 
         public ParamNode(string path) : base(path)
         {
-            Param = new ParamFile(AbsolutePath);
-            ParamNodeContainer.AddFile(this);
+            try
+            {
+                // TODO: This lacks necessary error checking.
+                Param = new ParamFile(AbsolutePath);
+                ParamNodeContainer.AddFile(this);
+            }
+            catch (System.Exception)
+            {
+
+            }
         }
     }
 }
