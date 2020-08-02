@@ -114,26 +114,31 @@ namespace CrossMod.Rendering
             if (colorBrightHdrFbo0 == null)
                 colorBrightHdrFbo0 = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width / 4, glViewport.Height / 4, PixelInternalFormat.Rgba16f);
 
+            var usePostProcessing = RenderSettings.Instance.ShadingMode == RenderSettings.RenderMode.Shaded;
             // WIP Bloom.
             // TODO: The color passes fbos could be organized better.
-            colorHdrFbo.Bind();
+            if (usePostProcessing)
+                colorHdrFbo.Bind();
 
             SetUpViewport();
             DrawItemToRender(currentFrame);
 
-            // TODO: This should be included in texture/screen drawing.
-            GL.Disable(EnableCap.DepthTest);
+            if (usePostProcessing)
+            {
+                // TODO: This should be included in texture/screen drawing.
+                GL.Disable(EnableCap.DepthTest);
 
-            // Render the brighter portions into a smaller buffer.
-            // TODO: Investigate if Ultimate does any blurring.
-            colorBrightHdrFbo0.Bind();
-            GL.Viewport(0, 0, colorBrightHdrFbo0.Width, colorBrightHdrFbo0.Height);
-            ScreenDrawing.DrawTexture(colorHdrFbo.Attachments[1] as Texture2D);
+                // Render the brighter portions into a smaller buffer.
+                // TODO: Investigate if Ultimate does any blurring.
+                colorBrightHdrFbo0.Bind();
+                GL.Viewport(0, 0, colorBrightHdrFbo0.Width, colorBrightHdrFbo0.Height);
+                ScreenDrawing.DrawTexture(colorHdrFbo.Attachments[1] as Texture2D);
 
-            // TODO: Why does this required so many casts?
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
-            ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorHdrFbo.Attachments[1] as Texture2D);
+                // TODO: Why does this required so many casts?
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
+                ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorHdrFbo.Attachments[1] as Texture2D);
+            }
 
             ParamNodeContainer.Render(Camera);
             ScriptNode?.Render(Camera);
