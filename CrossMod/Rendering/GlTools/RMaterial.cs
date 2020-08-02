@@ -208,8 +208,7 @@ namespace CrossMod.Rendering.GlTools
         private void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
-            // TODO: Check if this cast is safe.
-            SetVec4(uniformBlock, (MatlEnums.ParamId)RenderSettings.Instance.ParamId, new Vector4(0), true);
+            SetVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0), true);
         }
 
         private void SetMaterialParams(UniformBlock uniformBlock)

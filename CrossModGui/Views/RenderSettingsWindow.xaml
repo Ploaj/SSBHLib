@@ -12,12 +12,14 @@
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableBloom}">Enable Bloom</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Lighting" IsExpanded="True">
             <StackPanel>
                 <Grid >
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
@@ -29,9 +31,18 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" Margin="10,2" TextAlignment="Right">Direct Light Intensity</TextBlock>
                     <TextBox Grid.Row="0" Grid.Column="1" Margin="10,2" Text="{Binding DirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Slider Grid.Row="0" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding DirectLightIntensity}"></Slider>
+                    
                     <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,2" TextAlignment="Right">Indirect Light Intensity</TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Slider Grid.Row="1" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,2" TextAlignment="Right">Indirect Light Intensity</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="1" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,2" TextAlignment="Right">Bloom Intensity</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="10,2" Text="{Binding BloomIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Slider Grid.Row="2" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding BloomIntensity}"></Slider>
                 </Grid>
             </StackPanel>
         </Expander>

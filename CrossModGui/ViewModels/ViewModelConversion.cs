@@ -21,7 +21,9 @@ namespace CrossModGui.ViewModels
             settings.DirectLightIntensity = vm.DirectLightIntensity;
             settings.IblIntensity = vm.IndirectLightIntensity;
             if (System.Enum.TryParse(vm.ParamName, out MatlEnums.ParamId paramId))
-                settings.ParamId = (uint)paramId;
+                settings.ParamId = paramId;
+            settings.BloomIntensity = vm.BloomIntensity;
+            settings.EnableBloom = vm.EnableBloom;
         }
 
         public static void SetValues(this Camera camera, CameraSettingsWindowViewModel vm)

@@ -40,6 +40,9 @@ namespace CrossMod.Rendering
             shader.SetTexture("colorTex", colorTex, 0);
             shader.SetTexture("colorBrightTex", colorBrightTex, 1);
 
+            shader.SetBoolToInt("enableBloom", RenderSettings.Instance.EnableBloom);
+            shader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
+
             triangle.Draw(shader);
         }
     }

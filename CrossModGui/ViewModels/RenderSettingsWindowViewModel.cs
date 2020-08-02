@@ -28,6 +28,9 @@ namespace CrossModGui.ViewModels
 
         public RenderSettings.RenderMode SelectedRenderMode { get; set; } = RenderSettings.RenderMode.Shaded;
 
+        public bool EnableBloom { get; set; }
+        public float BloomIntensity { get; set; }
+
         public bool EnableDiffuse { get; set; }
 
         public bool EnableSpecular { get; set; }
@@ -71,6 +74,8 @@ namespace CrossModGui.ViewModels
                 EnableNormalMaps = rhs.RenderNormalMaps,
                 DirectLightIntensity = rhs.DirectLightIntensity,
                 IndirectLightIntensity = rhs.DirectLightIntensity,
+                EnableBloom = rhs.EnableBloom,
+                BloomIntensity = rhs.BloomIntensity
             };
         }
     }
