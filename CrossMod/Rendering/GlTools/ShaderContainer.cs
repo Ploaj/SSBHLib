@@ -53,6 +53,7 @@ namespace CrossMod.Rendering.GlTools
             CreateTextureShader();
             CreateScreenTextureShader();
             CreateScreenBloomCombinedShader();
+            CreateScreenGradientShader();
             CreateSphereShader();
             CreateCapsuleShader();
             CreateLineShader();
@@ -114,6 +115,14 @@ namespace CrossMod.Rendering.GlTools
             shaderLoader.AddShader("ScreenBloomCombined",
                 "texture.vert",
                 "ScreenBloomCombined.frag"
+            );
+        }
+
+        private static void CreateScreenGradientShader()
+        {
+            shaderLoader.AddShader("ScreenGradient",
+                "texture.vert",
+                "ScreenGradient.frag"
             );
         }
 

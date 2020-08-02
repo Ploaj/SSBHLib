@@ -122,6 +122,13 @@ namespace CrossMod.Rendering
             if (usePostProcessing)
                 colorHdrFbo.Bind();
 
+            // TODO: Handle gamma correction automatically.
+            // TODO: Add background color to render settings.
+            GL.Disable(EnableCap.DepthTest);
+            var trainingBackgroundGammaCorrected = (float)Math.Pow(0.9333, 2.2);
+            ScreenDrawing.DrawGradient(new Vector3(trainingBackgroundGammaCorrected), new Vector3(trainingBackgroundGammaCorrected));
+
+            SetRenderState();
             DrawItemToRender(currentFrame);
 
             if (usePostProcessing)
@@ -184,7 +191,6 @@ namespace CrossMod.Rendering
         private void SetUpViewport()
         {
             ClearBuffers();
-            SetRenderState();
         }
 
         private void ClearBuffers()

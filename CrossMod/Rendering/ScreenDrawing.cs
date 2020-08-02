@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.ShapeMeshes;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Textures;
 
@@ -42,6 +43,20 @@ namespace CrossMod.Rendering
 
             shader.SetBoolToInt("enableBloom", RenderSettings.Instance.EnableBloom);
             shader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
+
+            triangle.Draw(shader);
+        }
+
+        public static void DrawGradient(Vector3 colorBottom, Vector3 colorTop)
+        {
+            if (triangle == null)
+                triangle = new ScreenTriangle();
+
+            var shader = ShaderContainer.GetShader("ScreenGradient");
+            shader.UseProgram();
+
+            shader.SetVector3("colorTop", colorTop);
+            shader.SetVector3("colorBottom", colorBottom);
 
             triangle.Draw(shader);
         }
