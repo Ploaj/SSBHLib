@@ -78,9 +78,15 @@ namespace CrossMod.Nodes
             var openNodes = new List<Task>();
             foreach (var node in Nodes)
             {
-                // TODO: Catch exceptions from separate threads.
                 if (node is FileNode file)
+                {
+#if DEBUG
+                    file.Open();
+#else
                     openNodes.Add(Task.Run(() => file.Open()));
+#endif
+
+                }
             }
 
             Task.WaitAll(openNodes.ToArray());
