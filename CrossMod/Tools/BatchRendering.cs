@@ -109,7 +109,7 @@ namespace CrossMod.Tools
                     if (renderable != null)
                     {
                         var model = renderable.GetRenderableNode() as RNumdl;
-                        model?.GetModel()?.HideExpressionMeshes();
+                        model?.RenderModel?.HideExpressionMeshes();
                         return new List<IRenderableNode>() { renderable };
                     }
                 }

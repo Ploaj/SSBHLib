@@ -2,8 +2,7 @@
 {
     public interface IRenderableModel : IRenderable
     {
-        Models.RModel GetModel();
-        RSkeleton GetSkeleton();
-        RTexture[] GetTextures();
+        Models.RModel RenderModel { get; }
+        RSkeleton Skeleton { get; }
     }
 }

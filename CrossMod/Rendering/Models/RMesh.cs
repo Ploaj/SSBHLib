@@ -9,11 +9,14 @@ namespace CrossMod.Rendering.Models
 {
     public class RMesh
     {
+        // TODO: These properties shouldn't be mutable.
         public static Resources.DefaultTextures defaultTextures = null;
 
         public UltimateMesh RenderMesh { get; set; } = null;
 
         public string Name { get; set; }
+
+        public long SubIndex { get; set; }
 
         public Vector4 BoundingSphere { get; set; }
 

@@ -63,6 +63,7 @@ namespace CrossMod.Nodes
                 var rMesh = new RMesh
                 {
                     Name = meshObject.Name,
+                    SubIndex = meshObject.SubIndex,
                     SingleBindName = meshObject.ParentBoneName,
                     BoundingSphere = new Vector4(meshObject.BoundingSphereCenter.X, meshObject.BoundingSphereCenter.Y,
                         meshObject.BoundingSphereCenter.Z, meshObject.BoundingSphereRadius),

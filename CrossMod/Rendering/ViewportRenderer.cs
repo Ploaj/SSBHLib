@@ -68,8 +68,8 @@ namespace CrossMod.Rendering
 
         public void FrameRenderableModels()
         {
-            if (itemToRender is IRenderableModel model && model.GetModel() != null)
-                Camera.FrameBoundingSphere(model.GetModel().BoundingSphere, 0);
+            if (itemToRender is IRenderableModel model && model.RenderModel != null)
+                Camera.FrameBoundingSphere(model.RenderModel.BoundingSphere, 0);
         }
 
         public void UpdateCameraFromMouse()
@@ -109,8 +109,8 @@ namespace CrossMod.Rendering
 
             if (itemToRender is IRenderableModel model)
             {
-                RenderableAnimation?.SetFrameModel(model.GetModel(), currentFrame);
-                RenderableAnimation?.SetFrameSkeleton(model.GetSkeleton(), currentFrame);
+                RenderableAnimation?.SetFrameModel(model.RenderModel, currentFrame);
+                RenderableAnimation?.SetFrameSkeleton(model.Skeleton, currentFrame);
             }
             itemToRender?.Render(Camera);
                 

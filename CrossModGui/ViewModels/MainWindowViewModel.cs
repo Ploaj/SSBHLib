@@ -111,8 +111,8 @@ namespace CrossModGui.ViewModels
             else if (newNode is IRenderableModel renderableModel)
             {
                 RNumdl = renderableModel as RNumdl;
-                AddMeshesToGui(renderableModel.GetModel());
-                AddSkeletonToGui(renderableModel.GetSkeleton());
+                AddMeshesToGui(renderableModel.RenderModel);
+                AddSkeletonToGui(renderableModel.Skeleton);
             }
         }
 
