@@ -34,13 +34,7 @@ namespace CrossMod.Nodes
                 ExtendedMesh.Read(adjb);
             }
 
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
-            {
-                if (ssbhFile is Mesh)
-                {
-                    mesh = (Mesh)ssbhFile;
-                }
-            }
+            Ssbh.TryParseSsbhFile(AbsolutePath, out mesh);
         }
 
         public RModel GetRenderModel(RSkeleton skeleton = null)

@@ -20,13 +20,7 @@ namespace CrossMod.Nodes
         
         public override void Open()
         {
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
-            {
-                if (ssbhFile is Anim anim)
-                {
-                    animation = anim;
-                }
-            }
+            Ssbh.TryParseSsbhFile(AbsolutePath, out animation);
         }
 
         public string GetLightInformation()

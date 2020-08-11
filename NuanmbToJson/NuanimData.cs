@@ -58,9 +58,8 @@ namespace NuanmbToJson
 
         public NuanimData(string path)
         {
-            if (Ssbh.TryParseSsbhFile(path, out SsbhFile ssbhFile))
+            if (Ssbh.TryParseSsbhFile(path, out Anim animation))
             {
-                animation = ssbhFile as Anim;
                 if (animation == null)
                     throw new NullReferenceException("Could not parse file.");
 

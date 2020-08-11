@@ -17,13 +17,7 @@ namespace CrossMod.Nodes
         
         public override void Open()
         {
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
-            {
-                if (ssbhFile is Hlpb)
-                {
-                    helperBones = (Hlpb)ssbhFile;
-                }
-            }
+            Ssbh.TryParseSsbhFile(AbsolutePath, out helperBones);
         }
 
         public void AddToRenderSkeleton(RSkeleton Skeleton)

@@ -82,13 +82,7 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
-            {
-                if (ssbhFile is Modl modl)
-                {
-                    model = modl;
-                }
-            }
+            Ssbh.TryParseSsbhFile(AbsolutePath, out model);
         }
     }
 }

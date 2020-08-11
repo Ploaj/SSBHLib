@@ -16,13 +16,8 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out SsbhFile ssbhFile))
-            {
-                if (ssbhFile is Matl)
-                {
-                    Material = (Matl)ssbhFile;
-                }
-            }
+            if (Ssbh.TryParseSsbhFile(AbsolutePath, out Matl newMaterial))
+                Material = newMaterial;
         }
     }
 }

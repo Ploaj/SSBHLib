@@ -75,7 +75,7 @@ namespace SSBHLib.IO
             return b;
         }
 
-        public bool TryParse(out SsbhFile file)
+        public bool TryParse<T>(out T file) where T : SsbhFile
         {
             file = null;
             if (FileSize < 4)
@@ -92,7 +92,7 @@ namespace SSBHLib.IO
 
             if (parseMethodByMagic.ContainsKey(fileMagic))
             {
-                file = parseMethodByMagic[fileMagic](this);
+                file = (T)parseMethodByMagic[fileMagic](this);
                 return true;
             }
 
@@ -106,7 +106,7 @@ namespace SSBHLib.IO
                         MethodInfo parseMethod = typeof(SsbhParser).GetMethod("Parse");
                         parseMethod = parseMethod.MakeGenericMethod(type);
 
-                        file = (SsbhFile)parseMethod.Invoke(this, null);
+                        file = (T)parseMethod.Invoke(this, null);
                         return true;
                     }
                 }

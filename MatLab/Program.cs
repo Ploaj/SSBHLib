@@ -62,10 +62,8 @@ namespace MatLab
         private static void SerializeMatl(string inputPath, string outputPath, XmlSerializer serializer)
         {
             Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}...");
-            if (Ssbh.TryParseSsbhFile(inputPath, out SsbhFile file))
+            if (Ssbh.TryParseSsbhFile(inputPath, out Matl matlFile))
             {
-                Matl matlFile = (Matl)file;
-
                 MaterialLibrary library = MATLtoLibrary(matlFile);
 
                 using (TextWriter writer = new StringWriter())

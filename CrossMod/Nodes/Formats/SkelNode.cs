@@ -20,13 +20,7 @@ namespace CrossMod.Nodes
 
         public override void Open()
         {
-            if (Ssbh.TryParseSsbhFile(AbsolutePath, out var SSBHFile))
-            {
-                if (SSBHFile is Skel)
-                {
-                    skel = (Skel)SSBHFile;
-                }
-            }
+            Ssbh.TryParseSsbhFile(AbsolutePath, out skel);
         }
 
         public IRenderable GetRenderableNode()
