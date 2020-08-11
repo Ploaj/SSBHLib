@@ -42,7 +42,7 @@ namespace SSBHLib.Formats.Meshes
         
         public int[] BufferSizes { get; set; }
         
-        public long PolygonIndexSize { get; set; } // seems to match index count?
+        public long PolygonIndexSize { get; set; } // TODO: seems to match index count?
         
         public MeshBuffer[] VertexBuffers { get; set; }
         

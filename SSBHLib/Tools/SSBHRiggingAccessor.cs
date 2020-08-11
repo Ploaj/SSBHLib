@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SSBHLib.Tools
 {
@@ -54,7 +55,9 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         public SsbhVertexInfluence[] ReadRiggingBuffer(string meshName, int subIndex)
         {
-            MeshRiggingGroup riggingGroup = FindRiggingGroup(meshName, subIndex);
+            MeshRiggingGroup riggingGroup = meshFile.RiggingBuffers
+              .Where(b => b.MeshName == meshName && b.MeshSubIndex == subIndex)
+              .FirstOrDefault();
 
             if (riggingGroup == null)
                 return new SsbhVertexInfluence[0];
@@ -79,28 +82,6 @@ namespace SSBHLib.Tools
             }
 
             return influences.ToArray();
-        }
-        
-        /// <summary>
-        /// Finds a rigging group for given mesh name and sub index
-        /// </summary>
-        /// <param name="meshName"></param>
-        /// <param name="subIndex"></param>
-        /// <returns>null if not found</returns>
-        private MeshRiggingGroup FindRiggingGroup(string meshName, int subIndex)
-        {
-            MeshRiggingGroup riggingGroup = null;
-
-            foreach (MeshRiggingGroup g in meshFile.RiggingBuffers)
-            {
-                if (g.MeshName.Equals(meshName) && g.MeshSubIndex == subIndex)
-                {
-                    riggingGroup = g;
-                    break;
-                }
-            }
-
-            return riggingGroup;
         }
     }
 }

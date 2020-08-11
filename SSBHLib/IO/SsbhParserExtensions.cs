@@ -14,9 +14,8 @@
             result.VersionMinor = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -27,14 +26,12 @@
                     result.AimEntries[i] = parser.ParseHlpbRotateAim();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -45,34 +42,29 @@
                     result.InterpolationEntries[i] = parser.ParseHlpbRotateInterpolation();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.List1 = parser.ReadStructs<System.Int32>((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.List2 = parser.ReadStructs<System.Int32>((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -158,9 +150,8 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -171,14 +162,12 @@
                     result.BoneEntries[i] = parser.ParseSkelBoneEntry();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -189,14 +178,12 @@
                     result.WorldTransform[i] = parser.ParseMatrix4x4();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -207,14 +194,12 @@
                     result.InvWorldTransform[i] = parser.ParseMatrix4x4();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -225,14 +210,12 @@
                     result.Transform[i] = parser.ParseMatrix4x4();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -243,8 +226,7 @@
                     result.InvTransform[i] = parser.ParseMatrix4x4();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -298,9 +280,8 @@
             result.SkeletonFileName = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -311,16 +292,14 @@
                     result.MaterialFileNames[i] = parser.ParseModlMaterialName();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             result.UnknownFileName = parser.ReadOffsetReadString();
             result.MeshString = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -331,8 +310,7 @@
                     result.ModelEntries[i] = parser.ParseModlEntry();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -361,9 +339,8 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -374,14 +351,12 @@
                     result.FrameBufferContainers[i] = parser.ParseNrpdFrameBufferContainer();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -392,14 +367,12 @@
                     result.StateContainers[i] = parser.ParseNrpdStateContainer();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -410,8 +383,7 @@
                     result.RenderPasses[i] = parser.ParseNrpdRenderPass();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -489,9 +461,8 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -502,8 +473,7 @@
                     result.Shaders[i] = parser.ParseShdrShader();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -516,16 +486,14 @@
             result.Unk2 = parser.ReadUInt32();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.ShaderBinary = parser.ReadBytes((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             result.ShaderFileSize = parser.ReadInt64();      
             result.Padding1 = parser.ReadInt64();      
@@ -560,9 +528,8 @@
             result.Unk1 = parser.ReadSingle();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -573,28 +540,24 @@
                     result.Objects[i] = parser.ParseMeshObject();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.BufferSizes = parser.ReadStructs<System.Int32>((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             result.PolygonIndexSize = parser.ReadInt64();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -605,27 +568,23 @@
                     result.VertexBuffers[i] = parser.ParseMeshBuffer();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.PolygonBuffer = parser.ReadBytes((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -636,8 +595,7 @@
                     result.RiggingBuffers[i] = parser.ParseMeshRiggingGroup();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             result.UnknownOffset = parser.ReadInt64();      
             result.UnknownSize = parser.ReadInt64();      
@@ -656,9 +614,8 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -669,8 +626,7 @@
                     result.AttributeStrings[i] = parser.ParseMeshAttributeString();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -688,16 +644,14 @@
             result.BoneName = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.Data = parser.ReadBytes((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -715,16 +669,14 @@
             var result = new Formats.Meshes.MeshBuffer();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.Buffer = parser.ReadBytes((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -761,9 +713,8 @@
             result.OrientedBoundingBoxSize = parser.ParseVector3();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -774,8 +725,7 @@
                     result.Attributes[i] = parser.ParseMeshAttribute();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -788,9 +738,8 @@
             result.Flags = parser.ReadInt64();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -801,8 +750,7 @@
                     result.Buffers[i] = parser.ParseMeshBoneBuffer();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -827,9 +775,8 @@
             result.MaterialLabel = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -840,8 +787,7 @@
                     result.Attributes[i] = parser.ParseMatlAttribute();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             result.ShaderLabel = parser.ReadOffsetReadString();
             return result;
@@ -855,9 +801,8 @@
             result.MinorVersion = parser.ReadInt16();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -868,8 +813,7 @@
                     result.Entries[i] = parser.ParseMatlEntry();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -886,9 +830,8 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -899,21 +842,18 @@
                     result.Animations[i] = parser.ParseAnimGroup();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
                 result.Buffer = parser.ReadBytes((int)elementCount);
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -924,9 +864,8 @@
             result.Type = (Formats.Animation.AnimType)parser.ReadUInt64();      
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -937,8 +876,7 @@
                     result.Nodes[i] = parser.ParseAnimNode();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }
@@ -949,9 +887,8 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -962,8 +899,7 @@
                     result.Tracks[i] = parser.ParseAnimTrack();
                 }
  
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
             return result;
         }

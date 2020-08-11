@@ -121,7 +121,6 @@ namespace CrossMod.Rendering.Models
 
         private void DrawMeshes(RSkeleton skeleton, Shader currentShader)
         {
-            // TODO: _near, _far
             GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.

@@ -101,9 +101,8 @@ namespace SSBHLib.IO
 #>
             {
                 // TODO: Extract this code to a method?
-                bool inline = false; // TODO: Add proper check for this.
-                long absoluteOffset = parser.GetOffset(inline);
-                long elementCount = parser.ReadInt64(); // TODO: Depends on inline
+                long absoluteOffset = parser.GetOffset(inline: false);
+                long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
 
@@ -118,8 +117,7 @@ namespace SSBHLib.IO
                     result.<#=prop.Name#>[i] = <#=arrayElementParseText#>;
                 }
 <#              } #> 
-                if (!inline)
-                    parser.Seek(previousPosition); 
+                parser.Seek(previousPosition); 
             }
 <#          } else if (prop.PropertyType == typeof(string))  { #>
             result.<#=prop.Name#> = parser.ReadOffsetReadString();
