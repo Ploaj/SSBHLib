@@ -20,9 +20,6 @@ namespace CrossMod.Rendering
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
-        private Framebuffer colorHdrFbo;
-        private Framebuffer colorBrightHdrFbo0;
-
         public IRenderable ItemToRender
         {
             get => itemToRender;
@@ -108,12 +105,6 @@ namespace CrossMod.Rendering
 
         public void RenderNodes(float currentFrame = 0)
         {
-            // TODO: Resize framebuffers.
-            if (colorHdrFbo == null)
-                colorHdrFbo = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height, PixelInternalFormat.Rgba16f, 2);
-            if (colorBrightHdrFbo0 == null)
-                colorBrightHdrFbo0 = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width / 4, glViewport.Height / 4, PixelInternalFormat.Rgba16f);
-
             SetUpViewport();
 
             SetRenderState();
@@ -167,15 +158,8 @@ namespace CrossMod.Rendering
         private void ClearBuffers()
         {
             // TODO: Add background color to render settings.
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 0);
-
-            colorHdrFbo.Bind();
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            colorBrightHdrFbo0.Bind();
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.ClearColor(0.25f, 0.25f, 0.25f, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
