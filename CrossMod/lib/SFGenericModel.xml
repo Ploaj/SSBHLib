@@ -213,6 +213,7 @@
             <param name="uniformName">The name of the uniform inside the uniform block</param>
             <param name="value">The new value for the uniform</param>
             <returns><c>true</c> if <paramref name="uniformName"/> was set successfully</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Setting <paramref name="value"/> would result in an invalid buffer access</exception>
         </member>
         <member name="M:SFGenericModel.Materials.UniformBlock.SetValues``1(System.String,``0[])">
             <summary>
@@ -221,6 +222,7 @@
             <param name="uniformName">The name of the uniform inside the uniform block</param>
             <param name="values">The new value for the uniform</param>
             <returns><c>true</c> if <paramref name="uniformName"/> was set successfully</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Setting <paramref name="values"/> would result in an invalid buffer access</exception>
         </member>
         <member name="T:SFGenericModel.Materials.GenericMaterial">
             <summary>

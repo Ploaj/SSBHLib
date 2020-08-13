@@ -25,8 +25,8 @@
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
             <summary>
-            The minimum time in milliseconds between frames.
-            A value of <c>0</c> unlocks the frame rate but can result in very high CPU usage.
+            The time in milliseconds between the start of each frame update.
+            A value of <c>0</c> unlocks the frame rate but results in very high CPU usage.
             </summary>
         </member>
         <member name="P:SFGraphics.Controls.GLViewport.IsRendering">

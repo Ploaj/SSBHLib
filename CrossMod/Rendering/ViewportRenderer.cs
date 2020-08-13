@@ -116,39 +116,8 @@ namespace CrossMod.Rendering
 
             SetUpViewport();
 
-            // TODO: FBOs aren't working on Intel Integrated currently.
-            bool usePostProcessing = false;
-
-            // WIP Bloom.
-            // TODO: The color passes fbos could be organized better.
-            if (usePostProcessing)
-                colorHdrFbo.Bind();
-
-            // TODO: Handle gamma correction automatically.
-            // TODO: Add background color to render settings.
-            GL.Disable(EnableCap.DepthTest);
-            //var trainingBackgroundGammaCorrected = (float)Math.Pow(0.9333, 2.2);
-            ScreenDrawing.DrawGradient(new Vector3(0.25f), new Vector3(0.25f));
-
             SetRenderState();
             DrawItemToRender(currentFrame);
-
-            if (usePostProcessing)
-            {
-                // TODO: This should be included in texture/screen drawing.
-                GL.Disable(EnableCap.DepthTest);
-
-                // Render the brighter portions into a smaller buffer.
-                // TODO: Investigate if Ultimate does any blurring.
-                colorBrightHdrFbo0.Bind();
-                GL.Viewport(0, 0, colorBrightHdrFbo0.Width, colorBrightHdrFbo0.Height);
-                ScreenDrawing.DrawTexture(colorHdrFbo.Attachments[1] as Texture2D);
-
-                // TODO: Why does this required so many casts?
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
-                ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorHdrFbo.Attachments[1] as Texture2D);
-            }
 
             ParamNodeContainer.Render(Camera);
             ScriptNode?.Render(Camera);
@@ -197,7 +166,8 @@ namespace CrossMod.Rendering
 
         private void ClearBuffers()
         {
-            GL.ClearColor(0, 0, 0, 0);
+            // TODO: Add background color to render settings.
+            GL.ClearColor(0.25f, 0.25f, 0.25f, 0);
 
             colorHdrFbo.Bind();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

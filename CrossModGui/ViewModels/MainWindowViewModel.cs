@@ -79,6 +79,9 @@ namespace CrossModGui.ViewModels
 
         public void Clear()
         {
+            // Pause the rendering thread before modifying any renderables.
+            IsPlayingAnimation = false;
+
             FileTreeItems.Clear();
             BoneTreeItems.Clear();
             MeshListItems.Clear();

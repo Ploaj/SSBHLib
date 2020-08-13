@@ -303,6 +303,16 @@
             <exception cref="T:System.ArgumentOutOfRangeException">The specified range includes data 
             outside the buffer's current capacity.</exception>        
         </member>
+        <member name="M:SFGraphics.GLObjects.BufferObjects.BufferObject.SetSubData``1(``0,System.Int32)">
+            <summary>
+            Initializes a portion of the buffer's data with the specified data.
+            </summary>
+            <typeparam name="T">The type of each item.</typeparam>
+            <param name="data">The data used to initialize the buffer's data.</param>
+            <param name="offsetInBytes">The offset where data replacement will begin</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">The specified range includes data 
+            outside the buffer's current capacity.</exception>        
+        </member>
         <member name="M:SFGraphics.GLObjects.BufferObjects.BufferObject.GetData``1">
             <summary>
             Reads the buffer's data into structs of type <typeparamref name="T"/>.
