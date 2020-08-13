@@ -118,12 +118,18 @@ layout (location = 1) out vec4 fragColor1;
 uniform float directLightIntensity;
 uniform float iblIntensity;
 
+uniform int enableBloom;
+uniform float bloomIntensity;
+
 // Defined in Wireframe.frag.
 float WireframeIntensity(vec3 distanceToEdges);
 
 // Defined in NormalMap.frag.
 vec3 GetBitangent(vec3 normal, vec3 tangent, float tangentSign);
 vec3 GetBumpMapNormal(vec3 normal, vec3 tangent, vec3 bitangent, vec4 norColor);
+
+// Defined in Gamma.frag.
+vec3 GetSrgb(vec3 linear);
 
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
@@ -407,10 +413,6 @@ void main()
     // Final color multiplier.
     fragColor0.rgb *= CustomVector8.rgb;
 
-    // TODO: Move this to post-processing.
-    // Gamma correction.
-    //fragColor0.rgb = GetSrgb(fragColor0.rgb);
-
     // Alpha calculations
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
@@ -439,6 +441,14 @@ void main()
     float scale = 1 / componentMax;
     float scale2 = max(0.925 * -0.5 + componentMax, 0);
     fragColor1.rgb = fragColor0.rgb * scale * scale2 * 6;
+
+    // TODO: Move this to post-processing.
+    // This is a temporary workaround for FBOs not working on Intel.
+    if (enableBloom == 1)
+        fragColor0.rgb += fragColor1.rgb * bloomIntensity;
+
+    // Gamma correction.
+    fragColor0.rgb = GetSrgb(fragColor0.rgb);
 
     // TODO ???:
     //gl_FragDepth = gl_FragCoord.z + depthBias;

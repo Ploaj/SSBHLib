@@ -63,7 +63,7 @@ namespace CrossMod.Rendering.Models
 
             shader.UseProgram();
 
-            SetUniforms(shader);
+            SetRenderSettingsUniforms(shader);
             SetCameraUniforms(camera, shader);
 
             // Bones
@@ -97,7 +97,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetVector3("cameraPos", Camera.TransformedPosition);
         }
 
-        private static void SetUniforms(Shader currentShader)
+        private static void SetRenderSettingsUniforms(Shader currentShader)
         {
             currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
             currentShader.SetInt("renderMode", (int)RenderSettings.Instance.ShadingMode);
@@ -117,6 +117,9 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);
 
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
+
+            currentShader.SetBoolToInt("enableBloom", RenderSettings.Instance.EnableBloom);
+            currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
         }
 
         private void DrawMeshes(RSkeleton skeleton, Shader currentShader)

@@ -116,7 +116,9 @@ namespace CrossMod.Rendering
 
             SetUpViewport();
 
-            var usePostProcessing = RenderSettings.Instance.ShadingMode == RenderSettings.RenderMode.Shaded;
+            // TODO: FBOs aren't working on Intel Integrated currently.
+            bool usePostProcessing = false;
+
             // WIP Bloom.
             // TODO: The color passes fbos could be organized better.
             if (usePostProcessing)
@@ -125,8 +127,8 @@ namespace CrossMod.Rendering
             // TODO: Handle gamma correction automatically.
             // TODO: Add background color to render settings.
             GL.Disable(EnableCap.DepthTest);
-            var trainingBackgroundGammaCorrected = (float)Math.Pow(0.9333, 2.2);
-            ScreenDrawing.DrawGradient(new Vector3(trainingBackgroundGammaCorrected), new Vector3(trainingBackgroundGammaCorrected));
+            //var trainingBackgroundGammaCorrected = (float)Math.Pow(0.9333, 2.2);
+            ScreenDrawing.DrawGradient(new Vector3(0.25f), new Vector3(0.25f));
 
             SetRenderState();
             DrawItemToRender(currentFrame);
