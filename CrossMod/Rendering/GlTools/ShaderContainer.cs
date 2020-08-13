@@ -51,6 +51,9 @@ namespace CrossMod.Rendering.GlTools
             CreateRModelShader();
             CreateRModelUvShader();
             CreateTextureShader();
+            CreateScreenTextureShader();
+            CreateScreenBloomCombinedShader();
+            CreateScreenGradientShader();
             CreateSphereShader();
             CreateCapsuleShader();
             CreateLineShader();
@@ -77,6 +80,7 @@ namespace CrossMod.Rendering.GlTools
         {
             SetUpShaders();
 
+            // TODO: Log errors for all textures.
             var modelShader = GetShader("RModel");
             var debugShader = GetShader("RModelDebug");
             if (!modelShader.LinkStatusIsOk || !debugShader.LinkStatusIsOk)
@@ -96,6 +100,29 @@ namespace CrossMod.Rendering.GlTools
                 "texture.vert",
                 "texture.frag",
                 "Gamma.frag"
+            );
+        }
+
+        private static void CreateScreenTextureShader()
+        {
+            shaderLoader.AddShader("ScreenTexture",
+                "texture.vert",
+                "ScreenTexture.frag"
+            );
+        }
+        private static void CreateScreenBloomCombinedShader()
+        {
+            shaderLoader.AddShader("ScreenBloomCombined",
+                "texture.vert",
+                "ScreenBloomCombined.frag"
+            );
+        }
+
+        private static void CreateScreenGradientShader()
+        {
+            shaderLoader.AddShader("ScreenGradient",
+                "texture.vert",
+                "ScreenGradient.frag"
             );
         }
 

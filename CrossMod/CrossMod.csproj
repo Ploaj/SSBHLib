@@ -40,11 +40,6 @@
       <HintPath>lib\AnimatedGif.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="GenericValueEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\GenericValueEditor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\OpenTK.dll</HintPath>
@@ -105,6 +100,7 @@
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
     <Compile Include="Rendering\Models\IVec4.cs" />
+    <Compile Include="Rendering\ScreenDrawing.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
     <Compile Include="Nodes\FileTree\DirectoryNode.cs" />
@@ -185,10 +181,6 @@
     <Content Include="Lib\AnimatedGif.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\GenericValueEditor.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Lib\GenericValueEditor.xml" />
     <Content Include="Lib\OpenTK.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

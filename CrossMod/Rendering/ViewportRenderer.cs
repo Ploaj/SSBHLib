@@ -8,8 +8,8 @@ using SFGraphics.Cameras;
 using SFGraphics.Controls;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
+using SFGraphics.GLObjects.Textures;
 using System;
-using System.Linq;
 
 namespace CrossMod.Rendering
 {
@@ -19,6 +19,9 @@ namespace CrossMod.Rendering
         // Previous mouse state.
         private Vector2 mousePosition;
         private float mouseScrollWheel;
+
+        private Framebuffer colorHdrFbo;
+        private Framebuffer colorBrightHdrFbo0;
 
         public IRenderable ItemToRender
         {
@@ -105,17 +108,58 @@ namespace CrossMod.Rendering
 
         public void RenderNodes(float currentFrame = 0)
         {
+            // TODO: Resize framebuffers.
+            if (colorHdrFbo == null)
+                colorHdrFbo = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width, glViewport.Height, PixelInternalFormat.Rgba16f, 2);
+            if (colorBrightHdrFbo0 == null)
+                colorBrightHdrFbo0 = new Framebuffer(FramebufferTarget.Framebuffer, glViewport.Width / 4, glViewport.Height / 4, PixelInternalFormat.Rgba16f);
+
             SetUpViewport();
 
+            var usePostProcessing = RenderSettings.Instance.ShadingMode == RenderSettings.RenderMode.Shaded;
+            // WIP Bloom.
+            // TODO: The color passes fbos could be organized better.
+            if (usePostProcessing)
+                colorHdrFbo.Bind();
+
+            // TODO: Handle gamma correction automatically.
+            // TODO: Add background color to render settings.
+            GL.Disable(EnableCap.DepthTest);
+            var trainingBackgroundGammaCorrected = (float)Math.Pow(0.9333, 2.2);
+            ScreenDrawing.DrawGradient(new Vector3(trainingBackgroundGammaCorrected), new Vector3(trainingBackgroundGammaCorrected));
+
+            SetRenderState();
+            DrawItemToRender(currentFrame);
+
+            if (usePostProcessing)
+            {
+                // TODO: This should be included in texture/screen drawing.
+                GL.Disable(EnableCap.DepthTest);
+
+                // Render the brighter portions into a smaller buffer.
+                // TODO: Investigate if Ultimate does any blurring.
+                colorBrightHdrFbo0.Bind();
+                GL.Viewport(0, 0, colorBrightHdrFbo0.Width, colorBrightHdrFbo0.Height);
+                ScreenDrawing.DrawTexture(colorHdrFbo.Attachments[1] as Texture2D);
+
+                // TODO: Why does this required so many casts?
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.Viewport(0, 0, glViewport.Width, glViewport.Height);
+                ScreenDrawing.DrawBloomCombined(colorHdrFbo.Attachments[0] as Texture2D, colorHdrFbo.Attachments[1] as Texture2D);
+            }
+
+            ParamNodeContainer.Render(Camera);
+            ScriptNode?.Render(Camera);
+        }
+
+        private void DrawItemToRender(float currentFrame)
+        {
             if (itemToRender is IRenderableModel model)
             {
                 RenderableAnimation?.SetFrameModel(model.RenderModel, currentFrame);
                 RenderableAnimation?.SetFrameSkeleton(model.Skeleton, currentFrame);
             }
             itemToRender?.Render(Camera);
-                
-            ParamNodeContainer.Render(Camera);
-            ScriptNode?.Render(Camera);
         }
 
         public System.Drawing.Bitmap GetScreenshot()
@@ -144,17 +188,23 @@ namespace CrossMod.Rendering
                 glViewport.RestartRendering();
         }
 
-        private static void SetUpViewport()
+        private void SetUpViewport()
         {
-            DrawBackgroundClearBuffers();
-            SetRenderState();
+            ClearBuffers();
         }
 
-        private static void DrawBackgroundClearBuffers()
+        private void ClearBuffers()
         {
-            // TODO: Clearing can be skipped if there is a background to draw.
+            GL.ClearColor(0, 0, 0, 0);
+
+            colorHdrFbo.Bind();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1);
+
+            colorBrightHdrFbo0.Bind();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         private static void SetRenderState()
