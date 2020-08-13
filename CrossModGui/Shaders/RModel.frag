@@ -121,7 +121,8 @@ uniform float iblIntensity;
 float WireframeIntensity(vec3 distanceToEdges);
 
 // Defined in NormalMap.frag.
-vec3 GetBumpMapNormal(vec3 N, vec3 tangent, vec3 bitangent, vec4 norColor);
+vec3 GetBitangent(vec3 normal, vec3 tangent, float tangentSign);
+vec3 GetBumpMapNormal(vec3 normal, vec3 tangent, vec3 bitangent, vec4 norColor);
 
 // Defined in Gamma.frag.
 vec3 GetSrgb(vec3 linear);
@@ -304,7 +305,7 @@ void main()
 
 
     vec3 fragmentNormal = vertexNormal;
-    vec3 bitangent = normalize(cross(vertexNormal.xyz, tangent.xyz) * tangent.w * -1);
+    vec3 bitangent = GetBitangent(vertexNormal, tangent.xyz, tangent.w);
     if (renderNormalMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
