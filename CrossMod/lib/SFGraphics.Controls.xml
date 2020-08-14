@@ -26,6 +26,7 @@
         <member name="P:SFGraphics.Controls.GLViewport.RenderFrameInterval">
             <summary>
             The time in milliseconds between the start of each frame update.
+            Defaults to 60 fps.
             A value of <c>0</c> unlocks the frame rate but results in very high CPU usage.
             </summary>
         </member>
@@ -49,16 +50,6 @@
             Frees resources if the user forgets to call <see cref="M:SFGraphics.Controls.GLViewport.Dispose"/>.
             </summary>
         </member>
-        <member name="M:SFGraphics.Controls.GLViewport.OnNextFrameSetUp">
-            <summary>
-            Raises the <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> event.
-            </summary>
-        </member>
-        <member name="M:SFGraphics.Controls.GLViewport.RenderFrame">
-            <summary>
-            Renders and displays a frame on the current thread. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> to add custom rendering code.
-            </summary>
-        </member>
         <member name="M:SFGraphics.Controls.GLViewport.RestartRendering">
             <summary>
             Starts or resumes frame updates with interval specified by <see cref="P:SFGraphics.Controls.GLViewport.RenderFrameInterval"/>.
@@ -69,6 +60,16 @@
             <summary>
             Pauses the rendering thread and blocks until the current frame has finished.
             The context is made current on the calling thread.
+            </summary>
+        </member>
+        <member name="M:SFGraphics.Controls.GLViewport.OnNextFrameSetUp">
+            <summary>
+            Raises the <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> event.
+            </summary>
+        </member>
+        <member name="M:SFGraphics.Controls.GLViewport.RenderFrame">
+            <summary>
+            Renders and displays a frame on the current thread. Subscribe to <see cref="E:SFGraphics.Controls.GLViewport.FrameRendering"/> to add custom rendering code.
             </summary>
         </member>
         <member name="M:SFGraphics.Controls.GLViewport.Dispose">

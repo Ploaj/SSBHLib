@@ -74,6 +74,10 @@
       <HintPath>lib\SFGraphics.Controls.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SFGraphics.Timing">
+      <HintPath>lib\SFGraphics.Timing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="SFGraphics.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.Utils.dll</HintPath>
@@ -204,6 +208,10 @@
     <Content Include="Lib\SFGraphics.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\SFGraphics.Timing.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SFGraphics.Timing.xml" />
     <Content Include="Lib\SFGraphics.Utils.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

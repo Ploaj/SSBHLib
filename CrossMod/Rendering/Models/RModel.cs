@@ -67,6 +67,7 @@ namespace CrossMod.Rendering.Models
             SetCameraUniforms(camera, shader);
 
             // Bones
+            // TODO: Null check?
             boneUniformBuffer.BindBlock(shader);
             if (Skeleton != null)
             {
