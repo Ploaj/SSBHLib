@@ -37,7 +37,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,2" IsEnabled="False" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
         <GroupBox DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
