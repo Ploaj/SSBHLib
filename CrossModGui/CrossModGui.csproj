@@ -123,6 +123,12 @@
     <Compile Include="Converters\ColorBrushConverter.cs" />
     <Compile Include="Converters\ImageKeyImageConverter.cs" />
     <Compile Include="Tools\MaterialParamDescriptions.cs" />
+    <Compile Include="UserControls\AnimationBar.xaml.cs">
+      <DependentUpon>AnimationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\FileTreeView.xaml.cs">
+      <DependentUpon>FileTreeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MaterialEditorWindowViewModel.cs" />
@@ -139,6 +145,14 @@
       <DependentUpon>RenderSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\IconDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AnimationBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\FileTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

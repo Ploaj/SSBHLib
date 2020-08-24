@@ -58,16 +58,20 @@ namespace CrossModGui.ViewModels
             set 
             { 
                 isPlayingAnimation = value;
-                Renderer.IsPlayingAnimation = value;
 
-                // Update the values after stopping animation.
-                if (!IsPlayingAnimation)
+                if (isPlayingAnimation)
+                {
+                    Renderer.RestartRendering();
+                }
+                else
+                {
+                    Renderer.PauseRendering();
+                    // Update the values after stopping animation.
                     CurrentFrame = renderFrame;
+                }
             }
         }
         private bool isPlayingAnimation;
-
-        public string PlayAnimationText => IsPlayingAnimation ? "Pause" : "Play";
 
         // TODO: Where to store this value?
         public RNumdl RNumdl { get; set; }

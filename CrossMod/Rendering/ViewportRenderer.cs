@@ -35,8 +35,6 @@ namespace CrossMod.Rendering
 
         public ScriptNode ScriptNode { get; set; }
 
-        public bool IsPlayingAnimation { get; set; }
-
         private readonly GLViewport glViewport;
 
         public Camera Camera { get; } = new Camera() { FarClipPlane = 500000 };

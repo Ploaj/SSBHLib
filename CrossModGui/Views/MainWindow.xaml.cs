@@ -196,15 +196,6 @@ namespace CrossModGui.Views
             RenderFrameIfNeeded();
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.IsPlayingAnimation = !viewModel.IsPlayingAnimation;
-            if (viewModel.IsPlayingAnimation)
-                viewModel.Renderer.RestartRendering();
-            else
-                viewModel.Renderer.PauseRendering();
-        }
-
         private void RenderFrameIfNeeded()
         {
             if (!glViewport.IsRendering)
@@ -226,26 +217,6 @@ namespace CrossModGui.Views
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
             BatchRendering.RenderModels(viewModel.Renderer);
-        }
-
-        private void NextFrame_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.CurrentFrame++;
-        }
-
-        private void LastFrame_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.CurrentFrame = viewModel.TotalFrames;
-        }
-
-        private void PreviousFrame_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.CurrentFrame--;
-        }
-
-        private void FirstFrame_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.CurrentFrame = 0f;
         }
 
         private void glViewport_MouseEnter(object sender, EventArgs e)
