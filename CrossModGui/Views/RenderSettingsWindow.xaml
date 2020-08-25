@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CrossModGui.Views"
+        xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
-        Title="Render Settings" Height="462.188" Width="504.688">
+        Title="Render Settings" Height="489.188" Width="504.688">
     <StackPanel Margin="10">
         <Expander Header="Render Passes" IsExpanded="True">
             <StackPanel>
@@ -17,33 +17,9 @@
         </Expander>
         <Expander Header="Lighting" IsExpanded="True">
             <StackPanel>
-                <Grid >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="10,2" TextAlignment="Right">Direct Light Intensity</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="10,2" Text="{Binding DirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="0" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding DirectLightIntensity}"></Slider>
-                    
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,2" TextAlignment="Right">Indirect Light Intensity</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="1" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="10,2" TextAlignment="Right">Indirect Light Intensity</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,2" Text="{Binding IndirectLightIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="1" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding IndirectLightIntensity}"></Slider>
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,2" TextAlignment="Right">Bloom Intensity</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="10,2" Text="{Binding BloomIntensity, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Slider Grid.Row="2" Grid.Column="2" Margin="10,2" Minimum="0" Maximum="2" Value="{Binding BloomIntensity}"></Slider>
-                </Grid>
+                <usercontrols:LabeledFloatEditor Grid.Row="0" Label="Direct Light Intensity" LabelWidth="150" Value="{Binding DirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
+                <usercontrols:LabeledFloatEditor Grid.Row="1" Label="Indirect Light Intensity" LabelWidth="150" Value="{Binding IndirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
+                <usercontrols:LabeledFloatEditor Grid.Row="2" Label="Bloom Intensity" LabelWidth="150" Value="{Binding BloomIntensity}" Min="0" Max="1"></usercontrols:LabeledFloatEditor>
             </StackPanel>
         </Expander>
         <Expander Header="Materials" IsExpanded="True">

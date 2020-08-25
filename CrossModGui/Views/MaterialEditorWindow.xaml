@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CrossModGui.Views"
+        xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
         Title="Material Editor" Height="800" Width="500">
     <DockPanel Margin="10" LastChildFill="True">
@@ -67,20 +67,8 @@
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.FloatParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="100"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding ParamId}"></TextBlock>
-                                        <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" 
-                                                Value="{Binding Value}" Minimum="{Binding Min}" Maximum="{Binding Max}"></Slider>
-                                    </Grid>
+                                    <usercontrols:LabeledFloatEditor Label="{Binding ParamId}" LabelWidth="120" 
+                                                                     Min="{Binding Min}" Max="{Binding Max}" Value="{Binding Value}"></usercontrols:LabeledFloatEditor>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -89,38 +77,22 @@
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.Vec4Params}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="100"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                            <Rectangle Width="{Binding ActualHeight, ElementName=xValText}" 
-                                                       Height="{Binding ActualHeight, ElementName=xValText}" 
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="{Binding ActualHeight, ElementName=vec4Label}" 
+                                                       Height="{Binding ActualHeight, ElementName=vec4Label}" 
                                                        Fill="{Binding ColorBrush}" Stroke="Black"></Rectangle>
-                                            <TextBlock  HorizontalAlignment="Right" Margin="5,5" Text="{Binding ParamId}"></TextBlock>
+                                            <TextBlock Name="vec4Label" HorizontalAlignment="Right" Margin="5,5" Text="{Binding ParamId}"></TextBlock>
                                         </StackPanel>
-                                        <TextBlock Name="xValText" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label1}"></TextBlock>
-                                        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label2}"></TextBlock>
-                                        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label3}"></TextBlock>
-                                        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2" Text="{Binding Label4}"></TextBlock>
-                                        <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2" Text="{Binding Value1, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding Value2, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="3" Grid.Column="1" Margin="5,2" Text="{Binding Value3, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <TextBox Grid.Row="4" Grid.Column="1" Margin="5,2" Text="{Binding Value4, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                        <Slider Grid.Row="1" Grid.Column="2" Margin="5,2" Value="{Binding Value1}" Minimum="{Binding Min1}" Maximum="{Binding Max1}"></Slider>
-                                        <Slider Grid.Row="2" Grid.Column="2" Margin="5,2" Value="{Binding Value2}" Minimum="{Binding Min2}" Maximum="{Binding Max2}"></Slider>
-                                        <Slider Grid.Row="3" Grid.Column="2" Margin="5,2" Value="{Binding Value3}" Minimum="{Binding Min3}" Maximum="{Binding Max3}"></Slider>
-                                        <Slider Grid.Row="4" Grid.Column="2" Margin="5,2" Value="{Binding Value4}" Minimum="{Binding Min4}" Maximum="{Binding Max4}"></Slider>
-                                    </Grid>
+                                        <usercontrols:LabeledFloatEditor Margin="5,2" Label="{Binding Label1}" LabelWidth="120" 
+                                                                         Value="{Binding Value1}" Min="{Binding Min1}" Max="{Binding Max1}"></usercontrols:LabeledFloatEditor>
+                                        <usercontrols:LabeledFloatEditor Margin="5,2" Label="{Binding Label2}" LabelWidth="120" 
+                                                                         Value="{Binding Value2}" Min="{Binding Min2}" Max="{Binding Max2}"></usercontrols:LabeledFloatEditor>
+                                        <usercontrols:LabeledFloatEditor Margin="5,2" Label="{Binding Label3}" LabelWidth="120" 
+                                                                         Value="{Binding Value3}" Min="{Binding Min3}" Max="{Binding Max3}"></usercontrols:LabeledFloatEditor>
+                                        <usercontrols:LabeledFloatEditor Margin="5,2" Label="{Binding Label4}" LabelWidth="120" 
+                                                                         Value="{Binding Value4}" Min="{Binding Min4}" Max="{Binding Max4}"></usercontrols:LabeledFloatEditor>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -131,13 +103,9 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <!--<ColumnDefinition Width="auto"></ColumnDefinition>-->
                                             <ColumnDefinition Width="120"></ColumnDefinition>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <!--<Image Grid.Column="0" Source="{Binding Image, TargetNullValue={x:Null}}" 
-                                               Width="{Binding ActualHeight, ElementName=textureComboBox}" 
-                                               Height="{Binding ActualHeight, ElementName=textureComboBox}"/>-->
                                         <TextBlock Name="textureLabel" Grid.Column="0" Text="{Binding ParamId}" HorizontalAlignment="Right" Margin="5,2"></TextBlock>
                                         <ComboBox Name="textureComboBox" Grid.Column="1" 
                                           ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
