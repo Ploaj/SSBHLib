@@ -1,22 +1,25 @@
-﻿namespace XMBLib
+﻿using System.Runtime.InteropServices;
+
+namespace XMBLib
 {
     // XMB parsing code adapted from the following python script 
-    // https://github.com/Sammi-Husky/SSBU-TOOLS/blob/master/XMBDec.py
     // MIT License Copyright (c) 2018 Sammi Husky
+    // https://github.com/Sammi-Husky/SSBU-TOOLS/blob/master/XMBDec.py
     // https://github.com/Sammi-Husky/SSBU-TOOLS/blob/master/LICENSE
-    public class Header
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Header
     {
-        public char[] Magic { get; set; }
-        public int NumNodes { get; set; }
-        public int NumValues { get; set; }
-        public int NumProperties { get; set; }
-        public int NumMappedNodes { get; set; }
-        public uint StringsOffset { get; set; }
-        public uint PNodesTable { get; set; }
-        public uint PPropertiesTable { get; set; }
-        public uint PNodeMap { get; set; }
-        public uint PStrNames { get; set; }
-        public uint PStrValues { get; set; }
-        public uint Padding { get; set; }
+        public uint Magic;
+        public uint NodeCount;
+        public uint ValueCount;
+        public uint PropertyCount;
+        public uint MappedNodesCount;
+        public uint StringsOffset;
+        public uint NodesTableOffset;
+        public uint PropertiesTableOffset;
+        public uint NodeMapOffset;
+        public uint NamesOffset;
+        public uint ValuesOffset;
+        public uint Padding;
     }
 }

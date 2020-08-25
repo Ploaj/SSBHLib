@@ -13,12 +13,7 @@ namespace XMBLib
         public XmbEntry Parent { get; set; }
         public string Name { get; set; }
         public short Index { get; set; }
-        public uint NameOffset { get; set; }
-        public ushort NumProps { get; set; }
-        public ushort NumChildren { get; set; }
-        public ushort FirstProp { get; set; }
-        public ushort Unk1 { get; set; }
-        public short ParentIndex { get; set; }
-        public ushort Unk2 { get; set; }
+
+        public EntryData Data { get; set; }
     }
 }

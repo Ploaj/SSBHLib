@@ -23,14 +23,14 @@ namespace SSBHBatchProcess
 
             foreach (var file in Directory.EnumerateFiles(sourceFolder, $"*.xmb", SearchOption.AllDirectories))
             {
-                var xmb = new Xmb(@"F:\Yuzu Games\01006A800016E000\romfs\root\fighter\mario\model\body\c00\model.xmb");
                 try
                 {
+                    var xmb = new Xmb(file);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //Console.WriteLine(file);
-                    //Console.WriteLine(e.Message);
+                    Console.WriteLine(file);
+                    Console.WriteLine(e.Message);
                 }
             }
         }

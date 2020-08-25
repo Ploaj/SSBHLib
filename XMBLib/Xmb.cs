@@ -1,4 +1,4 @@
-﻿using System;
+﻿using SSBHLib.IO;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -16,97 +16,53 @@ namespace XMBLib
         public List<XmbEntry> Nodes { get; } = new List<XmbEntry>();
         public Dictionary<string, int> NodeDict { get; } = new Dictionary<string, int>();
 
-        // TODO: Move this somewhere.
-        // TODO: This code can be shared with SSBHLib
-        // TODO: Have a second option for inline strings?
-        public static string ReadAscii(BinaryReader reader)
-        {
-            var stringValue = new System.Text.StringBuilder();
-
-            byte b = reader.ReadByte();
-            while (b != 0)
-            {
-                stringValue.Append((char)b);
-                b = reader.ReadByte();
-            }
-
-            return stringValue.ToString();
-        }
-
         public Xmb(string path)
         {
             using (var reader = new BinaryReader(File.OpenRead(path)))
             {
-                Header = new Header
+                Header = reader.ReadStruct<Header>();
+
+                for (int x = 0; x < Header.NodeCount; x++)
                 {
-                    // TODO: This could be a struct.
-                    Magic = reader.ReadChars(4),
-                    NumNodes = reader.ReadInt32(),
-                    NumValues = reader.ReadInt32(),
-                    NumProperties = reader.ReadInt32(),
-                    NumMappedNodes = reader.ReadInt32(),
-                    StringsOffset = reader.ReadUInt32(),
-                    PNodesTable = reader.ReadUInt32(),
-                    PPropertiesTable = reader.ReadUInt32(),
-                    PNodeMap = reader.ReadUInt32(),
-                    PStrNames = reader.ReadUInt32(),
-                    PStrValues = reader.ReadUInt32(),
-                    Padding = reader.ReadUInt32()
-                };
+                    reader.BaseStream.Position = Header.NodesTableOffset + x * Marshal.SizeOf(typeof(EntryData));
+                    var entry = new XmbEntry
+                    {
+                        Data = reader.ReadStruct<EntryData>()
+                    };
 
-                for (int x = 0; x < Header.NumNodes; x++)
-                {
-                    // TODO: What is this stride?
-                    reader.BaseStream.Position = Header.PNodesTable + x * 0x10;
-                    var entry = new XmbEntry();
-
-                    // TODO: This could be a struct.
-                    // 0x10 is the size in bytes.
-                    entry.NameOffset = reader.ReadUInt32();
-                    entry.NumProps = reader.ReadUInt16();
-                    entry.NumChildren = reader.ReadUInt16();
-                    entry.FirstProp = reader.ReadUInt16();
-                    entry.Unk1 = reader.ReadUInt16();
-                    entry.ParentIndex = reader.ReadInt16();
-                    entry.Unk2 = reader.ReadUInt16();
-
-                    reader.BaseStream.Position = Header.PStrNames + entry.NameOffset;
-                    entry.Name = ReadAscii(reader);
+                    entry.Name = reader.ReadAscii(Header.NamesOffset + entry.Data.NameOffset);
                     entry.Index = (sbyte)x;
 
-                    for (int y = 0; y < entry.NumProps; y++)
+                    for (int y = 0; y < entry.Data.PropertyCount; y++)
                     {
-                        // TODO: What is this stride?
-                        reader.BaseStream.Position = Header.PPropertiesTable + (entry.FirstProp + y) * 8;
+                        // TODO: This is an array of structs.
+                        reader.BaseStream.Position = Header.PropertiesTableOffset + (entry.Data.FirstProp + y) * sizeof(int) * 2;
                         var strOff1 = reader.ReadUInt32();
                         var strOff2 = reader.ReadUInt32();
-                        reader.BaseStream.Position = Header.PStrNames + strOff1;
-                        var prop = ReadAscii(reader);
-                        reader.BaseStream.Position = Header.PStrValues + strOff2;
-                        entry.Properties[prop] = ReadAscii(reader);
+                        var prop = reader.ReadAscii(Header.NamesOffset + strOff1);
+                        entry.Properties[prop] = reader.ReadAscii(Header.ValuesOffset + strOff2);
                     }
 
                     Nodes.Add(entry);
                 }
 
-                for (int x = 0; x < Header.NumMappedNodes; x++)
+                for (int x = 0; x < Header.MappedNodesCount; x++)
                 {
-                    // TODO: What is this stride?
-                    reader.BaseStream.Position = Header.PNodeMap + x * 8;
-                    var strOff1 = reader.ReadInt32();
+                    // TODO: This is an array of structs.
+                    reader.BaseStream.Position = Header.NodeMapOffset + x * sizeof(int) * 2;
+                    var strOff1 = reader.ReadUInt32();
                     var nodeIndex = reader.ReadInt32();
-                    reader.BaseStream.Position = Header.PStrValues + strOff1;
-                    var nodeId = ReadAscii(reader);
+                    var nodeId = reader.ReadAscii(Header.ValuesOffset + strOff1);
                     NodeDict[nodeId] = nodeIndex;
                 }
 
                 for (int x = 0; x < Nodes.Count; x++)
                 {
                     var entry = Nodes[x];
-                    if (entry.ParentIndex != -1)
+                    if (entry.Data.ParentIndex != -1)
                     {
-                        entry.Parent = Nodes[entry.ParentIndex];
-                        Nodes[entry.ParentIndex].Children.Add(entry);
+                        entry.Parent = Nodes[entry.Data.ParentIndex];
+                        Nodes[entry.Data.ParentIndex].Children.Add(entry);
                     }
                     else
                     {
