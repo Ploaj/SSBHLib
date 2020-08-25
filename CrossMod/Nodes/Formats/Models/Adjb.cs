@@ -3,6 +3,7 @@ using System.IO;
 
 namespace CrossMod.Nodes
 {
+    // TODO: This should go in a separate lib.
     // extra node not specified in the SSBH
     // seems to be triangle adjacency for certain meshes
     public class Adjb

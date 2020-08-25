@@ -6,6 +6,7 @@ namespace CrossMod.Nodes
     /// Base class for all nodes that represent a file system entry.
     /// Contains the string absolute path and an overridable Open() method.
     /// </summary>
+    // TODO: Add the necessary properties instead of inheriting from treenode.
     public class FileNode : TreeNode
     {
         /// <summary>

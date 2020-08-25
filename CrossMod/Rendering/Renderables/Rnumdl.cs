@@ -1,4 +1,5 @@
 ﻿using CrossMod.Nodes;
+using CrossMod.Nodes.Formats.Models;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.Models;
 using SFGraphics.Cameras;
@@ -21,13 +22,19 @@ namespace CrossMod.Rendering
 
         public Matl Material { get; }
 
+        public XmbNode ModelXmb { get; }
+        public XmbNode LodXmb { get; }
+
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, Dictionary<string, RTexture> textureByName)
+        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
+            Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;
             Skeleton = skeleton;
             Material = material;
+            ModelXmb = modelXmb;
+            LodXmb = lodXmb;
             TextureByName = textureByName;
 
             if (meshNode != null)

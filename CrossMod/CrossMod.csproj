@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
+    <Compile Include="Nodes\Formats\Models\XmbNode.cs" />
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
     <Compile Include="Rendering\Models\IVec4.cs" />
     <Compile Include="Rendering\ScreenDrawing.cs" />
@@ -229,6 +230,10 @@
       <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
       <Name>SSBHLib</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\XMBLib\XMBLib.csproj">
+      <Project>{a95f40a2-5645-4e2a-a69d-e9add09fa9d2}</Project>
+      <Name>XMBLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
