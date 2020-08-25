@@ -2,12 +2,12 @@
 {
     public struct EntryData
     {
-        public uint NameOffset;
-        public ushort PropertyCount;
-        public ushort ChildCount;
-        public ushort FirstProp;
-        public ushort Unk1;
-        public short ParentIndex;
-        public ushort Unk2;
+        public uint NameOffset { get; set; }
+        public ushort PropertyCount{ get; set; }
+        public ushort ChildCount{ get; set; }
+        public ushort PropertyStartIndex{ get; set; }
+        public ushort Unk1{ get; set; }
+        public short ParentIndex{ get; set; }
+        public ushort Unk2{ get; set; }
     }
 }

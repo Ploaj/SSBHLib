@@ -33,6 +33,8 @@ namespace SSBHLib.IO
 
         public static string ReadAscii(this BinaryReader reader, uint offset)
         {
+            var originalPosition = reader.BaseStream.Position;
+
             reader.BaseStream.Position = offset;
 
             var stringValue = new System.Text.StringBuilder();
@@ -44,6 +46,7 @@ namespace SSBHLib.IO
                 b = reader.ReadByte();
             }
 
+            reader.BaseStream.Position = originalPosition;
             return stringValue.ToString();
         }
     }

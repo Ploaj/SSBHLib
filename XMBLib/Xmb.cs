@@ -11,6 +11,12 @@ namespace XMBLib
     // https://github.com/Sammi-Husky/SSBU-TOOLS/blob/master/LICENSE
     public class Xmb
     {
+        private struct PropertyData
+        {
+            public uint NameOffset { get; set; }
+            public uint ValueOffset { get; set; }
+        }
+
         public Header Header { get; set; }
         public XmbEntry Root { get; set; }
         public List<XmbEntry> Nodes { get; } = new List<XmbEntry>();
@@ -18,57 +24,80 @@ namespace XMBLib
 
         public Xmb(string path)
         {
+            InitializeFromFile(path);
+        }
+
+        private void InitializeFromFile(string path)
+        {
             using (var reader = new BinaryReader(File.OpenRead(path)))
             {
                 Header = reader.ReadStruct<Header>();
 
-                for (int x = 0; x < Header.NodeCount; x++)
+                reader.BaseStream.Position = Header.NodesTableOffset;
+                var entryData = reader.ReadStructs<EntryData>((int)Header.NodeCount);
+                CreateEntries(reader, entryData);
+
+                CreateMappedNodes(reader);
+
+                CreateParentChildRelationships();
+            }
+        }
+
+        private void CreateMappedNodes(BinaryReader reader)
+        {
+            reader.BaseStream.Position = Header.NodeMapOffset;
+            for (int mappedNodeIndex = 0; mappedNodeIndex < Header.MappedNodesCount; mappedNodeIndex++)
+            {
+                var idOffset = reader.ReadUInt32();
+                var nodeIndex = reader.ReadInt32();
+                var nodeId = reader.ReadAscii(Header.ValuesOffset + idOffset);
+                NodeDict[nodeId] = nodeIndex;
+            }
+        }
+
+        private void CreateParentChildRelationships()
+        {
+            foreach (var entry in Nodes)
+            {
+                if (entry.Data.ParentIndex != -1)
                 {
-                    reader.BaseStream.Position = Header.NodesTableOffset + x * Marshal.SizeOf(typeof(EntryData));
-                    var entry = new XmbEntry
-                    {
-                        Data = reader.ReadStruct<EntryData>()
-                    };
-
-                    entry.Name = reader.ReadAscii(Header.NamesOffset + entry.Data.NameOffset);
-                    entry.Index = (sbyte)x;
-
-                    for (int y = 0; y < entry.Data.PropertyCount; y++)
-                    {
-                        // TODO: This is an array of structs.
-                        reader.BaseStream.Position = Header.PropertiesTableOffset + (entry.Data.FirstProp + y) * sizeof(int) * 2;
-                        var strOff1 = reader.ReadUInt32();
-                        var strOff2 = reader.ReadUInt32();
-                        var prop = reader.ReadAscii(Header.NamesOffset + strOff1);
-                        entry.Properties[prop] = reader.ReadAscii(Header.ValuesOffset + strOff2);
-                    }
-
-                    Nodes.Add(entry);
+                    entry.Parent = Nodes[entry.Data.ParentIndex];
+                    Nodes[entry.Data.ParentIndex].Children.Add(entry);
                 }
-
-                for (int x = 0; x < Header.MappedNodesCount; x++)
+                else
                 {
-                    // TODO: This is an array of structs.
-                    reader.BaseStream.Position = Header.NodeMapOffset + x * sizeof(int) * 2;
-                    var strOff1 = reader.ReadUInt32();
-                    var nodeIndex = reader.ReadInt32();
-                    var nodeId = reader.ReadAscii(Header.ValuesOffset + strOff1);
-                    NodeDict[nodeId] = nodeIndex;
+                    Root = entry;
                 }
+            }
+        }
 
-                for (int x = 0; x < Nodes.Count; x++)
+        private void CreateEntries(BinaryReader reader, EntryData[] entryData)
+        {
+            for (int entryIndex = 0; entryIndex < Header.NodeCount; entryIndex++)
+            {
+                var entry = new XmbEntry
                 {
-                    var entry = Nodes[x];
-                    if (entry.Data.ParentIndex != -1)
-                    {
-                        entry.Parent = Nodes[entry.Data.ParentIndex];
-                        Nodes[entry.Data.ParentIndex].Children.Add(entry);
-                    }
-                    else
-                    {
-                        Root = entry;
-                    }
-                }
+                    Data = entryData[entryIndex],
+                    Name = reader.ReadAscii(Header.NamesOffset + entryData[entryIndex].NameOffset),
+                    Index = (sbyte)entryIndex
+                };
+
+                reader.BaseStream.Position = Header.PropertiesTableOffset + entry.Data.PropertyStartIndex * Marshal.SizeOf(typeof(PropertyData));
+                var propertyData = reader.ReadStructs<PropertyData>(entry.Data.PropertyCount);
+
+                CreateProperties(reader, entry, propertyData);
+
+                Nodes.Add(entry);
+            }
+        }
+
+        private void CreateProperties(BinaryReader reader, XmbEntry entry, PropertyData[] propertyData)
+        {
+            foreach (var property in propertyData)
+            {
+                var propertyName = reader.ReadAscii(Header.NamesOffset + property.NameOffset);
+                var propertyValue = reader.ReadAscii(Header.ValuesOffset + property.ValueOffset);
+                entry.Properties[propertyName] = propertyValue;
             }
         }
     }

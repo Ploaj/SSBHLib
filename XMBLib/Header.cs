@@ -9,17 +9,17 @@ namespace XMBLib
     [StructLayout(LayoutKind.Sequential)]
     public struct Header
     {
-        public uint Magic;
-        public uint NodeCount;
-        public uint ValueCount;
-        public uint PropertyCount;
-        public uint MappedNodesCount;
-        public uint StringsOffset;
-        public uint NodesTableOffset;
-        public uint PropertiesTableOffset;
-        public uint NodeMapOffset;
-        public uint NamesOffset;
-        public uint ValuesOffset;
-        public uint Padding;
+        public uint Magic { get; set; }
+        public uint NodeCount{ get; set; }
+        public uint ValueCount{ get; set; }
+        public uint PropertyCount{ get; set; }
+        public uint MappedNodesCount{ get; set; }
+        public uint StringsOffset{ get; set; }
+        public uint NodesTableOffset{ get; set; }
+        public uint PropertiesTableOffset{ get; set; }
+        public uint NodeMapOffset{ get; set; }
+        public uint NamesOffset{ get; set; }
+        public uint ValuesOffset{ get; set; }
+        public uint Padding{ get; set; }
     }
 }
