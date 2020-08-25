@@ -111,6 +111,8 @@ namespace CrossModGui.ViewModels
 
             public string ShaderLabel { get; set; }
 
+            public SolidColorBrush MaterialIdColor { get; set; }
+
             public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 
             public ObservableCollection<FloatParam> FloatParams { get; } = new ObservableCollection<FloatParam>();
@@ -145,7 +147,14 @@ namespace CrossModGui.ViewModels
             // TODO: Allow for editing all matl entries and not just materials assigned to meshes.
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
-                var material = new Material { Name = glMaterial.MaterialLabel, ShaderLabel = glMaterial.ShaderLabel };
+                var material = new Material { 
+                    Name = glMaterial.MaterialLabel, 
+                    ShaderLabel = glMaterial.ShaderLabel,
+                    MaterialIdColor = new SolidColorBrush(Color.FromArgb(255, 
+                        (byte)glMaterial.MaterialIdColorRgb255.X, 
+                        (byte)glMaterial.MaterialIdColorRgb255.Y, 
+                        (byte)glMaterial.MaterialIdColorRgb255.Z))
+                };
 
                 AddBooleanParams(glMaterial, material);
                 AddFloatParams(glMaterial, material);
@@ -212,6 +221,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
+        // TODO: Nutex previews.
         private static WriteableBitmap GetPreviewImage(CrossMod.Rendering.GlTools.RMaterial mat, MatlEnums.ParamId paramId)
         {
             // null values will be replaced with a default image in the view.
@@ -249,7 +259,7 @@ namespace CrossModGui.ViewModels
                         case nameof(Vec4Param.Value2):
                         case nameof(Vec4Param.Value3):
                         case nameof(Vec4Param.Value4):
-                            var sender = (s as Vec4Param);
+                            var sender = s as Vec4Param;
                             mat.UpdateVec4(param.Key, new OpenTK.Vector4(sender.Value1, sender.Value2, sender.Value3, sender.Value4));
                             break;
                         default:

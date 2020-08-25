@@ -23,6 +23,8 @@ uniform sampler2D bakeLitMap;
 uniform sampler2D gaoMap;
 uniform sampler2D inkNorMap;
 
+uniform vec3 materialId;
+
 uniform samplerCube difCubeMap;
 
 uniform sampler2D difMap;
@@ -228,6 +230,9 @@ void main()
 		case 15:
 			fragColor = vec4Param;
 			break;
+        case 16:
+            fragColor = vec4(materialId, 1);
+            break;
 		default:
 			fragColor = vec4(0, 0, 0, 1);
 			break;

@@ -32,12 +32,13 @@ namespace CrossMod.Rendering.GlTools
             EmiSampler = 0x71
         }
 
-        public static RMaterial CreateMaterial(MatlEntry currentEntry, Dictionary<string, RTexture> textureByName)
+        public static RMaterial CreateMaterial(MatlEntry currentEntry, int index, Dictionary<string, RTexture> textureByName)
         {
             RMaterial meshMaterial = new RMaterial()
             {
                 MaterialLabel = currentEntry.MaterialLabel,
                 ShaderLabel = currentEntry.ShaderLabel,
+                Index = index,
                 TextureByName = textureByName
             };
 

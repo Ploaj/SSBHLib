@@ -7,6 +7,7 @@ using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 using System.Linq;
+using XMBLib;
 
 namespace CrossMod.Rendering
 {
@@ -22,8 +23,8 @@ namespace CrossMod.Rendering
 
         public Matl Material { get; }
 
-        public XmbNode ModelXmb { get; }
-        public XmbNode LodXmb { get; }
+        public Xmb ModelXmb { get; }
+        public Xmb LodXmb { get; }
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
@@ -33,8 +34,8 @@ namespace CrossMod.Rendering
             Modl = modl;
             Skeleton = skeleton;
             Material = material;
-            ModelXmb = modelXmb;
-            LodXmb = lodXmb;
+            ModelXmb = modelXmb?.Xmb;
+            LodXmb = lodXmb?.Xmb;
             TextureByName = textureByName;
 
             if (meshNode != null)
@@ -78,9 +79,10 @@ namespace CrossMod.Rendering
 
         private void InitializeMaterials()
         {
-            foreach (var entry in Material.Entries)
+            for (int i = 0; i < Material.Entries.Length; i++)
             {
-                var rMaterial = MatlToMaterial.CreateMaterial(entry, TextureByName);
+                var entry = Material.Entries[i];
+                var rMaterial = MatlToMaterial.CreateMaterial(entry, i, TextureByName);
                 MaterialByName.Add(rMaterial.MaterialLabel, rMaterial);
             }
         }

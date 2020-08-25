@@ -21,7 +21,8 @@ namespace CrossMod.Rendering
             Bitangents,
             BakeUV,
             UVPattern,
-            ParamID
+            ParamID,
+            MaterialID
         }
 
         public static RenderSettings Instance { get; } = new RenderSettings();
