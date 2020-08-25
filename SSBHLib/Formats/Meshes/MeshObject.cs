@@ -6,6 +6,12 @@
         UnsignedInt = 1
     }
 
+    public enum RiggingType : int
+    {
+        SingleBound = 0,
+        Regular = 1
+    }
+
     public class MeshObject : SsbhFile
     {
         /// <summary>
@@ -82,8 +88,7 @@
         /// </summary>
         public DrawElementType DrawElementType { get; set; }
         
-        // TODO: HasRigging can be an enum.
-        public int HasRigging { get; set; } // 0 for single bind 1 otherwise?
+        public RiggingType RiggingType { get; set; }
         
         // TODO: Unk11?
         public int Unk11 { get; set; } // usually 0 long with above?

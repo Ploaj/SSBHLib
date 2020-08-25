@@ -701,7 +701,7 @@
             result.ElementOffset = parser.ReadUInt32();      
             result.Unk8 = parser.ReadInt32();      
             result.DrawElementType = (Formats.Meshes.DrawElementType)parser.ReadInt32();      
-            result.HasRigging = parser.ReadInt32();      
+            result.RiggingType = (Formats.Meshes.RiggingType)parser.ReadInt32();      
             result.Unk11 = parser.ReadInt32();      
             result.Unk12 = parser.ReadInt32();      
             result.BoundingSphereCenter = parser.ParseVector3();      

@@ -240,7 +240,6 @@ namespace SSBHLib.IO
 
         private void SetArrayPropertyByte(object targetObject, PropertyInfo prop, long size)
         {
-            // TODO: Size mismatch for bytes read?
             prop.SetValue(targetObject, ReadBytes((int)size));
         }
 

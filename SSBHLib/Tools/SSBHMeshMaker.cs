@@ -215,7 +215,7 @@ namespace SSBHLib.Tools
 
                 mo.ParentBoneName = tempmesh.ParentBone;
                 if (tempmesh.Influences.Count > 0 && (tempmesh.ParentBone == null || tempmesh.ParentBone.Equals("")))
-                    mo.HasRigging = 1;
+                    mo.RiggingType = RiggingType.Regular;
 
                 int stride1 = 0;
                 int stride2 = 0;
