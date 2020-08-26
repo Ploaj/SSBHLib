@@ -3,7 +3,7 @@ using OpenTK;
 
 namespace CrossMod.Tools
 {
-    public class CrossMath
+    public static class CrossMath
     {
         public static float Clamp(float v, float min, float max)
         {

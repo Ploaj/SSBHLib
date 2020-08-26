@@ -13,28 +13,16 @@ namespace SSBHLib.Formats.Meshes
 
         public string ModelName { get; set; } = "";// unused
 
-        public float BoundingSphereX { get; set; }
-        public float BoundingSphereY { get; set; }
-        public float BoundingSphereZ { get; set; }
+        public Vector3 BoundingSphereCenter { get; set; }
         public float BoundingSphereRadius { get; set; }
 
-        public float MinBoundingBoxX { get; set; }
-        public float MinBoundingBoxY { get; set; }
-        public float MinBoundingBoxZ { get; set; }
+        public Vector3 BoundingBoxMin { get; set; }
+        public Vector3 BoundingBoxMax { get; set; }
+        public Vector3 OrientedBoundingBoxCenter { get; set; }
 
-        public float MaxBoundingBoxX { get; set; }
-        public float MaxBoundingBoxY { get; set; }
-        public float MaxBoundingBoxZ { get; set; }
-        
-        public float ObbCenterX { get; set; }
-        public float ObbCenterY { get; set; }
-        public float ObbCenterZ { get; set; }
-
-        public Matrix3x3 Matrix { get; set; }
-
-        public float ObbSizeX { get; set; }
-        public float ObbSizeY { get; set; }
-        public float ObbSizeZ { get; set; }
+        // TODO: What does this matrix do?
+        public Matrix3x3 OrientedBoundingBoxTransform { get; set; }
+        public Vector3 OrientedBoundingBoxSize { get; set; }
 
         public float Unk1 { get; set; }
         

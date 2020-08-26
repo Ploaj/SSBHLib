@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using CrossMod.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.VertexAttributes;
@@ -41,7 +42,7 @@ namespace CrossMod.Nodes
         {
             var model = new RModel
             {
-                BoundingSphere = new Vector4(mesh.BoundingSphereX, mesh.BoundingSphereY, mesh.BoundingSphereZ, mesh.BoundingSphereRadius)
+                BoundingSphere = new Vector4(mesh.BoundingSphereCenter.ToOpenTK(), mesh.BoundingSphereRadius)
             };
 
             // Use a shared buffer to improve performance.

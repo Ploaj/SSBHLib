@@ -508,23 +508,13 @@
             result.VersionMajor = parser.ReadUInt16();      
             result.VersionMinor = parser.ReadUInt16();      
             result.ModelName = parser.ReadOffsetReadString();
-            result.BoundingSphereX = parser.ReadSingle();      
-            result.BoundingSphereY = parser.ReadSingle();      
-            result.BoundingSphereZ = parser.ReadSingle();      
+            result.BoundingSphereCenter = parser.ParseVector3();      
             result.BoundingSphereRadius = parser.ReadSingle();      
-            result.MinBoundingBoxX = parser.ReadSingle();      
-            result.MinBoundingBoxY = parser.ReadSingle();      
-            result.MinBoundingBoxZ = parser.ReadSingle();      
-            result.MaxBoundingBoxX = parser.ReadSingle();      
-            result.MaxBoundingBoxY = parser.ReadSingle();      
-            result.MaxBoundingBoxZ = parser.ReadSingle();      
-            result.ObbCenterX = parser.ReadSingle();      
-            result.ObbCenterY = parser.ReadSingle();      
-            result.ObbCenterZ = parser.ReadSingle();      
-            result.Matrix = parser.ParseMatrix3x3();      
-            result.ObbSizeX = parser.ReadSingle();      
-            result.ObbSizeY = parser.ReadSingle();      
-            result.ObbSizeZ = parser.ReadSingle();      
+            result.BoundingBoxMin = parser.ParseVector3();      
+            result.BoundingBoxMax = parser.ParseVector3();      
+            result.OrientedBoundingBoxCenter = parser.ParseVector3();      
+            result.OrientedBoundingBoxTransform = parser.ParseMatrix3x3();      
+            result.OrientedBoundingBoxSize = parser.ParseVector3();      
             result.Unk1 = parser.ReadSingle();      
             {
                 // TODO: Extract this code to a method?
