@@ -29,6 +29,10 @@ namespace CrossModGui.ViewModels
 
         public RenderSettings.RenderMode SelectedRenderMode { get; set; } = RenderSettings.RenderMode.Shaded;
 
+        public bool ShowParamControls => SelectedRenderMode == RenderSettings.RenderMode.ParamID;
+
+        public bool ShowChannelControls => SelectedRenderMode != RenderSettings.RenderMode.Shaded;
+
         public bool EnableBloom { get; set; }
         public float BloomIntensity { get; set; }
 
@@ -56,7 +60,9 @@ namespace CrossModGui.ViewModels
 
         public bool EnableAlpha { get; set; }
 
-        public string ParamName { get; set; }
+        // TODO: This should use an enum and combobox.
+        // The available items should be restricted to used material params (ex: not DiffuseTexture).
+        public string ParamName { get; set; } = RenderSettings.Instance.ParamId.ToString();
 
         public static implicit operator RenderSettingsWindowViewModel(RenderSettings rhs)
         {

@@ -113,6 +113,11 @@ namespace CrossModGui.ViewModels
 
             public SolidColorBrush MaterialIdColor { get; set; }
 
+            public bool HasFloats => FloatParams.Count > 0;
+            public bool HasBooleans => BooleanParams.Count > 0;
+            public bool HasVec4Params => Vec4Params.Count > 0;
+            public bool HasTextures => TextureParams.Count > 0;
+
             public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 
             public ObservableCollection<FloatParam> FloatParams { get; } = new ObservableCollection<FloatParam>();
@@ -144,7 +149,6 @@ namespace CrossModGui.ViewModels
             foreach (var name in CrossMod.Rendering.GlTools.RMaterial.DefaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
-            // TODO: Allow for editing all matl entries and not just materials assigned to meshes.
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
                 var material = new Material { 

@@ -6,6 +6,9 @@
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
         Title="Render Settings" Height="489.188" Width="504.688">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
+    </Window.Resources>
     <StackPanel Margin="10">
         <Expander Header="Render Passes" IsExpanded="True">
             <StackPanel>
@@ -42,16 +45,16 @@
                         ItemsSource="{Binding DescriptionByRenderMode}" 
                         DisplayMemberPath="Value" 
                         SelectedValuePath="Key"
-                        SelectedValue="{Binding SelectedRenderMode}" SelectionChanged="RenderMode_SelectionChanged">
+                        SelectedValue="{Binding SelectedRenderMode}">
                     </ComboBox>
                 </Grid>
-                <StackPanel>
+                <StackPanel Visibility="{Binding ShowChannelControls, Converter={StaticResource booleanVisibilityConverter}}">
                     <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
                     <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
                     <CheckBox Name="blueCheckBox" Margin="10,2" IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
                     <CheckBox Name="alphaCheckBox" Margin="10,2" IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
                 </StackPanel>
-                <Grid>
+                <Grid Visibility="{Binding ShowParamControls, Converter={StaticResource booleanVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />

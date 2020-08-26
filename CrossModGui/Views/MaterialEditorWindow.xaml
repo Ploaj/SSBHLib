@@ -6,6 +6,9 @@
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
         Title="Material Editor" Height="800" Width="500">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
+    </Window.Resources>
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
@@ -47,7 +50,7 @@
         <GroupBox DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <Expander Header="CustomBoolean Params" IsExpanded="False">
+                    <Expander Header="CustomBoolean Params" IsExpanded="False" Visibility="{Binding CurrentMaterial.HasBooleans, Converter={StaticResource booleanVisibilityConverter}}">
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -68,7 +71,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Expander>
-                    <Expander Header="CustomFloat Params" IsExpanded="False">
+                    <Expander Header="CustomFloat Params" IsExpanded="False" Visibility="{Binding CurrentMaterial.HasFloats, Converter={StaticResource booleanVisibilityConverter}}">
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.FloatParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -78,7 +81,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Expander>
-                    <Expander Header="CustomVector Params" IsExpanded="False">
+                    <Expander Header="CustomVector Params" IsExpanded="False" Visibility="{Binding CurrentMaterial.HasVec4Params, Converter={StaticResource booleanVisibilityConverter}}">
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.Vec4Params}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -101,7 +104,7 @@
                         </ItemsControl>
                     </Expander>
                     <Expander Header="Texture Params" IsExpanded="True">
-                        <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}" Visibility="{Binding CurrentMaterial.HasTextures, Converter={StaticResource booleanVisibilityConverter}}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
