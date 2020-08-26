@@ -38,6 +38,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>
+        -
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AnimatedGif">
       <HintPath>..\CrossMod\Lib\AnimatedGif.dll</HintPath>
@@ -492,4 +497,10 @@
     <Error Condition="!Exists('..\packages\Fody.6.2.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.2.0\build\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\Fody.6.2.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.2.0\build\Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>robocopy "$(TargetDir.TrimEnd('\'))" "$(TargetDir)Lib" *.dll /IS /MOV 
+if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25
+
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
