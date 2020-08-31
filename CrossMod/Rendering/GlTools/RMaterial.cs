@@ -199,7 +199,7 @@ namespace CrossMod.Rendering.GlTools
 
         private Vector3 GetMaterialIdColor(int index)
         {
-            if (index > MaterialColors.Length)
+            if (index >= MaterialColors.Length)
                 return Vector3.One;
 
             return MaterialColors[index];
