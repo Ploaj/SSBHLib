@@ -19,13 +19,22 @@ namespace SSBHLib.IO
             }
         }
 
+        private class ObjectWriteInfo
+        {
+            public object Data { get; }
+            public uint? RelativeOffsetStartPosition { get; }
+
+            public ObjectWriteInfo(object data, uint? relativeOffsetStartPosition = null)
+            {
+                Data = data;
+                RelativeOffsetStartPosition = relativeOffsetStartPosition;
+            }
+        }
+
         public long Position => BaseStream.Position; 
         public long FileSize => BaseStream.Length;
 
-        // Necessary for objects with offsets (strings, arrays, and matl data objects).
-        private Queue<object> ssbhObjectWriteQueue = new Queue<object>();
-
-        private readonly Dictionary<uint, object> objectByPositionBeforeRelativeOffset = new Dictionary<uint, object>();
+        private Queue<ObjectWriteInfo> objectWriteQueue = new Queue<ObjectWriteInfo>();
 
         public SsbhExporter(Stream stream) : base(stream)
         {
@@ -54,30 +63,30 @@ namespace SSBHLib.IO
 
         private void AddSsbhFile(SsbhFile file)
         {
-            ssbhObjectWriteQueue.Enqueue(file);
+            objectWriteQueue.Enqueue(new ObjectWriteInfo(file));
 
-            while (ssbhObjectWriteQueue.Count > 0)
+            while (objectWriteQueue.Count > 0)
             {
-                var obj = ssbhObjectWriteQueue.Dequeue();
-                if (obj == null)
+                var writeInfo = objectWriteQueue.Dequeue();
+                if (writeInfo.Data == null)
                     continue;
 
                 // 8-byte alignment for arrays and matl data objects.
-                if (obj is Array || (obj is MaterialEntry entry && entry.Object is MatlAttribute.MatlString))
+                if (writeInfo.Data is Array || (writeInfo.Data is MaterialEntry entry && entry.Object is MatlAttribute.MatlString))
                     Pad(0x8);
 
                 // 4-byte alignment for strings.
-                if (obj is string)
+                if (writeInfo.Data is string)
                     Pad(0x4);
 
                 // Fill in the temporary relative offset with the correct value.
-                if (objectByPositionBeforeRelativeOffset.ContainsValue(obj))
-                    WriteRelativeOffset(obj);
+                if (writeInfo.RelativeOffsetStartPosition.HasValue)
+                    WriteRelativeOffset(writeInfo);
 
-                if (obj is Array array)
+                if (writeInfo.Data is Array array)
                     WriteArray(array);
                 else
-                    WriteProperty(obj);
+                    WriteProperty(writeInfo.Data);
             }
         }
 
@@ -85,39 +94,31 @@ namespace SSBHLib.IO
         {
             if (array.GetType() == typeof(byte[]))
             {
-                foreach (byte o in array)
-                {
-                    Write(o);
-                }
+                Write((byte[])array);
             }
             else
             {
                 // Ensure the elements of this array get written before anything already in the queue.
-                Queue<object> objectQueueTemp = ssbhObjectWriteQueue;
-                ssbhObjectWriteQueue = new Queue<object>();
+                var objectQueueTemp = objectWriteQueue;
+                objectWriteQueue = new Queue<ObjectWriteInfo>();
                 foreach (object o in array)
                 {
                     WriteProperty(o);
                 }
-                foreach (object o in objectQueueTemp)
-                    ssbhObjectWriteQueue.Enqueue(o);
+                foreach (var o in objectQueueTemp)
+                    objectWriteQueue.Enqueue(o);
             }
         }
 
-        private void WriteRelativeOffset(object obj)
+        private void WriteRelativeOffset(ObjectWriteInfo obj)
         {
-            long relativeOffsetStartPosition = objectByPositionBeforeRelativeOffset.FirstOrDefault(x => x.Value == obj).Key;
-            if (relativeOffsetStartPosition != 0)
-            {
-                long currentPosition = Position;
-                BaseStream.Position = relativeOffsetStartPosition;
+            long currentPosition = Position;
+            BaseStream.Position = obj.RelativeOffsetStartPosition.Value;
 
-                // Calculate a relative offset based on the previous position.
-                Write(currentPosition - relativeOffsetStartPosition);
+            // Calculate a relative offset based on the previous position.
+            Write(currentPosition - obj.RelativeOffsetStartPosition.Value);
 
-                BaseStream.Position = currentPosition;
-                objectByPositionBeforeRelativeOffset.Remove((uint)relativeOffsetStartPosition);
-            }
+            BaseStream.Position = currentPosition;
         }
 
         private void WriteSsbhFile(SsbhFile file)
@@ -138,8 +139,7 @@ namespace SSBHLib.IO
                         Write(0L);
                         continue;
                     }
-                    ssbhObjectWriteQueue.Enqueue(prop.GetValue(file));
-                    objectByPositionBeforeRelativeOffset.Add((uint)Position, prop.GetValue(file));
+                    objectWriteQueue.Enqueue(new ObjectWriteInfo(prop.GetValue(file), (uint)Position));
                     // Write placeholder relative offset.
                     Write(0L);
                 }
@@ -147,8 +147,10 @@ namespace SSBHLib.IO
                 {
                     var array = (prop.GetValue(file) as Array);
                     if (array.Length > 0)
-                        objectByPositionBeforeRelativeOffset.Add((uint)Position, array);
-                    ssbhObjectWriteQueue.Enqueue(array);
+                        objectWriteQueue.Enqueue(new ObjectWriteInfo(array, (uint)Position));
+                    else
+                        objectWriteQueue.Enqueue(new ObjectWriteInfo(array));
+
                     // Write placeholder relative offset.
                     Write(0L);
                     Write((long)array.Length);
@@ -157,9 +159,8 @@ namespace SSBHLib.IO
                 {
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
-                    var matentry = new MaterialEntry(dataObject);
-                    objectByPositionBeforeRelativeOffset.Add((uint)Position, matentry);
-                    ssbhObjectWriteQueue.Enqueue(matentry);
+                    var matEntry = new MaterialEntry(dataObject);
+                    objectWriteQueue.Enqueue(new ObjectWriteInfo(matEntry, (uint)Position));
                     // Write placeholder relative offset.
                     Write(0L);
                 }
@@ -176,7 +177,7 @@ namespace SSBHLib.IO
             if (value is MaterialEntry entry)
             {
                 WriteProperty(entry.Object);
-                // Floats are 8-byte aligned?
+                // Floats are 8-byte aligned for MATL?
                 if (entry.Object is float)
                     Pad(0x8);
             }
