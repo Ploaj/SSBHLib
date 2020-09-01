@@ -1,16 +1,26 @@
 ﻿using System;
+using System.Reflection;
 
 namespace SSBHLib.IO
 {
     public class ParseTag : Attribute
     {
-        public bool InLine;
-        public bool Ignore;
+        public bool Ignore { get; set; }
 
-        public ParseTag(bool inLine = false, bool ignore = false)
+        public static bool ShouldSkipProperty(PropertyInfo prop)
         {
-            Ignore = ignore;
-            InLine = inLine;
+            bool shouldSkip = false;
+
+            foreach (var attribute in prop.GetCustomAttributes(true))
+            {
+                if (attribute is ParseTag tag)
+                {
+                    if (tag.Ignore)
+                        shouldSkip = true;
+                }
+            }
+
+            return shouldSkip;
         }
     }
 }

@@ -166,7 +166,7 @@ namespace SSBHLib.IO
         {
             foreach (var prop in tObject.GetType().GetProperties())
             {
-                if (ShouldSkipProperty(prop))
+                if (ParseTag.ShouldSkipProperty(prop))
                     continue;
 
                 if (prop.PropertyType == typeof(string))
@@ -188,9 +188,8 @@ namespace SSBHLib.IO
 
         private void SetArray<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
-            bool inline = prop.GetValue(tObject) != null;
-            long absoluteOffset = GetOffset(inline);
-            long elementCount = GetElementCount(tObject, prop, inline);
+            long absoluteOffset = GetOffset();
+            long elementCount = GetElementCount(tObject, prop);
 
             long previousPosition = Position;
 
@@ -204,8 +203,7 @@ namespace SSBHLib.IO
             else
                 SetArrayPropertyGeneric(tObject, prop, elementCount, propElementType);
 
-            if (!inline)
-                Seek(previousPosition);
+            Seek(previousPosition);
         }
 
         private void SetArrayPropertyGeneric<T>(T tObject, PropertyInfo prop, long elementCount, Type propElementType) where T : SsbhFile
@@ -243,42 +241,20 @@ namespace SSBHLib.IO
             prop.SetValue(targetObject, ReadBytes((int)size));
         }
 
-        private long GetElementCount<T>(T tObject, PropertyInfo prop, bool inline) where T : SsbhFile
+        private long GetElementCount<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
-            if (!inline)
-                return ReadInt64();
-            else
-                return (prop.GetValue(tObject) as Array).Length;
+            return ReadInt64();
         }
 
-        public long GetOffset(bool inline)
+        public long GetOffset()
         {
-            if (!inline)
-                return Position + ReadInt64();
-            else
-                return Position;
+            return Position + ReadInt64();
         }
 
         private void SetString<T>(T tObject, PropertyInfo prop) where T : SsbhFile
         {
             long stringOffset = Position + ReadInt64();
             prop.SetValue(tObject, ReadString(stringOffset));
-        }
-
-        public static bool ShouldSkipProperty(PropertyInfo prop)
-        {
-            bool shouldSkip = false;
-
-            foreach (var attribute in prop.GetCustomAttributes(true))
-            {
-                if (attribute is ParseTag tag)
-                {
-                    if (tag.Ignore)
-                        shouldSkip = true;
-                }
-            }
-
-            return shouldSkip;
         }
 
         private static void AddParseMethod(PropertyInfo prop, Type propElementType)

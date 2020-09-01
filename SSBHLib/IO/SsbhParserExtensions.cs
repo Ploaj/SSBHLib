@@ -14,7 +14,7 @@
             result.VersionMinor = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -30,7 +30,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -46,7 +46,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -57,7 +57,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -150,7 +150,7 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -166,7 +166,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -182,7 +182,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -198,7 +198,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -214,7 +214,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -280,7 +280,7 @@
             result.SkeletonFileName = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -298,7 +298,7 @@
             result.MeshString = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -339,7 +339,7 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -355,7 +355,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -371,7 +371,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -461,7 +461,7 @@
             result.MinorVersion = parser.ReadUInt16();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -486,7 +486,7 @@
             result.Unk2 = parser.ReadUInt32();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -518,7 +518,7 @@
             result.Unk1 = parser.ReadSingle();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -534,7 +534,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -546,7 +546,7 @@
             result.PolygonIndexSize = parser.ReadInt64();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -562,7 +562,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -573,7 +573,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -604,7 +604,7 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -634,7 +634,7 @@
             result.BoneName = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -659,7 +659,7 @@
             var result = new Formats.Meshes.MeshBuffer();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -703,7 +703,7 @@
             result.OrientedBoundingBoxSize = parser.ParseVector3();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -728,7 +728,7 @@
             result.Flags = parser.ReadInt64();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -765,7 +765,7 @@
             result.MaterialLabel = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -791,7 +791,7 @@
             result.MinorVersion = parser.ReadInt16();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -820,7 +820,7 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -836,7 +836,7 @@
             }
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -854,7 +854,7 @@
             result.Type = (Formats.Animation.AnimType)parser.ReadUInt64();      
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
@@ -877,7 +877,7 @@
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);

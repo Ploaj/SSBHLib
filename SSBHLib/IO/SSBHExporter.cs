@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SSBHLib.Formats.Materials;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using SSBHLib.Formats.Materials;
 
 namespace SSBHLib.IO
 {
@@ -23,7 +22,8 @@ namespace SSBHLib.IO
         public long FileSize => BaseStream.Length;
 
         private LinkedList<object> objectQueue = new LinkedList<object>();
-        private Dictionary<uint, object> objectOffset = new Dictionary<uint, object>();
+        // TODO: Change this to <object, uint>?
+        private readonly Dictionary<uint, object> positionBeforeRelativeOffsetByObject = new Dictionary<uint, object>();
 
         public SsbhExporter(Stream stream) : base(stream)
         {
@@ -37,7 +37,9 @@ namespace SSBHLib.IO
                 // write ssbh header
                 if (writeHeader)
                 {
+                    // The header is 16-byte aligned.
                     exporter.Write(new char[] { 'H', 'B', 'S', 'S'});
+                    // TODO: This value is always present.
                     exporter.Write(0x40);
                     exporter.Pad(0x10);
                 }
@@ -46,21 +48,6 @@ namespace SSBHLib.IO
                 exporter.AddSsbhFile(file);
                 exporter.Pad(4);
             }
-        }
-
-        private bool ShouldSkipProperty(PropertyInfo prop)
-        {
-            object[] attrs = prop.GetCustomAttributes(true);
-            bool skip = false;
-            foreach (object attr in attrs)
-            {
-                if (attr is ParseTag tag)
-                {
-                    if (tag.Ignore)
-                        return true;
-                }
-            }
-            return skip;
         }
 
         private void AddSsbhFile(SsbhFile file)
@@ -73,24 +60,28 @@ namespace SSBHLib.IO
                 if (obj == null)
                     continue;
 
-                // I guess?
-                if (obj is Array || obj is MaterialEntry entry && entry.Object is MatlAttribute.MatlString)
+                // types with pointers
+                if (obj is Array || (obj is MaterialEntry entry && entry.Object is MatlAttribute.MatlString))
                     Pad(0x8);
 
+                // TODO: String alignment?
                 // not sure if 4 or 8
                 if (obj is string)
                     Pad(0x4);
 
-                if (objectOffset.ContainsValue(obj))
+                if (positionBeforeRelativeOffsetByObject.ContainsValue(obj))
                 {
-                    long key = objectOffset.FirstOrDefault(x => x.Value == obj).Key;
-                    if (key != 0)
+                    long relativeOffsetStartPosition = positionBeforeRelativeOffsetByObject.FirstOrDefault(x => x.Value == obj).Key;
+                    if (relativeOffsetStartPosition != 0)
                     {
-                        long temp = Position;
-                        BaseStream.Position = key;
-                        WriteProperty(temp - key);
-                        BaseStream.Position = temp;
-                        objectOffset.Remove((uint)key);
+                        long currentPosition = Position;
+                        BaseStream.Position = relativeOffsetStartPosition;
+
+                        // Calculate a relative offset based on the previous position.
+                        WriteProperty(currentPosition - relativeOffsetStartPosition);
+
+                        BaseStream.Position = currentPosition;
+                        positionBeforeRelativeOffsetByObject.Remove((uint)relativeOffsetStartPosition);
                     }
                 }
 
@@ -126,52 +117,44 @@ namespace SSBHLib.IO
         {
             foreach (var prop in file.GetType().GetProperties())
             {
-                if (ShouldSkipProperty(prop))
+                // Some more matl hacks.
+                if (ParseTag.ShouldSkipProperty(prop))
                     continue;
 
+                // Check for types that use offsets.
                 if (prop.PropertyType == typeof(string))
                 {
+                    // TODO: Is this check necessary?
                     if (prop.GetValue(file) == null)
                     {
-                        Write((long)0);
+                        // Write placeholder relative offset.
+                        Write(0L);
                         continue;
                     }
                     objectQueue.AddLast(prop.GetValue(file));
-                    objectOffset.Add((uint)Position, prop.GetValue(file));
-                    Write((long)0);
+                    positionBeforeRelativeOffsetByObject.Add((uint)Position, prop.GetValue(file));
+                    // Write placeholder relative offset.
+                    Write(0L);
                 }
                 else if (prop.PropertyType.IsArray)
                 {
                     var array = (prop.GetValue(file) as Array);
-                    bool inline = false;
-                    if (prop.GetCustomAttribute(typeof(ParseTag)) != null)
-                        inline = ((ParseTag)prop.GetCustomAttribute(typeof(ParseTag))).InLine;
-
-                    if (!inline)
-                    {
-                        if (array.Length > 0)
-                            objectOffset.Add((uint)Position, array);
-                        objectQueue.AddLast(array);
-                        Write((long)0);
-                        Write((long)array.Length);
-                    }
-                    else
-                    {
-                        // inline array
-                        foreach (object o in array)
-                        {
-                            WriteProperty(o);
-                        }
-                    }
+                    if (array.Length > 0)
+                        positionBeforeRelativeOffsetByObject.Add((uint)Position, array);
+                    objectQueue.AddLast(array);
+                    // Write placeholder relative offset.
+                    Write(0L);
+                    Write((long)array.Length);
                 }
                 else if (prop.PropertyType == typeof(SsbhOffset)) 
                 {
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
                     var matentry = new MaterialEntry(dataObject);
-                    objectOffset.Add((uint)Position, matentry);
+                    positionBeforeRelativeOffsetByObject.Add((uint)Position, matentry);
                     objectQueue.AddLast(matentry);
-                    Write((long)0);
+                    // Write placeholder relative offset.
+                    Write(0L);
                 }
                 else
                 {
@@ -186,17 +169,16 @@ namespace SSBHLib.IO
             if (value is MaterialEntry entry)
             {
                 WriteProperty(entry.Object);
+                // Floats are 8-byte aligned?
                 if (entry.Object is float)
                     Pad(0x8);
             }
             else if (value is MatlAttribute.MatlString matlString)
             {
                 // special write function for matl string
+                // TODO: matl strings always have a relative offset of 8?
                 Write((long)8);
-                value = matlString.Text;
-                Write(((string)value).ToCharArray());
-                Write((byte)0);
-                Pad(0x4);
+                WriteString(matlString.Text);
             }
             else if (value is SsbhFile v)
             {
@@ -206,7 +188,7 @@ namespace SSBHLib.IO
             else if (t.IsEnum)
                 WriteEnum(t, value);
             else if (t == typeof(bool))
-                Write((bool)value ? (long)1 : (long)0);
+                Write((bool)value ? 1L : 0L);
             else if (t == typeof(byte))
                 Write((byte)value);
             else if (t == typeof(char))
@@ -227,12 +209,18 @@ namespace SSBHLib.IO
                 Write((float)value);
             else if (t == typeof(string))
             {
-                Write(((string)value).ToCharArray());
-                Write((byte)0);
-                Pad(0x4); 
+                WriteString((string)value);
             }
             else
                 throw new NotSupportedException($"{t} is not a supported type.");
+        }
+
+        private void WriteString(string text)
+        {
+            // 4-byte aligned c string
+            Write(text.ToCharArray());
+            Write((byte)0);
+            Pad(0x4);
         }
 
         private void WriteEnum(Type enumType, object value)

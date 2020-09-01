@@ -85,7 +85,7 @@ namespace SSBHLib.IO
             var result = new <#=typeFullName#>();
 <#		foreach (var prop in type.GetProperties())
         {
-            if (SSBHLib.IO.SsbhParser.ShouldSkipProperty(prop))
+            if (SSBHLib.IO.ParseTag.ShouldSkipProperty(prop))
                 continue;
 
             var propertyTypeFullName = GetFullTypeName(prop.PropertyType);
@@ -101,7 +101,7 @@ namespace SSBHLib.IO
 #>
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset(inline: false);
+                long absoluteOffset = parser.GetOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);
