@@ -31,6 +31,10 @@ var parserTextByType = new Dictionary<Type, string>()
     { typeof(ushort), "parser.ReadUInt16()" },
     { typeof(long), "parser.ReadInt64()" },
     { typeof(byte), "parser.ReadByte()" },
+    { typeof(SSBHLib.Formats.Vector3), "parser.ReadVector3()" },
+    { typeof(SSBHLib.Formats.Vector4), "parser.ReadVector4()" },
+    { typeof(SSBHLib.Formats.Matrix3x3), "parser.ReadMatrix3x3()" },
+    { typeof(SSBHLib.Formats.Matrix4x4), "parser.ReadMatrix4x4()" },
     { typeof(SSBHLib.IO.SsbhOffset), "parser.Position + parser.ReadInt64()" },
 };
 

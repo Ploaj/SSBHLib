@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Materials;
+﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Materials;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -214,11 +215,47 @@ namespace SSBHLib.IO
             else if (t == typeof(float))
                 Write((float)value);
             else if (t == typeof(string))
-            {
                 WriteString((string)value);
-            }
+            else if (t == typeof(Vector3))
+                WriteVector3((Vector3)value);
+            else if (t == typeof(Vector4))
+                WriteVector4((Vector4)value);
+            else if (t == typeof(Matrix3x3))
+                WriteMatrix3x3((Matrix3x3)value);
+            else if (t == typeof(Matrix4x4))
+                WriteMatrix4x4((Matrix4x4)value);
             else
                 throw new NotSupportedException($"{t} is not a supported type.");
+        }
+
+        private void WriteMatrix3x3(Matrix3x3 value)
+        {
+            WriteVector3(value.Row1);
+            WriteVector3(value.Row2);
+            WriteVector3(value.Row3);
+        }
+
+        private void WriteMatrix4x4(Matrix4x4 value)
+        {
+            WriteVector4(value.Row1);
+            WriteVector4(value.Row2);
+            WriteVector4(value.Row3);
+            WriteVector4(value.Row4);
+        }
+
+        private void WriteVector3(Vector3 value)
+        {
+            Write(value.X);
+            Write(value.Y);
+            Write(value.Z);
+        }
+
+        private void WriteVector4(Vector4 value)
+        {
+            Write(value.X);
+            Write(value.Y);
+            Write(value.Z);
+            Write(value.W);
         }
 
         private void WriteString(string text)

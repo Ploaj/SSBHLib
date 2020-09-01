@@ -1,6 +1,6 @@
 ﻿namespace SSBHLib.Formats
 {
-    public class Vector4 : SsbhFile
+    public class Vector4
     {
         public float X { get; set; }
         public float Y { get; set; }

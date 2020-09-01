@@ -133,15 +133,6 @@
             return result;
         }
 
-        public static Formats.Matrix3x3 ParseMatrix3x3(this SsbhParser parser)
-        {
-            var result = new Formats.Matrix3x3();
-            result.Row1 = parser.ParseVector3();      
-            result.Row2 = parser.ParseVector3();      
-            result.Row3 = parser.ParseVector3();      
-            return result;
-        }
-
         public static Formats.Skel ParseSkel(this SsbhParser parser)
         {
             var result = new Formats.Skel();
@@ -175,7 +166,7 @@
                 result.WorldTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.WorldTransform[i] = parser.ParseMatrix4x4();
+                    result.WorldTransform[i] = parser.ReadMatrix4x4();
                 }
  
                 parser.Seek(previousPosition); 
@@ -191,7 +182,7 @@
                 result.InvWorldTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.InvWorldTransform[i] = parser.ParseMatrix4x4();
+                    result.InvWorldTransform[i] = parser.ReadMatrix4x4();
                 }
  
                 parser.Seek(previousPosition); 
@@ -207,7 +198,7 @@
                 result.Transform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.Transform[i] = parser.ParseMatrix4x4();
+                    result.Transform[i] = parser.ReadMatrix4x4();
                 }
  
                 parser.Seek(previousPosition); 
@@ -223,7 +214,7 @@
                 result.InvTransform = new Formats.Matrix4x4[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.InvTransform[i] = parser.ParseMatrix4x4();
+                    result.InvTransform[i] = parser.ReadMatrix4x4();
                 }
  
                 parser.Seek(previousPosition); 
@@ -238,35 +229,6 @@
             result.Id = parser.ReadInt16();      
             result.ParentId = parser.ReadInt16();      
             result.Type = parser.ReadInt32();      
-            return result;
-        }
-
-        public static Formats.Matrix4x4 ParseMatrix4x4(this SsbhParser parser)
-        {
-            var result = new Formats.Matrix4x4();
-            result.Row1 = parser.ParseVector4();      
-            result.Row2 = parser.ParseVector4();      
-            result.Row3 = parser.ParseVector4();      
-            result.Row4 = parser.ParseVector4();      
-            return result;
-        }
-
-        public static Formats.Vector3 ParseVector3(this SsbhParser parser)
-        {
-            var result = new Formats.Vector3();
-            result.X = parser.ReadSingle();      
-            result.Y = parser.ReadSingle();      
-            result.Z = parser.ReadSingle();      
-            return result;
-        }
-
-        public static Formats.Vector4 ParseVector4(this SsbhParser parser)
-        {
-            var result = new Formats.Vector4();
-            result.X = parser.ReadSingle();      
-            result.Y = parser.ReadSingle();      
-            result.Z = parser.ReadSingle();      
-            result.W = parser.ReadSingle();      
             return result;
         }
 
@@ -508,13 +470,13 @@
             result.VersionMajor = parser.ReadUInt16();      
             result.VersionMinor = parser.ReadUInt16();      
             result.ModelName = parser.ReadOffsetReadString();
-            result.BoundingSphereCenter = parser.ParseVector3();      
+            result.BoundingSphereCenter = parser.ReadVector3();      
             result.BoundingSphereRadius = parser.ReadSingle();      
-            result.BoundingBoxMin = parser.ParseVector3();      
-            result.BoundingBoxMax = parser.ParseVector3();      
-            result.OrientedBoundingBoxCenter = parser.ParseVector3();      
-            result.OrientedBoundingBoxTransform = parser.ParseMatrix3x3();      
-            result.OrientedBoundingBoxSize = parser.ParseVector3();      
+            result.BoundingBoxMin = parser.ReadVector3();      
+            result.BoundingBoxMax = parser.ReadVector3();      
+            result.OrientedBoundingBoxCenter = parser.ReadVector3();      
+            result.OrientedBoundingBoxTransform = parser.ReadMatrix3x3();      
+            result.OrientedBoundingBoxSize = parser.ReadVector3();      
             result.Unk1 = parser.ReadSingle();      
             {
                 // TODO: Extract this code to a method?
@@ -694,13 +656,13 @@
             result.RiggingType = (Formats.Meshes.RiggingType)parser.ReadInt32();      
             result.Unk11 = parser.ReadInt32();      
             result.Unk12 = parser.ReadInt32();      
-            result.BoundingSphereCenter = parser.ParseVector3();      
+            result.BoundingSphereCenter = parser.ReadVector3();      
             result.BoundingSphereRadius = parser.ReadSingle();      
-            result.BoundingBoxMin = parser.ParseVector3();      
-            result.BoundingBoxMax = parser.ParseVector3();      
-            result.OrientedBoundingBoxCenter = parser.ParseVector3();      
-            result.OrientedBoundingBoxTransform = parser.ParseMatrix3x3();      
-            result.OrientedBoundingBoxSize = parser.ParseVector3();      
+            result.BoundingBoxMin = parser.ReadVector3();      
+            result.BoundingBoxMax = parser.ReadVector3();      
+            result.OrientedBoundingBoxCenter = parser.ReadVector3();      
+            result.OrientedBoundingBoxTransform = parser.ReadMatrix3x3();      
+            result.OrientedBoundingBoxSize = parser.ReadVector3();      
             {
                 // TODO: Extract this code to a method?
                 long absoluteOffset = parser.GetOffset();
