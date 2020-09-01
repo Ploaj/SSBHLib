@@ -21,9 +21,10 @@ namespace SSBHLib.IO
         public long Position => BaseStream.Position; 
         public long FileSize => BaseStream.Length;
 
-        private LinkedList<object> objectQueue = new LinkedList<object>();
-        // TODO: Change this to <object, uint>?
-        private readonly Dictionary<uint, object> positionBeforeRelativeOffsetByObject = new Dictionary<uint, object>();
+        // Necessary for objects with offsets (strings, arrays, and matl data objects).
+        private Queue<object> ssbhObjectWriteQueue = new Queue<object>();
+
+        private readonly Dictionary<uint, object> objectByPositionBeforeRelativeOffset = new Dictionary<uint, object>();
 
         public SsbhExporter(Stream stream) : base(stream)
         {
@@ -52,64 +53,69 @@ namespace SSBHLib.IO
 
         private void AddSsbhFile(SsbhFile file)
         {
-            objectQueue.AddFirst(file);
-            while (objectQueue.Count > 0)
+            ssbhObjectWriteQueue.Enqueue(file);
+
+            while (ssbhObjectWriteQueue.Count > 0)
             {
-                var obj = objectQueue.First();
-                objectQueue.RemoveFirst();
+                var obj = ssbhObjectWriteQueue.Dequeue();
                 if (obj == null)
                     continue;
 
-                // types with pointers
+                // 8-byte alignment for arrays and matl data objects.
                 if (obj is Array || (obj is MaterialEntry entry && entry.Object is MatlAttribute.MatlString))
                     Pad(0x8);
 
-                // TODO: String alignment?
-                // not sure if 4 or 8
+                // 4-byte alignment for strings.
                 if (obj is string)
                     Pad(0x4);
 
-                if (positionBeforeRelativeOffsetByObject.ContainsValue(obj))
-                {
-                    long relativeOffsetStartPosition = positionBeforeRelativeOffsetByObject.FirstOrDefault(x => x.Value == obj).Key;
-                    if (relativeOffsetStartPosition != 0)
-                    {
-                        long currentPosition = Position;
-                        BaseStream.Position = relativeOffsetStartPosition;
-
-                        // Calculate a relative offset based on the previous position.
-                        WriteProperty(currentPosition - relativeOffsetStartPosition);
-
-                        BaseStream.Position = currentPosition;
-                        positionBeforeRelativeOffsetByObject.Remove((uint)relativeOffsetStartPosition);
-                    }
-                }
+                // Fill in the temporary relative offset with the correct value.
+                if (objectByPositionBeforeRelativeOffset.ContainsValue(obj))
+                    WriteRelativeOffset(obj);
 
                 if (obj is Array array)
-                {
-                    if (array.GetType() == typeof(byte[]))
-                    {
-                        foreach (byte o in array)
-                        {
-                            Write(o);
-                        }
-                    }
-                    else
-                    {
-                        LinkedList<object> objectQueueTemp = objectQueue;
-                        objectQueue = new LinkedList<object>();
-                        foreach (object o in array)
-                        {
-                            WriteProperty(o);
-                        }
-                        foreach(object o in objectQueueTemp)
-                            objectQueue.AddLast(o);
-                    }
-                }
+                    WriteArray(array);
                 else
-                {
                     WriteProperty(obj);
+            }
+        }
+
+        private void WriteArray(Array array)
+        {
+            if (array.GetType() == typeof(byte[]))
+            {
+                foreach (byte o in array)
+                {
+                    Write(o);
                 }
+            }
+            else
+            {
+                // Ensure the elements of this array get written before anything already in the queue.
+                Queue<object> objectQueueTemp = ssbhObjectWriteQueue;
+                ssbhObjectWriteQueue = new Queue<object>();
+                foreach (object o in array)
+                {
+                    WriteProperty(o);
+                }
+                foreach (object o in objectQueueTemp)
+                    ssbhObjectWriteQueue.Enqueue(o);
+            }
+        }
+
+        private void WriteRelativeOffset(object obj)
+        {
+            long relativeOffsetStartPosition = objectByPositionBeforeRelativeOffset.FirstOrDefault(x => x.Value == obj).Key;
+            if (relativeOffsetStartPosition != 0)
+            {
+                long currentPosition = Position;
+                BaseStream.Position = relativeOffsetStartPosition;
+
+                // Calculate a relative offset based on the previous position.
+                Write(currentPosition - relativeOffsetStartPosition);
+
+                BaseStream.Position = currentPosition;
+                objectByPositionBeforeRelativeOffset.Remove((uint)relativeOffsetStartPosition);
             }
         }
 
@@ -131,8 +137,8 @@ namespace SSBHLib.IO
                         Write(0L);
                         continue;
                     }
-                    objectQueue.AddLast(prop.GetValue(file));
-                    positionBeforeRelativeOffsetByObject.Add((uint)Position, prop.GetValue(file));
+                    ssbhObjectWriteQueue.Enqueue(prop.GetValue(file));
+                    objectByPositionBeforeRelativeOffset.Add((uint)Position, prop.GetValue(file));
                     // Write placeholder relative offset.
                     Write(0L);
                 }
@@ -140,8 +146,8 @@ namespace SSBHLib.IO
                 {
                     var array = (prop.GetValue(file) as Array);
                     if (array.Length > 0)
-                        positionBeforeRelativeOffsetByObject.Add((uint)Position, array);
-                    objectQueue.AddLast(array);
+                        objectByPositionBeforeRelativeOffset.Add((uint)Position, array);
+                    ssbhObjectWriteQueue.Enqueue(array);
                     // Write placeholder relative offset.
                     Write(0L);
                     Write((long)array.Length);
@@ -151,8 +157,8 @@ namespace SSBHLib.IO
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);
                     var matentry = new MaterialEntry(dataObject);
-                    positionBeforeRelativeOffsetByObject.Add((uint)Position, matentry);
-                    objectQueue.AddLast(matentry);
+                    objectByPositionBeforeRelativeOffset.Add((uint)Position, matentry);
+                    ssbhObjectWriteQueue.Enqueue(matentry);
                     // Write placeholder relative offset.
                     Write(0L);
                 }

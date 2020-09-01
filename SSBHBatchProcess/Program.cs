@@ -1,12 +1,9 @@
 ﻿using SSBHLib;
+using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XMBLib;
 
 namespace SSBHBatchProcess
 {
@@ -14,24 +11,18 @@ namespace SSBHBatchProcess
     {
         static void Main(string[] args)
         {
-            if (args.Length != 1)
-            {
-                Console.WriteLine("Usage: SSBHBatchProcess.exe <SSBH source folder>");
-                return;
-            }
-            var sourceFolder = args[0];
+            // Test exporting to make sure it's still 1:1. 
+            TestFileExport<Matl>(args[0], args[1]);
+            TestFileExport<Mesh>(args[2], args[3]);
+        }
 
-            foreach (var file in Directory.EnumerateFiles(sourceFolder, $"*.xmb", SearchOption.AllDirectories))
+        private static void TestFileExport<T>(string input, string output) where T : SsbhFile
+        {
+            Ssbh.TryParseSsbhFile(input, out T file);
+            Ssbh.TrySaveSsbhFile(output, file);
+            if (!Enumerable.SequenceEqual(File.ReadAllBytes(input), File.ReadAllBytes(output)))
             {
-                try
-                {
-                    var xmb = new Xmb(file);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(file);
-                    Console.WriteLine(e.Message);
-                }
+                Console.WriteLine($"Files {input} and {output} do not match");
             }
         }
     }
