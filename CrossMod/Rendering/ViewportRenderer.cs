@@ -157,7 +157,7 @@ namespace CrossMod.Rendering
         {
             // TODO: Add background color to render settings.
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GL.ClearColor(0.25f, 0.25f, 0.25f, 1f);
+            GL.ClearColor(System.Drawing.Color.FromArgb(255, 60, 60, 60));
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
