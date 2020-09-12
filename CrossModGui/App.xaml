@@ -10,6 +10,55 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/IconDictionary.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
+            <!--TODO: Specify colors only once-->
+            <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Black" />
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type TabControl}">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type TabItem}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type ListView}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type Menu}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type Expander}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type MenuItem}">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type ComboBoxItem}">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type CheckBox}">
+                <Setter Property="Background" Value="Black"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
