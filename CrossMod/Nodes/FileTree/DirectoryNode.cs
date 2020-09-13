@@ -109,12 +109,7 @@ namespace CrossMod.Nodes
             if (fileNode == null)
                 fileNode = new FileNode(file);
 
-            // TODO: Set a boolean instead of converting the color.
-            // Change style of unrenderable nodes
-            if (!(fileNode is IRenderableNode) && !(fileNode is NuanimNode))
-            {
-                fileNode.ForeColor = Color.Gray;
-            }
+            fileNode.IsActive = (fileNode is IRenderableNode) || (fileNode is NuanimNode);
 
             fileNode.Text = Path.GetFileName(file);
             return fileNode;

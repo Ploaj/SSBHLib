@@ -14,7 +14,7 @@
         Title="Cross Mod" Height="490.024" Width="1034.305">
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
-        <converters:ColorBrushConverter x:Key="colorBrushConverter" />
+        <converters:IsActiveBrushConverter x:Key="colorBrushConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>

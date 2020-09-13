@@ -12,13 +12,13 @@
         <TreeView ItemsSource="{Binding Items}" SelectedItemChanged="TreeView_SelectedItemChanged">
             <TreeView.Resources>
                 <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
-                <converters:ColorBrushConverter x:Key="colorBrushConverter" />
+                <converters:IsActiveBrushConverter x:Key="isActiveBrushConverter" />
             </TreeView.Resources>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                     <StackPanel Orientation="Horizontal">
                         <Image Margin="2,0" Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}" RenderOptions.BitmapScalingMode="NearestNeighbor"></Image>
-                        <TextBlock Margin="2,0" Name="fileItemText" Text="{Binding Text}" Foreground="{Binding Path=ForeColor, Converter={StaticResource colorBrushConverter}}"/>
+                        <TextBlock Margin="2,0" Name="fileItemText" Text="{Binding Text}" Foreground="{Binding Path=IsActive, Converter={StaticResource isActiveBrushConverter}}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

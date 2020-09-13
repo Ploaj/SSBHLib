@@ -14,6 +14,11 @@ namespace CrossMod.Nodes
         /// </summary>
         public string AbsolutePath { get; }
 
+        /// <summary>
+        /// <c>true</c> if the node can be displayed or edited
+        /// </summary>
+        public bool IsActive { get; set; }
+
         public FileNode(string path)
         {
             AbsolutePath = path;
