@@ -25,6 +25,13 @@
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                    <Style.Resources>
+                        <!-- Style the inactive selection the same as active -->
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                             Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                            Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                    </Style.Resources>
                 </Style>
             </TreeView.ItemContainerStyle>
         </TreeView>
