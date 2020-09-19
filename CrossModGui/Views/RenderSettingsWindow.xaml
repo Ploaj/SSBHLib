@@ -27,7 +27,12 @@
         </Expander>
         <Expander Header="Materials" IsExpanded="True">
             <StackPanel>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableNormalMaps}">Enable Normal Maps</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableNorMaps}">Enable Nor Maps</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmMetalness}">Enable Prm Metalness</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmRoughness}">Enable Prm Roughness</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmAo}">Enable Prm AO</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmSpecular}">Enable Prm Specular</CheckBox>
+
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableEdgeTint}">Enable Edge Tint</CheckBox>
             </StackPanel>

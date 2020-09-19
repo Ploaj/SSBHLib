@@ -17,7 +17,12 @@ namespace CrossModGui.ViewModels
             settings.EnableSpecular = vm.EnableSpecular;
             settings.ShadingMode = vm.SelectedRenderMode;
             settings.RenderVertexColor = vm.EnableVertexColor;
-            settings.RenderNormalMaps = vm.EnableNormalMaps;
+            settings.RenderNorMaps = vm.EnableNorMaps;
+            settings.RenderPrmMetalness = vm.EnablePrmMetalness;
+            settings.RenderPrmRoughness = vm.EnablePrmRoughness;
+            settings.RenderPrmAo = vm.EnablePrmAo;
+            settings.RenderPrmSpecular = vm.EnablePrmSpecular;
+
             settings.DirectLightIntensity = vm.DirectLightIntensity;
             settings.IblIntensity = vm.IndirectLightIntensity;
             if (System.Enum.TryParse(vm.ParamName, out MatlEnums.ParamId paramId))

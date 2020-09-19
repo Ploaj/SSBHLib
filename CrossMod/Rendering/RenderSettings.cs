@@ -46,7 +46,12 @@ namespace CrossMod.Rendering
 
         public float IblIntensity { get; set; } = 1.0f;
 
-        public bool RenderNormalMaps { get; set; } = true;
+        public bool RenderNorMaps { get; set; } = true;
+
+        public bool RenderPrmMetalness { get; set; } = true;
+        public bool RenderPrmRoughness { get; set; } = true;
+        public bool RenderPrmAo { get; set; } = true;
+        public bool RenderPrmSpecular { get; set; } = true;
 
         public bool RenderVertexColor { get; set; } = true;
 

@@ -46,7 +46,13 @@ namespace CrossModGui.ViewModels
 
         public float IndirectLightIntensity { get; set; }
 
-        public bool EnableNormalMaps { get; set; }
+        public bool EnableNorMaps { get; set; }
+
+        public bool EnablePrmMetalness { get; set; }
+        public bool EnablePrmRoughness { get; set; }
+        public bool EnablePrmAo { get; set; }
+        public bool EnablePrmSpecular { get; set; }
+
 
         public bool EnableVertexColor { get; set; }
 
@@ -78,7 +84,11 @@ namespace CrossModGui.ViewModels
                 EnableSpecular = rhs.EnableSpecular,
                 SelectedRenderMode = rhs.ShadingMode,
                 EnableVertexColor = rhs.RenderVertexColor,
-                EnableNormalMaps = rhs.RenderNormalMaps,
+                EnableNorMaps = rhs.RenderNorMaps,
+                EnablePrmMetalness = rhs.RenderPrmMetalness,
+                EnablePrmRoughness = rhs.RenderPrmRoughness,
+                EnablePrmAo = rhs.RenderPrmAo,
+                EnablePrmSpecular = rhs.RenderPrmSpecular,
                 DirectLightIntensity = rhs.DirectLightIntensity,
                 IndirectLightIntensity = rhs.DirectLightIntensity,
                 EnableBloom = rhs.EnableBloom,

@@ -116,7 +116,13 @@ namespace CrossMod.Rendering.Models
             currentShader.SetBoolToInt("renderRimLighting", RenderSettings.Instance.EnableRimLighting);
             currentShader.SetBoolToInt("renderExperimental", RenderSettings.Instance.EnableExperimental);
 
-            currentShader.SetBoolToInt("renderNormalMaps", RenderSettings.Instance.RenderNormalMaps);
+            currentShader.SetBoolToInt("renderNorMaps", RenderSettings.Instance.RenderNorMaps);
+
+            currentShader.SetBoolToInt("renderPrmMetalness", RenderSettings.Instance.RenderPrmMetalness);
+            currentShader.SetBoolToInt("renderPrmRoughness", RenderSettings.Instance.RenderPrmRoughness);
+            currentShader.SetBoolToInt("renderPrmAo", RenderSettings.Instance.RenderPrmAo);
+            currentShader.SetBoolToInt("renderPrmSpec", RenderSettings.Instance.RenderPrmSpecular);
+
             currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);
 
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);

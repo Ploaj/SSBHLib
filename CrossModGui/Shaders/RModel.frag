@@ -45,7 +45,11 @@ uniform int renderExperimental;
 
 uniform int renderWireframe;
 uniform int renderVertexColor;
-uniform int renderNormalMaps;
+uniform int renderNorMaps;
+uniform int renderPrmMetalness;
+uniform int renderPrmRoughness;
+uniform int renderPrmAo;
+uniform int renderPrmSpec;
 
 uniform float floatTestParam;
 
@@ -311,7 +315,7 @@ void main()
 
     vec3 fragmentNormal = vertexNormal;
     vec3 bitangent = GetBitangent(vertexNormal, tangent.xyz, tangent.w);
-    if (renderNormalMaps == 1)
+    if (renderNorMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
     // Transform the view vector to world space.
@@ -341,6 +345,16 @@ void main()
     //     emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
+
+    // Override the PRM color with default texture colors if disabled.
+    if (renderPrmMetalness != 1)
+        prmColor.r = 0;
+    if (renderPrmRoughness != 1)
+        prmColor.g = 1;
+    if (renderPrmAo != 1)
+        prmColor.b = 1;
+    if (renderPrmSpec != 1)
+        prmColor.a = 0.5;
 
     // Probably some sort of override for PRM color.
     if (hasCustomVector47 == 1)
