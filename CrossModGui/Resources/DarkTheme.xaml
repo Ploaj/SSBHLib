@@ -332,9 +332,9 @@
         </Setter>
     </Style>
     <SolidColorBrush x:Key="SliderThumb.Static.Foreground" Color="#FFE5E5E5"/>
-    <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="#FFDCECFC"/>
+    <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="#FF666666"/>
     <SolidColorBrush x:Key="SliderThumb.MouseOver.Border" Color="#FF7Eb4EA"/>
-    <SolidColorBrush x:Key="SliderThumb.Pressed.Background" Color="#FFDAECFC"/>
+    <SolidColorBrush x:Key="SliderThumb.Pressed.Background" Color="#FF666666"/>
     <SolidColorBrush x:Key="SliderThumb.Pressed.Border" Color="#FF569DE5"/>
     <SolidColorBrush x:Key="SliderThumb.Disabled.Background" Color="#FFF0F0F0"/>
     <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#FFD9D9D9"/>
