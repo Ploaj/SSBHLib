@@ -30,6 +30,7 @@ namespace SSBHBatchProcess
                         TestFileExport<Mesh>(file);
                         break;
                     case ".numdlb":
+                    case ".nusrcmdlb":
                         TestFileExport<Modl>(file);
                         break;
                     case ".nusktb":
@@ -48,9 +49,9 @@ namespace SSBHBatchProcess
 
         }
 
-        private static void TestFileExport<T>(string input) where T : SsbhFile
+        private static void TestFileExport<T>(string inputFile) where T : SsbhFile
         {
-            Ssbh.TryParseSsbhFile(input, out T file);
+            Ssbh.TryParseSsbhFile(inputFile, out T file);
 
             var stream = new MemoryStream();
             using (var exporter = new SsbhExporter(stream))
@@ -58,9 +59,11 @@ namespace SSBHBatchProcess
                 exporter.WriteSsbhFile(file);
             }
 
-            if (!Enumerable.SequenceEqual(File.ReadAllBytes(input), stream.ToArray()))
+            // Saving the output is only needed if the bytes differ.
+            if (!Enumerable.SequenceEqual(File.ReadAllBytes(inputFile), stream.ToArray()))
             {
-                Console.WriteLine($"{input} did not export 1:1");
+                Console.WriteLine($"{Path.GetFileName(inputFile)} did not export 1:1");
+                File.WriteAllBytes($"{inputFile}.out", stream.ToArray());
             }
             else
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using SSBHLib.Formats.Meshes;
 using System.Linq;
+using SSBHLib.Formats;
 
 namespace SSBHLib.Tools
 {
@@ -241,7 +242,7 @@ namespace SSBHLib.Tools
                         BufferIndex = keypair.Key.BufferIndex,
                         DataType = keypair.Key.DataType,
                         BufferOffset = keypair.Key.BufferIndex == 0 ? stride1 : stride2,
-                        AttributeStrings = new MeshAttributeString[] { new MeshAttributeString() { Name = keypair.Key.Name } }
+                        AttributeStrings = new SsbhString[] { new SsbhString() { Text = keypair.Key.Name } }
                     };
                     mo.Attributes[attributeIndex++] = attr;
 

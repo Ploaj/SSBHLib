@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Animation;
+﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;

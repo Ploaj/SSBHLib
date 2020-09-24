@@ -27,6 +27,6 @@
         /// </summary>
         public string Name { get; set; }
         
-        public MeshAttributeString[] AttributeStrings { get; set; }
+        public SsbhString[] AttributeStrings { get; set; }
     }
 }

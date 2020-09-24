@@ -35,9 +35,9 @@ namespace SSBHLib.Tools
         {
             foreach (MeshAttribute a in meshObject.Attributes)
             {
-                foreach (MeshAttributeString s in a.AttributeStrings)
+                foreach (var s in a.AttributeStrings)
                 {
-                    if (s.Name.Equals(attributeName))
+                    if (s.Text.Equals(attributeName))
                     {
                         return a;
                     }
@@ -131,7 +131,7 @@ namespace SSBHLib.Tools
                 return new SsbhVertexAttribute[0];
             }
 
-            string attributeName = attr.AttributeStrings[0].Name;
+            string attributeName = attr.AttributeStrings[0].Text;
 
             // TODO: There are optimizations possible for reading if the data is tighly packed.
             // The stride may not allow this.

@@ -53,7 +53,6 @@
     <Compile Include="Formats\Meshes\Mesh.cs" />
     <Compile Include="Formats\Materials\Matl.cs" />
     <Compile Include="Formats\Meshes\MeshAttribute.cs" />
-    <Compile Include="Formats\Meshes\MeshAttributeString.cs" />
     <Compile Include="Formats\Meshes\MeshBoneBuffer.cs" />
     <Compile Include="Formats\Meshes\MeshBoneInfluence.cs" />
     <Compile Include="Formats\Meshes\MeshBuffer.cs" />
@@ -71,6 +70,7 @@
     <Compile Include="Formats\SkelBoneEntry.cs" />
     <Compile Include="Formats\Matrix4x4.cs" />
     <Compile Include="Formats\SSBHFileAttribute.cs" />
+    <Compile Include="Formats\SsbhString.cs" />
     <Compile Include="Formats\Vector3.cs" />
     <Compile Include="Formats\Vector4.cs" />
     <Compile Include="IO\BinaryReaderExtensions.cs" />

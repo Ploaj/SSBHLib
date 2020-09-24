@@ -1,7 +1,4 @@
 ﻿using SSBHLib.Formats;
-using SSBHLib.Formats.Animation;
-using SSBHLib.Formats.Materials;
-using SSBHLib.Formats.Meshes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +12,6 @@ namespace SSBHLib.IO
 
         private int bitPosition;
 
-        // Avoid reflection invoke overhead for known file magics.
         private static readonly Dictionary<string, Func<SsbhParser, SsbhFile>> parseMethodByMagic = new Dictionary<string, Func<SsbhParser, SsbhFile>>()
         {
             { "BPLH", (parser) => parser.ParseHlpb() },
@@ -26,25 +22,6 @@ namespace SSBHLib.IO
             { "HSEM", (parser) => parser.ParseMesh() },
             { "LTAM", (parser) => parser.ParseMatl() },
             { "MINA", (parser) => parser.ParseAnim() }
-        };
-
-        // Avoid reflection invoke overhead for known types.
-        private static readonly Dictionary<Type, Func<SsbhParser, SsbhFile>> parseMethodByType = new Dictionary<Type, Func<SsbhParser, SsbhFile>>()
-        {
-            { typeof(AnimGroup), (parser) => parser.ParseAnimGroup() },
-            { typeof(AnimNode), (parser) => parser.ParseAnimNode() },
-            { typeof(AnimTrack), (parser) => parser.ParseAnimTrack() },
-            { typeof(MatlEntry), (parser) => parser.ParseMatlEntry() },
-            { typeof(MatlAttribute), (parser) => parser.ParseMatlAttribute() },
-            { typeof(ModlMaterialName), (parser) => parser.ParseModlMaterialName() },
-            { typeof(ModlEntry), (parser) => parser.ParseModlEntry() },
-            { typeof(MeshObject), (parser) => parser.ParseMeshObject() },
-            { typeof(MeshAttribute), (parser) => parser.ParseMeshAttribute() },
-            { typeof(MeshAttributeString), (parser) => parser.ParseMeshAttributeString() },
-            { typeof(MeshBuffer), (parser) => parser.ParseMeshBuffer() },
-            { typeof(MeshRiggingGroup), (parser) => parser.ParseMeshRiggingGroup() },
-            { typeof(MeshBoneBuffer), (parser) => parser.ParseMeshBoneBuffer() },
-            { typeof(SkelBoneEntry), (parser) => parser.ParseSkelBoneEntry() },
         };
 
         public SsbhParser(Stream stream) : base(stream)

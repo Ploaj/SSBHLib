@@ -232,6 +232,13 @@
             return result;
         }
 
+        public static Formats.SsbhString ParseSsbhString(this SsbhParser parser)
+        {
+            var result = new Formats.SsbhString();
+            result.Text = parser.ReadOffsetReadString();
+            return result;
+        }
+
         public static Formats.Modl ParseModl(this SsbhParser parser)
         {
             var result = new Formats.Modl();
@@ -572,21 +579,14 @@
                 parser.Seek(absoluteOffset);
 
  
-                result.AttributeStrings = new Formats.Meshes.MeshAttributeString[elementCount];
+                result.AttributeStrings = new Formats.SsbhString[elementCount];
                 for (int i = 0; i < elementCount; i++)
                 {
-                    result.AttributeStrings[i] = parser.ParseMeshAttributeString();
+                    result.AttributeStrings[i] = parser.ParseSsbhString();
                 }
  
                 parser.Seek(previousPosition); 
             }
-            return result;
-        }
-
-        public static Formats.Meshes.MeshAttributeString ParseMeshAttributeString(this SsbhParser parser)
-        {
-            var result = new Formats.Meshes.MeshAttributeString();
-            result.Name = parser.ReadOffsetReadString();
             return result;
         }
 
