@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace SSBHLib.IO
 {
@@ -41,24 +42,23 @@ namespace SSBHLib.IO
 
         }
 
-        public static void WriteSsbhFile(string fileName, SsbhFile file, bool writeHeader = true)
+        public SsbhExporter(string fileName) : this(new FileStream(fileName, FileMode.Create))
         {
-            using (SsbhExporter exporter = new SsbhExporter(new FileStream(fileName, FileMode.Create)))
-            {
-                // write ssbh header
-                if (writeHeader)
-                {
-                    // The header is 16-byte aligned.
-                    exporter.Write(new char[] { 'H', 'B', 'S', 'S'});
-                    // TODO: This value is always present.
-                    exporter.Write(0x40);
-                    exporter.Pad(0x10);
-                }
 
-                // write file contents
-                exporter.AddSsbhFile(file);
-                exporter.Pad(4);
-            }
+        }
+
+        public void WriteSsbhFile(SsbhFile file)
+        {
+            // The header is 16-byte aligned.
+            Write(new char[] { 'H', 'B', 'S', 'S'});
+            // TODO: This value is always present.
+            Write(0x40);
+            Pad(0x10);
+
+            // write file contents
+            AddSsbhFile(file);
+            // TODO: padding?
+            //exporter.Pad(0x4);
         }
 
         private void AddSsbhFile(SsbhFile file)
@@ -83,14 +83,15 @@ namespace SSBHLib.IO
                 if (writeInfo.RelativeOffsetStartPosition.HasValue)
                     WriteRelativeOffset(writeInfo);
 
+                var isLastWrite = objectWriteQueue.Count == 0;
                 if (writeInfo.Data is Array array)
-                    WriteArray(array);
+                    WriteArray(array, isLastWrite);
                 else
-                    WriteProperty(writeInfo.Data);
+                    WriteProperty(writeInfo.Data, isLastWrite);
             }
         }
 
-        private void WriteArray(Array array)
+        private void WriteArray(Array array, bool isLastWrite)
         {
             if (array.GetType() == typeof(byte[]))
             {
@@ -103,7 +104,7 @@ namespace SSBHLib.IO
                 objectWriteQueue = new Queue<ObjectWriteInfo>();
                 foreach (object o in array)
                 {
-                    WriteProperty(o);
+                    WriteProperty(o, isLastWrite);
                 }
                 foreach (var o in objectQueueTemp)
                     objectWriteQueue.Enqueue(o);
@@ -121,7 +122,7 @@ namespace SSBHLib.IO
             BaseStream.Position = currentPosition;
         }
 
-        private void WriteSsbhFile(SsbhFile file)
+        private void WriteSsbh(SsbhFile file, bool isLastWrite)
         {
             foreach (var prop in file.GetType().GetProperties())
             {
@@ -166,17 +167,17 @@ namespace SSBHLib.IO
                 }
                 else
                 {
-                    WriteProperty(prop.GetValue(file));
+                    WriteProperty(prop.GetValue(file), isLastWrite);
                 }
             }
         }
 
-        private void WriteProperty(object value)
+        private void WriteProperty(object value, bool isLastWrite)
         {
             Type t = value.GetType();
             if (value is MaterialEntry entry)
             {
-                WriteProperty(entry.Object);
+                WriteProperty(entry.Object, isLastWrite);
                 // Floats are 8-byte aligned for MATL?
                 if (entry.Object is float)
                     Pad(0x8);
@@ -190,7 +191,7 @@ namespace SSBHLib.IO
             }
             else if (value is SsbhFile v)
             {
-                WriteSsbhFile(v);
+                WriteSsbh(v, isLastWrite);
                 Pad(0x8);
             }
             else if (t.IsEnum)
@@ -216,7 +217,7 @@ namespace SSBHLib.IO
             else if (t == typeof(float))
                 Write((float)value);
             else if (t == typeof(string))
-                WriteString((string)value);
+                WriteString((string)value, isLastWrite);
             else if (t == typeof(Vector3))
                 WriteVector3((Vector3)value);
             else if (t == typeof(Vector4))
@@ -259,12 +260,13 @@ namespace SSBHLib.IO
             Write(value.W);
         }
 
-        private void WriteString(string text)
+        private void WriteString(string text, bool isLastWrite = false)
         {
             // 4-byte aligned c string
             Write(text.ToCharArray());
             Write((byte)0);
-            Pad(0x4);
+            if (!isLastWrite)
+                Pad(0x4);
         }
 
         private void WriteEnum(Type enumType, object value)

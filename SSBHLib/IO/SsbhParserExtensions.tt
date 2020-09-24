@@ -105,7 +105,7 @@ namespace SSBHLib.IO
 #>
             {
                 // TODO: Extract this code to a method?
-                long absoluteOffset = parser.GetOffset();
+                long absoluteOffset = parser.ReadRelativeGetAbsoluteOffset();
                 long elementCount = parser.ReadInt64();
                 long previousPosition = parser.Position;
                 parser.Seek(absoluteOffset);

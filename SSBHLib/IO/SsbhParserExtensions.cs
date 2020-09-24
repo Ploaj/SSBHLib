@@ -256,7 +256,7 @@
  
                 parser.Seek(previousPosition); 
             }
-            result.UnknownFileName = parser.ReadOffsetReadString();
+            result.Unk1 = parser.ReadInt64();      
             result.MeshString = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?

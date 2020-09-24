@@ -6,6 +6,7 @@ using SSBHLib.Formats;
 using System;
 using System.IO;
 using System.Linq;
+using SSBHLib.IO;
 
 namespace SSBHBatchProcess
 {
@@ -23,22 +24,22 @@ namespace SSBHBatchProcess
                 switch (extension)
                 {
                     case ".numatb":
-                        TestFileExport<Matl>(file, file + "_out");
+                        TestFileExport<Matl>(file);
                         break;
                     case ".numshb":
-                        TestFileExport<Mesh>(file, file + "_out");
+                        TestFileExport<Mesh>(file);
                         break;
                     case ".numdlb":
-                        TestFileExport<Modl>(file, file + "_out");
+                        TestFileExport<Modl>(file);
                         break;
                     case ".nusktb":
-                        TestFileExport<Skel>(file, file + "_out");
+                        TestFileExport<Skel>(file);
                         break;
                     case ".nuanmb":
-                        TestFileExport<Anim>(file, file + "_out");
+                        TestFileExport<Anim>(file);
                         break;
                     case ".nuhlpb":
-                        TestFileExport<Hlpb>(file, file + "_out");
+                        TestFileExport<Hlpb>(file);
                         break;
                     default:
                         break;
@@ -47,13 +48,19 @@ namespace SSBHBatchProcess
 
         }
 
-        private static void TestFileExport<T>(string input, string output) where T : SsbhFile
+        private static void TestFileExport<T>(string input) where T : SsbhFile
         {
             Ssbh.TryParseSsbhFile(input, out T file);
-            Ssbh.TrySaveSsbhFile(output, file);
-            if (!Enumerable.SequenceEqual(File.ReadAllBytes(input), File.ReadAllBytes(output)))
+
+            var stream = new MemoryStream();
+            using (var exporter = new SsbhExporter(stream))
             {
-                Console.WriteLine($"Files {input} and {output} do not match");
+                exporter.WriteSsbhFile(file);
+            }
+
+            if (!Enumerable.SequenceEqual(File.ReadAllBytes(input), stream.ToArray()))
+            {
+                Console.WriteLine($"{input} did not export 1:1");
             }
             else
             {

@@ -12,7 +12,10 @@ namespace SSBHLib
         /// <param name="file"></param>
         public static void TrySaveSsbhFile(string filePath, SsbhFile file)
         {
-            SsbhExporter.WriteSsbhFile(filePath, file, true);
+            using (var exporter = new SsbhExporter(filePath))
+            {
+                exporter.WriteSsbhFile(file);
+            }
         }
 
         /// <summary>
