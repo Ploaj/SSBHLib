@@ -152,7 +152,7 @@ namespace CrossMod.Nodes
 
         private static string ConfigureAttribute(UltimateMesh renderMesh, MeshObject meshObject, MeshAttribute attribute)
         {
-            var name = attribute.AttributeStrings[0].Name;
+            var name = attribute.AttributeStrings[0].Text;
             var valueCount = (ValueCount)UltimateVertexAttribute.GetAttributeFromName(name).ComponentCount;
             var type = GetGlAttributeType(attribute);
             var bufferName = $"vertexBuffer{attribute.BufferIndex}";
