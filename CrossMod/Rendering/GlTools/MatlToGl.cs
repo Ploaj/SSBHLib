@@ -52,8 +52,6 @@ namespace CrossMod.Rendering.GlTools
                 return CullFaceMode.Back;
             if (cullMode == MatlCullMode.Front)
                 return CullFaceMode.Front;
-            if (cullMode == MatlCullMode.FrontAndBack)
-                return CullFaceMode.FrontAndBack;
 
             return CullFaceMode.Back;
         }

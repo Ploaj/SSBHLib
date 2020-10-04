@@ -89,6 +89,7 @@ namespace CrossMod.Rendering.GlTools
 
         public float CurrentFrame { get; set; } = 0;
 
+        public bool EnableFaceCulling { get; set; }
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
 
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
@@ -194,7 +195,7 @@ namespace CrossMod.Rendering.GlTools
             else
                 GL.Disable(EnableCap.SampleAlphaToCoverage);
 
-            SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(true, CullMode));
+            SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(EnableFaceCulling, CullMode));
         }
 
         private Vector3 GetMaterialIdColor(int index)

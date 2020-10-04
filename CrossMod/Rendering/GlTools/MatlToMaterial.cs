@@ -114,6 +114,7 @@ namespace CrossMod.Rendering.GlTools
 
             meshMaterial.DepthBias = rasterizerState.DepthBias;
             meshMaterial.CullMode = MatlToGl.GetCullMode(rasterizerState.CullMode);
+            meshMaterial.EnableFaceCulling = rasterizerState.CullMode != MatlCullMode.None;
         }
 
         private static void SetBlendState(RMaterial meshMaterial, MatlAttribute a)

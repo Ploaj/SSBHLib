@@ -10,7 +10,7 @@
     {
         Back = 0,
         Front = 1,
-        FrontAndBack = 2
+        None = 2
     }
 
     public partial class MatlAttribute
