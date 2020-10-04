@@ -35,8 +35,9 @@
             </MenuItem>
             <MenuItem Header="Menu">
                 <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
-                <MenuItem Header="Camera" Click="Camera_Click"/>
+                <MenuItem Header="Camera Settings" Click="Camera_Click"/>
                 <MenuItem Header="Material Editor" Click="MaterialEditor_Click"></MenuItem>
+                <MenuItem Header="Preferences" Click="Preferences_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Viewport">
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>

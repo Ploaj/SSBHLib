@@ -34,6 +34,10 @@ namespace CrossMod.Nodes
             Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
             SelectedImageKey = "folder";
             ImageKey = "folder";
+
+            // Make the font color use the default foreground color.
+            // TODO: "IsActive" should be reworked at some point (it only applies to renderables).
+            IsActive = true;
         }
 
         /// <summary>
