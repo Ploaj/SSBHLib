@@ -321,6 +321,11 @@ void main()
     // Transform the view vector to world space.
     vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
 
+    // A hack to ensure backfaces render the same as front faces.
+    // TODO: Does the game actually do this?
+    if (dot(viewVector, fragmentNormal) < 0.0)
+        fragmentNormal *= -1.0;
+
     // TODO: Double check the orientation.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
