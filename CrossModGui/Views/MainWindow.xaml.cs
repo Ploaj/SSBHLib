@@ -15,6 +15,8 @@ namespace CrossModGui.Views
     {
         private readonly MainWindowViewModel viewModel;
 
+        // Store state for the lifetime of the application.
+        // Probably not the most elegant solution...
         private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
         private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
 
@@ -164,6 +166,9 @@ namespace CrossModGui.Views
         private void Window_Closed(object sender, EventArgs e)
         {
             glViewport.Dispose();
+
+            // Ensure the changes are preserved between sessions.
+            PreferencesWindowViewModel.Instance.SaveChangesToFile();
         }
 
         private void glViewport_Resize(object sender, EventArgs e)
@@ -221,8 +226,7 @@ namespace CrossModGui.Views
 
         private void glViewport_MouseEnter(object sender, EventArgs e)
         {
-            // Workaround for mouse scroll state not being updated
-            // while the mouse pointer isn't on the viewport.
+            // Workaround for mouse scroll state not being updated while the mouse pointer isn't on the viewport.
             viewModel.Renderer.UpdateMouseScroll();
         }
 
@@ -234,6 +238,12 @@ namespace CrossModGui.Views
         private void MeshBoneTabMenu_Click(object sender, RoutedEventArgs e)
         {
             meshBoneTabControl.Visibility = (sender as MenuItem).IsChecked ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void Preferences_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new PreferencesWindow(PreferencesWindowViewModel.Instance);
+            window.Show();
         }
     }
 }

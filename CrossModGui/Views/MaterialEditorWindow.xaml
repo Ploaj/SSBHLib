@@ -41,7 +41,7 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Rectangle Margin="5,0" Fill="{Binding MaterialIdColor}" Width="16" Height="16" Stroke="Black"></Rectangle>
+                            <Rectangle Margin="5,0" Fill="{Binding MaterialIdColor}" Width="16" Height="16"></Rectangle>
                             <TextBlock Text="{Binding Name}"></TextBlock>
                         </StackPanel>
                     </DataTemplate>
@@ -50,7 +50,7 @@
             <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
-        <GroupBox DockPanel.Dock="Bottom">
+        <Grid DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <Expander Header="CustomBoolean Params" IsExpanded="False" Visibility="{Binding CurrentMaterial.HasBooleans, Converter={StaticResource booleanVisibilityConverter}}">
@@ -127,6 +127,6 @@
                     </Expander>
                 </StackPanel>
             </ScrollViewer>
-        </GroupBox>
+        </Grid>
     </DockPanel>
 </Window>

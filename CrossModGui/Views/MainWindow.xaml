@@ -14,7 +14,7 @@
         Title="Cross Mod" Height="490.024" Width="1034.305">
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
-        <converters:ColorBrushConverter x:Key="colorBrushConverter" />
+        <converters:IsActiveBrushConverter x:Key="colorBrushConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>
@@ -35,8 +35,9 @@
             </MenuItem>
             <MenuItem Header="Menu">
                 <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
-                <MenuItem Header="Camera" Click="Camera_Click"/>
+                <MenuItem Header="Camera Settings" Click="Camera_Click"/>
                 <MenuItem Header="Material Editor" Click="MaterialEditor_Click"></MenuItem>
+                <MenuItem Header="Preferences" Click="Preferences_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Viewport">
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>
@@ -75,6 +76,17 @@
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Style.Resources>
+                                    <!-- Style the inactive selection the same as active -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                        Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                        Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                                </Style.Resources>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
                     </TreeView>
                 </TabItem>
             </TabControl>

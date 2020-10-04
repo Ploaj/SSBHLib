@@ -51,7 +51,10 @@
       <HintPath>..\CrossMod\Lib\AnimatedGif.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper, Version=15.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.15.0.5\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>..\packages\CsvHelper.15.0.6\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\CrossMod\Lib\OpenTK.dll</HintPath>
@@ -128,7 +131,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BitmapToWpfBitmap.cs" />
-    <Compile Include="Converters\ColorBrushConverter.cs" />
+    <Compile Include="Converters\IsActiveBrushConverter.cs" />
     <Compile Include="Converters\ImageKeyImageConverter.cs" />
     <Compile Include="Tools\MaterialParamDescriptions.cs" />
     <Compile Include="UserControls\AnimationBar.xaml.cs">
@@ -143,6 +146,7 @@
     <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MaterialEditorWindowViewModel.cs" />
+    <Compile Include="ViewModels\PreferencesWindowViewModel.cs" />
     <Compile Include="ViewModels\RenderSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelConversion.cs" />
@@ -152,9 +156,16 @@
     <Compile Include="Views\MaterialEditorWindow.xaml.cs">
       <DependentUpon>MaterialEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PreferencesWindow.xaml.cs">
+      <DependentUpon>PreferencesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RenderSettingsWindow.xaml.cs">
       <DependentUpon>RenderSettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\IconDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MaterialEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PreferencesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

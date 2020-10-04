@@ -34,6 +34,10 @@ namespace CrossMod.Nodes
             Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
             SelectedImageKey = "folder";
             ImageKey = "folder";
+
+            // Make the font color use the default foreground color.
+            // TODO: "IsActive" should be reworked at some point (it only applies to renderables).
+            IsActive = true;
         }
 
         /// <summary>
@@ -109,12 +113,7 @@ namespace CrossMod.Nodes
             if (fileNode == null)
                 fileNode = new FileNode(file);
 
-            // TODO: Set a boolean instead of converting the color.
-            // Change style of unrenderable nodes
-            if (!(fileNode is IRenderableNode) && !(fileNode is NuanimNode))
-            {
-                fileNode.ForeColor = Color.Gray;
-            }
+            fileNode.IsActive = (fileNode is IRenderableNode) || (fileNode is NuanimNode);
 
             fileNode.Text = Path.GetFileName(file);
             return fileNode;
