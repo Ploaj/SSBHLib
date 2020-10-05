@@ -57,8 +57,6 @@ namespace CrossMod.Rendering.GlTools
                         meshMaterial.vec4ByParamId[attribute.ParamId] = new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
                         break;
                     case MatlEnums.ParamDataType.Boolean:
-                        // Convert to vec4 to use with rendering.
-                        // Use cyan to differentiate with no value (blue).
                         bool boolValue = (bool)attribute.DataObject;
                         meshMaterial.boolByParamId[attribute.ParamId] = boolValue;
                         break;
@@ -72,15 +70,10 @@ namespace CrossMod.Rendering.GlTools
                     case MatlEnums.ParamDataType.RasterizerState:
                         SetRasterizerState(meshMaterial, attribute);
                         break;
+                    case MatlEnums.ParamDataType.Sampler:
+                        SetSamplerInformation(meshMaterial, attribute);
+                        break;
                 }
-            }
-
-            foreach (MatlAttribute a in currentEntry.Attributes)
-            {
-                if (a.DataObject == null || a.DataType != MatlEnums.ParamDataType.Sampler)
-                    continue;
-
-                SetSamplerInformation(meshMaterial, a);
             }
 
             return meshMaterial;
@@ -95,15 +88,14 @@ namespace CrossMod.Rendering.GlTools
                 TextureWrapT = MatlToGl.GetWrapMode(samplerStruct.WrapT),
                 TextureWrapR = MatlToGl.GetWrapMode(samplerStruct.WrapR),
                 MagFilter = MatlToGl.GetMagFilter(samplerStruct.MagFilter),
-                MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter)
+                MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter),
+                TextureLodBias = samplerStruct.LodBias,
             };
 
-            GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureLodBias, samplerStruct.LodBias);
-
             if (samplerStruct.Unk6 == 2 && RenderSettings.Instance.EnableExperimental)
-                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, (float)samplerStruct.MaxAnisotropy);
+                sampler.TextureMaxAnisotropy = samplerStruct.MaxAnisotropy;
             else
-                GL.SamplerParameter(sampler.Id, SamplerParameterName.TextureMaxAnisotropyExt, 1.0f);
+                sampler.TextureMaxAnisotropy = 1.0f;
 
             material.samplerByParamId[a.ParamId] = sampler;
         }
