@@ -64,7 +64,7 @@ uniform MaterialParams
     vec4 CustomVector11;
     vec4 CustomVector13;
     vec4 CustomVector14;
-    vec3 CustomVector18;
+    vec4 CustomVector18;
     vec4 CustomVector30;
     vec4 CustomVector31;
     vec4 CustomVector32;
