@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using CrossMod.Rendering;
+﻿using CrossMod.Rendering;
+using System.Collections.Generic;
 
 namespace CrossModGui.ViewModels
 {

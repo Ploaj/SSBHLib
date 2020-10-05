@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CrossMod.Rendering.ShapeMeshes;
 using OpenTK;
-using SFGraphics.GLObjects.Shaders;
-using SFGraphics.Cameras;
 using OpenTK.Graphics.OpenGL;
+using SFGraphics.Cameras;
+using SFGraphics.GLObjects.Shaders;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using CrossMod.Rendering.ShapeMeshes;
 
 namespace CrossMod.Rendering
 {
@@ -19,10 +19,10 @@ namespace CrossMod.Rendering
         private PrimBonePrism bonePrism;
         public static Shader boneShader = null;
         private static Matrix4 prismRotation = Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), 1.5708f);
-        
+
         public void Reset()
         {
-            foreach(var bone in Bones)
+            foreach (var bone in Bones)
             {
                 bone.AnimationTransform = bone.Transform;
             }
@@ -31,7 +31,7 @@ namespace CrossMod.Rendering
         public Matrix4[] GetTransforms()
         {
             Matrix4[] transforms = new Matrix4[Bones.Count];
-            for(int i = 0; i < Bones.Count; i++)
+            for (int i = 0; i < Bones.Count; i++)
             {
                 transforms[i] = Bones[i].Transform;
             }
@@ -78,7 +78,7 @@ namespace CrossMod.Rendering
 
             // Process HelperBones
 
-            foreach(RHelperBone hBone in HelperBone)
+            foreach (RHelperBone hBone in HelperBone)
             {
                 // get watcher bone
                 /*RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
@@ -136,7 +136,7 @@ namespace CrossMod.Rendering
 
         public int GetBoneIndex(string boneName)
         {
-            for(int i = 0; i < Bones.Count; i++)
+            for (int i = 0; i < Bones.Count; i++)
             {
                 if (Bones[i].Name.Equals(boneName))
                     return i;
@@ -157,7 +157,7 @@ namespace CrossMod.Rendering
                 boneShader = new Shader();
                 boneShader.LoadShaders(File.ReadAllText("Shaders/Bone.vert"), File.ReadAllText("Shaders/Bone.frag"));
             }
-            
+
             boneShader.UseProgram();
 
             boneShader.SetVector4("boneColor", RenderSettings.Instance.BoneColor);
@@ -171,7 +171,7 @@ namespace CrossMod.Rendering
                 Matrix4 transform = b.GetAnimationTransform(this);
                 boneShader.SetMatrix4x4("bone", ref transform);
                 boneShader.SetInt("hasParent", b.ParentId != -1 ? 1 : 0);
-                if(b.ParentId != -1)
+                if (b.ParentId != -1)
                 {
                     Matrix4 parenttransform = Bones[b.ParentId].GetAnimationTransform(this);
                     boneShader.SetMatrix4x4("parent", ref parenttransform);
@@ -179,7 +179,7 @@ namespace CrossMod.Rendering
                 bonePrism.Draw(boneShader);
 
                 // leaf node
-                boneShader.SetInt("hasParent", 0); 
+                boneShader.SetInt("hasParent", 0);
                 bonePrism.Draw(boneShader);
             }
 
@@ -238,7 +238,7 @@ namespace CrossMod.Rendering
 
         public Matrix4 GetAnimationTransform(RSkeleton skeleton)
         {
-            if(ParentId != -1)
+            if (ParentId != -1)
             {
                 return AnimationTransform * skeleton.Bones[ParentId].GetAnimationTransform(skeleton);
             }

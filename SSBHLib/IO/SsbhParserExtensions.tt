@@ -121,12 +121,12 @@ namespace SSBHLib.IO
                     result.<#=prop.Name#>[i] = <#=arrayElementParseText#>;
                 }
 <#              } #> 
-                parser.Seek(previousPosition); 
+                parser.Seek(previousPosition);
             }
 <#          } else if (prop.PropertyType == typeof(string))  { #>
             result.<#=prop.Name#> = parser.ReadOffsetReadString();
 <#          } else{ #>
-            <#=fullAssignmentText#>      
+            <#=fullAssignmentText#>
 <#          } #>
 <#      } #>
 <# 

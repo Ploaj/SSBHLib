@@ -1,6 +1,4 @@
 ﻿using OpenTK;
-using System;
-using System.Security.Policy;
 
 namespace CrossMod.Rendering
 {
@@ -50,7 +48,7 @@ namespace CrossMod.Rendering
             return new Catch(0x031ed91fca, 1, Vector3.Zero) { Enabled = false };
         }
     }
-    
+
     public class Collision
     {
         public ulong Bone { get; set; }

@@ -1,12 +1,12 @@
 ﻿using SSBHLib;
+using SSBHLib.Formats;
+using SSBHLib.Formats.Animation;
 using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
-using SSBHLib.Formats.Animation;
-using SSBHLib.Formats;
+using SSBHLib.IO;
 using System;
 using System.IO;
 using System.Linq;
-using SSBHLib.IO;
 
 namespace SSBHBatchProcess
 {

@@ -1,7 +1,7 @@
 ﻿using CrossMod.Rendering;
-using SSBHLib.Formats;
-using SSBHLib;
 using OpenTK;
+using SSBHLib;
+using SSBHLib.Formats;
 
 namespace CrossMod.Nodes
 {

@@ -1,8 +1,8 @@
 ﻿using CrossMod.Rendering;
-using SSBHLib;
-using SSBHLib.Tools;
 using OpenTK;
+using SSBHLib;
 using SSBHLib.Formats.Animation;
+using SSBHLib.Tools;
 using System.Collections.Generic;
 
 namespace CrossMod.Nodes
@@ -12,11 +12,11 @@ namespace CrossMod.Nodes
     {
         private Anim animation;
 
-        public NuanimNode(string path): base(path)
+        public NuanimNode(string path) : base(path)
         {
             ImageKey = "animation";
         }
-        
+
         public override void Open()
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out animation);
@@ -72,7 +72,7 @@ namespace CrossMod.Nodes
                     ReadBoneAnimations(renderAnimation, decoder, animGroup);
                 }
             }
-            
+
             return renderAnimation;
         }
 

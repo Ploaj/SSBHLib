@@ -10,7 +10,6 @@ using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace CrossMod.Nodes
 {
@@ -223,7 +222,7 @@ namespace CrossMod.Nodes
                 case MeshAttribute.AttributeDataType.Float:
                     return VertexAttribPointerType.Float;
                 case MeshAttribute.AttributeDataType.Byte:
-                    return VertexAttribPointerType.UnsignedByte; 
+                    return VertexAttribPointerType.UnsignedByte;
                 case MeshAttribute.AttributeDataType.HalfFloat:
                     return VertexAttribPointerType.HalfFloat;
                 case MeshAttribute.AttributeDataType.HalfFloat2:

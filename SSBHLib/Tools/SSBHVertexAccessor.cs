@@ -1,7 +1,6 @@
 ﻿using SSBHLib.Formats.Meshes;
 using SSBHLib.IO;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace SSBHLib.Tools
@@ -171,7 +170,7 @@ namespace SSBHLib.Tools
         // TODO: It may be better to convert bytes to floating point by dividing by 255.0f.
         private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (MeshAttribute.AttributeDataType)attr.DataType;
+            var format = attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -201,7 +200,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec2(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (MeshAttribute.AttributeDataType)attr.DataType;
+            var format = attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -231,7 +230,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec3(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (MeshAttribute.AttributeDataType)attr.DataType;
+            var format = attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
@@ -261,7 +260,7 @@ namespace SSBHLib.Tools
 
         private SsbhVertexAttribute[] ReadAttributeVec4(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
         {
-            var format = (MeshAttribute.AttributeDataType)attr.DataType;
+            var format = attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)

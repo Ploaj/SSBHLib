@@ -1,10 +1,10 @@
-﻿using SSBHLib;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using SSBHLib;
 using SSBHLib.Formats.Animation;
 using SSBHLib.Tools;
 using System;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace NuanmbToJson
 {

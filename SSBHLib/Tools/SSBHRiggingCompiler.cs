@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SSBHLib.Formats.Meshes;
+using System;
 using System.Collections.Generic;
-using SSBHLib.Formats.Meshes;
 using System.Linq;
 
 namespace SSBHLib.Tools
@@ -29,7 +29,7 @@ namespace SSBHLib.Tools
             Dictionary<ushort, int> vertexToWeightCount = new Dictionary<ushort, int>();
             int maxInfluenceCount = 0;
 
-            foreach(var influence in influences)
+            foreach (var influence in influences)
             {
                 // get byte list
                 if (!boneNameToData.ContainsKey(influence.BoneName))
@@ -52,7 +52,7 @@ namespace SSBHLib.Tools
             // create bone groups
             group.Flags = 0x0100 | maxInfluenceCount;
             List<MeshBoneBuffer> bonebuffers = new List<MeshBoneBuffer>();
-            foreach(var pair in boneNameToData)
+            foreach (var pair in boneNameToData)
             {
                 bonebuffers.Add(new MeshBoneBuffer() { BoneName = pair.Key, Data = pair.Value.ToArray() });
             }

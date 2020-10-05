@@ -1,7 +1,6 @@
 ﻿using CrossMod.Rendering.GlTools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Shaders;
 using System;
 
@@ -25,9 +24,9 @@ namespace CrossMod.Rendering.Models
 
         public RMaterial Material { get; set; } = null;
 
-        public bool Visible 
-        { 
-            get => visible; 
+        public bool Visible
+        {
+            get => visible;
             set
             {
                 if (value != visible)

@@ -1,6 +1,4 @@
-﻿using SSBHLib.IO;
-
-namespace SSBHLib.Formats.Meshes
+﻿namespace SSBHLib.Formats.Meshes
 {
     [SsbhFile("HSEM")]
     public class Mesh : SsbhFile
@@ -25,21 +23,21 @@ namespace SSBHLib.Formats.Meshes
         public Vector3 OrientedBoundingBoxSize { get; set; }
 
         public float Unk1 { get; set; }
-        
+
         public MeshObject[] Objects { get; set; }
-        
+
         public int[] BufferSizes { get; set; }
-        
+
         public long PolygonIndexSize { get; set; } // TODO: seems to match index count?
-        
+
         public MeshBuffer[] VertexBuffers { get; set; }
-        
+
         public byte[] PolygonBuffer { get; set; }
-        
+
         public MeshRiggingGroup[] RiggingBuffers { get; set; }
-        
+
         public long UnknownOffset { get; set; }
-        
+
         public long UnknownSize { get; set; }
     }
 }

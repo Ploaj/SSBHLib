@@ -1,11 +1,9 @@
-﻿using CrossMod.Rendering;
+﻿using CrossMod.Nodes.Formats.Models;
+using CrossMod.Rendering;
 using SSBHLib;
-using SSBHLib.Formats.Meshes;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
-using SSBHLib.Tools;
 using System.Collections.Generic;
-using CrossMod.Nodes.Formats.Models;
 
 namespace CrossMod.Nodes
 {

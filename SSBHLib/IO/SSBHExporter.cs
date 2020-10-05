@@ -3,8 +3,6 @@ using SSBHLib.Formats.Materials;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace SSBHLib.IO
 {
@@ -32,7 +30,7 @@ namespace SSBHLib.IO
             }
         }
 
-        public long Position => BaseStream.Position; 
+        public long Position => BaseStream.Position;
         public long FileSize => BaseStream.Length;
 
         private Queue<ObjectWriteInfo> objectWriteQueue = new Queue<ObjectWriteInfo>();
@@ -50,7 +48,7 @@ namespace SSBHLib.IO
         public void WriteSsbhFile(SsbhFile file)
         {
             // The header is 16-byte aligned.
-            Write(new char[] { 'H', 'B', 'S', 'S'});
+            Write(new char[] { 'H', 'B', 'S', 'S' });
             // TODO: This value is always present.
             Write(0x40);
             Pad(0x10);
@@ -156,7 +154,7 @@ namespace SSBHLib.IO
                     Write(0L);
                     Write((long)array.Length);
                 }
-                else if (prop.PropertyType == typeof(SsbhOffset)) 
+                else if (prop.PropertyType == typeof(SsbhOffset))
                 {
                     // HACK: for materials
                     var dataObject = file.GetType().GetProperty("DataObject").GetValue(file);

@@ -58,12 +58,12 @@ namespace CrossModGui.ViewModels
             public float Max4 { get; set; } = 1.0f;
             public float Value4
             {
-                get => value4; 
-                set 
-                { 
-                    value4 = value; 
-                    UpdateColor(); 
-                } 
+                get => value4;
+                set
+                {
+                    value4 = value;
+                    UpdateColor();
+                }
             }
             private float value4;
 

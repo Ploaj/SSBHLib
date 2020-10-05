@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SSBHLib.Formats.Materials
+﻿namespace SSBHLib.Formats.Materials
 {
     public static class MatlEnums
     {

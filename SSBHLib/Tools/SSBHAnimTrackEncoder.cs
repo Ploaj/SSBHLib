@@ -1,5 +1,4 @@
-﻿using SSBHLib.Formats;
-using SSBHLib.Formats.Animation;
+﻿using SSBHLib.Formats.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,12 +15,12 @@ namespace SSBHLib.Tools
             animFile.FrameCount = frameCount;
         }
 
-        private List<AnimGroup> groups = new List<AnimGroup>();
-        private Dictionary<AnimTrack, IList<object>> trackToValues = new Dictionary<AnimTrack, IList<object>>();
+        private readonly List<AnimGroup> groups = new List<AnimGroup>();
+        private readonly Dictionary<AnimTrack, IList<object>> trackToValues = new Dictionary<AnimTrack, IList<object>>();
 
-        private Anim animFile = new Anim();
+        private readonly Anim animFile = new Anim();
 
-        private static float defaultEpsilon = 0.000002f; //0.0000012f;
+        private static readonly float defaultEpsilon = 0.000002f; //0.0000012f;
         private float epsilon = defaultEpsilon;
 
         public bool CompressVector4 { get; set; } = false;
@@ -255,7 +254,7 @@ namespace SSBHLib.Tools
                     return v;
                 }
             }
-            private List<float> values = new List<float>();
+            private readonly List<float> values = new List<float>();
 
             // cache bitcount
             private float currentError = float.MaxValue;
@@ -353,7 +352,7 @@ namespace SSBHLib.Tools
         {
             private int currentByte = 0;
             private int currentBit = 0;
-            private List<byte> output = new List<byte>();
+            private readonly List<byte> output = new List<byte>();
 
             public void WriteBits(int value, int bitCount)
             {

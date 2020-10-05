@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using SSBHLib.Formats.Animation;
+﻿using SSBHLib.Formats.Animation;
 using SSBHLib.IO;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -78,7 +78,7 @@ namespace SSBHLib.Tools
                 }
                 if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.Direct))
                 {
-                    for(int i = 0; i < track.FrameCount; i++)
+                    for (int i = 0; i < track.FrameCount; i++)
                         output.Add(ReadDirect(parser, track.Flags));
                 }
                 if (CheckFlag(track.Flags, 0xFF00, AnimTrackFlags.Compressed))
@@ -191,7 +191,7 @@ namespace SSBHLib.Tools
                     int valueBitCount = (int)item.Count;
                     if (valueBitCount == 0)
                         continue;
-                    
+
                     int value = parser.ReadBits(valueBitCount);
                     int scale = 0;
                     for (int k = 0; k < valueBitCount; k++)
@@ -234,7 +234,7 @@ namespace SSBHLib.Tools
 
             // PreProcess
             SsbhAnimCompressedItem[] items = parser.ReadStructs<SsbhAnimCompressedItem>(9);
-            
+
             parser.Seek(dataOffset + header.DefaultDataOffset);
 
             float xsca = parser.ReadSingle();
@@ -250,7 +250,7 @@ namespace SSBHLib.Tools
             float csca = parser.ReadSingle();
 
             parser.Seek(dataOffset + header.CompressedDataOffset);
-            for(int frame = 0; frame < header.FrameCount; frame++)
+            for (int frame = 0; frame < header.FrameCount; frame++)
             {
                 AnimTrackTransform transform = new AnimTrackTransform()
                 {
@@ -295,11 +295,11 @@ namespace SSBHLib.Tools
                         frameValue = 0;
 
                     // the Transform type relies a lot on flags
-                    
+
                     if ((header.Flags & 0x3) == 0x3)
                     {
                         //Scale Compensate
-                        if(itemIndex == 0)
+                        if (itemIndex == 0)
                         {
                             transform.CompensateScale = frameValue;
                         }
@@ -434,7 +434,7 @@ namespace SSBHLib.Tools
 
             if (t == v0) return av;
             if (t == v1) return bv;
-            
+
             float mu = (t - v0) / (v1 - v0);
             float value = ((av * (1 - mu)) + (bv * mu));
             if (float.IsNaN(value))

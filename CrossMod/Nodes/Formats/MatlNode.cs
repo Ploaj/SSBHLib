@@ -7,7 +7,7 @@ namespace CrossMod.Nodes
     public class MatlNode : FileNode
     {
         public Matl Material { get; set; }
-        
+
         public MatlNode(string path) : base(path)
         {
             ImageKey = "material";

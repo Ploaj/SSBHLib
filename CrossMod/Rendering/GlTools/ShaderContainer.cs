@@ -24,10 +24,10 @@ namespace CrossMod.Rendering.GlTools
         public static Shader GetCurrentRModelShader()
         {
             if (RenderSettings.Instance.RenderUVs)
-                return GetShader("RModelUV"); 
+                return GetShader("RModelUV");
             if (RenderSettings.Instance.UseDebugShading)
                 return GetShader("RModelDebug");
-            
+
             return GetShader("RModel");
         }
 
@@ -145,7 +145,7 @@ namespace CrossMod.Rendering.GlTools
 
         private static void CreateRModelShader()
         {
-            shaderLoader.AddShader("RModel", 
+            shaderLoader.AddShader("RModel",
                 "RModel.vert",
                 "RModel.geom",
                 "RModel.frag",

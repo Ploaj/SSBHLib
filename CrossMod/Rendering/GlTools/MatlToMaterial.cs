@@ -9,29 +9,6 @@ namespace CrossMod.Rendering.GlTools
     // TODO: This class could just be part of the material class.
     public static class MatlToMaterial
     {
-        public enum TextureParams
-        {
-            ColMap = 0x5C,
-            ColMap2 = 0x5D,
-            GaoMap = 0x5F,
-            NorMap = 0x60,
-            EmiMap = 0x61,
-            EmiMap2 = 0x6A,
-            PrmMap = 0x62,
-            SpecularCubeMap = 0x63,
-            DifCubeMap = 0x64,
-            BakeLitMap = 0x65,
-            DiffuseMap = 0x66,
-            DiffuseMap2 = 0x67,
-            DiffuseMap3 = 0x68,
-            ProjMap = 0x69,
-            InkNorMap = 0x133,
-            ColSampler = 0x6C,
-            NorSampler = 0x70,
-            PrmSampler = 0x72,
-            EmiSampler = 0x71
-        }
-
         public static RMaterial CreateMaterial(MatlEntry currentEntry, int index, Dictionary<string, RTexture> textureByName)
         {
             RMaterial meshMaterial = new RMaterial()

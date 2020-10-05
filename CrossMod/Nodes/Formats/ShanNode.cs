@@ -54,7 +54,7 @@ namespace CrossMod.Nodes
                     float float1 = r.ReadSingle();
                     float float2 = r.ReadSingle();
                     uint entryCount = r.ReadUInt32();
-                    
+
                     // TODO: look into in the future
                 }
 

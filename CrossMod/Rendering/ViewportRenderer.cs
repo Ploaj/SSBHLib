@@ -27,7 +27,7 @@ namespace CrossMod.Rendering
             }
         }
         private IRenderable itemToRender;
-     
+
         public IRenderableAnimation RenderableAnimation { get; set; }
 
         public ScriptNode ScriptNode { get; set; }

@@ -5,7 +5,6 @@ using SFGenericModel.VertexAttributes;
 using SFGraphics.GLObjects.Shaders;
 using SFShapes;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CrossMod.Rendering.ShapeMeshes
 {

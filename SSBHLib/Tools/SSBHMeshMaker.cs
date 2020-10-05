@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SSBHLib.Formats;
+using SSBHLib.Formats.Meshes;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using SSBHLib.Formats.Meshes;
 using System.Linq;
-using SSBHLib.Formats;
 
 namespace SSBHLib.Tools
 {
@@ -29,7 +29,7 @@ namespace SSBHLib.Tools
         }
 
         private TempMesh currentMesh;
-        private List<TempMesh> meshes = new List<TempMesh>();
+        private readonly List<TempMesh> meshes = new List<TempMesh>();
 
         /// <summary>
         /// Begins creating a new mesh object with given attributes

@@ -1,6 +1,6 @@
-﻿using SSBHLib.Formats;
+﻿using CrossMod.Rendering;
 using SSBHLib;
-using CrossMod.Rendering;
+using SSBHLib.Formats;
 
 namespace CrossMod.Nodes
 {
@@ -9,11 +9,11 @@ namespace CrossMod.Nodes
     {
         public Hlpb helperBones;
 
-        public NuhlpbNode(string path): base(path)
+        public NuhlpbNode(string path) : base(path)
         {
             ImageKey = "skeleton";
         }
-        
+
         public override void Open()
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out helperBones);

@@ -1,5 +1,5 @@
-﻿using System;
-using OpenTK;
+﻿using OpenTK;
+using System;
 
 namespace CrossMod.Tools
 {
@@ -46,7 +46,7 @@ namespace CrossMod.Tools
             y = (float)Math.Asin(Clamp(mat.M13, -1, 1));
 
             if (Math.Abs(mat.M13) < 0.99999)
-            { 
+            {
                 x = (float)Math.Atan2(-mat.M23, mat.M33);
                 z = (float)Math.Atan2(-mat.M12, mat.M11);
             }

@@ -3,7 +3,7 @@
     [SsbhFile("LEKS")]
     public class Skel : SsbhFile
     {
-        public uint Magic { get; set; }  = 0x534B454C;
+        public uint Magic { get; set; } = 0x534B454C;
 
         public ushort MajorVersion { get; set; } = 1;
 

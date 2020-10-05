@@ -26,7 +26,7 @@ namespace SSBHLib.IO
 
         public SsbhParser(Stream stream) : base(stream)
         {
-            
+
         }
 
         public void Seek(long position)
@@ -46,7 +46,7 @@ namespace SSBHLib.IO
             file = null;
             if (FileSize < 4)
                 return false;
-            
+
             string fileMagic = new string(ReadChars(4));
             Seek(Position - 4);
             if (fileMagic.Equals("HBSS"))
@@ -95,7 +95,7 @@ namespace SSBHLib.IO
                 stringValue.Append((char)b);
                 b = ReadByte();
             }
-            
+
             Seek(previousPosition);
 
             return stringValue.ToString();
@@ -171,7 +171,7 @@ namespace SSBHLib.IO
                         le += 8;
                 }
             }
-            
+
             return value;
         }
     }

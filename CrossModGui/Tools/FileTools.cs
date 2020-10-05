@@ -22,7 +22,7 @@ namespace CrossModGui.Tools
             folderName = "";
             return false;
         }
-        
+
         public static bool TryOpenFileDialog(out string fileName, string filter = "")
         {
             using (var dialog = new OpenFileDialog())
@@ -38,7 +38,7 @@ namespace CrossModGui.Tools
             fileName = "";
             return false;
         }
-        
+
         public static bool TryOpenSaveFileDialog(out string fileName, string filter = "", string defaultFileName = "")
         {
             using (var dialog = new SaveFileDialog())

@@ -144,7 +144,7 @@ namespace CrossModGui.Tools
             get { return _hwnd; }
         }
 
-        private IntPtr _hwnd;
+        private readonly IntPtr _hwnd;
     }
 
     /// <summary>
@@ -157,9 +157,8 @@ namespace CrossModGui.Tools
     /// </summary>
     public class Reflector
     {
-
-        string m_ns;
-        Assembly m_asmb;
+        readonly string m_ns;
+        readonly Assembly m_asmb;
 
 
 

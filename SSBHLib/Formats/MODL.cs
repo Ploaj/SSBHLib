@@ -1,4 +1,4 @@
-﻿namespace SSBHLib.Formats 
+﻿namespace SSBHLib.Formats
 {
     [SsbhFile("LDOM")]
     public class Modl : SsbhFile
@@ -8,9 +8,9 @@
         public ushort MajorVersion { get; set; } = 1;
 
         public ushort MinorVersion { get; set; } = 7;
-        
+
         public string ModelFileName { get; set; }
-        
+
         public string SkeletonFileName { get; set; }
 
         public ModlMaterialName[] MaterialFileNames { get; set; }
@@ -30,9 +30,9 @@
     public class ModlEntry : SsbhFile
     {
         public string MeshName { get; set; }
-        
+
         public long SubIndex { get; set; }
-        
+
         /// <summary>
         /// Assigns the material with matching <see cref="Materials.MatlEntry.MaterialLabel"/> to this entry.
         /// </summary>

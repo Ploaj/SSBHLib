@@ -178,7 +178,7 @@ namespace CrossMod.Rendering.GlTools
 
             // This needs to be updated more than once.
             AddDebugParams(uniformBlock);
-            
+
             // Update the uniform values.
             genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
             uniformBlock.BindBlock(shader);
@@ -344,7 +344,7 @@ namespace CrossMod.Rendering.GlTools
             else
                 return DefaultTextures.Instance.DefaultWhite;
         }
-   
+
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
         {
             genericMaterial.AddTexture("uvPattern", DefaultTextures.Instance.UvPattern);

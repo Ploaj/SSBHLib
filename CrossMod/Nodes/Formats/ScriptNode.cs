@@ -18,7 +18,7 @@ namespace CrossMod.Nodes
     {
         public Dictionary<string, Script> Scripts { get; set; }
         public Dictionary<ulong, int> BoneIDs { get; set; }
-        
+
         public Attack[] Attacks { get; set; }
         public Catch[] Grabs { get; set; }
         public float MotionRate { get; set; } = 1f;
@@ -26,20 +26,23 @@ namespace CrossMod.Nodes
         private static Sphere Sphere { get; set; }
         private static Capsule Capsule { get; set; }
         private static Line Line { get; set; }
-        
-        public SkelNode SkelNode { set
+
+        public SkelNode SkelNode
+        {
+            set
             {
                 Skel = value.GetRenderableNode() as RSkeleton;
                 BoneIDs.Clear();
                 BoneIDs.Add(Hash.Hash40("top"), 0);
-                for (int i = 0; i < Skel.Bones.Count; i++) 
+                for (int i = 0; i < Skel.Bones.Count; i++)
                 {
                     ulong hash = Hash.Hash40(Skel.Bones[i].Name);
                     if (!BoneIDs.ContainsKey(hash))
                         BoneIDs.Add(hash, i);
                 }
-                    
-            } }
+
+            }
+        }
         public RSkeleton Skel { get; set; }
         public string CurrentAnimationName { get; set; }
 
@@ -82,7 +85,7 @@ namespace CrossMod.Nodes
             List<Collision> collisions = new List<Collision>();
             collisions.AddRange(Attacks);
             collisions.AddRange(Grabs);
-            
+
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);

@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using SFGraphics.Cameras;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering
@@ -23,7 +22,7 @@ namespace CrossMod.Rendering
                 return;
 
             // Visibility
-            foreach(RVisibilityAnimation a in VisibilityNodes)
+            foreach (RVisibilityAnimation a in VisibilityNodes)
             {
                 foreach (Models.RMesh m in model.SubMeshes)
                 {
@@ -38,7 +37,7 @@ namespace CrossMod.Rendering
             // Material
             foreach (Models.RMesh m in model.SubMeshes)
             {
-                if(m.Material != null)
+                if (m.Material != null)
                 {
                     m.Material.Vec4ParamsMaterialAnimation.Clear();
                     m.Material.CurrentFrame = frame;
@@ -53,7 +52,7 @@ namespace CrossMod.Rendering
                     {
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
-                            m.Material.Vec4ParamsMaterialAnimation[paramId] =  a.Keys.GetValue(frame);
+                            m.Material.Vec4ParamsMaterialAnimation[paramId] = a.Keys.GetValue(frame);
                         }
                     }
                 }
@@ -67,9 +66,9 @@ namespace CrossMod.Rendering
             // Model scale
             float scale = RenderSettings.Instance.ModelScale;
             // BoneTransform
-            foreach(RBone b in Skeleton.Bones)
+            foreach (RBone b in Skeleton.Bones)
             {
-                foreach(RTransformAnimation a in TransformNodes)
+                foreach (RTransformAnimation a in TransformNodes)
                 {
                     if (b.Name.Equals(a.Name))
                     {
@@ -140,7 +139,7 @@ namespace CrossMod.Rendering
         }
     }
 
-    public class RKey<T> 
+    public class RKey<T>
     {
         public float Frame;
         public T Value;

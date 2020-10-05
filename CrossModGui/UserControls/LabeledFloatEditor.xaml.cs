@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CrossModGui.UserControls
 {
@@ -20,7 +8,7 @@ namespace CrossModGui.UserControls
     /// </summary>
     public partial class LabeledFloatEditor : UserControl
     {
-        public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(float), typeof(LabeledFloatEditor), 
+        public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(float), typeof(LabeledFloatEditor),
             new FrameworkPropertyMetadata(0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public static DependencyProperty MinProperty = DependencyProperty.Register(nameof(Min), typeof(float), typeof(LabeledFloatEditor),
@@ -35,10 +23,10 @@ namespace CrossModGui.UserControls
         public static DependencyProperty LabelWidthProperty = DependencyProperty.Register(nameof(LabelWidth), typeof(double), typeof(LabeledFloatEditor),
             new FrameworkPropertyMetadata(120.0));
 
-        public float Value 
+        public float Value
         {
             get => (float)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value); 
+            set => SetValue(ValueProperty, value);
         }
 
         public float Min

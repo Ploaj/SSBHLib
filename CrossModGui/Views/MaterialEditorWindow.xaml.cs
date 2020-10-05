@@ -1,5 +1,4 @@
 ﻿using CrossMod.Rendering;
-using CrossMod.Tools;
 using CrossModGui.Tools;
 using CrossModGui.ViewModels;
 using System.Diagnostics;

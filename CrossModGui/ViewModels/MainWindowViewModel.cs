@@ -4,7 +4,6 @@ using CrossMod.Rendering.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Media;
 
 namespace CrossModGui.ViewModels
 {
@@ -14,7 +13,7 @@ namespace CrossModGui.ViewModels
         {
             public string Name { get; set; }
 
-            public List<BoneTreeItem> Children { get; set;  } = new List<BoneTreeItem>();
+            public List<BoneTreeItem> Children { get; set; } = new List<BoneTreeItem>();
         }
 
         public class MeshListItem : ViewModelBase
@@ -55,8 +54,8 @@ namespace CrossModGui.ViewModels
         public bool IsPlayingAnimation
         {
             get => isPlayingAnimation;
-            set 
-            { 
+            set
+            {
                 isPlayingAnimation = value;
 
                 if (isPlayingAnimation)
@@ -150,8 +149,8 @@ namespace CrossModGui.ViewModels
 
             // TODO: ScriptNode.MotionRate?
 
-             // TODO: The script node should probably be stored with the model somehow.
-             // Having to find the node each time seems redundant.
+            // TODO: The script node should probably be stored with the model somehow.
+            // Having to find the node each time seems redundant.
             var scriptNode = FindSiblingOfType<ScriptNode>(item);
             if (scriptNode != null)
             {

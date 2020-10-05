@@ -1,7 +1,7 @@
-﻿using OpenTK;
+﻿using CrossMod.Nodes;
+using OpenTK;
 using System;
 using System.Collections.Generic;
-using CrossMod.Nodes;
 
 // Classes ported from StudioSB
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE
@@ -74,7 +74,7 @@ namespace CrossMod.Tools
                         if (ArrayLevel == arrayLevel && MipLevel == mipLevel)
                         {
                             //SBConsole.WriteLine($"{width} {height} {blkWidth} {blkHeight} {target} {bpp} {TileMode} {(int)Math.Max(0, BlockHeightLog2 - blockHeightShift)} {data_.Length}");
-                            byte[] result = Deswizzle(width, height, depth, blkWidth, blkHeight, blkDepth, target, bpp, TileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), data_);
+                            byte[] result = Deswizzle(width, height, depth, blkWidth, blkHeight, blkDepth, target, bpp, TileMode, Math.Max(0, BlockHeightLog2 - blockHeightShift), data_);
                             //Create a copy and use that to remove uneeded data
                             byte[] result_ = new byte[size];
                             Array.Copy(result, 0, result_, 0, size);

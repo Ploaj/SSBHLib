@@ -1,8 +1,8 @@
-﻿using System;
-using SSBHLib;
+﻿using SSBHLib;
 using SSBHLib.Formats.Materials;
-using System.Xml.Serialization;
+using System;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace MatLab
 {

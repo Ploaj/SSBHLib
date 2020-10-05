@@ -3,8 +3,8 @@ using System.Xml.Serialization;
 
 namespace MatLab
 {
-    [XmlInclude(typeof(MatlAttribute.MatlBlendState)), XmlInclude(typeof(MatlAttribute.MatlRasterizerState)), 
-        XmlInclude(typeof(MatlAttribute.MatlVector4)), XmlInclude(typeof(MatlAttribute.MatlSampler)), 
+    [XmlInclude(typeof(MatlAttribute.MatlBlendState)), XmlInclude(typeof(MatlAttribute.MatlRasterizerState)),
+        XmlInclude(typeof(MatlAttribute.MatlVector4)), XmlInclude(typeof(MatlAttribute.MatlSampler)),
         XmlInclude(typeof(MatlAttribute.MatlString)), XmlInclude(typeof(MatlAttribute.MatlUvTransform))]
     public class MatlXmlAttribute
     {

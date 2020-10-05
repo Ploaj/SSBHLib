@@ -9,7 +9,7 @@
         Boolean = 0x0008,
         Vector4 = 0x0009,
 
-        Direct = 0x0100, 
+        Direct = 0x0100,
         ConstTransform = 0x0200,
         Compressed = 0x0400,
         Constant = 0x0500,

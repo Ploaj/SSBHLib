@@ -3,7 +3,7 @@
     [SsbhFile("RDHS")]
     public class Shdr : SsbhFile
     {
-        public uint Magic { get; set; } 
+        public uint Magic { get; set; }
 
         public ushort MajorVersion { get; set; }
 

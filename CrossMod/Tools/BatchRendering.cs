@@ -1,6 +1,5 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
-using CrossMod.Rendering.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

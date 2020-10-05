@@ -1,8 +1,8 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel;
-using System.Collections.Generic;
 using SFGenericModel.VertexAttributes;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering.ShapeMeshes
 {

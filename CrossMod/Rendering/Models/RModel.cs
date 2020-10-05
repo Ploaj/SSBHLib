@@ -166,7 +166,7 @@ namespace CrossMod.Rendering.Models
         }
 
         private void GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes)
-        {          
+        {
             opaqueMeshes = new List<RMesh>();
             sortMeshes = new List<RMesh>();
             nearMeshes = new List<RMesh>();

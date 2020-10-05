@@ -2,7 +2,7 @@
 {
     public struct SsbhOffset
     {
-        public long Value { get ; }
+        public long Value { get; }
 
         public SsbhOffset(long value)
         {
