@@ -1,6 +1,7 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Tools;
+using CrossModGui.Tools;
 using CrossModGui.ViewModels;
 using System;
 using System.Windows;
@@ -221,7 +222,13 @@ namespace CrossModGui.Views
 
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
-            BatchRendering.RenderModels(viewModel.Renderer);
+            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
+                return;
+
+            if (!FileTools.TryOpenFolderDialog(out string outputPath, "Select PNG Output Directory"))
+                return;
+
+            BatchRendering.RenderModels(folderPath, outputPath, viewModel.Renderer);
         }
 
         private void glViewport_MouseEnter(object sender, EventArgs e)

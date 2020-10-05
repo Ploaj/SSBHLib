@@ -23,7 +23,6 @@ namespace CrossMod.Nodes
         public NumsbhNode(string path) : base(path)
         {
             ImageKey = "mesh";
-            SelectedImageKey = "mesh";
         }
 
         public override void Open()

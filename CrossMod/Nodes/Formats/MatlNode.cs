@@ -11,7 +11,6 @@ namespace CrossMod.Nodes
         public MatlNode(string path) : base(path)
         {
             ImageKey = "material";
-            SelectedImageKey = "material";
         }
 
         public override void Open()

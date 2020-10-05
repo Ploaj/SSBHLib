@@ -34,14 +34,8 @@ namespace CrossMod.Tools
         private static readonly ConcurrentQueue<SaveImageWorkItem> imagesToSave = new ConcurrentQueue<SaveImageWorkItem>();
         private static bool isBatchRendering = false;
 
-        public static void RenderModels(ViewportRenderer renderer)
+        public static void RenderModels(string folderPath, string outputPath, ViewportRenderer renderer)
         {
-            if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))
-                return;
-
-            if (!FileTools.TryOpenFolderDialog(out string outputPath, "Select PNG Output Directory"))
-                return;
-
             var viewportWasRendering = renderer.IsRendering;
             renderer.PauseRendering();
 

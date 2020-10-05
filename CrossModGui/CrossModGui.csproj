@@ -133,7 +133,11 @@
     <Compile Include="Converters\BitmapToWpfBitmap.cs" />
     <Compile Include="Converters\IsActiveBrushConverter.cs" />
     <Compile Include="Converters\ImageKeyImageConverter.cs" />
+    <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\MaterialParamDescriptions.cs" />
+    <Compile Include="Tools\OpenFolderDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserControls\AnimationBar.xaml.cs">
       <DependentUpon>AnimationBar.xaml</DependentUpon>
     </Compile>

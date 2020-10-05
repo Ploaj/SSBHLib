@@ -12,7 +12,6 @@ namespace CrossMod.Nodes
         public NuhlpbNode(string path): base(path)
         {
             ImageKey = "skeleton";
-            SelectedImageKey = "skeleton";
         }
         
         public override void Open()

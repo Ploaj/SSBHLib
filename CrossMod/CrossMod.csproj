@@ -128,12 +128,8 @@
     <Compile Include="Rendering\ShapeMeshes\Polygon.cs" />
     <Compile Include="Rendering\ShapeMeshes\Sphere.cs" />
     <Compile Include="Rendering\SsbhVertexAttributeExtensions.cs" />
-    <Compile Include="Tools\ConversionExtensions.cs" />
+    <Compile Include="Tools\OpenTkVectorExtensions.cs" />
     <Compile Include="Tools\CrossMath.cs" />
-    <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="GUI\OpenFolderDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Nodes\FileTree\FileTypeAttribute.cs" />
     <Compile Include="Nodes\FileTree\FileNode.cs" />
     <Compile Include="Nodes\Interfaces\IRenderableNode.cs" />

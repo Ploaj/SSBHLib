@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Reflection;
+using System.Windows.Forms;
 
-namespace System.Windows.Forms
+namespace CrossModGui.Tools
 {
     /// <summary>
     /// Wraps System.Windows.Forms.OpenFileDialog to make it present
@@ -13,23 +15,23 @@ namespace System.Windows.Forms
     public partial class FolderSelectDialog : Component
     {
         // Wrapped dialog
-        System.Windows.Forms.OpenFileDialog ofd = null;
+        readonly OpenFileDialog ofd = null;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         public FolderSelectDialog()
         {
-            ofd = new System.Windows.Forms.OpenFileDialog();
-
-            ofd.Filter = "Folders|\n";
-            ofd.AddExtension = false;
-            ofd.CheckFileExists = false;
-            ofd.DereferenceLinks = true;
-            ofd.Multiselect = false;
+            ofd = new OpenFileDialog
+            {
+                Filter = "Folders|\n",
+                AddExtension = false,
+                CheckFileExists = false,
+                DereferenceLinks = true,
+                Multiselect = false
+            };
         }
 
-        #region Properties
 
         /// <summary>
         /// Gets/Sets the initial folder to be selected. A null value selects the current directory.
@@ -57,9 +59,7 @@ namespace System.Windows.Forms
             get { return ofd.FileName; }
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// Shows the dialog
@@ -88,7 +88,7 @@ namespace System.Windows.Forms
                 object dialog = r.Call(ofd, "CreateVistaDialog");
                 r.Call(ofd, "OnBeforeVistaDialog", dialog);
 
-                uint options = (uint)r.CallAs(typeof(System.Windows.Forms.FileDialog), ofd, "GetOptions");
+                uint options = (uint)r.CallAs(typeof(FileDialog), ofd, "GetOptions");
                 options |= (uint)r.GetEnum("FileDialogNative.FOS", "FOS_PICKFOLDERS");
                 r.CallAs(typeIFileDialog, dialog, "SetOptions", options);
 
@@ -120,14 +120,12 @@ namespace System.Windows.Forms
 
             return flag ? DialogResult.OK : DialogResult.Cancel;
         }
-
-        #endregion
     }
 
     /// <summary>
     /// Creates IWin32Window around an IntPtr
     /// </summary>
-    public class WindowWrapper : System.Windows.Forms.IWin32Window
+    public class WindowWrapper : IWin32Window
     {
         /// <summary>
         /// Constructor
@@ -159,14 +157,11 @@ namespace System.Windows.Forms
     /// </summary>
     public class Reflector
     {
-        #region variables
 
         string m_ns;
         Assembly m_asmb;
 
-        #endregion
 
-        #region Constructors
 
         /// <summary>
         /// Constructor
@@ -195,9 +190,7 @@ namespace System.Windows.Forms
             }
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// Return a Type instance for a type 'typeName'
@@ -329,8 +322,5 @@ namespace System.Windows.Forms
             FieldInfo fieldInfo = type.GetField(name);
             return fieldInfo.GetValue(null);
         }
-
-        #endregion
-
     }
 }

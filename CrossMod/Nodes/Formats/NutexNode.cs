@@ -21,7 +21,6 @@ namespace CrossMod.Nodes
         public NutexNode(string path) : base(path)
         {
             ImageKey = "texture";
-            SelectedImageKey = "texture";
         }
 
         public override string ToString()

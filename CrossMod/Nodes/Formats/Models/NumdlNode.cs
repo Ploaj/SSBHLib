@@ -18,7 +18,6 @@ namespace CrossMod.Nodes
         public NumdlNode(string path) : base(path)
         {
             ImageKey = "model";
-            SelectedImageKey = "model";
         }
 
         public IRenderable GetRenderableNode()

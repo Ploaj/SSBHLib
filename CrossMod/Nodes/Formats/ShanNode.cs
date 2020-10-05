@@ -9,7 +9,6 @@ namespace CrossMod.Nodes
         public ShanNode(string path) : base(path)
         {
             ImageKey = "animation";
-            SelectedImageKey = "animation";
         }
 
         public override void Open()

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CrossMod.Tools
+﻿namespace CrossMod.Tools
 {
-    public static class ConversionExtensions
+    public static class OpenTkVectorExtensions
     {
         public static OpenTK.Vector3 ToOpenTK(this SSBHLib.Formats.Vector3 vector3)
         {

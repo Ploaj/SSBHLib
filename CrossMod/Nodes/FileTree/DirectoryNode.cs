@@ -32,7 +32,6 @@ namespace CrossMod.Nodes
         public DirectoryNode(string path, bool isRoot = true) : base(path)
         {
             Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
-            SelectedImageKey = "folder";
             ImageKey = "folder";
 
             // Make the font color use the default foreground color.
@@ -57,12 +56,12 @@ namespace CrossMod.Nodes
                 if (Directory.Exists(name))
                 {
                     var dirNode = new DirectoryNode(name, isRoot: false);
-                    Nodes.Add(dirNode);
+                    AddNode(dirNode);
                     dirNode.Open();
                 }
                 else
                 {
-                    Nodes.Add(CreateFileNode(name));
+                    AddNode(CreateFileNode(name));
                 }
             }
 
@@ -84,12 +83,7 @@ namespace CrossMod.Nodes
             {
                 if (node is FileNode file)
                 {
-#if DEBUG
-                    file.Open();
-#else
                     openNodes.Add(Task.Run(() => file.Open()));
-#endif
-
                 }
             }
 
