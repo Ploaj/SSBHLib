@@ -1,19 +1,16 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering.GlTools;
-using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using SFGraphics.Cameras;
-using SFGraphics.Controls;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
-using SFGraphics.GLObjects.Textures;
 using System;
 
 namespace CrossMod.Rendering
 {
-    public class ViewportRenderer
+    public abstract class ViewportRenderer
     {
         // TODO: Handle input somewhere else.
         // Previous mouse state.
@@ -35,24 +32,20 @@ namespace CrossMod.Rendering
 
         public ScriptNode ScriptNode { get; set; }
 
-        private readonly GLViewport glViewport;
-
         public Camera Camera { get; } = new Camera() { FarClipPlane = 500000 };
 
         public void UpdateMouseScroll() => mouseScrollWheel = Mouse.GetState().WheelPrecise;
 
-        public ViewportRenderer(GLViewport viewport)
-        {
-            glViewport = viewport;
-        }
+        public abstract int Width { get; }
+        public abstract int Height { get; }
 
-        public void SwapBuffers() => glViewport.SwapBuffers();
+        public abstract void SwapBuffers();
 
-        public void PauseRendering() => glViewport.PauseRendering();
+        public abstract void PauseRendering();
 
-        public void RestartRendering() => glViewport.RestartRendering();
+        public abstract void RestartRendering();
 
-        public bool IsRendering => glViewport.IsRendering;
+        public bool IsRendering { get; protected set; }
 
         public void ClearRenderableNodes()
         {
@@ -93,11 +86,11 @@ namespace CrossMod.Rendering
             mouseScrollWheel = newMouseScrollWheel;
         }
 
-        public void ReloadShaders()
+        public void ReloadShaders(string shaderFolder)
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
-                ShaderContainer.ReloadShaders();
+                ShaderContainer.ReloadShaders(shaderFolder);
             });
         }
 
@@ -125,13 +118,13 @@ namespace CrossMod.Rendering
         public System.Drawing.Bitmap GetScreenshot()
         {
             // Make sure the context is current on this thread.
-            var wasRendering = glViewport.IsRendering;
-            glViewport.PauseRendering();
+            var wasRendering = IsRendering;
+            PauseRendering();
 
-            var bmp = Framebuffer.ReadDefaultFramebufferImagePixels(glViewport.Width, glViewport.Height, true);
+            var bmp = Framebuffer.ReadDefaultFramebufferImagePixels(Width, Height, true);
 
             if (wasRendering)
-                glViewport.RestartRendering();
+                RestartRendering();
 
             return bmp;
         }
@@ -139,13 +132,13 @@ namespace CrossMod.Rendering
         public void SwitchContextToCurrentThreadAndPerformAction(Action action)
         {
             // Make sure the context is current on this thread.
-            var wasRendering = glViewport.IsRendering;
-            glViewport.PauseRendering();
+            var wasRendering = IsRendering;
+            PauseRendering();
 
             action();
 
             if (wasRendering)
-                glViewport.RestartRendering();
+                RestartRendering();
         }
 
         private void SetUpViewport()

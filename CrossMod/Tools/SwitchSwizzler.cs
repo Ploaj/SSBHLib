@@ -85,7 +85,6 @@ namespace CrossMod.Tools
                     }
                     catch (Exception e)
                     {
-                        System.Windows.Forms.MessageBox.Show($"Failed to swizzle texture {surface.Name}!");
                         Console.WriteLine(e);
 
                         return new byte[0];

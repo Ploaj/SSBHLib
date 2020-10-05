@@ -45,11 +45,6 @@
       <HintPath>lib\OpenTK.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\OpenTK.GLControl.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="paracobNET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\paracobNET.dll</HintPath>
@@ -67,15 +62,6 @@
     <Reference Include="SFGraphics, Version=1.0.6906.615, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SFGraphics.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SFGraphics.Controls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\SFGraphics.Controls.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SFGraphics.Timing">
-      <HintPath>lib\SFGraphics.Timing.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SFGraphics.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -98,7 +84,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />

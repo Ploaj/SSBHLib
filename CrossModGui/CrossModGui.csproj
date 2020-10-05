@@ -133,6 +133,7 @@
     <Compile Include="Converters\BitmapToWpfBitmap.cs" />
     <Compile Include="Converters\IsActiveBrushConverter.cs" />
     <Compile Include="Converters\ImageKeyImageConverter.cs" />
+    <Compile Include="Rendering\GlViewportRenderer.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\MaterialParamDescriptions.cs" />
     <Compile Include="Tools\OpenFolderDialog.cs">
@@ -512,9 +513,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Lib\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="cross.ico" />
   </ItemGroup>

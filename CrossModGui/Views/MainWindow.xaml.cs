@@ -1,6 +1,7 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Tools;
+using CrossModGui.Rendering;
 using CrossModGui.Tools;
 using CrossModGui.ViewModels;
 using System;
@@ -21,12 +22,14 @@ namespace CrossModGui.Views
         private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
         private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
 
+        private readonly string shaderFolder = $"Shaders";
+
         public MainWindow()
         {
             InitializeComponent();
 
             DataContext = viewModel;
-            viewModel = new MainWindowViewModel(new ViewportRenderer(glViewport));
+            viewModel = new MainWindowViewModel(new GlViewportRenderer(glViewport));
             DataContext = viewModel;
 
             // Link view models to models.
@@ -48,7 +51,7 @@ namespace CrossModGui.Views
             glViewport.FrameRendering += GlViewport_OnRenderFrame;
 
             CrossMod.Rendering.Resources.DefaultTextures.Initialize();
-            CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders();
+            CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders(shaderFolder);
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -217,7 +220,7 @@ namespace CrossModGui.Views
         private void ReloadShaders_Click(object sender, RoutedEventArgs e)
         {
             // Force the shaders to be generated again.
-            viewModel.Renderer.ReloadShaders();
+            viewModel.Renderer.ReloadShaders(shaderFolder);
         }
 
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)

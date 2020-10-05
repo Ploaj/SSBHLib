@@ -1,10 +1,8 @@
-﻿using AnimatedGif;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Shaders;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -38,9 +36,9 @@ namespace CrossMod.Rendering.GlTools
             return shaderLoader.GetShader(name);
         }
 
-        public static void SetUpShaders()
+        public static void SetUpShaders(string shaderFolder)
         {
-            UpdateShaderSources();
+            UpdateShaderSources(shaderFolder);
             CreateAllShaders();
 
             HasSetUp = true;
@@ -63,9 +61,8 @@ namespace CrossMod.Rendering.GlTools
             CreateRModelDebugShader();
         }
 
-        private static void UpdateShaderSources()
+        private static void UpdateShaderSources(string shaderFolder)
         {
-            var shaderFolder = $"{Path.GetDirectoryName(Application.ExecutablePath)}//Shaders";
             var shaderFiles = Directory.EnumerateFiles(shaderFolder, "*.*", SearchOption.AllDirectories).Where(f => shaderTypeByExtension.Keys.Contains(Path.GetExtension(f)));
             foreach (var file in shaderFiles)
             {
@@ -76,18 +73,13 @@ namespace CrossMod.Rendering.GlTools
             }
         }
 
-        public static void ReloadShaders()
+        public static void ReloadShaders(string shaderFolder)
         {
-            SetUpShaders();
+            SetUpShaders(shaderFolder);
 
-            // TODO: Log errors for all textures.
+            // TODO: Log errors for all shaders.
             var modelShader = GetShader("RModel");
             var debugShader = GetShader("RModelDebug");
-            if (!modelShader.LinkStatusIsOk || !debugShader.LinkStatusIsOk)
-            {
-                MessageBox.Show("One or more shaders failed to compile. See the generated error logs for details.",
-                    "Shader Compilation Error");
-            }
 
             Directory.CreateDirectory("Error Logs");
             File.WriteAllText("Error Logs//RModel_shader_errors.txt", modelShader.GetErrorLog());
