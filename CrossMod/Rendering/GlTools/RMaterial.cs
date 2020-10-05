@@ -161,7 +161,7 @@ namespace CrossMod.Rendering.GlTools
             if (genericMaterial == null || shouldUpdateTextures)
             {
                 genericMaterial = CreateGenericMaterial();
-                shouldUpdateTextures = true;
+                shouldUpdateTextures = false;
             }
 
             if (uniformBlock == null)
