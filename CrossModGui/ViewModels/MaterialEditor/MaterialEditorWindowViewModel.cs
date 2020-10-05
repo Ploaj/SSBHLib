@@ -1,131 +1,15 @@
 ﻿using CrossMod.Rendering;
+using CrossMod.Rendering.GlTools;
 using CrossModGui.Tools;
 using SSBHLib;
 using SSBHLib.Formats.Materials;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace CrossModGui.ViewModels
 {
-    public class MaterialEditorWindowViewModel : ViewModelBase
+    public partial class MaterialEditorWindowViewModel : ViewModelBase
     {
-        public class BooleanParam : ViewModelBase
-        {
-            public string ParamId { get; set; }
-            public bool Value { get; set; }
-        }
-
-        public class FloatParam : ViewModelBase
-        {
-            public string ParamId { get; set; }
-            public float Value { get; set; }
-            public float Min { get; set; } = 0.0f;
-            public float Max { get; set; } = 1.0f;
-        }
-
-        public class Vec4Param : ViewModelBase
-        {
-
-            public string ParamId { get; set; }
-            public Brush ColorBrush { get; set; }
-
-            public string Label1 { get; set; } = "X";
-            public float Min1 { get; set; } = 0.0f;
-            public float Max1 { get; set; } = 1.0f;
-            public float Value1
-            {
-                get => value1;
-                set
-                {
-                    value1 = value;
-                    UpdateColor();
-                }
-            }
-            private float value1;
-
-            public string Label2 { get; set; } = "Y";
-            public float Min2 { get; set; } = 0.0f;
-            public float Max2 { get; set; } = 1.0f;
-            public float Value2
-            {
-                get => value2;
-                set
-                {
-                    value2 = value;
-                    UpdateColor();
-                }
-            }
-            private float value2;
-
-            public string Label3 { get; set; } = "Z";
-            public float Min3 { get; set; } = 0.0f;
-            public float Max3 { get; set; } = 1.0f;
-            public float Value3
-            {
-                get => value3;
-                set
-                {
-                    value3 = value;
-                    UpdateColor();
-                }
-            }
-            private float value3;
-
-            public string Label4 { get; set; } = "W";
-            public float Min4 { get; set; } = 0.0f;
-            public float Max4 { get; set; } = 1.0f;
-            public float Value4
-            {
-                get => value4; 
-                set 
-                { 
-                    value4 = value; 
-                    UpdateColor(); 
-                } 
-            }
-            private float value4;
-
-            private void UpdateColor()
-            {
-                // TODO: The linear -> srgb conversion should be handled by a library.
-                var gamma = 0.4545;
-                var red = (float)System.Math.Pow(Value1, gamma);
-                var green = (float)System.Math.Pow(Value2, gamma);
-                var blue = (float)System.Math.Pow(Value3, gamma);
-                var Color = SFGraphics.Utils.ColorUtils.GetColor(red, green, blue);
-                ColorBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, Color.R, Color.G, Color.B));
-            }
-        }
-
-        public class TextureParam : ViewModelBase
-        {
-            public string ParamId { get; set; }
-            public string Value { get; set; }
-            public ImageSource Image { get; set; }
-        }
-
-        public class Material : ViewModelBase
-        {
-            public string Name { get; set; }
-
-            public string ShaderLabel { get; set; }
-
-            public SolidColorBrush MaterialIdColor { get; set; }
-
-            public bool HasFloats => FloatParams.Count > 0;
-            public bool HasBooleans => BooleanParams.Count > 0;
-            public bool HasVec4Params => Vec4Params.Count > 0;
-            public bool HasTextures => TextureParams.Count > 0;
-
-            public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
-
-            public ObservableCollection<FloatParam> FloatParams { get; } = new ObservableCollection<FloatParam>();
-
-            public ObservableCollection<Vec4Param> Vec4Params { get; } = new ObservableCollection<Vec4Param>();
-
-            public ObservableCollection<TextureParam> TextureParams { get; } = new ObservableCollection<TextureParam>();
-        }
 
         public ObservableCollection<Material> Materials { get; } = new ObservableCollection<Material>();
 
@@ -146,27 +30,34 @@ namespace CrossModGui.ViewModels
             foreach (var name in rnumdl.TextureByName.Keys)
                 PossibleTextureNames.Add(name);
             // TODO: Restrict the textures used for cube maps.
-            foreach (var name in CrossMod.Rendering.GlTools.RMaterial.DefaultTexturesByName.Keys)
+            foreach (var name in RMaterial.DefaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
             foreach (var glMaterial in rnumdl.MaterialByName.Values)
             {
-                var material = new Material { 
-                    Name = glMaterial.MaterialLabel, 
-                    ShaderLabel = glMaterial.ShaderLabel,
-                    MaterialIdColor = new SolidColorBrush(Color.FromArgb(255, 
-                        (byte)glMaterial.MaterialIdColorRgb255.X, 
-                        (byte)glMaterial.MaterialIdColorRgb255.Y, 
-                        (byte)glMaterial.MaterialIdColorRgb255.Z))
-                };
-
-                AddBooleanParams(glMaterial, material);
-                AddFloatParams(glMaterial, material);
-                AddVec4Params(glMaterial, material);
-                AddTextureParams(glMaterial, material);
+                var material = CreateMaterial(glMaterial);
 
                 Materials.Add(material);
             }
+        }
+
+        private Material CreateMaterial(RMaterial glMaterial)
+        {
+            var material = new Material
+            {
+                Name = glMaterial.MaterialLabel,
+                ShaderLabel = glMaterial.ShaderLabel,
+                MaterialIdColor = new SolidColorBrush(Color.FromArgb(255,
+                    (byte)glMaterial.MaterialIdColorRgb255.X,
+                    (byte)glMaterial.MaterialIdColorRgb255.Y,
+                    (byte)glMaterial.MaterialIdColorRgb255.Z))
+            };
+
+            AddBooleanParams(glMaterial, material);
+            AddFloatParams(glMaterial, material);
+            AddVec4Params(glMaterial, material);
+            AddTextureParams(glMaterial, material);
+            return material;
         }
 
         public void SaveMatl(string outputPath)
@@ -177,10 +68,6 @@ namespace CrossModGui.ViewModels
 
             foreach (var entry in rnumdl.Material.Entries)
             {
-                // TODO: This only checks materials that are already assigned to a mesh.
-                if (!rnumdl.MaterialByName.ContainsKey(entry.MaterialLabel))
-                    continue;
-
                 var material = rnumdl.MaterialByName[entry.MaterialLabel];
                 foreach (var attribute in entry.Attributes)
                 {
@@ -208,14 +95,10 @@ namespace CrossModGui.ViewModels
             Ssbh.TrySaveSsbhFile(outputPath, rnumdl.Material);
         }
 
-        private static void AddTextureParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
+        private static void AddTextureParams(RMaterial mat, Material material)
         {
             foreach (var param in mat.textureNameByParamId)
             {
-                // TODO: Don't create a new bitmap every time.
-                // Create a thumbnail icon.
-                //var image = GetPreviewImage(mat, param.Key);
-
                 var textureParam = new TextureParam { ParamId = param.Key.ToString(), Value = param.Value };
 
                 // Update the material for rendering.
@@ -225,21 +108,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        // TODO: Nutex previews.
-        private static WriteableBitmap GetPreviewImage(CrossMod.Rendering.GlTools.RMaterial mat, MatlEnums.ParamId paramId)
-        {
-            // null values will be replaced with a default image in the view.
-            if (!mat.textureNameByParamId.ContainsKey(paramId))
-                return null;
-            if (!mat.TextureByName.ContainsKey(mat.textureNameByParamId[paramId]))
-                return null;
-
-            var rTexture = mat.TextureByName[mat.textureNameByParamId[paramId]];
-            var image = Converters.BitmapToWpfBitmap.CreateBitmapImage(rTexture.SfTexture.Width, rTexture.SfTexture.Height, rTexture.BitmapImageData);
-            return image;
-        }
-
-        private static void AddVec4Params(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
+        private static void AddVec4Params(RMaterial mat, Material material)
         {
             foreach (var param in mat.vec4ByParamId)
             {
@@ -298,7 +167,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static void AddFloatParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
+        private static void AddFloatParams(RMaterial mat, Material material)
         {
             foreach (var param in mat.floatByParamId)
             {
@@ -315,7 +184,7 @@ namespace CrossModGui.ViewModels
             }
         }
 
-        private static void AddBooleanParams(CrossMod.Rendering.GlTools.RMaterial mat, Material material)
+        private static void AddBooleanParams(RMaterial mat, Material material)
         {
             foreach (var param in mat.boolByParamId)
             {

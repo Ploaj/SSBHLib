@@ -31,13 +31,10 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                <TextBlock VerticalAlignment="Center" Margin="5,2">Current Material</TextBlock>
-            </StackPanel>
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2,0,2" ItemsSource="{Binding Materials}" 
-                      SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0" 
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Material</TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2,0,2" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
                       DropDownOpened="ComboBox_DropDownOpened"
-                      DropDownClosed="ComboBox_DropDownClosed"  >
+                      DropDownClosed="ComboBox_DropDownClosed">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -124,6 +121,30 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                    </Expander>
+                    <Expander Header="Rasterizer State" IsExpanded="False">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">WIP</TextBlock>
+                        </Grid>
+                    </Expander>
+                    <Expander Header="Blend State" IsExpanded="False">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">WIP</TextBlock>
+                        </Grid>
                     </Expander>
                 </StackPanel>
             </ScrollViewer>

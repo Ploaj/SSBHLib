@@ -145,7 +145,12 @@
     </Compile>
     <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MaterialEditorWindowViewModel.cs" />
+    <Compile Include="ViewModels\MaterialEditor\BooleanParam.cs" />
+    <Compile Include="ViewModels\MaterialEditor\FloatParam.cs" />
+    <Compile Include="ViewModels\MaterialEditor\Material.cs" />
+    <Compile Include="ViewModels\MaterialEditor\MaterialEditorWindowViewModel.cs" />
+    <Compile Include="ViewModels\MaterialEditor\TextureParam.cs" />
+    <Compile Include="ViewModels\MaterialEditor\Vec4Param.cs" />
     <Compile Include="ViewModels\PreferencesWindowViewModel.cs" />
     <Compile Include="ViewModels\RenderSettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
