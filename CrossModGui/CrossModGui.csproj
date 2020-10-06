@@ -142,6 +142,9 @@
     <Compile Include="UserControls\AnimationBar.xaml.cs">
       <DependentUpon>AnimationBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\EnumEditor.xaml.cs">
+      <DependentUpon>EnumEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\FileTreeView.xaml.cs">
       <DependentUpon>FileTreeView.xaml</DependentUpon>
     </Compile>
@@ -181,6 +184,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\AnimationBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\EnumEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

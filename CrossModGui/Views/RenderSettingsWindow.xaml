@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
-        Title="Render Settings" Height="489.188" Width="504.688">
+        Title="Render Settings" Height="560.688" Width="504.688">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
     </Window.Resources>
@@ -39,20 +39,8 @@
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
             <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0">Render Mode</Label>
-                    <ComboBox 
-                        Grid.Column="1"
-                        ItemsSource="{Binding DescriptionByRenderMode}" 
-                        DisplayMemberPath="Value" 
-                        SelectedValuePath="Key"
-                        SelectedValue="{Binding SelectedRenderMode}">
-                    </ComboBox>
-                </Grid>
+                <usercontrols:EnumEditor Label="Render Mode" DescriptionByValue="{Binding DescriptionByRenderMode}" SelectedValue="{Binding SelectedRenderMode}"></usercontrols:EnumEditor>
+                
                 <StackPanel Visibility="{Binding ShowChannelControls, Converter={StaticResource booleanVisibilityConverter}}">
                     <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
                     <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
