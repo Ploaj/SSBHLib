@@ -6,7 +6,7 @@ namespace CrossModGui.ViewModels
     {
         public static PreferencesWindowViewModel Instance { get; } = FromJson();
 
-        public bool EnableDarkTheme { get; set; } = false;
+        public bool EnableDarkTheme { get; set; } = true;
 
         private const string path = "Preferences.json";
 
