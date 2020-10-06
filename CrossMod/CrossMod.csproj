@@ -103,7 +103,7 @@
     <Compile Include="Nodes\Formats\ShanNode.cs" />
     <Compile Include="Rendering\Collision.cs" />
     <Compile Include="Rendering\Exceptions\MissingExtensionException.cs" />
-    <Compile Include="Rendering\GlTools\MatlToGl.cs" />
+    <Compile Include="Rendering\GlTools\MatlToOpenTk.cs" />
     <Compile Include="Rendering\Models\UltimateMesh.cs" />
     <Compile Include="Rendering\ShapeMeshes\PrimBonePrism.cs" />
     <Compile Include="Rendering\Renderables\RAnimation.cs" />

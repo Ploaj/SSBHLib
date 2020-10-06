@@ -906,8 +906,8 @@
             result.WrapS = (Formats.Materials.MatlWrapMode)parser.ReadInt32();
             result.WrapT = (Formats.Materials.MatlWrapMode)parser.ReadInt32();
             result.WrapR = (Formats.Materials.MatlWrapMode)parser.ReadInt32();
-            result.MinFilter = parser.ReadInt32();
-            result.MagFilter = parser.ReadInt32();
+            result.MinFilter = (Formats.Materials.MatlMinFilter)parser.ReadInt32();
+            result.MagFilter = (Formats.Materials.MatlMagFilter)parser.ReadInt32();
             result.Unk6 = parser.ReadInt32();
             result.Unk7 = parser.ReadInt32();
             result.Unk8 = parser.ReadInt32();

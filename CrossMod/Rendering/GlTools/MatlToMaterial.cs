@@ -1,12 +1,10 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Samplers;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.GlTools
 {
-    // TODO: This class could just be part of the material class.
     public static class MatlToMaterial
     {
         public static RMaterial CreateMaterial(MatlEntry currentEntry, int index, Dictionary<string, RTexture> textureByName)
@@ -30,16 +28,13 @@ namespace CrossMod.Rendering.GlTools
                         SetTextureParameter(meshMaterial, attribute);
                         break;
                     case MatlEnums.ParamDataType.Vector4:
-                        var vec4 = (MatlAttribute.MatlVector4)attribute.DataObject;
-                        meshMaterial.vec4ByParamId[attribute.ParamId] = new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
+                        meshMaterial.vec4ByParamId[attribute.ParamId] = ((MatlAttribute.MatlVector4)attribute.DataObject).ToOpenTk();
                         break;
                     case MatlEnums.ParamDataType.Boolean:
-                        bool boolValue = (bool)attribute.DataObject;
-                        meshMaterial.boolByParamId[attribute.ParamId] = boolValue;
+                        meshMaterial.boolByParamId[attribute.ParamId] = (bool)attribute.DataObject;
                         break;
                     case MatlEnums.ParamDataType.Float:
-                        float floatValue = (float)attribute.DataObject;
-                        meshMaterial.floatByParamId[attribute.ParamId] = floatValue;
+                        meshMaterial.floatByParamId[attribute.ParamId] = (float)attribute.DataObject;
                         break;
                     case MatlEnums.ParamDataType.BlendState:
                         SetBlendState(meshMaterial, attribute);
@@ -61,11 +56,11 @@ namespace CrossMod.Rendering.GlTools
 
             SamplerObject sampler = new SamplerObject
             {
-                TextureWrapS = MatlToGl.GetWrapMode(samplerStruct.WrapS),
-                TextureWrapT = MatlToGl.GetWrapMode(samplerStruct.WrapT),
-                TextureWrapR = MatlToGl.GetWrapMode(samplerStruct.WrapR),
-                MagFilter = MatlToGl.GetMagFilter(samplerStruct.MagFilter),
-                MinFilter = MatlToGl.GetMinFilter(samplerStruct.MinFilter),
+                TextureWrapS = samplerStruct.WrapS.ToOpenTk(),
+                TextureWrapT = samplerStruct.WrapT.ToOpenTk(),
+                TextureWrapR = samplerStruct.WrapR.ToOpenTk(),
+                MagFilter = samplerStruct.MagFilter.ToOpenTk(),
+                MinFilter = samplerStruct.MinFilter.ToOpenTk(),
                 TextureLodBias = samplerStruct.LodBias,
             };
 
@@ -82,7 +77,7 @@ namespace CrossMod.Rendering.GlTools
             var rasterizerState = (MatlAttribute.MatlRasterizerState)a.DataObject;
 
             meshMaterial.DepthBias = rasterizerState.DepthBias;
-            meshMaterial.CullMode = MatlToGl.GetCullMode(rasterizerState.CullMode);
+            meshMaterial.CullMode = rasterizerState.CullMode.ToOpenTk();
             meshMaterial.EnableFaceCulling = rasterizerState.CullMode != MatlCullMode.None;
         }
 
