@@ -71,5 +71,19 @@ namespace CrossMod.Rendering.GlTools
                     throw new NotSupportedException($"Unsupported conversion for {cullMode}");
             }
         }
+
+        public static PolygonMode ToOpenTk(this MatlFillMode fillMode)
+        {
+            switch (fillMode)
+            {
+                // None requires explicitly disabling culling, so just return back.
+                case MatlFillMode.Solid:
+                    return PolygonMode.Fill;
+                case MatlFillMode.Line:
+                    return PolygonMode.Line;
+                default:
+                    throw new NotSupportedException($"Unsupported conversion for {fillMode}");
+            }
+        }
     }
 }

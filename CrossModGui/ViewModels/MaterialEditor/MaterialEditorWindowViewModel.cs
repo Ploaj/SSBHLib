@@ -3,7 +3,10 @@ using CrossMod.Rendering.GlTools;
 using CrossModGui.Tools;
 using SSBHLib;
 using SSBHLib.Formats.Materials;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media;
 
 namespace CrossModGui.ViewModels
@@ -16,6 +19,19 @@ namespace CrossModGui.ViewModels
         public Material CurrentMaterial { get; set; }
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
+
+        public Dictionary<MatlCullMode, string> DescriptionByCullMode { get; } = new Dictionary<MatlCullMode, string>
+        {
+            { MatlCullMode.Back, "Back" },
+            { MatlCullMode.Front, "Front" },
+            { MatlCullMode.None, "None" },
+        };
+
+        public Dictionary<MatlFillMode, string> DescriptionByFillMode { get; } = new Dictionary<MatlFillMode, string>
+        {
+            { MatlFillMode.Solid, "Solid" },
+            { MatlFillMode.Line, "Line" },
+        };
 
         // TODO: Does this reference need to be in the view model?
         private readonly RNumdl rnumdl;
@@ -50,14 +66,54 @@ namespace CrossModGui.ViewModels
                 MaterialIdColor = new SolidColorBrush(Color.FromArgb(255,
                     (byte)glMaterial.MaterialIdColorRgb255.X,
                     (byte)glMaterial.MaterialIdColorRgb255.Y,
-                    (byte)glMaterial.MaterialIdColorRgb255.Z))
+                    (byte)glMaterial.MaterialIdColorRgb255.Z)),
+                CullMode = GetCullMode(glMaterial),
+                FillMode = GetFillMode(glMaterial)
             };
 
             AddBooleanParams(glMaterial, material);
             AddFloatParams(glMaterial, material);
             AddVec4Params(glMaterial, material);
             AddTextureParams(glMaterial, material);
+
+            // Ensure render state is updated in real time.
+            material.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(Material.CullMode))
+                    glMaterial.CullMode = material.CullMode.ToOpenTk();
+                else if (e.PropertyName == nameof(Material.FillMode))
+                    glMaterial.FillMode = material.FillMode.ToOpenTk();
+            };
             return material;
+        }
+
+        private MatlFillMode GetFillMode(RMaterial glMaterial)
+        {
+            switch (glMaterial.FillMode)
+            {
+                case OpenTK.Graphics.OpenGL.PolygonMode.Fill:
+                    return MatlFillMode.Solid;
+                case OpenTK.Graphics.OpenGL.PolygonMode.Line:
+                    return MatlFillMode.Line;
+                default:
+                    throw new NotSupportedException($"Unsupported conversion for {glMaterial.FillMode}");
+            }
+        }
+
+        private MatlCullMode GetCullMode(RMaterial glMaterial)
+        {
+            if (!glMaterial.EnableFaceCulling)
+                return MatlCullMode.None;
+
+            switch (glMaterial.CullMode)
+            {
+                case OpenTK.Graphics.OpenGL.CullFaceMode.Back:
+                    return MatlCullMode.Back;
+                case OpenTK.Graphics.OpenGL.CullFaceMode.Front:
+                    return MatlCullMode.Front;
+                default:
+                    throw new NotSupportedException($"Unsupported conversion for {glMaterial.CullMode}");
+            }
         }
 
         public void SaveMatl(string outputPath)
@@ -66,28 +122,39 @@ namespace CrossModGui.ViewModels
             if (rnumdl == null || rnumdl.Material == null)
                 return;
 
+            // Transfer changes from the render material to the MATL.
+            // TODO: Recreate the matl from the view model instead?
             foreach (var entry in rnumdl.Material.Entries)
             {
-                var material = rnumdl.MaterialByName[entry.MaterialLabel];
+                // TODO: This is a mess.
+                var rMaterial = rnumdl.MaterialByName[entry.MaterialLabel];
+                var vmMaterial = Materials.Where(m => m.ShaderLabel == entry.ShaderLabel && m.Name == entry.MaterialLabel).FirstOrDefault();
+
                 foreach (var attribute in entry.Attributes)
                 {
                     // The data type isn't known, so check each type.
-                    if (material.floatByParamId.ContainsKey(attribute.ParamId))
+                    if (rMaterial.floatByParamId.ContainsKey(attribute.ParamId))
                     {
-                        attribute.DataObject = material.floatByParamId[attribute.ParamId];
+                        attribute.DataObject = rMaterial.floatByParamId[attribute.ParamId];
                     }
-                    else if (material.boolByParamId.ContainsKey(attribute.ParamId))
+                    else if (rMaterial.boolByParamId.ContainsKey(attribute.ParamId))
                     {
-                        attribute.DataObject = material.boolByParamId[attribute.ParamId];
+                        attribute.DataObject = rMaterial.boolByParamId[attribute.ParamId];
                     }
-                    else if (material.vec4ByParamId.ContainsKey(attribute.ParamId))
+                    else if (rMaterial.vec4ByParamId.ContainsKey(attribute.ParamId))
                     {
-                        var value = material.vec4ByParamId[attribute.ParamId];
+                        var value = rMaterial.vec4ByParamId[attribute.ParamId];
                         attribute.DataObject = new MatlAttribute.MatlVector4 { X = value.X, Y = value.Y, Z = value.Z, W = value.W };
                     }
-                    else if (material.textureNameByParamId.ContainsKey(attribute.ParamId))
+                    else if (rMaterial.textureNameByParamId.ContainsKey(attribute.ParamId))
                     {
-                        attribute.DataObject = new MatlAttribute.MatlString { Text = material.textureNameByParamId[attribute.ParamId] };
+                        attribute.DataObject = new MatlAttribute.MatlString { Text = rMaterial.textureNameByParamId[attribute.ParamId] };
+                    }
+                    else if (attribute.DataType == MatlEnums.ParamDataType.RasterizerState)
+                    {
+                        var rasterizer = (MatlAttribute.MatlRasterizerState)attribute.DataObject;
+                        rasterizer.CullMode = vmMaterial.CullMode;
+                        rasterizer.FillMode = vmMaterial.FillMode;
                     }
                 }
             }

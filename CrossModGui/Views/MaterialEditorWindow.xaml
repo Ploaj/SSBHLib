@@ -123,18 +123,12 @@
                         </ItemsControl>
                     </Expander>
                     <Expander Header="Rasterizer State" IsExpanded="False">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">WIP</TextBlock>
-                        </Grid>
+                        <StackPanel>
+                            <usercontrols:EnumEditor Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.FillMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
+                        </StackPanel>
                     </Expander>
-                    <Expander Header="Blend State" IsExpanded="False">
+                    <Expander Header="Blend State" IsExpanded="False" Visibility="Hidden">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>

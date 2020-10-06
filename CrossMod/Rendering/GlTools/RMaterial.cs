@@ -92,6 +92,8 @@ namespace CrossMod.Rendering.GlTools
         public bool EnableFaceCulling { get; set; }
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
 
+        public PolygonMode FillMode { get; set; } = PolygonMode.Fill;
+
         public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
         public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
         public bool HasSortLabel => ShaderLabel.EndsWith("_sort");
@@ -196,6 +198,7 @@ namespace CrossMod.Rendering.GlTools
                 GL.Disable(EnableCap.SampleAlphaToCoverage);
 
             SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(EnableFaceCulling, CullMode));
+            SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
         }
 
         private Vector3 GetMaterialIdColor(int index)
