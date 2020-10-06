@@ -32,7 +32,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Material</TextBlock>
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2,0,2" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
                       DropDownOpened="ComboBox_DropDownOpened"
                       DropDownClosed="ComboBox_DropDownClosed">
                 <ComboBox.ItemTemplate>
@@ -45,7 +45,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
         <Grid DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -124,8 +124,8 @@
                     </Expander>
                     <Expander Header="Rasterizer State" IsExpanded="False">
                         <StackPanel>
-                            <usercontrols:EnumEditor Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.FillMode}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,0" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.FillMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
                     <Expander Header="Blend State" IsExpanded="False" Visibility="Hidden">
