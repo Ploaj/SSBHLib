@@ -197,7 +197,7 @@ namespace CrossMod.Nodes
 
         public static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
-            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.SrgbAlpha },
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Rgba8 },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba8 },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba32f },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, InternalFormat.Rgba8 },
