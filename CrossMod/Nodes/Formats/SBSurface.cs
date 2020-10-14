@@ -108,6 +108,7 @@ namespace CrossMod.Nodes
         /// <returns></returns>
         public Texture GetRenderTexture()
         {
+            // TODO: This is a mess.
             if (renderTexture == null)
             {
                 if (Arrays.Count == 6)
@@ -126,7 +127,7 @@ namespace CrossMod.Nodes
                     else
                     {
                         // TODO: The internal format should only be rgb, rgba, etc. A cast won't always work.
-                        var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat, PixelType);
+                        var format = new TextureFormatUncompressed((PixelInternalFormat)InternalFormat, PixelFormat, PixelType);
                         cube.LoadImageData(Width, format,
                             Arrays[0].Mipmaps[0], Arrays[1].Mipmaps[0], Arrays[2].Mipmaps[0],
                             Arrays[3].Mipmaps[0], Arrays[4].Mipmaps[0], Arrays[5].Mipmaps[0]);
@@ -144,8 +145,7 @@ namespace CrossMod.Nodes
 
                     if (TextureFormatTools.IsCompressed(InternalFormat))
                     {
-                        // hack
-                        // trying to load mipmaps with similar sizes seems to not work
+                        // HACK: trying to load mipmaps with similar sizes seems to not work
                         var mipTest = new List<byte[]>();
                         int prevsize = 0;
                         foreach (var v in Arrays[0].Mipmaps)
@@ -160,7 +160,7 @@ namespace CrossMod.Nodes
                     else
                     {
                         // TODO: Uncompressed mipmaps
-                        var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat, PixelType);
+                        var format = new TextureFormatUncompressed((PixelInternalFormat)InternalFormat, PixelFormat, PixelType);
                         sfTex.LoadImageData(Width, Height, Arrays[0].Mipmaps, format);
                     }
                     renderTexture = sfTex;

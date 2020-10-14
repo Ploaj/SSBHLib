@@ -54,6 +54,7 @@ namespace CrossMod.Tools
             { InternalFormat.Rg32i,         new FormatInfo(8,  1,  1, 1) },
             { InternalFormat.Rg32ui,        new FormatInfo(8,  1,  1, 1) },
             { InternalFormat.Rgba8i,        new FormatInfo(4,  1,  1, 1) },
+            { InternalFormat.Srgb8Alpha8,        new FormatInfo(4,  1,  1, 1) },
             { InternalFormat.Rgba8Snorm,       new FormatInfo(4,  1,  1, 1) },
             { InternalFormat.Rgba8ui,        new FormatInfo(4,  1,  1, 1) },
             { InternalFormat.Rgba8,       new FormatInfo(4,  1,  1, 1) }, // TEX_FORMAT.R8G8B8A8_UNORM

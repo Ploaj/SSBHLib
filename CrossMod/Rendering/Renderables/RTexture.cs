@@ -12,8 +12,6 @@ namespace CrossMod.Rendering
         // TODO: RTexture properties should not be mutable.
         public Texture SfTexture { get; set; } = null;
 
-        public byte[] BitmapImageData { get; set; }
-
         public bool IsSrgb { get; set; } = false;
 
         public void Render(Camera camera)
