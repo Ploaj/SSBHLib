@@ -340,7 +340,7 @@ namespace CrossMod.Rendering.GlTools
 
             var textureName = textureNameByParamId[paramId];
             if (TextureByName.ContainsKey(textureName))
-                return TextureByName[textureName].SfTexture;
+                return TextureByName[textureName].Texture;
 
             if (DefaultTexturesByName.ContainsKey(textureName))
                 return DefaultTexturesByName[textureName];

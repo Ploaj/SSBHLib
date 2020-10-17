@@ -34,6 +34,7 @@ namespace CrossMod.Nodes
             // HACK: Empty streams?
             if (surface == null)
             {
+                // TODO: Don't read from disk every time?
                 using (var image = Image.FromFile("DefaultTextures/default_black.png"))
                 {
                     surface = SBSurface.FromBitmap((Bitmap)image);
@@ -116,17 +117,10 @@ namespace CrossMod.Nodes
             // We'll assume the context isn't destroyed.
             if (renderableTexture == null)
             {
-                renderableTexture = new RTexture
-                {
-                    IsSrgb = surface.IsSRGB
-                };
-
                 // HACK: Nutex loading doesn't always work.
                 try
                 {
-                    renderableTexture.SfTexture = surface.GetRenderTexture();
-                    // TODO: Getting the BGRA data can randomly cause access violation exceptions.
-                    //renderableTexture.BitmapImageData = renderableTexture.SfTexture.GetImageDataBgra();
+                    renderableTexture = new RTexture(surface.GetRenderTexture(), surface.IsSRGB);
                 }
                 catch (Exception)
                 {
@@ -135,43 +129,6 @@ namespace CrossMod.Nodes
             }
 
             return renderableTexture;
-        }
-
-        public static void Export(string FileName, SBSurface surface)
-        {
-            using (BinaryWriter writer = new BinaryWriter(new FileStream(FileName, FileMode.Create)))
-            {
-                writer.Write(SwitchSwizzler.CreateBuffer(surface));
-
-                uint ImageSize = (uint)writer.BaseStream.Position;
-
-                foreach (var mip in surface.Arrays)
-                {
-                    foreach (var m in mip.Mipmaps)
-                        writer.Write(m.Length);
-                    for (int i = mip.Mipmaps.Count; i < 0x10; i++)
-                        writer.Write(0);
-                }
-
-                writer.Write(new char[] { ' ', 'X', 'N', 'T' });
-                writer.Write(surface.Name.ToCharArray());
-                writer.Write(new byte[0x40 - surface.Name.Length]);
-                writer.Write(surface.Width);
-                writer.Write(surface.Height);
-                writer.Write(surface.Depth);
-                writer.Write((byte)TexFormatByInternalFormat(surface.InternalFormat)); // format
-                writer.Write((byte)4); // unknown usually 4
-                writer.Write((short)0); // pad
-                writer.Write(surface.IsCubeMap ? 9 : 4); // unknown usually 4 9 for cubemap
-                writer.Write(surface.Arrays[0].Mipmaps.Count);
-                writer.Write(0x1000); // alignment
-                writer.Write(surface.Arrays.Count); // array count
-                writer.Write(ImageSize);
-
-                writer.Write(new char[] { ' ', 'X', 'E', 'T' });
-                writer.Write((short)1); // version major
-                writer.Write((short)2); // version minor
-            }
         }
 
         private static string ReadTexName(BinaryReader reader)
@@ -185,14 +142,6 @@ namespace CrossMod.Nodes
             }
 
             return result;
-        }
-
-        private static NUTEX_FORMAT TexFormatByInternalFormat(InternalFormat format)
-        {
-            foreach (var v in internalFormatByNuTexFormat)
-                if (v.Value == format)
-                    return v.Key;
-            return NUTEX_FORMAT.BC1_SRGB;
         }
 
         public static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
@@ -216,7 +165,6 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC7_UNORM, InternalFormat.CompressedRgbaBptcUnorm },
             { NUTEX_FORMAT.BC7_SRGB, InternalFormat.CompressedSrgbAlphaBptcUnorm }
         };
-
 
         private static PixelType GetPixelType(NUTEX_FORMAT format)
         {

@@ -2,6 +2,7 @@
 using CrossMod.Rendering.ShapeMeshes;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Textures;
 
 namespace CrossMod.Rendering
@@ -10,17 +11,21 @@ namespace CrossMod.Rendering
     {
         private static ScreenTriangle triangle = null;
 
+        private static SamplerObject sampler = null;
+
         public static void DrawTexture(Texture texture)
         {
             if (triangle == null)
                 triangle = new ScreenTriangle();
+            if (sampler == null)
+                sampler = new SamplerObject { MagFilter = TextureMagFilter.Nearest, MinFilter = TextureMinFilter.Nearest };
 
             var shader = ShaderContainer.GetShader("ScreenTexture");
             shader.UseProgram();
 
             // TODO: Add a sampler to this class and use that instead.
             // TODO: Samplers are bound from the previous model drawing.
-            GL.BindSampler(0, 0);
+            sampler.Bind(0);
             shader.SetTexture("image", texture, 0);
 
             triangle.Draw(shader);
