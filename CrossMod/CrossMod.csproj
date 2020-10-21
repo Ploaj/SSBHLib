@@ -208,14 +208,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
-      <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
-      <Name>SSBHLib</Name>
-      <Private>True</Private>
+    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj">
+      <Project>{ddba0adc-ee80-4813-8eb3-50529c60bb15}</Project>
+      <Name>SsbhLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XMBLib\XMBLib.csproj">
+    <ProjectReference Include="..\XMBLib\XmbLib.csproj">
       <Project>{a95f40a2-5645-4e2a-a69d-e9add09fa9d2}</Project>
-      <Name>XMBLib</Name>
+      <Name>XmbLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

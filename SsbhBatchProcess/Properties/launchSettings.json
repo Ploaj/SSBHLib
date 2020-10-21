@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SsbhBatchProcess": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Jonathan\\Desktop\\SSBHLib Export Test\""
+    }
+  }
+}

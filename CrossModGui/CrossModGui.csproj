@@ -471,9 +471,9 @@
       <Project>{f9aa9734-a74e-4e28-ba16-6e97a063dd20}</Project>
       <Name>CrossMod</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SSBHLib\SSBHLib.csproj">
-      <Project>{3f5daf1a-b133-469e-807c-25484c80dbfc}</Project>
-      <Name>SSBHLib</Name>
+    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj">
+      <Project>{ddba0adc-ee80-4813-8eb3-50529c60bb15}</Project>
+      <Name>SsbhLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
