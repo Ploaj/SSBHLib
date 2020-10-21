@@ -29,14 +29,8 @@ namespace CrossModGui
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show($"An unhandled exception just occurred. The application will now close.\n\n{e.Exception.Message}\n\n{e.Exception.StackTrace}",
-                "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+            // TODO: Log errors.
             e.Handled = true;
-
-            // TODO: Log this error.
-
-            // Ensure all threads exit.
-            Environment.Exit(0);
         }
     }
 }

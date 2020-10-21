@@ -176,6 +176,12 @@ namespace CrossMod.Rendering.Models
             // TODO: Use a setter in the material class to cache the result.
             foreach (RMesh m in SubMeshes)
             {
+                if (m.Material == null)
+                {
+                    opaqueMeshes.Add(m);
+                    continue;
+                }
+
                 if (m.Material.ShaderLabel.EndsWith("_far"))
                     farMeshes.Add(m);
                 else if (m.Material.ShaderLabel.EndsWith("_sort"))
@@ -194,8 +200,8 @@ namespace CrossMod.Rendering.Models
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
-                m.Material.SetMaterialUniforms(currentShader, previousMaterial);
-                m.Material.SetRenderState();
+                m.Material?.SetMaterialUniforms(currentShader, previousMaterial);
+                m.Material?.SetRenderState();
             }
 
             m.Draw(currentShader, skeleton);
