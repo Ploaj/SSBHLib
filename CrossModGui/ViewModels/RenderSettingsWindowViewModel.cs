@@ -66,6 +66,8 @@ namespace CrossModGui.ViewModels
 
         public bool EnableAlpha { get; set; }
 
+        public bool EnableWireframe { get; set; }
+
         // TODO: This should use an enum and combobox.
         // The available items should be restricted to used material params (ex: not DiffuseTexture).
         public string ParamName { get; set; } = RenderSettings.Instance.ParamId.ToString();
@@ -92,7 +94,8 @@ namespace CrossModGui.ViewModels
                 DirectLightIntensity = rhs.DirectLightIntensity,
                 IndirectLightIntensity = rhs.DirectLightIntensity,
                 EnableBloom = rhs.EnableBloom,
-                BloomIntensity = rhs.BloomIntensity
+                BloomIntensity = rhs.BloomIntensity,
+                EnableWireframe = rhs.EnableWireframe
             };
         }
     }

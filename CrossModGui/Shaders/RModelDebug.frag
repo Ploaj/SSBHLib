@@ -38,7 +38,7 @@ uniform vec4 renderChannels;
 uniform int renderMode;
 
 uniform int renderWireframe;
-uniform int renderNormalMaps;
+uniform int renderNorMaps;
 
 uniform sampler2D uvPattern;
 
@@ -142,9 +142,9 @@ void main()
     if (hasInkNorMap == 1)
         norColor.rgb = texture(inkNorMap, map1).rga;
 
-    vec3 fragmentNormal = vertexNormal;
+    vec3 fragmentNormal = normalize(vertexNormal);
     vec3 bitangent = GetBitangent(vertexNormal.xyz, tangent.xyz, tangent.w);
-    if (renderNormalMaps == 1)
+    if (renderNorMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
     // Transform the view vector to world space.
@@ -162,17 +162,7 @@ void main()
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;
 
-	// Invert glossiness?
-	float roughness = clamp(1 - prmColor.g, 0, 1);
-
     vec4 uvPatternColor = texture(uvPattern, map1).rgba;
-
-	// Image based lighting.
-	vec3 diffuseIbl = textureLod(diffusePbrCube, reflectionVector, 0).rgb * 2.5;
-	int maxLod = 10;
-	vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, roughness * maxLod).rgb * 2.5;
-
-	float metalness = prmColor.r;
 
 	// Just gamma correct albedo maps.
 	fragColor = vec4(1);

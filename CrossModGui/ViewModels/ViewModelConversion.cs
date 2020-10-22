@@ -22,6 +22,7 @@ namespace CrossModGui.ViewModels
             settings.RenderPrmRoughness = vm.EnablePrmRoughness;
             settings.RenderPrmAo = vm.EnablePrmAo;
             settings.RenderPrmSpecular = vm.EnablePrmSpecular;
+            settings.EnableWireframe = vm.EnableWireframe;
 
             settings.DirectLightIntensity = vm.DirectLightIntensity;
             settings.IblIntensity = vm.IndirectLightIntensity;

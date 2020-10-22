@@ -312,8 +312,7 @@ void main()
     if (hasInkNorMap == 1)
         norColor.xyz = texture(inkNorMap, map1).rga;
 
-
-    vec3 fragmentNormal = vertexNormal;
+    vec3 fragmentNormal = normalize(vertexNormal);
     vec3 bitangent = GetBitangent(vertexNormal, tangent.xyz, tangent.w);
     if (renderNorMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
@@ -420,7 +419,6 @@ void main()
     if (renderEmission == 1)
         fragColor0.rgb += EmissionTerm(emissionColor);
 
-
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
         fragColor0.rgb *= colorSet1.rgb; 
@@ -447,13 +445,6 @@ void main()
     fragColor0.a = clamp(fragColor0.a, 0, 1); // TODO: krool???
     fragColor0.rgb *= fragColor0.a;
 
-    if (renderWireframe == 1)
-    {
-        vec3 edgeColor = vec3(1);
-        float intensity = WireframeIntensity(edgeDistance);
-        fragColor0.rgb = mix(fragColor0.rgb, edgeColor, intensity);
-    }
-
     // Ported bloom code.
     // TODO: Where do the uniform buffer values come from?
     float componentMax = max(max(fragColor0.r, max(fragColor0.g, fragColor0.b)), 0.001);
@@ -469,6 +460,10 @@ void main()
     // Gamma correction.
     fragColor0.rgb = GetSrgb(fragColor0.rgb);
 
-    // TODO ???:
-    //gl_FragDepth = gl_FragCoord.z + depthBias;
+    if (renderWireframe == 1)
+    {
+        vec3 edgeColor = vec3(1);
+        float intensity = WireframeIntensity(edgeDistance);
+        fragColor0.rgb = mix(fragColor0.rgb, edgeColor, intensity);
+    }
 }

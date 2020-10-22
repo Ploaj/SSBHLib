@@ -16,6 +16,7 @@
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableBloom}">Enable Bloom</CheckBox>
+                <CheckBox Margin="10,2" IsChecked="{Binding EnableWireframe}">Enable Wireframe</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Lighting" IsExpanded="True">
