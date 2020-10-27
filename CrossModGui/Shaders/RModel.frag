@@ -58,8 +58,8 @@ uniform float depthBias;
 uniform MaterialParams
 {
     vec4 CustomVector[64];
-    int CustomBoolean[20];
-    float CustomFloat[20];
+    ivec4 CustomBoolean[20];
+    vec4 CustomFloat[20];
 
     vec4 vec4Param;
 
@@ -207,7 +207,7 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
     if (hasCustomFloat10 == 1)
-        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat[10]);
+        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat[10].x);
     else
         return Ggx(nDotH, roughness);
 }
@@ -216,7 +216,7 @@ vec3 SpecularTerm(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness, 
 {
     vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
-    vec3 specularTerm = (directSpecular * CustomBoolean[3]) + (indirectSpecular * CustomBoolean[4]);
+    vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x);
 
     return specularTerm;
 }
@@ -239,7 +239,7 @@ float Luminance(vec3 rgb)
 
 vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
-    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8]); 
+    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8].x); 
 
     // Metals use albedo instead of the specular color/tint.
     vec3 specularReflectionF0 = vec3(prmSpec * 0.2) * tintColor;
@@ -305,7 +305,7 @@ void main()
     reflectionVector.y *= -1;
 
     // TODO: ???
-    float iorRatio = 1.0 / (1.0 + CustomFloat[19]);
+    float iorRatio = 1.0 / (1.0 + CustomFloat[19].x);
     vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Shading vectors.
@@ -353,7 +353,7 @@ void main()
 
     // TODO: Is specular overridden by default?
     float specular = prmColor.a;
-    if (CustomBoolean[1] == 0)
+    if (CustomBoolean[1].x == 0)
         specular = 0.16;
 
 
@@ -399,7 +399,7 @@ void main()
         fragColor0.rgb *= colorSet1.rgb; 
 
     // TODO: Experimental refraction.
-    if (CustomFloat[19] > 0.0)
+    if (CustomFloat[19].x > 0.0)
         fragColor0.rgb += refractionIbl * renderExperimental;
 
     // Final color multiplier.
@@ -411,9 +411,9 @@ void main()
         fragColor0.a *= colorSet1.a;
 
     // TODO: Meshes with refraction have some sort of angle fade.
-    float f0Refract = GetF0(CustomFloat[19] + 1.0);
+    float f0Refract = GetF0(CustomFloat[19].x + 1.0);
     vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
-    if (CustomFloat[19] > 0 && renderExperimental == 1)
+    if (CustomFloat[19].x > 0 && renderExperimental == 1)
         fragColor0.a = transmissionAlpha.x;
 
     // Premultiplied alpha. 

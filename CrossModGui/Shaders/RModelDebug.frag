@@ -45,8 +45,8 @@ uniform sampler2D uvPattern;
 uniform MaterialParams
 {
     vec4 CustomVector[64];
-    int CustomBoolean[20];
-    float CustomFloat[20];
+    ivec4 CustomBoolean[20];
+    vec4 CustomFloat[20];
 
     vec4 vec4Param;
 

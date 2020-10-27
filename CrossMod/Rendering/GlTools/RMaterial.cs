@@ -94,11 +94,6 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public RMaterial()
-        {
-
-        }
-
         public void SetMaterialUniforms(Shader shader, RMaterial previousMaterial)
         {
             // TODO: This code could be moved to the constructor.
@@ -190,55 +185,9 @@ namespace CrossMod.Rendering.GlTools
 
         private void SetMaterialParams(UniformBlock uniformBlock)
         {
-            // TODO: Refactor this to be cleaner.
-            // Set defaults
-            var customVectors = new Vector4[64];
-            customVectors[3] = Vector4.One;
-            customVectors[6] = new Vector4(1, 1, 0, 0);
-            customVectors[8] = Vector4.One;
-            customVectors[13] = Vector4.One;
-            customVectors[14] = Vector4.One;
-            customVectors[18] = Vector4.One;
-            customVectors[31] = new Vector4(1, 1, 0, 0);
-            customVectors[32] = new Vector4(1, 1, 0, 0);
-
-            // Set values from the material.
-            foreach (var param in vec4ByParamId)
-            {
-                customVectors[param.Key.ToVectorIndex()] = param.Value;
-            }
-            uniformBlock.SetValues("CustomVector", customVectors);
-
-            // Set defaults.
-            var customBooleans = new bool[20];
-            customBooleans[1] = false;
-            customBooleans[2] = true;
-            customBooleans[3] = true;
-            customBooleans[4] = true;
-            customBooleans[5] = false;
-            customBooleans[6] = false;
-            customBooleans[9] = false;
-            customBooleans[11] = true;
-
-            // Set values from material.
-            // HACK: A temporary workaround for integers being 16 byte aligned.
-            // TODO: Query the stride?
-            var customBooleanData = new IVec4[20];
-            foreach (var param in boolByParamId)
-            {
-                customBooleanData[param.Key.ToBooleanIndex()] = new IVec4 { X = param.Value ? 1 : 0 };
-            }
-            uniformBlock.SetValues("CustomBoolean", customBooleanData);
-
-            // Set values from material.
-            // HACK: A temporary workaround for integers being 16 byte aligned.
-            // TODO: Query the stride?
-            var customFloatData = new Vector4[20];
-            foreach (var param in floatByParamId)
-            {
-                customFloatData[param.Key.ToFloatIndex()] = new Vector4(0f, 0f, 0f, param.Value);
-            }
-            uniformBlock.SetValues("CustomFloat", customFloatData);
+            SetVectors(uniformBlock);
+            SetBooleans(uniformBlock);
+            SetFloats(uniformBlock);
 
             uniformBlock.SetValue("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
             uniformBlock.SetValue("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
@@ -258,6 +207,65 @@ namespace CrossMod.Rendering.GlTools
             var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
             var hasEmiMaps = HasEmi || HasEmi2;
             uniformBlock.SetValue("emissionOverride", hasEmiMaps && !hasDiffuseMaps);
+        }
+
+        private void SetVectors(UniformBlock uniformBlock)
+        {
+            // Use a 16 byte type to avoid alignment issues.
+            var customVectors = new Vector4[64];
+            customVectors[3] = Vector4.One;
+            customVectors[6] = new Vector4(1, 1, 0, 0);
+            customVectors[8] = Vector4.One;
+            customVectors[13] = Vector4.One;
+            customVectors[14] = Vector4.One;
+            customVectors[18] = Vector4.One;
+            customVectors[31] = new Vector4(1, 1, 0, 0);
+            customVectors[32] = new Vector4(1, 1, 0, 0);
+
+            // Set values from the material.
+            foreach (var param in vec4ByParamId)
+            {
+                customVectors[param.Key.ToVectorIndex()] = param.Value;
+            }
+
+            // Override the defaults or material values with animation data.
+            foreach (var param in Vec4ParamsMaterialAnimation)
+            {
+                customVectors[param.Key.ToVectorIndex()] = param.Value;
+            }
+
+            uniformBlock.SetValues("CustomVector", customVectors);
+        }
+
+        private void SetFloats(UniformBlock uniformBlock)
+        {
+            // Use a 16 byte type to avoid alignment issues.
+            var customFloatData = new Vector4[20];
+            foreach (var param in floatByParamId)
+            {
+                customFloatData[param.Key.ToFloatIndex()] = new Vector4(0f, 0f, 0f, param.Value);
+            }
+            uniformBlock.SetValues("CustomFloat", customFloatData);
+        }
+
+        private void SetBooleans(UniformBlock uniformBlock)
+        {
+            // Use a 16 byte type to avoid alignment issues.
+            var customBooleans = new IVec4[20];
+            customBooleans[1] = new IVec4 { X = 0 };
+            customBooleans[2] = new IVec4 { X = 1 };
+            customBooleans[3] = new IVec4 { X = 1 };
+            customBooleans[4] = new IVec4 { X = 1 };
+            customBooleans[5] = new IVec4 { X = 0 };
+            customBooleans[6] = new IVec4 { X = 0 };
+            customBooleans[9] = new IVec4 { X = 0 };
+            customBooleans[11] = new IVec4 { X = 1 };
+
+            foreach (var param in boolByParamId)
+            {
+                customBooleans[param.Key.ToBooleanIndex()] = new IVec4 { X = param.Value ? 1 : 0 };
+            }
+            uniformBlock.SetValues("CustomBoolean", customBooleans);
         }
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
@@ -303,12 +311,7 @@ namespace CrossMod.Rendering.GlTools
             // Convert parameters into colors for easier visualization.
             var name = "vec4Param";
 
-            if (Vec4ParamsMaterialAnimation.ContainsKey(paramId))
-            {
-                var value = Vec4ParamsMaterialAnimation[paramId];
-                uniformBlock.SetValue(name, value);
-            }
-            else if (vec4ByParamId.ContainsKey(paramId))
+            if (vec4ByParamId.ContainsKey(paramId))
             {
                 var value = vec4ByParamId[paramId];
                 uniformBlock.SetValue(name, value);

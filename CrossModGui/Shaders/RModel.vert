@@ -49,8 +49,8 @@ uniform Bones
 uniform MaterialParams
 {
     vec4 CustomVector[64];
-    int CustomBoolean[20];
-    float CustomFloat[20];
+    ivec4 CustomBoolean[20];
+    vec4 CustomFloat[20];
 
     vec4 vec4Param;
 
@@ -111,7 +111,7 @@ void main()
 
     // Sprite sheet uvs.
     geomMap1 = map1;
-    if (CustomBoolean[9] == 1)
+    if (CustomBoolean[9].x == 1)
         geomMap1 /= CustomVector[18].xy;
 
     geomUvSet = uvSet;

@@ -32,7 +32,7 @@ namespace CrossMod.Rendering.GlTools
         };
 
         /// <summary>
-        /// Selects a unique color based on the index. Out of range indices are assigned to white.
+        /// Selects a unique color based on the index. Out of range indices are assigned to white. RGB values are <c>0.0f</c> to <c>255.0f</c>.
         /// </summary>
         /// <param name="index">the index into the unique color list</param>
         /// <returns>The color associated with <paramref name="index"/></returns>
