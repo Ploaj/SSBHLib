@@ -11,13 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XmbLib", "XMBLib\XmbLib.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsbhLib", "SsbhLib\SsbhLib.csproj", "{DDBA0ADC-EE80-4813-8EB3-50529C60BB15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsbhBatchProcess", "SsbhBatchProcess\SsbhBatchProcess.csproj", "{C14EEAB3-AA9E-431B-8CC8-A73F9D13391E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsbhBatchProcess", "SsbhBatchProcess\SsbhBatchProcess.csproj", "{C14EEAB3-AA9E-431B-8CC8-A73F9D13391E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsbhLib.Test", "SsbhLib.Test\SsbhLib.Test.csproj", "{B97F5508-2897-4AE6-95A6-D3D4A16D4829}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsbhLib.Test", "SsbhLib.Test\SsbhLib.Test.csproj", "{B97F5508-2897-4AE6-95A6-D3D4A16D4829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatLab", "MatLab\MatLab.csproj", "{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatLab", "MatLab\MatLab.csproj", "{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuanmbToJson", "NuanmbToJson\NuanmbToJson.csproj", "{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuanmbToJson", "NuanmbToJson\NuanmbToJson.csproj", "{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossMod.Test", "CrossMod.Test\CrossMod.Test.csproj", "{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
