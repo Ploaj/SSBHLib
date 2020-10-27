@@ -89,6 +89,7 @@
     <Compile Include="Nodes\Formats\Models\Adjb.cs" />
     <Compile Include="Nodes\Formats\Models\XmbNode.cs" />
     <Compile Include="Rendering\GlTools\MatlToMaterial.cs" />
+    <Compile Include="Rendering\GlTools\UniqueColors.cs" />
     <Compile Include="Rendering\Models\IVec4.cs" />
     <Compile Include="Rendering\ScreenDrawing.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
