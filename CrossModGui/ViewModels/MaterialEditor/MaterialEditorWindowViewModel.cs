@@ -9,11 +9,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 
-namespace CrossModGui.ViewModels
+namespace CrossModGui.ViewModels.MaterialEditor
 {
     public partial class MaterialEditorWindowViewModel : ViewModelBase
     {
-
         public ObservableCollection<Material> Materials { get; } = new ObservableCollection<Material>();
 
         public Material CurrentMaterial { get; set; }
@@ -75,6 +74,7 @@ namespace CrossModGui.ViewModels
             AddFloatParams(glMaterial, material);
             AddVec4Params(glMaterial, material);
             AddTextureParams(glMaterial, material);
+            AddSamplerParams(glMaterial, material);
 
             // Ensure render state is updated in real time.
             material.PropertyChanged += (s, e) =>
@@ -85,6 +85,18 @@ namespace CrossModGui.ViewModels
                     glMaterial.FillMode = material.FillMode.ToOpenTk();
             };
             return material;
+        }
+
+        private void AddSamplerParams(RMaterial glMaterial, Material material)
+        {
+            foreach (var param in glMaterial.samplerByParamId)
+            {
+                var samplerParam = new SamplerParam { ParamId = param.Key.ToString() };
+
+                // TODO: Update the material for rendering.
+
+                material.SamplerParams.Add(samplerParam);
+            }
         }
 
         private MatlFillMode GetFillMode(RMaterial glMaterial)

@@ -122,23 +122,37 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Expander>
+                    <Expander Header="Sample Params" Visibility="Collapsed">
+                        <ItemsControl ItemsSource="{Binding CurrentMaterial.SamplerParams}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="5,0">
+                                        <TextBlock Text="{Binding ParamId}"></TextBlock>
+                                        <usercontrols:EnumEditor Label="Wrap S"></usercontrols:EnumEditor>
+                                        <usercontrols:EnumEditor Label="Wrap T"></usercontrols:EnumEditor>
+                                        <usercontrols:EnumEditor Label="Wrap R"></usercontrols:EnumEditor>
+                                        <usercontrols:EnumEditor Label="Min Filter"></usercontrols:EnumEditor>
+                                        <usercontrols:EnumEditor Label="Mag Filter"></usercontrols:EnumEditor>
+                                        <usercontrols:LabeledFloatEditor Label="Lod Bias"></usercontrols:LabeledFloatEditor>
+                                        <usercontrols:EnumEditor Label="Max Anisotropy"></usercontrols:EnumEditor>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
                     <Expander Header="Rasterizer State" IsExpanded="False">
                         <StackPanel>
                             <usercontrols:EnumEditor Margin="5,0" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.FillMode}"></usercontrols:EnumEditor>
                             <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
-                    <Expander Header="Blend State" IsExpanded="False" Visibility="Hidden">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">WIP</TextBlock>
-                        </Grid>
+                    <Expander Header="Blend State" IsExpanded="False" Visibility="Collapsed">
+                        <StackPanel>
+                            <usercontrols:EnumEditor Label="Src Factor"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Label="Blend Factor 1"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Label="Blend Factor 2"></usercontrols:EnumEditor>
+
+                        </StackPanel>
                     </Expander>
                 </StackPanel>
             </ScrollViewer>

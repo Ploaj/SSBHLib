@@ -1,14 +1,11 @@
 ﻿using System.Windows.Media;
 
-namespace CrossModGui.ViewModels
+namespace CrossModGui.ViewModels.MaterialEditor
 {
-    public partial class MaterialEditorWindowViewModel
+    public class TextureParam : ViewModelBase
     {
-        public class TextureParam : ViewModelBase
-        {
-            public string ParamId { get; set; }
-            public string Value { get; set; }
-            public ImageSource Image { get; set; }
-        }
+        public string ParamId { get; set; }
+        public string Value { get; set; }
+        public ImageSource Image { get; set; }
     }
 }

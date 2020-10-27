@@ -1,11 +1,8 @@
-﻿namespace CrossModGui.ViewModels
+﻿namespace CrossModGui.ViewModels.MaterialEditor
 {
-    public partial class MaterialEditorWindowViewModel
+    public class BooleanParam : ViewModelBase
     {
-        public class BooleanParam : ViewModelBase
-        {
-            public string ParamId { get; set; }
-            public bool Value { get; set; }
-        }
+        public string ParamId { get; set; }
+        public bool Value { get; set; }
     }
 }

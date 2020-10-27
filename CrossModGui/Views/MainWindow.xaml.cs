@@ -4,6 +4,7 @@ using CrossMod.Tools;
 using CrossModGui.Rendering;
 using CrossModGui.Tools;
 using CrossModGui.ViewModels;
+using CrossModGui.ViewModels.MaterialEditor;
 using System;
 using System.Windows;
 using System.Windows.Controls;

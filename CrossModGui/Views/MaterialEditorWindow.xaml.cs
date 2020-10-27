@@ -1,6 +1,6 @@
 ﻿using CrossMod.Rendering;
 using CrossModGui.Tools;
-using CrossModGui.ViewModels;
+using CrossModGui.ViewModels.MaterialEditor;
 using System.Diagnostics;
 using System.Windows;
 
