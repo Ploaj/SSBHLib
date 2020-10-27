@@ -45,7 +45,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             foreach (var name in rnumdl.TextureByName.Keys)
                 PossibleTextureNames.Add(name);
             // TODO: Restrict the textures used for cube maps.
-            foreach (var name in RMaterial.DefaultTexturesByName.Keys)
+            foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
             foreach (var glMaterial in rnumdl.MaterialByName.Values)

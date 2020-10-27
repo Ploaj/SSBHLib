@@ -93,6 +93,7 @@
     <Compile Include="Rendering\Models\IVec4.cs" />
     <Compile Include="Rendering\ParamIdExtensions.cs" />
     <Compile Include="Rendering\ScreenDrawing.cs" />
+    <Compile Include="Rendering\TextureAssignment.cs" />
     <Compile Include="Rendering\ViewportRenderer.cs" />
     <Compile Include="Tools\BatchRendering.cs" />
     <Compile Include="Nodes\FileTree\DirectoryNode.cs" />
