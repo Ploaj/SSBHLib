@@ -57,36 +57,11 @@ uniform float depthBias;
 
 uniform MaterialParams
 {
-    vec4 CustomVector0;
-    vec4 CustomVector3;
-    vec4 CustomVector6;
-    vec4 CustomVector8;
-    vec4 CustomVector11;
-    vec4 CustomVector13;
-    vec4 CustomVector14;
-    vec4 CustomVector18;
-    vec4 CustomVector30;
-    vec4 CustomVector31;
-    vec4 CustomVector32;
-    vec4 CustomVector42;
-    vec4 CustomVector47;
-    vec4 CustomVector44;
-    vec4 CustomVector45;
+    vec4 CustomVector[64];
+    int CustomBoolean[20];
+    float CustomFloat[20];
 
     vec4 vec4Param;
-
-    int CustomBoolean1;
-    int CustomBoolean2;
-    int CustomBoolean3;
-    int CustomBoolean4;
-    int CustomBoolean9;
-    int CustomBoolean11;
-
-    float CustomFloat1;
-    float CustomFloat4;
-    float CustomFloat8;
-    float CustomFloat10;
-    float CustomFloat19;
 
     int hasCustomVector11;
     int hasCustomVector47;
@@ -194,7 +169,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     if (hasCustomVector11 == 1)
     {
         float skinShading = nDotL;
-        skinShading *= CustomVector30.y;
+        skinShading *= CustomVector[30].y;
         skinShading = skinShading * 0.5 + 0.5;
         directShading = mix(directShading, skinShading, sssBlend);
     }
@@ -215,15 +190,15 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBle
     vec3 diffuseTerm = albedoColor.rgb;
 
     // Color multiplier param.
-    diffuseTerm *= CustomVector13.rgb;
+    diffuseTerm *= CustomVector[13].rgb;
 
     // TODO: Wiifit stage model color.
     if (hasCustomVector44 == 1)
-        diffuseTerm = CustomVector44.rgb + CustomVector45.rgb;
+        diffuseTerm = CustomVector[44].rgb + CustomVector[45].rgb;
 
     // Fake subsurface scattering.
-    diffuseTerm = mix(diffuseTerm, CustomVector11.rgb, sssBlend);
-    diffuseTerm += CustomVector11.rgb * sssBlend;
+    diffuseTerm = mix(diffuseTerm, CustomVector[11].rgb, sssBlend);
+    diffuseTerm += CustomVector[11].rgb * sssBlend;
 
     return diffuseTerm;
 }
@@ -232,7 +207,7 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
     if (hasCustomFloat10 == 1)
-        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat10);
+        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat[10]);
     else
         return Ggx(nDotH, roughness);
 }
@@ -241,14 +216,14 @@ vec3 SpecularTerm(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness, 
 {
     vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
-    vec3 specularTerm = (directSpecular * CustomBoolean3) + (indirectSpecular * CustomBoolean4);
+    vec3 specularTerm = (directSpecular * CustomBoolean[3]) + (indirectSpecular * CustomBoolean[4]);
 
     return specularTerm;
 }
 
 vec3 EmissionTerm(vec4 emissionColor)
 {
-    return emissionColor.rgb * CustomVector3.rgb;
+    return emissionColor.rgb * CustomVector[3].rgb;
 }
 
 float GetF0(float ior)
@@ -264,7 +239,7 @@ float Luminance(vec3 rgb)
 
 vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
-    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat8); 
+    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8]); 
 
     // Metals use albedo instead of the specular color/tint.
     vec3 specularReflectionF0 = vec3(prmSpec * 0.2) * tintColor;
@@ -275,9 +250,9 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
 
 vec3 GetSpecularEdgeTint(float nDotV)
 {
-    vec3 rimColor = CustomVector14.rgb * LightCustomVector8.rgb;
+    vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
     float rimBlend = pow(1 - nDotV,5);
-    return mix(vec3(1), rimColor, rimBlend * LightCustomVector8.w * CustomVector14.w);
+    return mix(vec3(1), rimColor, rimBlend * LightCustomVector8.w * CustomVector[14].w);
 }
 
 float RoughnessToLod(float roughness)
@@ -330,7 +305,7 @@ void main()
     reflectionVector.y *= -1;
 
     // TODO: ???
-    float iorRatio = 1.0 / (1.0 + CustomFloat19);
+    float iorRatio = 1.0 / (1.0 + CustomFloat[19]);
     vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Shading vectors.
@@ -341,9 +316,9 @@ void main()
     float nDotL = dot(fragmentNormal, chrLightDir);
 
     // Get texture color.
-    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector6, CustomVector31, CustomVector32, colorSet5);
+    vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
 
-    vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector6, CustomVector31);
+    vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector[6], CustomVector[31]);
     // TODO: Mega man's eyes?.
     // if (CustomBoolean11 == 0)
     //     emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
@@ -362,9 +337,9 @@ void main()
 
     // Probably some sort of override for PRM color.
     if (hasCustomVector47 == 1)
-        prmColor = CustomVector47;
+        prmColor = CustomVector[47];
 
-    fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector0.x);
+    fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector[0].x);
     // Alpha testing.
     // TODO: Not all shaders have this.
     if (fragColor0.a < 0.5)
@@ -378,7 +353,7 @@ void main()
 
     // TODO: Is specular overridden by default?
     float specular = prmColor.a;
-    if (CustomBoolean1 == 0)
+    if (CustomBoolean[1] == 0)
         specular = 0.16;
 
 
@@ -388,7 +363,7 @@ void main()
         specularOcclusion *= prmColor.a;
 
     vec3 ambientOcclusion = vec3(prmColor.b);
-    ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat1 + 1.0));
+    ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat[1] + 1.0));
 
     // Image based lighting.
     int maxLod = 6;
@@ -398,7 +373,7 @@ void main()
     vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
 
     // Render passes.
-    float sssBlend = prmColor.r * CustomVector30.x;
+    float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
@@ -424,11 +399,11 @@ void main()
         fragColor0.rgb *= colorSet1.rgb; 
 
     // TODO: Experimental refraction.
-    if (CustomFloat19 > 0.0)
+    if (CustomFloat[19] > 0.0)
         fragColor0.rgb += refractionIbl * renderExperimental;
 
     // Final color multiplier.
-    fragColor0.rgb *= CustomVector8.rgb;
+    fragColor0.rgb *= CustomVector[8].rgb;
 
     // Alpha calculations
     // HACK: Some models have black vertex color for some reason.
@@ -436,9 +411,9 @@ void main()
         fragColor0.a *= colorSet1.a;
 
     // TODO: Meshes with refraction have some sort of angle fade.
-    float f0Refract = GetF0(CustomFloat19 + 1.0);
+    float f0Refract = GetF0(CustomFloat[19] + 1.0);
     vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
-    if (CustomFloat19 > 0 && renderExperimental == 1)
+    if (CustomFloat[19] > 0 && renderExperimental == 1)
         fragColor0.a = transmissionAlpha.x;
 
     // Premultiplied alpha. 

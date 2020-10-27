@@ -22,36 +22,11 @@ uniform samplerCube specularPbrCube;
 
 uniform MaterialParams
 {
-    vec4 CustomVector0;
-    vec4 CustomVector3;
-    vec4 CustomVector6;
-    vec4 CustomVector8;
-    vec4 CustomVector11;
-    vec4 CustomVector13;
-    vec4 CustomVector14;
-    vec4 CustomVector18;
-    vec4 CustomVector30;
-    vec4 CustomVector31;
-    vec4 CustomVector32;
-    vec4 CustomVector42;
-    vec4 CustomVector47;
-    vec4 CustomVector44;
-    vec4 CustomVector45;
+    vec4 CustomVector[64];
+    int CustomBoolean[20];
+    float CustomFloat[20];
 
     vec4 vec4Param;
-
-    int CustomBoolean1;
-    int CustomBoolean2;
-    int CustomBoolean3;
-    int CustomBoolean4;
-    int CustomBoolean9;
-    int CustomBoolean11;
-
-    float CustomFloat1;
-    float CustomFloat4;
-    float CustomFloat8;
-    float CustomFloat10;
-    float CustomFloat19;
 
     int hasCustomVector11;
     int hasCustomVector47;
@@ -94,7 +69,7 @@ vec2 TransformUv(vec2 uv, vec4 transform)
         // dUdV Map.
         // Remap [0,1] to [-1,1].
         vec2 textureOffset = texture(norMap, uv*2).xy * 2 - 1; 
-        result += (textureOffset) * CustomFloat4;
+        result += (textureOffset) * CustomFloat[4];
     }
 
     return result;

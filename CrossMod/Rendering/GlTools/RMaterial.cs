@@ -1,10 +1,10 @@
-﻿using CrossMod.Rendering.Resources;
+﻿using CrossMod.Rendering.Models;
+using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Shaders;
-using SFGraphics.GLObjects.Textures;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 
@@ -185,40 +185,60 @@ namespace CrossMod.Rendering.GlTools
         private void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
-            SetVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0), true);
+            SetVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0));
         }
 
         private void SetMaterialParams(UniformBlock uniformBlock)
         {
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector0, Vector4.Zero);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector3, Vector4.One);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector6, new Vector4(1, 1, 0, 0));
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector8, Vector4.One);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector11, Vector4.Zero);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector13, Vector4.One);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector14, Vector4.One);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector18, Vector4.One);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector30, Vector4.Zero);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector31, new Vector4(1, 1, 0, 0));
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector32, new Vector4(1, 1, 0, 0));
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector44, Vector4.Zero);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector45, Vector4.Zero);
-            SetVec4(uniformBlock, MatlEnums.ParamId.CustomVector47, Vector4.Zero);
+            // TODO: Refactor this to be cleaner.
+            // Set defaults
+            var customVectors = new Vector4[64];
+            customVectors[3] = Vector4.One;
+            customVectors[6] = new Vector4(1, 1, 0, 0);
+            customVectors[8] = Vector4.One;
+            customVectors[13] = Vector4.One;
+            customVectors[14] = Vector4.One;
+            customVectors[18] = Vector4.One;
+            customVectors[31] = new Vector4(1, 1, 0, 0);
+            customVectors[32] = new Vector4(1, 1, 0, 0);
 
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean1, false);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean2, true);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean3, true);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean4, true);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean5, false);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean6, false);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean9, false);
-            SetBool(uniformBlock, MatlEnums.ParamId.CustomBoolean11, true);
+            // Set values from the material.
+            foreach (var param in vec4ByParamId)
+            {
+                customVectors[param.Key.ToVectorIndex()] = param.Value;
+            }
+            uniformBlock.SetValues("CustomVector", customVectors);
 
-            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat1, 0.0f);
-            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat4, 0.0f);
-            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat8, 0.0f);
-            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat10, 0.0f);
-            SetFloat(uniformBlock, MatlEnums.ParamId.CustomFloat19, 0.0f);
+            // Set defaults.
+            var customBooleans = new bool[20];
+            customBooleans[1] = false;
+            customBooleans[2] = true;
+            customBooleans[3] = true;
+            customBooleans[4] = true;
+            customBooleans[5] = false;
+            customBooleans[6] = false;
+            customBooleans[9] = false;
+            customBooleans[11] = true;
+
+            // Set values from material.
+            // HACK: A temporary workaround for integers being 16 byte aligned.
+            // TODO: Query the stride?
+            var customBooleanData = new IVec4[20];
+            foreach (var param in boolByParamId)
+            {
+                customBooleanData[param.Key.ToBooleanIndex()] = new IVec4 { X = param.Value ? 1 : 0 };
+            }
+            uniformBlock.SetValues("CustomBoolean", customBooleanData);
+
+            // Set values from material.
+            // HACK: A temporary workaround for integers being 16 byte aligned.
+            // TODO: Query the stride?
+            var customFloatData = new Vector4[20];
+            foreach (var param in floatByParamId)
+            {
+                customFloatData[param.Key.ToFloatIndex()] = new Vector4(0f, 0f, 0f, param.Value);
+            }
+            uniformBlock.SetValues("CustomFloat", customFloatData);
 
             uniformBlock.SetValue("hasCustomVector11", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector11));
             uniformBlock.SetValue("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
@@ -278,40 +298,10 @@ namespace CrossMod.Rendering.GlTools
             genericMaterial.AddTexture("specularPbrCube", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture7));
         }
 
-        private void SetBool(UniformBlock uniformBlock, MatlEnums.ParamId paramId, bool defaultValue)
-        {
-            var name = paramId.ToString();
-            if (boolByParamId.ContainsKey(paramId))
-            {
-                var value = boolByParamId[paramId];
-                uniformBlock.SetValue(name, value ? 1 : 0);
-            }
-            else
-            {
-                uniformBlock.SetValue(name, defaultValue ? 1 : 0);
-            }
-        }
-
-        private void SetFloat(UniformBlock uniformBlock, MatlEnums.ParamId paramId, float defaultValue)
-        {
-            var name = paramId.ToString();
-            if (floatByParamId.ContainsKey(paramId))
-            {
-                var value = floatByParamId[paramId];
-                uniformBlock.SetValue(name, value);
-            }
-            else
-            {
-                uniformBlock.SetValue(name, defaultValue);
-            }
-        }
-
-        private void SetVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue, bool isDebug = false)
+        private void SetVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue)
         {
             // Convert parameters into colors for easier visualization.
-            var name = paramId.ToString();
-            if (isDebug)
-                name = "vec4Param";
+            var name = "vec4Param";
 
             if (Vec4ParamsMaterialAnimation.ContainsKey(paramId))
             {

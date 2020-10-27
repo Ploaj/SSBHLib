@@ -21,6 +21,18 @@ namespace CrossMod.Test.ParamIdExtensionTests
         }
 
         [TestMethod]
+        public void CustomVector20()
+        {
+            Assert.AreEqual(20, ParamId.CustomVector20.ToVectorIndex());
+        }
+
+        [TestMethod]
+        public void CustomVector63()
+        {
+            Assert.AreEqual(63, ParamId.CustomVector63.ToVectorIndex());
+        }
+
+        [TestMethod]
         public void BelowVectorRange()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => (ParamId)(ParamId.CustomVector0 - 1).ToVectorIndex());

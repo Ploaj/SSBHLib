@@ -26,6 +26,10 @@ namespace CrossMod.Rendering
             if (paramId < ParamId.CustomVector0 || paramId > ParamId.CustomVector63)
                 throw new ArgumentOutOfRangeException(nameof(paramId));
 
+            // Vector param IDs don't take up a single range.
+            if (paramId > ParamId.CustomVector19)
+                return (int)paramId - (int)ParamId.CustomVector20 + 20;
+
             return (int)paramId - (int)ParamId.CustomVector0;
         }
 
