@@ -28,13 +28,13 @@ namespace CrossMod.Rendering.GlTools
                         SetTextureParameter(meshMaterial, attribute);
                         break;
                     case MatlEnums.ParamDataType.Vector4:
-                        meshMaterial.vec4ByParamId[attribute.ParamId] = ((MatlAttribute.MatlVector4)attribute.DataObject).ToOpenTk();
+                        meshMaterial.UpdateVec4(attribute.ParamId, ((MatlAttribute.MatlVector4)attribute.DataObject).ToOpenTk());
                         break;
                     case MatlEnums.ParamDataType.Boolean:
-                        meshMaterial.boolByParamId[attribute.ParamId] = (bool)attribute.DataObject;
+                        meshMaterial.UpdateBoolean(attribute.ParamId, (bool)attribute.DataObject);
                         break;
                     case MatlEnums.ParamDataType.Float:
-                        meshMaterial.floatByParamId[attribute.ParamId] = (float)attribute.DataObject;
+                        meshMaterial.UpdateFloat(attribute.ParamId, (float)attribute.DataObject);
                         break;
                     case MatlEnums.ParamDataType.BlendState:
                         SetBlendState(meshMaterial, attribute);
@@ -69,7 +69,7 @@ namespace CrossMod.Rendering.GlTools
             else
                 sampler.TextureMaxAnisotropy = 1.0f;
 
-            material.samplerByParamId[a.ParamId] = sampler;
+            material.UpdateSampler(a.ParamId, sampler);
         }
 
         private static void SetRasterizerState(RMaterial meshMaterial, MatlAttribute a)
@@ -106,7 +106,7 @@ namespace CrossMod.Rendering.GlTools
         {
             // Don't make texture names case sensitive.
             var textureName = ((MatlAttribute.MatlString)a.DataObject).Text.ToLower();
-            meshMaterial.textureNameByParamId[a.ParamId] = textureName;
+            meshMaterial.UpdateTexture(a.ParamId, textureName);
         }
     }
 }

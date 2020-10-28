@@ -6,7 +6,9 @@ using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Shaders;
 using SSBHLib.Formats.Materials;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -44,29 +46,31 @@ namespace CrossMod.Rendering.GlTools
 
         public float DepthBias { get; set; } = 0.0f;
 
-        public bool HasCol => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture0);
-        public bool HasCol2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture1);
-        public bool HasInkNorMap => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture16);
-        public bool HasDifCube => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture8);
-        public bool HasDiffuse => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture10);
-        public bool HasDiffuse2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture11);
-        public bool HasDiffuse3 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture12);
-        public bool HasEmi => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture5);
-        public bool HasEmi2 => textureNameByParamId.ContainsKey(MatlEnums.ParamId.Texture14);
+        public bool HasCol => HasTexture(MatlEnums.ParamId.Texture0);
+        public bool HasCol2 => HasTexture(MatlEnums.ParamId.Texture1);
+        public bool HasInkNorMap => HasTexture(MatlEnums.ParamId.Texture16);
+        public bool HasDifCube => HasTexture(MatlEnums.ParamId.Texture8);
+        public bool HasDiffuse => HasTexture(MatlEnums.ParamId.Texture10);
+        public bool HasDiffuse2 => HasTexture(MatlEnums.ParamId.Texture11);
+        public bool HasDiffuse3 => HasTexture(MatlEnums.ParamId.Texture12);
+        public bool HasEmi => HasTexture(MatlEnums.ParamId.Texture5);
+        public bool HasEmi2 => HasTexture(MatlEnums.ParamId.Texture14);
 
-        // TODO: Make these private to ensure changes are updated in the viewport.
-        public Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
-        public Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
-        public Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
+        public bool HasTexture(MatlEnums.ParamId paramId) => textureNameByParamId.ContainsKey(paramId);
+        public string GetTextureName(MatlEnums.ParamId paramId) => textureNameByParamId[paramId];
 
-        public Dictionary<MatlEnums.ParamId, string> textureNameByParamId = new Dictionary<MatlEnums.ParamId, string>();
-        public Dictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new Dictionary<MatlEnums.ParamId, SamplerObject>();
+        // TODO: These can just be arrays.
+        private readonly Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
+        private readonly Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
+        private readonly Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
+        private readonly Dictionary<MatlEnums.ParamId, string> textureNameByParamId = new Dictionary<MatlEnums.ParamId, string>();
+        private readonly Dictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new Dictionary<MatlEnums.ParamId, SamplerObject>();
 
         // Add a flag to ensure the uniforms get updated for rendering.
         // TODO: Updating the uniform block from the update methods doesn't work.
         // TODO: The performance impact is negligible, but not all uniforms need to be updated at once
         private bool shouldUpdateUniformBlock = false;
-        private bool shouldUpdateTextures = false;
+        private bool shouldUpdateTexturesAndSamplers = false;
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
         {
@@ -77,7 +81,7 @@ namespace CrossMod.Rendering.GlTools
         public void UpdateTexture(MatlEnums.ParamId paramId, string value)
         {
             textureNameByParamId[paramId] = value;
-            shouldUpdateTextures = true;
+            shouldUpdateTexturesAndSamplers = true;
         }
 
         public void UpdateFloat(MatlEnums.ParamId paramId, float value)
@@ -92,15 +96,28 @@ namespace CrossMod.Rendering.GlTools
             shouldUpdateUniformBlock = true;
         }
 
+        public void UpdateSampler(MatlEnums.ParamId paramId, SamplerObject sampler)
+        {
+            samplerByParamId[paramId] = sampler;
+            shouldUpdateTexturesAndSamplers = true;
+        }
+
+        // TODO: Workaround for the material editor using the render material instead of the MATL.
+        public List<KeyValuePair<MatlEnums.ParamId, Vector4>> GetCustomVectorValues() => vec4ByParamId.AsEnumerable().ToList();
+        public List<KeyValuePair<MatlEnums.ParamId, float>> GetCustomFloatValues() => floatByParamId.AsEnumerable().ToList();
+        public List<KeyValuePair<MatlEnums.ParamId, string>> GetTextureValues() => textureNameByParamId.AsEnumerable().ToList();
+        public List<KeyValuePair<MatlEnums.ParamId, SamplerObject>> GetSamplerValues() => samplerByParamId.AsEnumerable().ToList();
+        public List<KeyValuePair<MatlEnums.ParamId, bool>> GetCustomBoolValues() => boolByParamId.AsEnumerable().ToList();
+
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
         public void SetMaterialUniforms(Shader shader, RMaterial previousMaterial)
         {
             // TODO: This code could be moved to the constructor.
-            if (genericMaterial == null || shouldUpdateTextures)
+            if (genericMaterial == null || shouldUpdateTexturesAndSamplers)
             {
                 genericMaterial = CreateGenericMaterial();
-                shouldUpdateTextures = false;
+                shouldUpdateTexturesAndSamplers = false;
             }
 
             if (uniformBlock == null)
@@ -180,7 +197,7 @@ namespace CrossMod.Rendering.GlTools
         private void AddDebugParams(UniformBlock uniformBlock)
         {
             // Set specific parameters and use a default value if not present.
-            SetVec4(uniformBlock, RenderSettings.Instance.ParamId, new Vector4(0));
+            SetParamAsVec4Debug(uniformBlock, RenderSettings.Instance.ParamId);
         }
 
         private void SetMaterialParams(UniformBlock uniformBlock)
@@ -306,7 +323,7 @@ namespace CrossMod.Rendering.GlTools
             genericMaterial.AddTexture("specularPbrCube", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture7));
         }
 
-        private void SetVec4(UniformBlock uniformBlock, MatlEnums.ParamId paramId, Vector4 defaultValue)
+        private void SetParamAsVec4Debug(UniformBlock uniformBlock, MatlEnums.ParamId paramId)
         {
             // Convert parameters into colors for easier visualization.
             var name = "vec4Param";
@@ -331,7 +348,7 @@ namespace CrossMod.Rendering.GlTools
             }
             else
             {
-                uniformBlock.SetValue(name, defaultValue);
+                uniformBlock.SetValue(name, Vector4.Zero);
             }
         }
     }

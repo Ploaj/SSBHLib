@@ -42,10 +42,10 @@ namespace CrossMod.Rendering
         public static Texture GetTexture(RMaterial material, MatlEnums.ParamId paramId)
         {
             // Set a default to avoid unnecessary conditionals in the shader.
-            if (!material.textureNameByParamId.ContainsKey(paramId))
+            if (!material.HasTexture(paramId))
                 return defaultTextureByParamId[paramId];
 
-            var textureName = material.textureNameByParamId[paramId];
+            var textureName = material.GetTextureName(paramId);
             if (material.TextureByName.ContainsKey(textureName))
                 return material.TextureByName[textureName].Texture;
 

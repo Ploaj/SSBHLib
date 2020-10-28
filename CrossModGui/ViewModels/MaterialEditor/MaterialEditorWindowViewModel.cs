@@ -89,7 +89,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private void AddSamplerParams(RMaterial glMaterial, Material material)
         {
-            foreach (var param in glMaterial.samplerByParamId)
+            foreach (var param in glMaterial.GetSamplerValues())
             {
                 var samplerParam = new SamplerParam { ParamId = param.Key.ToString() };
 
@@ -134,33 +134,35 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (rnumdl == null || rnumdl.Material == null)
                 return;
 
-            // Transfer changes from the render material to the MATL.
-            // TODO: Recreate the matl from the view model instead?
+            // TODO: Completely rebuild the MATL once the view model has all the necessary values.
+            // Transfer changes from the view model to the MATL.
             foreach (var entry in rnumdl.Material.Entries)
             {
-                // TODO: This is a mess.
-                var rMaterial = rnumdl.MaterialByName[entry.MaterialLabel];
                 var vmMaterial = Materials.Where(m => m.ShaderLabel == entry.ShaderLabel && m.Name == entry.MaterialLabel).FirstOrDefault();
 
                 foreach (var attribute in entry.Attributes)
                 {
                     // The data type isn't known, so check each type.
-                    if (rMaterial.floatByParamId.ContainsKey(attribute.ParamId))
+                    var floatParam = vmMaterial.FloatParams.SingleOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                    var boolparam = vmMaterial.BooleanParams.SingleOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                    var vec4Param = vmMaterial.Vec4Params.SingleOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                    var textureParam = vmMaterial.TextureParams.SingleOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+
+                    if (floatParam != null)
                     {
-                        attribute.DataObject = rMaterial.floatByParamId[attribute.ParamId];
+                        attribute.DataObject = floatParam.Value;
                     }
-                    else if (rMaterial.boolByParamId.ContainsKey(attribute.ParamId))
+                    else if (boolparam != null)
                     {
-                        attribute.DataObject = rMaterial.boolByParamId[attribute.ParamId];
+                        attribute.DataObject = boolparam.Value;
                     }
-                    else if (rMaterial.vec4ByParamId.ContainsKey(attribute.ParamId))
+                    else if (vec4Param != null)
                     {
-                        var value = rMaterial.vec4ByParamId[attribute.ParamId];
-                        attribute.DataObject = new MatlAttribute.MatlVector4 { X = value.X, Y = value.Y, Z = value.Z, W = value.W };
+                        attribute.DataObject = new MatlAttribute.MatlVector4 { X = vec4Param.Value1, Y = vec4Param.Value2, Z = vec4Param.Value3, W = vec4Param.Value4 };
                     }
-                    else if (rMaterial.textureNameByParamId.ContainsKey(attribute.ParamId))
+                    else if (textureParam != null)
                     {
-                        attribute.DataObject = new MatlAttribute.MatlString { Text = rMaterial.textureNameByParamId[attribute.ParamId] };
+                        attribute.DataObject = new MatlAttribute.MatlString { Text = textureParam.Value };
                     }
                     else if (attribute.DataType == MatlEnums.ParamDataType.RasterizerState)
                     {
@@ -176,7 +178,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private static void AddTextureParams(RMaterial mat, Material material)
         {
-            foreach (var param in mat.textureNameByParamId)
+            foreach (var param in mat.GetTextureValues())
             {
                 var textureParam = new TextureParam { ParamId = param.Key.ToString(), Value = param.Value };
 
@@ -189,7 +191,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private static void AddVec4Params(RMaterial mat, Material material)
         {
-            foreach (var param in mat.vec4ByParamId)
+            foreach (var param in mat.GetCustomVectorValues())
             {
                 var vec4Param = new Vec4Param
                 {
@@ -248,7 +250,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private static void AddFloatParams(RMaterial mat, Material material)
         {
-            foreach (var param in mat.floatByParamId)
+            foreach (var param in mat.GetCustomFloatValues())
             {
                 var floatParam = new FloatParam
                 {
@@ -265,7 +267,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private static void AddBooleanParams(RMaterial mat, Material material)
         {
-            foreach (var param in mat.boolByParamId)
+            foreach (var param in mat.GetCustomBoolValues())
             {
                 var boolParam = new BooleanParam
                 {
