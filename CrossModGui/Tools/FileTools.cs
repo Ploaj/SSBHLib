@@ -6,11 +6,8 @@ namespace CrossModGui.Tools
     {
         public static bool TryOpenFolderDialog(out string folderName, string title = "")
         {
-            using (var dialog = new FolderSelectDialog())
+            using (var dialog = new FolderBrowserDialog())
             {
-                if (!string.IsNullOrEmpty(title))
-                    dialog.Title = title;
-
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     folderName = dialog.SelectedPath;

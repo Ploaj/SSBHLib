@@ -1,42 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props" Condition="Exists('..\packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>CrossModGui</RootNamespace>
-    <AssemblyName>CrossModGui</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <AllowedReferenceRelatedFileExtensions>
@@ -49,433 +17,265 @@
   <ItemGroup>
     <Reference Include="AnimatedGif">
       <HintPath>..\CrossMod\Lib\AnimatedGif.dll</HintPath>
-    </Reference>
-    <Reference Include="CsvHelper, Version=15.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.15.0.6\lib\net45\CsvHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\CrossMod\Lib\OpenTK.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="OpenTK.GLControl">
       <HintPath>..\CrossMod\Lib\OpenTK.GLControl.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="paracobNET">
       <HintPath>..\CrossMod\Lib\paracobNET.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationFramework.Aero2" />
-    <Reference Include="PropertyChanged, Version=3.2.8.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
-      <HintPath>..\packages\PropertyChanged.Fody.3.2.8\lib\net40\PropertyChanged.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SELib">
       <HintPath>..\CrossMod\Lib\SELib.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFGenericModel">
       <HintPath>..\CrossMod\Lib\SFGenericModel.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFGraphics">
       <HintPath>..\CrossMod\Lib\SFGraphics.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFGraphics.Controls">
       <HintPath>..\CrossMod\Lib\SFGraphics.Controls.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFGraphics.Utils">
       <HintPath>..\CrossMod\Lib\SFGraphics.Utils.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFShaderLoader">
       <HintPath>..\CrossMod\Lib\SFShaderLoader.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="SFShapes">
       <HintPath>..\CrossMod\Lib\SFShapes.dll</HintPath>
-      <Private>False</Private>
+      <Private>true</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Converters\BitmapToWpfBitmap.cs" />
-    <Compile Include="Converters\IsActiveBrushConverter.cs" />
-    <Compile Include="Converters\ImageKeyImageConverter.cs" />
-    <Compile Include="Rendering\GlViewportRenderer.cs" />
-    <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="Tools\MaterialParamDescriptions.cs" />
-    <Compile Include="Tools\OpenFolderDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserControls\AnimationBar.xaml.cs">
-      <DependentUpon>AnimationBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\EnumEditor.xaml.cs">
-      <DependentUpon>EnumEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\FileTreeView.xaml.cs">
-      <DependentUpon>FileTreeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\LabeledFloatEditor.xaml.cs">
-      <DependentUpon>LabeledFloatEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\CameraSettingsWindowViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MaterialEditor\BooleanParam.cs" />
-    <Compile Include="ViewModels\MaterialEditor\FloatParam.cs" />
-    <Compile Include="ViewModels\MaterialEditor\Material.cs" />
-    <Compile Include="ViewModels\MaterialEditor\MaterialEditorWindowViewModel.cs" />
-    <Compile Include="ViewModels\MaterialEditor\SamplerParam.cs" />
-    <Compile Include="ViewModels\MaterialEditor\TextureParam.cs" />
-    <Compile Include="ViewModels\MaterialEditor\Vec4Param.cs" />
-    <Compile Include="ViewModels\PreferencesWindowViewModel.cs" />
-    <Compile Include="ViewModels\RenderSettingsWindowViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="ViewModels\ViewModelConversion.cs" />
-    <Compile Include="Views\CameraSettingsWindow.xaml.cs">
-      <DependentUpon>CameraSettingsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MaterialEditorWindow.xaml.cs">
-      <DependentUpon>MaterialEditorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PreferencesWindow.xaml.cs">
-      <DependentUpon>PreferencesWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RenderSettingsWindow.xaml.cs">
-      <DependentUpon>RenderSettingsWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Resources\DarkTheme.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\IconDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\AnimationBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\EnumEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\FileTreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\LabeledFloatEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Views\CameraSettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MaterialEditorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PreferencesWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\RenderSettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="DefaultTextures\irr x+.bin">
+    <None Update="DefaultTextures\irr x+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\irr x-.bin">
+    <None Update="DefaultTextures\irr x-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\irr y+.bin">
+    <None Update="DefaultTextures\irr y+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\irr y-.bin">
+    <None Update="DefaultTextures\irr y-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\irr z+.bin">
+    <None Update="DefaultTextures\irr z+.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\irr z-.bin">
+    <None Update="DefaultTextures\irr z-.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 0.bin">
+    <None Update="DefaultTextures\spec x+ 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 1.bin">
+    <None Update="DefaultTextures\spec x+ 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 2.bin">
+    <None Update="DefaultTextures\spec x+ 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 3.bin">
+    <None Update="DefaultTextures\spec x+ 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 4.bin">
+    <None Update="DefaultTextures\spec x+ 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 5.bin">
+    <None Update="DefaultTextures\spec x+ 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x+ 6.bin">
+    <None Update="DefaultTextures\spec x+ 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 0.bin">
+    <None Update="DefaultTextures\spec x- 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 1.bin">
+    <None Update="DefaultTextures\spec x- 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 2.bin">
+    <None Update="DefaultTextures\spec x- 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 3.bin">
+    <None Update="DefaultTextures\spec x- 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 4.bin">
+    <None Update="DefaultTextures\spec x- 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 5.bin">
+    <None Update="DefaultTextures\spec x- 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec x- 6.bin">
+    <None Update="DefaultTextures\spec x- 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 0.bin">
+    <None Update="DefaultTextures\spec y+ 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 1.bin">
+    <None Update="DefaultTextures\spec y+ 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 2.bin">
+    <None Update="DefaultTextures\spec y+ 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 3.bin">
+    <None Update="DefaultTextures\spec y+ 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 4.bin">
+    <None Update="DefaultTextures\spec y+ 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 5.bin">
+    <None Update="DefaultTextures\spec y+ 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y+ 6.bin">
+    <None Update="DefaultTextures\spec y+ 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 0.bin">
+    <None Update="DefaultTextures\spec y- 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 1.bin">
+    <None Update="DefaultTextures\spec y- 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 2.bin">
+    <None Update="DefaultTextures\spec y- 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 3.bin">
+    <None Update="DefaultTextures\spec y- 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 4.bin">
+    <None Update="DefaultTextures\spec y- 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 5.bin">
+    <None Update="DefaultTextures\spec y- 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec y- 6.bin">
+    <None Update="DefaultTextures\spec y- 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 0.bin">
+    <None Update="DefaultTextures\spec z+ 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 1.bin">
+    <None Update="DefaultTextures\spec z+ 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 2.bin">
+    <None Update="DefaultTextures\spec z+ 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 3.bin">
+    <None Update="DefaultTextures\spec z+ 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 4.bin">
+    <None Update="DefaultTextures\spec z+ 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 5.bin">
+    <None Update="DefaultTextures\spec z+ 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z+ 6.bin">
+    <None Update="DefaultTextures\spec z+ 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 0.bin">
+    <None Update="DefaultTextures\spec z- 0.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 1.bin">
+    <None Update="DefaultTextures\spec z- 1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 2.bin">
+    <None Update="DefaultTextures\spec z- 2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 3.bin">
+    <None Update="DefaultTextures\spec z- 3.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 4.bin">
+    <None Update="DefaultTextures\spec z- 4.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 5.bin">
+    <None Update="DefaultTextures\spec z- 5.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\spec z- 6.bin">
+    <None Update="DefaultTextures\spec z- 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\materialparams.csv" />
-    <None Include="Shaders\bone.frag">
+    <None Update="Shaders\bone.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\bone.vert">
+    <None Update="Shaders\bone.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Capsule.vert">
+    <None Update="Shaders\Capsule.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Gamma.frag">
+    <None Update="Shaders\Gamma.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Line.vert">
+    <None Update="Shaders\Line.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\NormalMap.frag">
+    <None Update="Shaders\NormalMap.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Polygon.vert">
+    <None Update="Shaders\Polygon.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModel.frag">
+    <None Update="Shaders\RModel.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModel.geom">
+    <None Update="Shaders\RModel.geom">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModel.vert">
+    <None Update="Shaders\RModel.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModelDebug.frag">
+    <None Update="Shaders\RModelDebug.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModelUV.frag">
+    <None Update="Shaders\RModelUV.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\RModelUV.vert">
+    <None Update="Shaders\RModelUV.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\ScreenBloomCombined.frag">
+    <None Update="Shaders\ScreenBloomCombined.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\ScreenGradient.frag">
+    <None Update="Shaders\ScreenGradient.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\ScreenTexture.frag">
+    <None Update="Shaders\ScreenTexture.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SolidColor.frag">
+    <None Update="Shaders\SolidColor.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Sphere.vert">
+    <None Update="Shaders\Sphere.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\texture.frag">
+    <None Update="Shaders\texture.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\texture.vert">
+    <None Update="Shaders\texture.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\TextureLayers.frag">
+    <None Update="Shaders\TextureLayers.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Wireframe.frag">
+    <None Update="Shaders\Wireframe.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CrossMod\CrossMod.csproj">
-      <Project>{f9aa9734-a74e-4e28-ba16-6e97a063dd20}</Project>
-      <Name>CrossMod</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj">
-      <Project>{ddba0adc-ee80-4813-8eb3-50529c60bb15}</Project>
-      <Name>SsbhLib</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\CrossMod\CrossMod.csproj" />
+    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ico_animation.png" />
@@ -502,42 +302,42 @@
     <Resource Include="Resources\ico_unknown.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DefaultTextures\default_black.png">
+    <None Update="DefaultTextures\default_black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\default_cube_black.png">
+    <None Update="DefaultTextures\default_cube_black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\default_normal.tif">
+    <None Update="DefaultTextures\default_normal.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\default_Params.tif">
+    <None Update="DefaultTextures\default_Params.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\default_White.png">
+    <None Update="DefaultTextures\default_White.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DefaultTextures\UVPattern.png">
+    <None Update="DefaultTextures\UVPattern.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.10" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="cross.ico" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Fody.6.2.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.2.0\build\Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Fody.6.2.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.2.0\build\Fody.targets')" />
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="15.0.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.2" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>robocopy "$(TargetDir.TrimEnd('\'))" "$(TargetDir)Lib" *.dll /IS /MOV 
-if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25
-
+    <PostBuildEvent>
 </PostBuildEvent>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 </Project>
