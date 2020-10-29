@@ -14,25 +14,20 @@ namespace CrossModGui.ViewModels
 
         public float RotationYDegrees { get; set; }
 
-        public static implicit operator CameraSettingsWindowViewModel(Camera rhs)
-        {
-            return new CameraSettingsWindowViewModel
-            {
-                PositionX = rhs.Translation.X,
-                PositionY = rhs.Translation.Y,
-                PositionZ = rhs.Translation.Z,
-                RotationXDegrees = rhs.RotationXDegrees,
-                RotationYDegrees = rhs.RotationYDegrees
-            };
-        }
-
-        public void SetValues(Camera camera)
+        public CameraSettingsWindowViewModel(Camera camera)
         {
             PositionX = camera.Translation.X;
             PositionY = camera.Translation.Y;
             PositionZ = camera.Translation.Z;
             RotationXDegrees = camera.RotationXDegrees;
             RotationYDegrees = camera.RotationYDegrees;
+        }
+
+        public void SetValues(Camera camera)
+        {
+            camera.Translation = new OpenTK.Vector3(PositionX, PositionY, PositionZ);
+            camera.RotationXDegrees = RotationXDegrees;
+            camera.RotationYDegrees = RotationYDegrees;
         }
     }
 }

@@ -11,6 +11,8 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public static class ShaderContainer
     {
+        private static readonly string shaderFolder = "Shaders";
+
         private static readonly Dictionary<string, ShaderType> shaderTypeByExtension = new Dictionary<string, ShaderType>
         {
             { ".vert", ShaderType.VertexShader },
@@ -36,7 +38,7 @@ namespace CrossMod.Rendering.GlTools
             return shaderLoader.GetShader(name);
         }
 
-        public static void SetUpShaders(string shaderFolder)
+        public static void SetUpShaders()
         {
             UpdateShaderSources(shaderFolder);
             CreateAllShaders();
@@ -73,9 +75,9 @@ namespace CrossMod.Rendering.GlTools
             }
         }
 
-        public static void ReloadShaders(string shaderFolder)
+        public static void ReloadShaders()
         {
-            SetUpShaders(shaderFolder);
+            SetUpShaders();
 
             // TODO: Log errors for all shaders.
             var modelShader = GetShader("RModel");

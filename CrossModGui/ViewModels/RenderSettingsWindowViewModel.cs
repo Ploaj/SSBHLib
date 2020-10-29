@@ -1,4 +1,5 @@
 ﻿using CrossMod.Rendering;
+using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 
 namespace CrossModGui.ViewModels
@@ -72,31 +73,55 @@ namespace CrossModGui.ViewModels
         // The available items should be restricted to used material params (ex: not DiffuseTexture).
         public string ParamName { get; set; } = RenderSettings.Instance.ParamId.ToString();
 
-        public static implicit operator RenderSettingsWindowViewModel(RenderSettings rhs)
+        public RenderSettingsWindowViewModel(RenderSettings renderSettings)
         {
-            return new RenderSettingsWindowViewModel
-            {
-                EnableRed = rhs.EnableRed,
-                EnableGreen = rhs.EnableGreen,
-                EnableBlue = rhs.EnableBlue,
-                EnableAlpha = rhs.EnableAlpha,
-                EnableDiffuse = rhs.EnableDiffuse,
-                EnableEmission = rhs.EnableEmission,
-                EnableEdgeTint = rhs.EnableRimLighting,
-                EnableSpecular = rhs.EnableSpecular,
-                SelectedRenderMode = rhs.ShadingMode,
-                EnableVertexColor = rhs.RenderVertexColor,
-                EnableNorMaps = rhs.RenderNorMaps,
-                EnablePrmMetalness = rhs.RenderPrmMetalness,
-                EnablePrmRoughness = rhs.RenderPrmRoughness,
-                EnablePrmAo = rhs.RenderPrmAo,
-                EnablePrmSpecular = rhs.RenderPrmSpecular,
-                DirectLightIntensity = rhs.DirectLightIntensity,
-                IndirectLightIntensity = rhs.DirectLightIntensity,
-                EnableBloom = rhs.EnableBloom,
-                BloomIntensity = rhs.BloomIntensity,
-                EnableWireframe = rhs.EnableWireframe
-            };
+            EnableRed = renderSettings.EnableRed;
+            EnableGreen = renderSettings.EnableGreen;
+            EnableBlue = renderSettings.EnableBlue;
+            EnableAlpha = renderSettings.EnableAlpha;
+            EnableDiffuse = renderSettings.EnableDiffuse;
+            EnableEmission = renderSettings.EnableEmission;
+            EnableEdgeTint = renderSettings.EnableRimLighting;
+            EnableSpecular = renderSettings.EnableSpecular;
+            SelectedRenderMode = renderSettings.ShadingMode;
+            EnableVertexColor = renderSettings.RenderVertexColor;
+            EnableNorMaps = renderSettings.RenderNorMaps;
+            EnablePrmMetalness = renderSettings.RenderPrmMetalness;
+            EnablePrmRoughness = renderSettings.RenderPrmRoughness;
+            EnablePrmAo = renderSettings.RenderPrmAo;
+            EnablePrmSpecular = renderSettings.RenderPrmSpecular;
+            DirectLightIntensity = renderSettings.DirectLightIntensity;
+            IndirectLightIntensity = renderSettings.DirectLightIntensity;
+            EnableBloom = renderSettings.EnableBloom;
+            BloomIntensity = renderSettings.BloomIntensity;
+            EnableWireframe = renderSettings.EnableWireframe;
+        }
+
+        public void SetValues(RenderSettings settings)
+        {
+            settings.EnableRed = EnableRed;
+            settings.EnableGreen = EnableGreen;
+            settings.EnableBlue = EnableBlue;
+            settings.EnableAlpha = EnableAlpha;
+            settings.EnableDiffuse = EnableDiffuse;
+            settings.EnableEmission = EnableEmission;
+            settings.EnableRimLighting = EnableEdgeTint;
+            settings.EnableSpecular = EnableSpecular;
+            settings.ShadingMode = SelectedRenderMode;
+            settings.RenderVertexColor = EnableVertexColor;
+            settings.RenderNorMaps = EnableNorMaps;
+            settings.RenderPrmMetalness = EnablePrmMetalness;
+            settings.RenderPrmRoughness = EnablePrmRoughness;
+            settings.RenderPrmAo = EnablePrmAo;
+            settings.RenderPrmSpecular = EnablePrmSpecular;
+            settings.EnableWireframe = EnableWireframe;
+
+            settings.DirectLightIntensity = DirectLightIntensity;
+            settings.IblIntensity = IndirectLightIntensity;
+            if (System.Enum.TryParse(ParamName, out MatlEnums.ParamId paramId))
+                settings.ParamId = paramId;
+            settings.BloomIntensity = BloomIntensity;
+            settings.EnableBloom = EnableBloom;
         }
     }
 }

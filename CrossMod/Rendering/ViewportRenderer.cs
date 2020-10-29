@@ -86,11 +86,11 @@ namespace CrossMod.Rendering
             mouseScrollWheel = newMouseScrollWheel;
         }
 
-        public void ReloadShaders(string shaderFolder)
+        public void ReloadShaders()
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
-                ShaderContainer.ReloadShaders(shaderFolder);
+                ShaderContainer.ReloadShaders();
             });
         }
 

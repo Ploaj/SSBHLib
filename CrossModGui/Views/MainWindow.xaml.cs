@@ -18,41 +18,26 @@ namespace CrossModGui.Views
     {
         private readonly MainWindowViewModel viewModel;
 
-        // Store state for the lifetime of the application.
-        // Probably not the most elegant solution...
-        private readonly RenderSettingsWindowViewModel renderSettingsViewModel;
-        private readonly CameraSettingsWindowViewModel cameraSettingsViewModel;
-
-        private readonly string shaderFolder = $"Shaders";
-
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = viewModel;
             viewModel = new MainWindowViewModel(new GlViewportRenderer(glViewport));
             DataContext = viewModel;
-
-            // Link view models to models.
-            renderSettingsViewModel = RenderSettings.Instance;
-            renderSettingsViewModel.PropertyChanged += (s, e) => RenderSettings.Instance.SetValues(renderSettingsViewModel);
-
-            cameraSettingsViewModel = viewModel.Renderer.Camera;
-            cameraSettingsViewModel.PropertyChanged += CameraSettingsViewModel_PropertyChanged;
 
             viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             glViewport.HandleCreated += GlViewport_HandleCreated;
         }
 
-        private void GlViewport_HandleCreated(object sender, EventArgs e)
+        private void GlViewport_HandleCreated(object? sender, EventArgs e)
         {
             // The context is created after the handle is created,
             // so do any setup here before rendering starts.
             glViewport.FrameRendering += GlViewport_OnRenderFrame;
 
             CrossMod.Rendering.Resources.DefaultTextures.Initialize();
-            CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders(shaderFolder);
+            CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders();
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -73,53 +58,39 @@ namespace CrossModGui.Views
             }
         }
 
-        private void CameraSettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(CameraSettingsWindowViewModel.RotationXDegrees):
-                    viewModel.Renderer.Camera.RotationXDegrees = cameraSettingsViewModel.RotationXDegrees;
-                    break;
-                case nameof(CameraSettingsWindowViewModel.RotationYDegrees):
-                    viewModel.Renderer.Camera.RotationYDegrees = cameraSettingsViewModel.RotationYDegrees;
-                    break;
-                case nameof(CameraSettingsWindowViewModel.PositionX):
-                    viewModel.Renderer.Camera.TranslationX = cameraSettingsViewModel.PositionX;
-                    break;
-                case nameof(CameraSettingsWindowViewModel.PositionY):
-                    viewModel.Renderer.Camera.TranslationY = cameraSettingsViewModel.PositionY;
-                    break;
-                case nameof(CameraSettingsWindowViewModel.PositionZ):
-                    viewModel.Renderer.Camera.TranslationZ = cameraSettingsViewModel.PositionZ;
-                    break;
-            }
-
-            viewModel.Renderer.UpdateCameraFromMouse();
-        }
-
-        private void GlViewport_OnRenderFrame(object sender, EventArgs e)
+        private void GlViewport_OnRenderFrame(object? sender, EventArgs e)
         {
             viewModel.RenderNodes();
         }
 
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
-            DisplayEditorWindow(new RenderSettingsWindow(renderSettingsViewModel));
+            var windowViewModel = new RenderSettingsWindowViewModel(RenderSettings.Instance);
+            windowViewModel.PropertyChanged += (s, e) => windowViewModel.SetValues(RenderSettings.Instance);
+
+            DisplayWindowWithRealTimeViewportUpdates(new RenderSettingsWindow(windowViewModel));
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
         {
             // Make sure the window has current values.
-            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
-            DisplayEditorWindow(new CameraSettingsWindow(cameraSettingsViewModel));
+            var windowViewModel = new CameraSettingsWindowViewModel(viewModel.Renderer.Camera);
+            windowViewModel.PropertyChanged += (s, e) =>
+            {
+                windowViewModel.SetValues(viewModel.Renderer.Camera);
+                viewModel.Renderer.UpdateCameraFromMouse();
+            };
+
+            DisplayWindowWithRealTimeViewportUpdates(new CameraSettingsWindow(windowViewModel));
         }
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            DisplayEditorWindow(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.RNumdl)));
+            // TODO: Should this take a MATL instead?
+            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.RNumdl)));
         }
 
-        private void DisplayEditorWindow(Window window)
+        private void DisplayWindowWithRealTimeViewportUpdates(Window window)
         {
             // Start automatic frame updates instead of making the window have to refresh the viewport.
             var wasRendering = glViewport.IsRendering;
@@ -187,16 +158,12 @@ namespace CrossModGui.Views
         private void glViewport_MouseInteract(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             viewModel.Renderer.UpdateCameraFromMouse();
-            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
-
             RenderFrameIfNeeded();
         }
 
         private void FrameModel_Click(object sender, RoutedEventArgs e)
         {
             viewModel.Renderer.FrameRenderableModels();
-            cameraSettingsViewModel.SetValues(viewModel.Renderer.Camera);
-
             RenderFrameIfNeeded();
         }
 
@@ -221,7 +188,7 @@ namespace CrossModGui.Views
         private void ReloadShaders_Click(object sender, RoutedEventArgs e)
         {
             // Force the shaders to be generated again.
-            viewModel.Renderer.ReloadShaders(shaderFolder);
+            viewModel.Renderer.ReloadShaders();
         }
 
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
@@ -243,12 +210,14 @@ namespace CrossModGui.Views
 
         private void FileTreeMenu_Click(object sender, RoutedEventArgs e)
         {
-            fileTreeView.Visibility = (sender as MenuItem).IsChecked ? Visibility.Visible : Visibility.Collapsed;
+            if (sender is MenuItem item)
+                fileTreeView.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void MeshBoneTabMenu_Click(object sender, RoutedEventArgs e)
         {
-            meshBoneTabControl.Visibility = (sender as MenuItem).IsChecked ? Visibility.Visible : Visibility.Collapsed;
+            if (sender is MenuItem item)
+                meshBoneTabControl.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Preferences_Click(object sender, RoutedEventArgs e)
