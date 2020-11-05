@@ -40,7 +40,7 @@ namespace CrossMod.Rendering.GlTools
 
             foreach (var pair in currentEntry.GetSamplers())
             {
-                meshMaterial.UpdateSampler(pair.Key, pair.Value.ToSfGraphics());
+                meshMaterial.UpdateSampler(pair.Key, pair.Value.ToSamplerData());
             }
 
             foreach (var pair in currentEntry.GetRasterizerStates())

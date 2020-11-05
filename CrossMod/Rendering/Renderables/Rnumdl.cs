@@ -13,18 +13,18 @@ namespace CrossMod.Rendering
 {
     public class RNumdl : IRenderableModel
     {
-        public Modl Modl { get; }
+        public Modl? Modl { get; }
 
         public Dictionary<string, RTexture> TextureByName { get; }
 
-        public RSkeleton Skeleton { get; }
+        public RSkeleton? Skeleton { get; }
 
-        public RModel RenderModel { get; }
+        public RModel? RenderModel { get; }
 
-        public Matl Material { get; }
+        public Matl? Matl { get; }
 
-        public Xmb ModelXmb { get; }
-        public Xmb LodXmb { get; }
+        public Xmb? ModelXmb { get; }
+        public Xmb? LodXmb { get; }
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
@@ -33,14 +33,14 @@ namespace CrossMod.Rendering
         {
             Modl = modl;
             Skeleton = skeleton;
-            Material = material;
+            Matl = material;
             ModelXmb = modelXmb?.Xmb;
             LodXmb = lodXmb?.Xmb;
             TextureByName = textureByName;
 
             if (meshNode != null)
                 RenderModel = meshNode.GetRenderModel(Skeleton);
-            if (Material != null)
+            if (Matl != null)
                 UpdateMaterials();
             if (Skeleton != null)
             {
@@ -79,9 +79,9 @@ namespace CrossMod.Rendering
 
         private void InitializeMaterials()
         {
-            for (int i = 0; i < Material.Entries.Length; i++)
+            for (int i = 0; i < Matl.Entries.Length; i++)
             {
-                var entry = Material.Entries[i];
+                var entry = Matl.Entries[i];
                 var rMaterial = MatlToMaterial.CreateMaterial(entry, i, TextureByName);
                 MaterialByName.Add(rMaterial.MaterialLabel, rMaterial);
             }

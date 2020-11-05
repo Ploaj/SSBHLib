@@ -6,6 +6,7 @@ using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Shaders;
 using SSBHLib.Formats.Materials;
+using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.GlTools
@@ -15,6 +16,7 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public class RMaterial
     {
+
         public string MaterialLabel { get; set; }
         public string ShaderLabel { get; set; }
         public int Index { get; set; }
@@ -64,6 +66,9 @@ namespace CrossMod.Rendering.GlTools
         private readonly Dictionary<MatlEnums.ParamId, string> textureNameByParamId = new Dictionary<MatlEnums.ParamId, string>();
         private readonly Dictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new Dictionary<MatlEnums.ParamId, SamplerObject>();
 
+        // The context probably won't be current on the correct thread, so just queue updates for the next frame.
+        private readonly Queue<Tuple<MatlEnums.ParamId, SamplerData>> samplerUpdates = new Queue<Tuple<MatlEnums.ParamId, SamplerData>>();
+
         // Add a flag to ensure the uniforms get updated for rendering.
         // TODO: Updating the uniform block from the update methods doesn't work.
         // TODO: The performance impact is negligible, but not all uniforms need to be updated at once
@@ -94,9 +99,9 @@ namespace CrossMod.Rendering.GlTools
             shouldUpdateUniformBlock = true;
         }
 
-        public void UpdateSampler(MatlEnums.ParamId paramId, SamplerObject sampler)
+        public void UpdateSampler(MatlEnums.ParamId paramId, SamplerData sampler)
         {
-            samplerByParamId[paramId] = sampler;
+            samplerUpdates.Enqueue(new Tuple<MatlEnums.ParamId, SamplerData>(paramId, sampler));
             shouldUpdateTexturesAndSamplers = true;
         }
 
@@ -278,6 +283,14 @@ namespace CrossMod.Rendering.GlTools
 
         private void AddMaterialTextures(GenericMaterial genericMaterial)
         {
+            // Make sure the sampler info is updated.
+            // Creating the samplers on another thread likely won't work due to the context not being current.
+            while (samplerUpdates.Count > 0)
+            {
+                var update = samplerUpdates.Dequeue();
+                samplerByParamId[update.Item1] = update.Item2.ToSampler();
+            }
+
             genericMaterial.AddTexture("colMap", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture0), GetSampler(MatlEnums.ParamId.Sampler0));
             genericMaterial.AddTexture("col2Map", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture1), GetSampler(MatlEnums.ParamId.Sampler1));
             genericMaterial.AddTexture("prmMap", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture6), GetSampler(MatlEnums.ParamId.Sampler6));

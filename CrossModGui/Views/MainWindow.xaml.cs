@@ -86,7 +86,7 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.Rnumdl?.Material, viewModel.Rnumdl?.TextureByName.Keys)));
+            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.Rnumdl)));
         }
 
         private void DisplayWindowWithRealTimeViewportUpdates(Window window)

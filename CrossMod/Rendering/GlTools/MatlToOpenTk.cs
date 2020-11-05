@@ -7,6 +7,26 @@ namespace CrossMod.Rendering.GlTools
 {
     public static class MatlToOpenTk
     {
+        public static SamplerData ToSamplerData(this MatlAttribute.MatlSampler samplerStruct)
+        {
+            var sampler = new SamplerData
+            {
+                WrapS = samplerStruct.WrapS.ToOpenTk(),
+                WrapT = samplerStruct.WrapT.ToOpenTk(),
+                WrapR = samplerStruct.WrapR.ToOpenTk(),
+                MagFilter = samplerStruct.MagFilter.ToOpenTk(),
+                MinFilter = samplerStruct.MinFilter.ToOpenTk(),
+                LodBias = samplerStruct.LodBias,
+            };
+
+            if (samplerStruct.Unk6 == 2)
+                sampler.MaxAnisotropy = samplerStruct.MaxAnisotropy;
+            else
+                sampler.MaxAnisotropy = 1;
+
+            return sampler;
+        }
+
         public static Vector4 ToOpenTk(this MatlAttribute.MatlVector4 value)
         {
             return new Vector4(value.X, value.Y, value.Z, value.W);
