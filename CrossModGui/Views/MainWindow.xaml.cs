@@ -87,7 +87,7 @@ namespace CrossModGui.Views
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Should this take a MATL instead?
-            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.RNumdl)));
+            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.Matl)));
         }
 
         private void DisplayWindowWithRealTimeViewportUpdates(Window window)

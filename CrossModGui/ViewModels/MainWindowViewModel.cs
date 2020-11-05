@@ -1,6 +1,7 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace CrossModGui.ViewModels
         private bool isPlayingAnimation;
 
         // TODO: Where to store this value?
-        public RNumdl RNumdl { get; set; }
+        public Matl? Matl { get; set; }
 
         public MainWindowViewModel(ViewportRenderer renderer)
         {
@@ -116,7 +117,7 @@ namespace CrossModGui.ViewModels
             }
             else if (newNode is IRenderableModel renderableModel)
             {
-                RNumdl = renderableModel as RNumdl;
+                Matl = (renderableModel as RNumdl)?.Material;
                 AddMeshesToGui(renderableModel.RenderModel);
                 AddSkeletonToGui(renderableModel.Skeleton);
             }

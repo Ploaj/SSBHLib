@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace CrossMod.Tools
 {
+    // TODO: This can be part of SSBHLib itself because there are no additional dependencies.
     public static class MatlExtensions
     {
         public static Dictionary<MatlEnums.ParamId, float> GetFloats(this MatlEntry entry)
