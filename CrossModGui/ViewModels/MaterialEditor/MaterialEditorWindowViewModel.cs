@@ -31,6 +31,28 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlFillMode.Line, "Line" },
         };
 
+        public Dictionary<MatlMagFilter, string> DescriptionByMagFilter { get; } = new Dictionary<MatlMagFilter, string>
+        {
+            { MatlMagFilter.Nearest, "Nearest" },
+            { MatlMagFilter.Linear, "Linear" },
+            { MatlMagFilter.Linear2, "Linear + ???" },
+        };
+
+        public Dictionary<MatlMinFilter, string> DescriptionByMinFilter { get; } = new Dictionary<MatlMinFilter, string>
+        {
+            { MatlMinFilter.Nearest, "Nearest" },
+            { MatlMinFilter.LinearMipmapLinear, "LinearMipmapLinear" },
+            { MatlMinFilter.LinearMipmapLinear2, "LinearMipmapLinear2" },
+        };
+
+        public Dictionary<MatlWrapMode, string> DescriptionByWrapMode { get; } = new Dictionary<MatlWrapMode, string>
+        {
+            { MatlWrapMode.Repeat, "Repeat" },
+            { MatlWrapMode.ClampToEdge, "ClampToEdge" },
+            { MatlWrapMode.MirroredRepeat, "MirroredRepeat" },
+            { MatlWrapMode.ClampToBorder, "ClampToBorder" },
+        };
+
         public MaterialEditorWindowViewModel(Matl? matl)
         {
             // TODO: Get all nutexb names to add.
@@ -96,13 +118,30 @@ namespace CrossModGui.ViewModels.MaterialEditor
             material.TextureParams.AddRange(entry.GetTextures()
                 .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value }));
 
-            // TODO: Add more sampler info.
-            material.SamplerParams.AddRange(entry.GetSamplers()
-                .Select(t => new SamplerParam { ParamId = t.Key.ToString() }));
+            UpdateTextureParamsFromSamplers(entry, material);
 
             // TODO: Sync changes with the render materials?
 
             return material;
+        }
+
+        private static void UpdateTextureParamsFromSamplers(MatlEntry entry, Material material)
+        {
+            var entrySamplers = entry.GetSamplers();
+            foreach (var param in material.TextureParams)
+            {
+                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId textureId))
+                    continue;
+
+                if (!entrySamplers.TryGetValue(ParamIdExtensions.GetSampler(textureId), out MatlAttribute.MatlSampler? sampler))
+                    continue;
+
+                param.WrapS = sampler.WrapS;
+                param.WrapT = sampler.WrapT;
+                param.WrapR = sampler.WrapR;
+                param.MinFilter = sampler.MinFilter;
+                param.MagFilter = sampler.MagFilter;
+            }
         }
 
         public void SaveMatl(string outputPath)

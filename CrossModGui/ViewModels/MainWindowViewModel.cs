@@ -12,14 +12,14 @@ namespace CrossModGui.ViewModels
     {
         public class BoneTreeItem : ViewModelBase
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = "";
 
             public List<BoneTreeItem> Children { get; set; } = new List<BoneTreeItem>();
         }
 
         public class MeshListItem : ViewModelBase
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = "";
 
             public bool IsChecked { get; set; }
         }

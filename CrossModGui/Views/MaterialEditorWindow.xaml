@@ -103,39 +103,46 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Expander>
-                    <Expander Header="Texture Params" IsExpanded="True">
+                    <Expander Header="Texture/Sampler Params" IsExpanded="True">
                         <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}" Visibility="{Binding CurrentMaterial.HasTextures, Converter={StaticResource booleanVisibilityConverter}}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Name="textureLabel" Grid.Column="0" Text="{Binding ParamId}" HorizontalAlignment="Right" Margin="5,2"></TextBlock>
-                                        <ComboBox Name="textureComboBox" Grid.Column="1" 
-                                          ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
-                                          SelectedItem="{Binding Value}" Margin="5,2">
-                                        </ComboBox>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Expander>
-                    <Expander Header="Sample Params" Visibility="Collapsed">
-                        <ItemsControl ItemsSource="{Binding CurrentMaterial.SamplerParams}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="5,0">
-                                        <TextBlock Text="{Binding ParamId}"></TextBlock>
-                                        <usercontrols:EnumEditor Label="Wrap S"></usercontrols:EnumEditor>
-                                        <usercontrols:EnumEditor Label="Wrap T"></usercontrols:EnumEditor>
-                                        <usercontrols:EnumEditor Label="Wrap R"></usercontrols:EnumEditor>
-                                        <usercontrols:EnumEditor Label="Min Filter"></usercontrols:EnumEditor>
-                                        <usercontrols:EnumEditor Label="Mag Filter"></usercontrols:EnumEditor>
-                                        <usercontrols:LabeledFloatEditor Label="Lod Bias"></usercontrols:LabeledFloatEditor>
-                                        <usercontrols:EnumEditor Label="Max Anisotropy"></usercontrols:EnumEditor>
-                                    </StackPanel>
+                                    <Expander Margin="15,0,0,0" IsExpanded="False">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Rectangle Width="16" Height="16" Fill="White" Stroke="Black"></Rectangle>
+                                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding ParamId}"></TextBlock>
+                                                <ComboBox Name="textureComboBox" HorizontalAlignment="Stretch"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
+                                                    SelectedItem="{Binding Value}" Margin="5,0">
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Expander.Header>
+                                        <StackPanel>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Wrap S"
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByWrapMode}"
+                                                                     SelectedValue="{Binding WrapS}"></usercontrols:EnumEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Wrap T"
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByWrapMode}"
+                                                                     SelectedValue="{Binding WrapT}"></usercontrols:EnumEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Wrap R"
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByWrapMode}"
+                                                                     SelectedValue="{Binding WrapR}"></usercontrols:EnumEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Min Filter"
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByMinFilter}"
+                                                                     SelectedValue="{Binding MinFilter}"></usercontrols:EnumEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Mag Filter"
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByMagFilter}"
+                                                                     SelectedValue="{Binding MagFilter}"></usercontrols:EnumEditor>
+                                            <usercontrols:LabeledFloatEditor Margin="5,2" Label="Lod Bias"></usercontrols:LabeledFloatEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Max Anisotropy"></usercontrols:EnumEditor>
+                                        </StackPanel>
+                                    </Expander>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -146,12 +153,11 @@
                             <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
-                    <Expander Header="Blend State" IsExpanded="False" Visibility="Collapsed">
+                    <Expander Header="Blend State" IsExpanded="False">
                         <StackPanel>
                             <usercontrols:EnumEditor Label="Src Factor"></usercontrols:EnumEditor>
                             <usercontrols:EnumEditor Label="Blend Factor 1"></usercontrols:EnumEditor>
                             <usercontrols:EnumEditor Label="Blend Factor 2"></usercontrols:EnumEditor>
-
                         </StackPanel>
                     </Expander>
                 </StackPanel>

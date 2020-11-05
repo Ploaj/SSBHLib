@@ -5,6 +5,34 @@ namespace CrossMod.Rendering
 {
     public static class ParamIdExtensions
     {
+        public static ParamId GetSampler(ParamId texture)
+        {
+            return texture switch
+            {
+                ParamId.Texture0 => ParamId.Sampler0,
+                ParamId.Texture1 => ParamId.Sampler1,
+                ParamId.Texture2 => ParamId.Sampler2,
+                ParamId.Texture3 => ParamId.Sampler3,
+                ParamId.Texture4 => ParamId.Sampler4,
+                ParamId.Texture5 => ParamId.Sampler5,
+                ParamId.Texture6 => ParamId.Sampler6,
+                ParamId.Texture7 => ParamId.Sampler7,
+                ParamId.Texture8 => ParamId.Sampler8,
+                ParamId.Texture9 => ParamId.Sampler9,
+                ParamId.Texture10 => ParamId.Sampler10,
+                ParamId.Texture11 => ParamId.Sampler11,
+                ParamId.Texture12 => ParamId.Sampler12,
+                ParamId.Texture13 => ParamId.Sampler13,
+                ParamId.Texture14 => ParamId.Sampler14,
+                ParamId.Texture15 => ParamId.Sampler15,
+                ParamId.Texture16 => ParamId.Sampler16,
+                ParamId.Texture17 => ParamId.Sampler17,
+                ParamId.Texture18 => ParamId.Sampler18,
+                ParamId.Texture19 => ParamId.Sampler19,
+                _ => throw new ArgumentOutOfRangeException(nameof(texture), $"{texture} has no associated sampler")
+            };
+        }
+
         public static int ToFloatIndex(this ParamId paramId)
         {
             if (paramId < ParamId.CustomFloat0 || paramId > ParamId.CustomFloat19)
