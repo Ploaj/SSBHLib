@@ -23,24 +23,17 @@ namespace CrossModGui.Converters
             if (value == null)
                 return unknownIco;
 
-            switch (value.ToString())
+            return (value.ToString()) switch
             {
-                case "animation":
-                    return animationIco;
-                case "folder":
-                    return folderIco;
-                case "material":
-                    return materialIco;
-                case "mesh":
-                    return meshIco;
-                case "model":
-                    return modelIco;
-                case "skeleton":
-                    return skeletonIco;
-                case "texture":
-                    return textureIco;
-            }
-            return unknownIco;
+                "animation" => animationIco,
+                "folder" => folderIco,
+                "material" => materialIco,
+                "mesh" => meshIco,
+                "model" => modelIco,
+                "skeleton" => skeletonIco,
+                "texture" => textureIco,
+                _ => unknownIco,
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

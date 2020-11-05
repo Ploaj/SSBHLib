@@ -15,7 +15,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
     {
         public ObservableCollection<Material> Materials { get; } = new ObservableCollection<Material>();
 
-        public Material CurrentMaterial { get; set; }
+        public Material? CurrentMaterial { get; set; }
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
@@ -37,9 +37,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public MaterialEditorWindowViewModel(RNumdl rnumdl)
         {
-            if (rnumdl == null)
-                return;
-
             this.rnumdl = rnumdl;
 
             foreach (var name in rnumdl.TextureByName.Keys)

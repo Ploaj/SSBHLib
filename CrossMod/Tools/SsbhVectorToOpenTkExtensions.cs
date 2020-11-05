@@ -1,6 +1,6 @@
 ﻿namespace CrossMod.Tools
 {
-    public static class OpenTkVectorExtensions
+    public static class SsbhVectorToOpenTkExtensions
     {
         public static OpenTK.Vector3 ToOpenTK(this SSBHLib.Formats.Vector3 vector3)
         {

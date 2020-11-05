@@ -38,12 +38,12 @@ namespace CrossMod.Nodes
 
         private IRenderable CreateRenderableModel()
         {
-            NumsbhNode meshNode = null;
-            NuhlpbNode hlpbNode = null;
-            RSkeleton skeleton = null;
-            Matl material = null;
-            XmbNode modelXmb = null;
-            XmbNode lodXmb = null;
+            NumsbhNode? meshNode = null;
+            NuhlpbNode? hlpbNode = null;
+            RSkeleton? skeleton = null;
+            Matl? material = null;
+            XmbNode? modelXmb = null;
+            XmbNode? lodXmb = null;
 
             var textureByName = new Dictionary<string, RTexture>();
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, ref modelXmb, ref lodXmb, textureByName);
