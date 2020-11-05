@@ -62,10 +62,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "ClampToBorder" },
         };
 
+        private readonly Matl? matl;
+
         public MaterialEditorWindowViewModel(RNumdl? rnumdl)
         {
             if (rnumdl == null)
                 return;
+
+            matl = rnumdl.Matl;
 
             PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
 
@@ -109,6 +113,21 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 SyncFloats(rMaterial, material);
                 SyncTexturesSamplers(rMaterial, material);
                 SyncVectors(rMaterial, material);
+
+                // Rasterizer state and blend state are stored with the material
+                // because there is only a single rasterizer state and blend state.
+                material.PropertyChanged += (s, e) =>
+                {
+                    switch (e.PropertyName)
+                    {
+                        case nameof(material.CullMode):
+                            rMaterial.CullMode = material.CullMode.ToOpenTk();
+                            break;
+                        case nameof(material.FillMode):
+                            rMaterial.FillMode = material.FillMode.ToOpenTk();
+                            break;
+                    }
+                };
             }
 
             return material;
@@ -209,7 +228,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
 
             material.TextureParams.AddRange(entry.GetTextures()
-                .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value }));
+                .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value, SamplerParamId = ParamIdExtensions.GetSampler(t.Key).ToString() }));
 
             UpdateTextureParamsFromSamplers(entry, material);
         }
@@ -238,8 +257,95 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public void SaveMatl(string outputPath)
         {
             // TODO: Completely recreate the Matl from the view model.
+            if (matl == null)
+                return;
+
+            foreach (var entry in matl.Entries)
+            {
+                var material = Materials.SingleOrDefault(m => m.Name == entry.MaterialLabel);
+                if (material == null)
+                    continue;
+
+                foreach (var attribute in entry.Attributes)
+                {
+                    // The data type isn't known, so check each type.
+                    switch (attribute.DataType)
+                    {
+                        case MatlEnums.ParamDataType.Float:
+                            var floatParam = material.FloatParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = floatParam.Value;
+                            break;
+                        case MatlEnums.ParamDataType.Boolean:
+                            var boolparam = material.BooleanParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = boolparam.Value;
+                            break;
+                        case MatlEnums.ParamDataType.String:
+                            var textureParam = material.TextureParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = new MatlAttribute.MatlString { Text = textureParam.Value };
+                            break;
+                        case MatlEnums.ParamDataType.Vector4:
+                            var vec4Param = material.Vec4Params.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = GetMatlVec4(vec4Param);
+                            break;
+                        // TODO: Fully represent these types in the viewmodel.
+                        case MatlEnums.ParamDataType.Sampler:
+                            var samplerParam = material.TextureParams.FirstOrDefault(p => p.SamplerParamId == attribute.ParamId.ToString());
+                            if (attribute.DataObject is MatlAttribute.MatlSampler matlSampler)
+                                attribute.DataObject = GetMatlSampler(samplerParam, matlSampler);
+                            break;
+                        case MatlEnums.ParamDataType.RasterizerState:
+                            if (attribute.DataObject is MatlAttribute.MatlRasterizerState rasterizerState)
+                                attribute.DataObject = GetRasterizerState(material, rasterizerState);
+                            break;
+                        case MatlEnums.ParamDataType.BlendState:
+                            if (attribute.DataObject is MatlAttribute.MatlBlendState blendState)
+                                attribute.DataObject = GetBlendState(material, blendState);
+                            break;
+                    }
+                }
+            }
+
+            SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
         }
 
+        private MatlAttribute.MatlBlendState GetBlendState(Material material, MatlAttribute.MatlBlendState previous)
+        {
+            // TODO: Completely remake the data object.
+            return previous;
+        }
+
+        private MatlAttribute.MatlRasterizerState GetRasterizerState(Material material, MatlAttribute.MatlRasterizerState previous)
+        {
+            // TODO: Completely remake the data object.
+            previous.CullMode = material.CullMode;
+            previous.FillMode = material.FillMode;
+            return previous;
+        }
+
+        private MatlAttribute.MatlVector4 GetMatlVec4(Vec4Param param)
+        {
+            return new MatlAttribute.MatlVector4
+            {
+                X = param.Value1,
+                Y = param.Value2,
+                Z = param.Value3,
+                W = param.Value4
+            };
+        }
+
+        private MatlAttribute.MatlSampler GetMatlSampler(TextureParam param, MatlAttribute.MatlSampler previous)
+        {
+            // TODO: Completely remake the data object.
+            previous.WrapS = param.WrapS;
+            previous.WrapT = param.WrapT;
+            previous.WrapR = param.WrapR;
+            previous.MagFilter = param.MagFilter;
+            previous.MinFilter = param.MinFilter;
+            previous.LodBias = param.LodBias;
+            previous.MaxAnisotropy = param.MaxAnisotropy;
+
+            return previous;
+        }
 
         private static bool TryAssignValuesFromDescription(Vec4Param vec4Param)
         {

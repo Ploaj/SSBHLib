@@ -6,6 +6,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class TextureParam : ViewModelBase
     {
         public string ParamId { get; set; }
+        public string SamplerParamId { get; set; }
         public string Value { get; set; }
         public ImageSource Image { get; set; }
         public MatlWrapMode WrapS { get; set; }
