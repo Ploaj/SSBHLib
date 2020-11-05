@@ -112,13 +112,21 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <Rectangle Width="16" Height="16" Fill="White" Stroke="Black"></Rectangle>
                                                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding ParamId}"></TextBlock>
-                                                <ComboBox Name="textureComboBox" HorizontalAlignment="Stretch"
-                                                    ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
-                                                    SelectedItem="{Binding Value}" Margin="5,0">
-                                                </ComboBox>
                                             </StackPanel>
                                         </Expander.Header>
                                         <StackPanel>
+                                            <Grid Margin="5,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Texture" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2"></TextBlock>
+                                                <ComboBox 
+                                                    Name="textureComboBox" Grid.Column="1" 
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.PossibleTextureNames}"
+                                                    SelectedItem="{Binding Value}" Margin="0,2">
+                                                </ComboBox>
+                                            </Grid>
                                             <usercontrols:EnumEditor Margin="5,2" Label="Wrap S"
                                                                      DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
                                                                                                   Path=DataContext.DescriptionByWrapMode}"

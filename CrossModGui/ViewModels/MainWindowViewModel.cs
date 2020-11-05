@@ -74,7 +74,7 @@ namespace CrossModGui.ViewModels
         private bool isPlayingAnimation;
 
         // TODO: Where to store this value?
-        public Matl? Matl { get; set; }
+        public RNumdl? Rnumdl { get; set; }
 
         public MainWindowViewModel(ViewportRenderer renderer)
         {
@@ -115,11 +115,11 @@ namespace CrossModGui.ViewModels
             {
                 AddSkeletonToGui(skeleton);
             }
-            else if (newNode is IRenderableModel renderableModel)
+            else if (newNode is RNumdl rnumdl)
             {
-                Matl = (renderableModel as RNumdl)?.Material;
-                AddMeshesToGui(renderableModel.RenderModel);
-                AddSkeletonToGui(renderableModel.Skeleton);
+                Rnumdl = rnumdl;
+                AddMeshesToGui(rnumdl.RenderModel);
+                AddSkeletonToGui(rnumdl.Skeleton);
             }
         }
 

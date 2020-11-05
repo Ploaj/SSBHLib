@@ -53,10 +53,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "ClampToBorder" },
         };
 
-        public MaterialEditorWindowViewModel(Matl? matl)
+        public MaterialEditorWindowViewModel(Matl? matl, IEnumerable<string>? textureNames)
         {
-            // TODO: Get all nutexb names to add.
-            // This could probably just be a method on Rnumdl.
+            if (textureNames != null)
+                PossibleTextureNames.AddRange(textureNames);
 
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)

@@ -6,9 +6,7 @@ using SFGenericModel.Materials;
 using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Shaders;
 using SSBHLib.Formats.Materials;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CrossMod.Rendering.GlTools
 {
@@ -101,13 +99,6 @@ namespace CrossMod.Rendering.GlTools
             samplerByParamId[paramId] = sampler;
             shouldUpdateTexturesAndSamplers = true;
         }
-
-        // TODO: Workaround for the material editor using the render material instead of the MATL.
-        public List<KeyValuePair<MatlEnums.ParamId, Vector4>> GetCustomVectorValues() => vec4ByParamId.AsEnumerable().ToList();
-        public List<KeyValuePair<MatlEnums.ParamId, float>> GetCustomFloatValues() => floatByParamId.AsEnumerable().ToList();
-        public List<KeyValuePair<MatlEnums.ParamId, string>> GetTextureValues() => textureNameByParamId.AsEnumerable().ToList();
-        public List<KeyValuePair<MatlEnums.ParamId, SamplerObject>> GetSamplerValues() => samplerByParamId.AsEnumerable().ToList();
-        public List<KeyValuePair<MatlEnums.ParamId, bool>> GetCustomBoolValues() => boolByParamId.AsEnumerable().ToList();
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
