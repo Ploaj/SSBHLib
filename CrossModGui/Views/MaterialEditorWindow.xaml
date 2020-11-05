@@ -147,8 +147,11 @@
                                                                      DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
                                                                                                   Path=DataContext.DescriptionByMagFilter}"
                                                                      SelectedValue="{Binding MagFilter}"></usercontrols:EnumEditor>
-                                            <usercontrols:LabeledFloatEditor Margin="5,2" Label="Lod Bias"></usercontrols:LabeledFloatEditor>
-                                            <usercontrols:EnumEditor Margin="5,2" Label="Max Anisotropy"></usercontrols:EnumEditor>
+                                            <usercontrols:LabeledFloatEditor Margin="5,2" Label="Lod Bias" Value="{Binding LodBias}"></usercontrols:LabeledFloatEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Max Anisotropy" 
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByAnisotropy}"
+                                                                     SelectedValue="{Binding MaxAnisotropy}"></usercontrols:EnumEditor>
                                         </StackPanel>
                                     </Expander>
                                 </DataTemplate>

@@ -2,7 +2,6 @@
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.Tools;
-using SFGraphics.GLObjects.Samplers;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +23,15 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlCullMode.Back, "Back" },
             { MatlCullMode.Front, "Front" },
             { MatlCullMode.None, "None" },
+        };
+
+        public Dictionary<int, string> DescriptionByAnisotropy { get; } = new Dictionary<int, string>
+        {
+            { 0, "1x" },
+            { 2, "2x" },
+            { 4, "4x" },
+            { 8, "16x" },
+            { 16, "128x" },
         };
 
         public Dictionary<MatlFillMode, string> DescriptionByFillMode { get; } = new Dictionary<MatlFillMode, string>

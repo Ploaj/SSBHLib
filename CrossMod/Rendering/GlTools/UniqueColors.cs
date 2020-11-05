@@ -28,7 +28,9 @@ namespace CrossMod.Rendering.GlTools
             new Vector3(255,250,200),
             new Vector3(128, 0, 0),
             new Vector3(0,0,128),
-            new Vector3(0,0,0),
+            new Vector3(0,128,0),
+            new Vector3(128,128,255),
+            new Vector3(184,184,184),
         };
 
         /// <summary>
@@ -38,11 +40,9 @@ namespace CrossMod.Rendering.GlTools
         /// <returns>The color associated with <paramref name="index"/></returns>
         public static Vector3 IndexToColor(int index)
         {
-            // TODO: This doesn't contain enough colors for some models with many materials.
-            if (index >= MaterialColors.Length || index < 0)
-                return Vector3.One;
-
-            return MaterialColors[index];
+            // This doesn't contain enough colors for some models with many materials, 
+            // so just map some materials to the same color.
+            return MaterialColors[index % MaterialColors.Length];
         }
     }
 }
