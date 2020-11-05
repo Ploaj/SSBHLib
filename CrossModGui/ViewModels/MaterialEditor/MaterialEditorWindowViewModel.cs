@@ -25,6 +25,20 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlCullMode.None, "None" },
         };
 
+        public Dictionary<int, string> DescriptionBySrcFactor { get; } = new Dictionary<int, string>
+        {
+            { 0, "Zero" },
+            { 1, "One" },
+        };
+
+        public Dictionary<int, string> DescriptionByBlendFactor { get; } = new Dictionary<int, string>
+        {
+            { 0, "Zero" },
+            { 1, "One" },
+            { 2, "SourceAlpha" },
+            { 6, "OneMinusSourceAlpha" },
+        };
+
         public Dictionary<int, string> DescriptionByAnisotropy { get; } = new Dictionary<int, string>
         {
             { 0, "1x" },
@@ -126,6 +140,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                         case nameof(material.FillMode):
                             rMaterial.FillMode = material.FillMode.ToOpenTk();
                             break;
+                        // TODO: Blend state.
                     }
                 };
             }
@@ -203,6 +218,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
             {
                 material.CullMode = rasterizerState.CullMode;
                 material.FillMode = rasterizerState.FillMode;
+            }
+
+            // There should only be a single blend state in each material.
+            if (entry.GetBlendStates().TryGetValue(MatlEnums.ParamId.BlendState0, out MatlAttribute.MatlBlendState? blendState))
+            {
+                material.SrcFactor = blendState.SrcFactor;
+                material.BlendFactor1 = blendState.BlendFactor1;
+                material.BlendFactor2 = blendState.BlendFactor2;
             }
 
             material.BooleanParams.AddRange(entry.GetBools()

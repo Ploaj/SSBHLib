@@ -19,6 +19,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public MatlCullMode CullMode { get; set; }
         public MatlFillMode FillMode { get; set; }
+        public int SrcFactor { get; set; }
+        public int BlendFactor1 { get; set; }
+        public int BlendFactor2 { get; set; }
 
         public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 

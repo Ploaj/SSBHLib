@@ -68,7 +68,7 @@ namespace CrossMod.Rendering.GlTools
         {
             // TODO: Does "src factor" toggle something in the shader?
             meshMaterial.BlendSrc = BlendingFactor.One;
-            if (blendState.Unk1 == 0)
+            if (blendState.SrcFactor == 0)
                 meshMaterial.BlendSrc = BlendingFactor.Zero;
 
             if (blendState.BlendFactor2 == 1)

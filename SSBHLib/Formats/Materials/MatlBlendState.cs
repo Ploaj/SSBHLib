@@ -4,7 +4,7 @@
     {
         public class MatlBlendState : SsbhFile
         {
-            public int Unk1 { get; set; }
+            public int SrcFactor { get; set; }
 
             public int Unk2 { get; set; }
 

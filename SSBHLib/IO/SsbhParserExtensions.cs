@@ -871,7 +871,7 @@
         public static Formats.Materials.MatlAttribute.MatlBlendState ParseMatlBlendState(this SsbhParser parser)
         {
             var result = new Formats.Materials.MatlAttribute.MatlBlendState();
-            result.Unk1 = parser.ReadInt32();
+            result.SrcFactor = parser.ReadInt32();
             result.Unk2 = parser.ReadInt32();
             result.BlendFactor1 = parser.ReadInt32();
             result.Unk4 = parser.ReadInt32();
