@@ -62,19 +62,14 @@ namespace CrossMod.Rendering.GlTools
 
         public static TextureWrapMode ToOpenTk(this MatlWrapMode wrapMode)
         {
-            switch (wrapMode)
+            return wrapMode switch
             {
-                case MatlWrapMode.Repeat:
-                    return TextureWrapMode.Repeat;
-                case MatlWrapMode.ClampToEdge:
-                    return TextureWrapMode.ClampToEdge;
-                case MatlWrapMode.MirroredRepeat:
-                    return TextureWrapMode.MirroredRepeat;
-                case MatlWrapMode.ClampToBorder:
-                    return TextureWrapMode.ClampToBorder;
-                default:
-                    throw new NotSupportedException($"Unsupported conversion for {wrapMode}");
-            }
+                MatlWrapMode.Repeat => TextureWrapMode.Repeat,
+                MatlWrapMode.ClampToEdge => TextureWrapMode.ClampToEdge,
+                MatlWrapMode.MirroredRepeat => TextureWrapMode.MirroredRepeat,
+                MatlWrapMode.ClampToBorder => TextureWrapMode.ClampToBorder,
+                _ => throw new NotSupportedException($"Unsupported conversion for {wrapMode}"),
+            };
         }
 
         public static CullFaceMode ToOpenTk(this MatlCullMode cullMode)
@@ -92,18 +87,33 @@ namespace CrossMod.Rendering.GlTools
             }
         }
 
+        public static BlendingFactor ToOpenTk(this MatlBlendFactor factor)
+        {
+            return factor switch
+            {
+                MatlBlendFactor.Zero => BlendingFactor.Zero,
+                MatlBlendFactor.One => BlendingFactor.One,
+                MatlBlendFactor.SourceAlpha => BlendingFactor.SrcAlpha,
+                MatlBlendFactor.DestinationAlpha => BlendingFactor.DstAlpha,
+                MatlBlendFactor.SourceColor => BlendingFactor.DstColor,
+                MatlBlendFactor.DestinationColor => BlendingFactor.DstColor,
+                MatlBlendFactor.OneMinusSourceAlpha => BlendingFactor.OneMinusSrcAlpha,
+                MatlBlendFactor.OneMinusDestinationAlpha => BlendingFactor.OneMinusDstAlpha,
+                MatlBlendFactor.OneMinusSourceColor => BlendingFactor.OneMinusDstColor,
+                MatlBlendFactor.OneMinusDestinationColor => BlendingFactor.OneMinusDstColor,
+                MatlBlendFactor.SourceAlphaSaturate => BlendingFactor.SrcAlphaSaturate,
+                _ => throw new NotSupportedException($"Unsupported conversion for {factor}")
+            };
+        }
+
         public static PolygonMode ToOpenTk(this MatlFillMode fillMode)
         {
-            switch (fillMode)
+            return fillMode switch
             {
-                // None requires explicitly disabling culling, so just return back.
-                case MatlFillMode.Solid:
-                    return PolygonMode.Fill;
-                case MatlFillMode.Line:
-                    return PolygonMode.Line;
-                default:
-                    throw new NotSupportedException($"Unsupported conversion for {fillMode}");
-            }
+                MatlFillMode.Solid => PolygonMode.Fill,
+                MatlFillMode.Line => PolygonMode.Line,
+                _ => throw new NotSupportedException($"Unsupported conversion for {fillMode}")
+            };
         }
     }
 }

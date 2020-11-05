@@ -1,5 +1,4 @@
 ﻿using CrossMod.Tools;
-using OpenTK.Graphics.OpenGL;
 using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 
@@ -66,17 +65,10 @@ namespace CrossMod.Rendering.GlTools
 
         private static void SetBlendState(RMaterial meshMaterial, MatlAttribute.MatlBlendState blendState)
         {
-            // TODO: Does "src factor" toggle something in the shader?
-            meshMaterial.BlendSrc = BlendingFactor.One;
-            if (blendState.SrcFactor == 0)
-                meshMaterial.BlendSrc = BlendingFactor.Zero;
+            meshMaterial.SourceColor = blendState.SourceColor.ToOpenTk();
+            meshMaterial.DestinationColor = blendState.DestinationColor.ToOpenTk();
 
-            if (blendState.BlendFactor2 == 1)
-                meshMaterial.BlendDst = BlendingFactor.One;
-            else if (blendState.BlendFactor2 == 2)
-                meshMaterial.BlendDst = BlendingFactor.SrcAlpha;
-            else if (blendState.BlendFactor2 == 6)
-                meshMaterial.BlendDst = BlendingFactor.OneMinusSrcAlpha;
+            // TODO: Unk6?
 
             // TODO: Do both need to be set?
             meshMaterial.UseAlphaSampleCoverage = blendState.Unk7 == 1 || blendState.Unk8 == 1;

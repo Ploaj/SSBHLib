@@ -166,15 +166,12 @@
                     </Expander>
                     <Expander Header="Blend State" IsExpanded="False">
                         <StackPanel>
-                            <usercontrols:EnumEditor Label="Src Factor"
-                                                     DescriptionByValue="{Binding DescriptionBySrcFactor}"
-                                                     SelectedValue="{Binding CurrentMaterial.SrcFactor}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Label="Blend Factor 1"
+                            <usercontrols:EnumEditor Label="Source Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
-                                                     SelectedValue="{Binding CurrentMaterial.BlendFactor1}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Label="Blend Factor 2"
+                                                     SelectedValue="{Binding CurrentMaterial.SourceColor}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Label="Destination Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
-                                                     SelectedValue="{Binding CurrentMaterial.BlendFactor2}"></usercontrols:EnumEditor>
+                                                     SelectedValue="{Binding CurrentMaterial.DestinationColor}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
                 </StackPanel>

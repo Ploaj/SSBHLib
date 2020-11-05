@@ -38,8 +38,8 @@ namespace CrossMod.Rendering.GlTools
 
         public PolygonMode FillMode { get; set; } = PolygonMode.Fill;
 
-        public BlendingFactor BlendSrc { get; set; } = BlendingFactor.One;
-        public BlendingFactor BlendDst { get; set; } = BlendingFactor.Zero;
+        public BlendingFactor SourceColor { get; set; } = BlendingFactor.One;
+        public BlendingFactor DestinationColor { get; set; } = BlendingFactor.Zero;
         public bool HasSortLabel => ShaderLabel.EndsWith("_sort");
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
@@ -138,7 +138,7 @@ namespace CrossMod.Rendering.GlTools
 
         public void SetRenderState()
         {
-            var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, BlendSrc, BlendDst, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
+            var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, SourceColor, DestinationColor, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
             SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(alphaBlendSettings);
 
             // Meshes with screen door transparency enable this OpenGL extension.

@@ -25,18 +25,19 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlCullMode.None, "None" },
         };
 
-        public Dictionary<int, string> DescriptionBySrcFactor { get; } = new Dictionary<int, string>
+        public Dictionary<MatlBlendFactor, string> DescriptionByBlendFactor { get; } = new Dictionary<MatlBlendFactor, string>
         {
-            { 0, "Zero" },
-            { 1, "One" },
-        };
-
-        public Dictionary<int, string> DescriptionByBlendFactor { get; } = new Dictionary<int, string>
-        {
-            { 0, "Zero" },
-            { 1, "One" },
-            { 2, "SourceAlpha" },
-            { 6, "OneMinusSourceAlpha" },
+            { MatlBlendFactor.Zero, "Zero" },
+            { MatlBlendFactor.One, "One" },
+            { MatlBlendFactor.SourceAlpha, "Source Alpha" },
+            { MatlBlendFactor.DestinationAlpha, "Destination Alpha" },
+            { MatlBlendFactor.SourceColor, "Source Color" },
+            { MatlBlendFactor.DestinationColor, "Destination Color" },
+            { MatlBlendFactor.OneMinusSourceAlpha, "One Minus Source Alpha" },
+            { MatlBlendFactor.OneMinusDestinationAlpha, "One Minus Destination Alpha" },
+            { MatlBlendFactor.OneMinusSourceColor, "One Minus Source Color" },
+            { MatlBlendFactor.OneMinusDestinationColor, "One Minus Destination Color" },
+            { MatlBlendFactor.SourceAlphaSaturate, "Source Alpha Saturate" },
         };
 
         public Dictionary<int, string> DescriptionByAnisotropy { get; } = new Dictionary<int, string>
@@ -64,16 +65,16 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public Dictionary<MatlMinFilter, string> DescriptionByMinFilter { get; } = new Dictionary<MatlMinFilter, string>
         {
             { MatlMinFilter.Nearest, "Nearest" },
-            { MatlMinFilter.LinearMipmapLinear, "LinearMipmapLinear" },
-            { MatlMinFilter.LinearMipmapLinear2, "LinearMipmapLinear2" },
+            { MatlMinFilter.LinearMipmapLinear, "Linear Mipmap Linear" },
+            { MatlMinFilter.LinearMipmapLinear2, "Linear Mipmap Linear2" },
         };
 
         public Dictionary<MatlWrapMode, string> DescriptionByWrapMode { get; } = new Dictionary<MatlWrapMode, string>
         {
             { MatlWrapMode.Repeat, "Repeat" },
-            { MatlWrapMode.ClampToEdge, "ClampToEdge" },
-            { MatlWrapMode.MirroredRepeat, "MirroredRepeat" },
-            { MatlWrapMode.ClampToBorder, "ClampToBorder" },
+            { MatlWrapMode.ClampToEdge, "Clamp to Edge" },
+            { MatlWrapMode.MirroredRepeat, "Mirrored Repeat" },
+            { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
         private readonly Matl? matl;
@@ -140,7 +141,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
                         case nameof(material.FillMode):
                             rMaterial.FillMode = material.FillMode.ToOpenTk();
                             break;
-                        // TODO: Blend state.
+                        case nameof(material.SourceColor):
+                            rMaterial.SourceColor = material.SourceColor.ToOpenTk();
+                            break;
+                        case nameof(material.DestinationColor):
+                            rMaterial.DestinationColor = material.DestinationColor.ToOpenTk();
+                            break;
                     }
                 };
             }
@@ -177,7 +183,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
-                // TODO: Store the sampler paramId as well?
                 param.PropertyChanged += (s, e) => 
                 { 
                     rMaterial.UpdateTexture(paramId, param.Value);
@@ -223,9 +228,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // There should only be a single blend state in each material.
             if (entry.GetBlendStates().TryGetValue(MatlEnums.ParamId.BlendState0, out MatlAttribute.MatlBlendState? blendState))
             {
-                material.SrcFactor = blendState.SrcFactor;
-                material.BlendFactor1 = blendState.BlendFactor1;
-                material.BlendFactor2 = blendState.BlendFactor2;
+                material.SourceColor = blendState.SourceColor;
+                material.DestinationColor = blendState.DestinationColor;
             }
 
             material.BooleanParams.AddRange(entry.GetBools()
@@ -334,6 +338,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         private MatlAttribute.MatlBlendState GetBlendState(Material material, MatlAttribute.MatlBlendState previous)
         {
             // TODO: Completely remake the data object.
+            previous.SourceColor = material.SourceColor;
+            previous.DestinationColor = material.DestinationColor;
             return previous;
         }
 
