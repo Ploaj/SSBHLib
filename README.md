@@ -20,4 +20,5 @@ A simple program for converting .numatb files to .xml and .xml files to .numatb.
 `MatLab.exe <input> [output]`  
 
 # Building
-Compile in Visual Studio 2019 or later on Windows. Requires .NET Framework 4.6.1.
+Compile in Visual Studio 2019 or later. Requires .NET Core 3.1. Cross Mod GUI and Cross Mod require Windows specific components.
+SSBHLib itself and the other CLI programs will work on any platform supporting .Net Core. 
