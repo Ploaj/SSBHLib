@@ -11,7 +11,7 @@ An experimental Smash Ultimate model viewer designed for shader development, tes
 A WIP rewrite of Cross Mod with a new material editor and other improvements. Many features haven't been ported over from the original program yet. An executable can be downloaded from [releases](https://github.com/Ploaj/SSBHLib/releases).
 
 ### System Requirements
-The recommended OpenGL version for Cross Mod is 4.20. Version 3.30 or higher may still work as long as the necessary OpenGL extensions are present.
+The recommended OpenGL version for Cross Mod is 4.20. Version 3.30 or higher may still work as long as the necessary OpenGL extensions are present. Cross Mod GUI as well as the CLI programs require .NET Core. See the release for installation instructions.
 
 # Mat Lab
 A simple program for converting .numatb files to .xml and .xml files to .numatb. The output path will be generated as `<input>_out.xml` or `<input>_out.numatb` if not specified. Files can also be dragged onto the executable to convert them. An executable can be downloaded from [releases](https://github.com/Ploaj/SSBHLib/releases).
