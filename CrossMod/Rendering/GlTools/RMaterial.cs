@@ -207,6 +207,7 @@ namespace CrossMod.Rendering.GlTools
             uniformBlock.SetValue("hasCustomVector44", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector44));
             uniformBlock.SetValue("hasCustomVector47", vec4ByParamId.ContainsKey(MatlEnums.ParamId.CustomVector47));
             uniformBlock.SetValue("hasCustomFloat10", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat10));
+            uniformBlock.SetValue("hasCustomFloat19", floatByParamId.ContainsKey(MatlEnums.ParamId.CustomFloat19));
             uniformBlock.SetValue("hasCustomBoolean1", boolByParamId.ContainsKey(MatlEnums.ParamId.CustomBoolean1));
 
             uniformBlock.SetValue("hasColMap", HasCol);
@@ -257,7 +258,7 @@ namespace CrossMod.Rendering.GlTools
             var customFloatData = new Vector4[20];
             foreach (var param in floatByParamId)
             {
-                customFloatData[param.Key.ToFloatIndex()] = new Vector4(0f, 0f, 0f, param.Value);
+                customFloatData[param.Key.ToFloatIndex()] = new Vector4(param.Value, 0f, 0f, 0f);
             }
             uniformBlock.SetValues("CustomFloat", customFloatData);
         }

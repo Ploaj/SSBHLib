@@ -67,6 +67,7 @@ uniform MaterialParams
     int hasCustomVector47;
     int hasCustomVector44;
     int hasCustomFloat10;
+    int hasCustomFloat19;
     int hasCustomBoolean1;
 
     int hasColMap; 
@@ -91,8 +92,7 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform vec3 cameraPos;
 
-layout (location = 0) out vec4 fragColor0;
-layout (location = 1) out vec4 fragColor1;
+out vec4 fragColor0;
 
 uniform float directLightIntensity;
 uniform float iblIntensity;
@@ -243,12 +243,12 @@ float Luminance(vec3 rgb)
     return dot(rgb, W);
 }
 
-vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float nDotV, float roughness)
+vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
     vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8].x); 
 
     // Metals use albedo instead of the specular color/tint.
-    vec3 specularReflectionF0 = vec3(prmSpec * 0.2) * tintColor;
+    vec3 specularReflectionF0 = vec3(f0) * tintColor;
     vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
 
     return FresnelSchlick(nDotV, f0Final);
@@ -291,10 +291,28 @@ vec3 GetInvalidShaderLabelColor()
     return vec3(checkerBoardFinal, 0, 0);
 }
 
+float GetAngleFade(float nDotV, float ior, float specularf0) 
+{
+    // CustomFloat19 defines the IOR for a separate fresnel based fade.
+    // The specular f0 value is used to set the minimum opacity.
+    float f0AngleFade = GetF0(ior + 1.0);
+    float facingRatio = FresnelSchlick(nDotV, vec3(f0AngleFade)).x;
+    return max(facingRatio, specularf0);
+}
+
+vec3 GetBloomBrightColor(vec3 color0)
+{
+    // Ported bloom code.
+    // TODO: Where do the uniform buffer values come from?
+    float componentMax = max(max(color0.r, max(color0.g, color0.b)), 0.001);
+    float scale = 1 / componentMax;
+    float scale2 = max(0.925 * -0.5 + componentMax, 0);
+    return color0.rgb * scale * scale2 * 6;
+}
+
 void main()
 {
     fragColor0 = vec4(0, 0, 0, 1);
-    fragColor1 = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, map1).xyzw;
     if (hasInkNorMap == 1)
@@ -316,10 +334,6 @@ void main()
     // TODO: Double check the orientation.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
-
-    // TODO: ???
-    float iorRatio = 1.0 / (1.0 + CustomFloat[19].x);
-    vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Shading vectors.
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
@@ -358,7 +372,7 @@ void main()
     fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector[0].x);
     // Alpha testing.
     // TODO: Not all shaders have this.
-    if (fragColor0.a < 0.5)
+    if (fragColor0.a < 0.5 && hasCustomFloat19 != 1)
         discard;
 
     float roughness = prmColor.g;
@@ -372,6 +386,9 @@ void main()
     if (CustomBoolean[1].x == 0)
         specular = 0.16;
 
+    // Hardcoded shader constant.
+    float specularScale = 0.2;
+    specular *= specularScale;
 
     float specularOcclusion = norColor.a;
     // These materials don't have a nor map.
@@ -385,8 +402,7 @@ void main()
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
-    vec3 refractionIbl = textureLod(specularPbrCube, refractionVector, 0.075 * maxLod).rgb * iblIntensity;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5; // TODO: constant?
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
@@ -395,10 +411,10 @@ void main()
 
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, bitangent, roughness, specularIbl, metalness);
 
-
     vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
 
+    // Color Passes.
     if (renderDiffuse == 1)
         fragColor0.rgb += diffusePass * diffuseLight * kDiffuse;
 
@@ -408,17 +424,12 @@ void main()
     if (renderRimLighting == 1)
         fragColor0.rgb += GetRimLighting(nDotV);
 
-    // Emission
     if (renderEmission == 1)
         fragColor0.rgb += EmissionTerm(emissionColor);
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
         fragColor0.rgb *= colorSet1.rgb; 
-
-    // TODO: Experimental refraction.
-    if (CustomFloat[19].x > 0.0)
-        fragColor0.rgb += refractionIbl * renderExperimental;
 
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
@@ -428,27 +439,17 @@ void main()
     if (renderVertexColor == 1 && colorSet1.a != 0)
         fragColor0.a *= colorSet1.a;
 
-    // TODO: Meshes with refraction have some sort of angle fade.
-    float f0Refract = GetF0(CustomFloat[19].x + 1.0);
-    vec3 transmissionAlpha = FresnelSchlick(nDotV, vec3(f0Refract));
-    if (CustomFloat[19].x > 0 && renderExperimental == 1)
-        fragColor0.a = transmissionAlpha.x;
+    if (hasCustomFloat19 == 1 && renderExperimental == 1)
+        fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specular);
 
     // Premultiplied alpha. 
     fragColor0.a = clamp(fragColor0.a, 0, 1); // TODO: krool???
     fragColor0.rgb *= fragColor0.a;
 
-    // Ported bloom code.
-    // TODO: Where do the uniform buffer values come from?
-    float componentMax = max(max(fragColor0.r, max(fragColor0.g, fragColor0.b)), 0.001);
-    float scale = 1 / componentMax;
-    float scale2 = max(0.925 * -0.5 + componentMax, 0);
-    fragColor1.rgb = fragColor0.rgb * scale * scale2 * 6;
-
     // TODO: Move this to post-processing.
     // This is a temporary workaround for FBOs not working on Intel.
     if (enableBloom == 1)
-        fragColor0.rgb += fragColor1.rgb * bloomIntensity;
+        fragColor0.rgb += GetBloomBrightColor(fragColor0.rgb) * bloomIntensity;
 
     // Gamma correction.
     fragColor0.rgb = GetSrgb(fragColor0.rgb);

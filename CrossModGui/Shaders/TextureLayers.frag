@@ -32,6 +32,7 @@ uniform MaterialParams
     int hasCustomVector47;
     int hasCustomVector44;
     int hasCustomFloat10;
+    int hasCustomFloat19;
     int hasCustomBoolean1;
 
     int hasColMap; 

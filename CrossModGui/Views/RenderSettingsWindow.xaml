@@ -34,9 +34,7 @@
                 <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmRoughness}">Enable Prm Roughness</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmAo}">Enable Prm AO</CheckBox>
                 <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmSpecular}">Enable Prm Specular</CheckBox>
-
                 <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableEdgeTint}">Enable Edge Tint</CheckBox>
             </StackPanel>
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
