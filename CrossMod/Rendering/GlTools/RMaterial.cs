@@ -177,6 +177,7 @@ namespace CrossMod.Rendering.GlTools
 
         private static Vector3 GetLightDirectionFromQuaternion(float x, float y, float z, float w)
         {
+            // Convert the light.nuanmb quaternion to a direction vector for the shader.
             var quaternion = new Quaternion(x, y, z, w);
             var matrix = Matrix4.CreateFromQuaternion(quaternion);
             var lightDirection = Vector4.Transform(new Vector4(0, 0, 1, 0), matrix);

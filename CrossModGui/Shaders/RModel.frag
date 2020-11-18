@@ -175,8 +175,10 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     }
     directShading = clamp(directShading, 0, 1);
 
-    // TODO: Investigate why diffuse is so bright?
-    vec3 directLight = LightCustomVector0.xyz * directShading; // * LightCustomFloat0
+    // Hardcoded shader constant.
+    float directLightScale = 0.3183000087738037;
+    
+    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * directLightScale;
     
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
@@ -214,7 +216,11 @@ float SpecularBrdf(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness)
 
 vec3 SpecularTerm(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
 {
-    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity;
+    // Direct specular intensity from cbuf1.
+    // TODO: Is this always constant.
+    float directLightScale = 0.3183000087738037;
+
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity * directLightScale;
     vec3 indirectSpecular = specularIbl;
     vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x);
 
@@ -248,11 +254,18 @@ vec3 GetSpecularWeight(float prmSpec, vec3 diffusePass, float metalness, float n
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetSpecularEdgeTint(float nDotV)
+vec3 GetRimLighting(float nDotV)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
-    float rimBlend = pow(1 - nDotV,5);
-    return mix(vec3(1), rimColor, rimBlend * LightCustomVector8.w * CustomVector[14].w);
+    float rimBlend = pow(1 - nDotV, 5);
+    // TODO: There some sort of directional lighting that controls the intensity of this effect.
+    // This appears to be lighting done in the vertex shader.
+    float rimUnkLighting = 0.6;
+
+    // Hardcoded shader constant.
+    float rimIntensity = 0.2125999927520752; 
+
+    return rimColor * rimBlend * LightCustomVector8.w * CustomVector[14].w * rimUnkLighting * rimIntensity;
 }
 
 float RoughnessToLod(float roughness)
@@ -309,11 +322,11 @@ void main()
     vec3 refractionVector = refract(viewVector, normalize(fragmentNormal), iorRatio);
 
     // Shading vectors.
-    vec3 halfAngle = normalize(chrLightDir + viewVector);
+    vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
     float nDotV = max(dot(fragmentNormal, viewVector), 0);
     float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
     // Don't clamp to allow remapping the range of values later.
-    float nDotL = dot(fragmentNormal, chrLightDir);
+    float nDotL = dot(fragmentNormal, chrLightDir.xyz);
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
@@ -324,6 +337,9 @@ void main()
     //     emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
+
+    // albedoColor = vec4(vec3(0.25), 1.0);
+    // prmColor = vec4(1.1,0,1,0);
 
     // Override the PRM color with default texture colors if disabled.
     if (renderPrmMetalness != 1)
@@ -378,17 +394,19 @@ void main()
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, halfAngle, bitangent, roughness, specularIbl, metalness);
-    if (renderRimLighting == 1)
-        specularPass *= GetSpecularEdgeTint(nDotV);
+
 
     vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
-    vec3 kDiffuse = (vec3(1) - kSpecular) * (1 - metalness);
+    vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
 
     if (renderDiffuse == 1)
         fragColor0.rgb += diffusePass * diffuseLight * kDiffuse;
 
     if (renderSpecular == 1)
         fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
+
+    if (renderRimLighting == 1)
+        fragColor0.rgb += GetRimLighting(nDotV);
 
     // Emission
     if (renderEmission == 1)
