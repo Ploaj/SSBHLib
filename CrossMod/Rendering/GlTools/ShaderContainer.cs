@@ -91,8 +91,8 @@ namespace CrossMod.Rendering.GlTools
         private static void CreateTextureShader()
         {
             shaderLoader.AddShader("RTexture",
-                "texture.vert",
-                "texture.frag",
+                "Texture.vert",
+                "Texture.frag",
                 "Gamma.frag"
             );
         }
@@ -100,14 +100,14 @@ namespace CrossMod.Rendering.GlTools
         private static void CreateScreenTextureShader()
         {
             shaderLoader.AddShader("ScreenTexture",
-                "texture.vert",
+                "Texture.vert",
                 "ScreenTexture.frag"
             );
         }
         private static void CreateScreenBloomCombinedShader()
         {
             shaderLoader.AddShader("ScreenBloomCombined",
-                "texture.vert",
+                "Texture.vert",
                 "ScreenBloomCombined.frag"
             );
         }
@@ -115,7 +115,7 @@ namespace CrossMod.Rendering.GlTools
         private static void CreateScreenGradientShader()
         {
             shaderLoader.AddShader("ScreenGradient",
-                "texture.vert",
+                "Texture.vert",
                 "ScreenGradient.frag"
             );
         }
