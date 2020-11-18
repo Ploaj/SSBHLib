@@ -32,6 +32,9 @@ namespace CrossMod.Rendering.Resources
         public static void Initialize()
         {
             Instance = new DefaultTextures();
+
+            // The default cube map sampling has artifacts between cube map faces.
+            GL.Enable(EnableCap.TextureCubeMapSeamless);
         }
 
         private DefaultTextures()

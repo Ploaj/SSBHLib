@@ -51,6 +51,7 @@ namespace CrossMod.Rendering.GlTools
             CreateRModelShader();
             CreateRModelUvShader();
             CreateTextureShader();
+            CreateTextureCubeShader();
             CreateScreenTextureShader();
             CreateScreenBloomCombinedShader();
             CreateScreenGradientShader();
@@ -93,6 +94,15 @@ namespace CrossMod.Rendering.GlTools
             shaderLoader.AddShader("RTexture",
                 "Texture.vert",
                 "Texture.frag",
+                "Gamma.frag"
+            );
+        }
+
+        private static void CreateTextureCubeShader()
+        {
+            shaderLoader.AddShader("RTextureCube",
+                "TextureCube.vert",
+                "TextureCube.frag",
                 "Gamma.frag"
             );
         }
