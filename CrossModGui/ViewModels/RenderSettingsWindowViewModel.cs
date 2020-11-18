@@ -57,7 +57,7 @@ namespace CrossModGui.ViewModels
 
         public bool EnableVertexColor { get; set; }
 
-        public bool EnableEdgeTint { get; set; }
+        public bool EnableRimLighting { get; set; }
 
         public bool EnableRed { get; set; }
 
@@ -81,7 +81,7 @@ namespace CrossModGui.ViewModels
             EnableAlpha = renderSettings.EnableAlpha;
             EnableDiffuse = renderSettings.EnableDiffuse;
             EnableEmission = renderSettings.EnableEmission;
-            EnableEdgeTint = renderSettings.EnableRimLighting;
+            EnableRimLighting = renderSettings.EnableRimLighting;
             EnableSpecular = renderSettings.EnableSpecular;
             SelectedRenderMode = renderSettings.ShadingMode;
             EnableVertexColor = renderSettings.RenderVertexColor;
@@ -105,7 +105,7 @@ namespace CrossModGui.ViewModels
             settings.EnableAlpha = EnableAlpha;
             settings.EnableDiffuse = EnableDiffuse;
             settings.EnableEmission = EnableEmission;
-            settings.EnableRimLighting = EnableEdgeTint;
+            settings.EnableRimLighting = EnableRimLighting;
             settings.EnableSpecular = EnableSpecular;
             settings.ShadingMode = SelectedRenderMode;
             settings.RenderVertexColor = EnableVertexColor;
