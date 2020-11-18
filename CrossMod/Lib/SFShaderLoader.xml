@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SFShaderLoader</name>
+    </assembly>
+    <members>
+        <member name="T:SFShaderLoader.ShaderLoader">
+            <summary>
+            Loads and stores <see cref="T:SFGraphics.GLObjects.Shaders.Shader"/> objects from source strings or precompiled binaries.
+            </summary>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.AddSource(System.String,System.String,OpenTK.Graphics.OpenGL.ShaderType)">
+            <summary>
+            Creates and compiles a new <see cref="T:SFGraphics.GLObjects.Shaders.ShaderObject"/> to be accessed by <paramref name="name"/>
+            for subsequent calls to <see cref="M:SFShaderLoader.ShaderLoader.AddShader(System.String,System.String[])"/>.
+            </summary>
+            <param name="name">The unique identifier to associate with <paramref name="shaderSource"/></param>
+            <param name="shaderSource">The shader's GLSL source code</param>
+            <param name="shaderType">Determines which shader stage this shader will be used for when linking the program</param>
+            <returns><c>true</c> if the shader was added and compiled successfully</returns>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.AddShader(System.String,System.String[])">
+            <summary>
+            Creates and links a new <see cref="T:SFGraphics.GLObjects.Shaders.Shader"/> from <see cref="T:SFGraphics.GLObjects.Shaders.ShaderObject"/>
+            based on the keys in <paramref name="sourceNames"/>. Invalid keys are ignored.
+            </summary>
+            <param name="name">A unique name for the shader program</param>
+            <param name="sourceNames">A collection of shader object names/></param>
+            <returns><c>true</c> if the shader was added and linked successfully</returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">A key in <paramref name="sourceNames"/> 
+            does not refer to an available shader source</exception>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.AddShader(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Compiles a <see cref="T:SFGraphics.GLObjects.Shaders.Shader"/> from the given source files and adds it to the shader list.
+            Replaces the existing shader for <paramref name="name"/> if found.
+            </summary>
+            <param name="name">A unique name for the shader program</param>
+            <param name="vertexSources">The source code for vertex shaders</param>
+            <param name="fragmentSources">The source code for fragment shaders</param>
+            <param name="geometrySources">The source code for geometry shaders</param>
+            <returns><c>true</c> if the shader was added and linked successfully</returns>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.AddShader(System.String,System.Byte[],OpenTK.Graphics.OpenGL.BinaryFormat)">
+            <summary>
+            Loads a shader from precompiled shader binaries and adds it to the shader list.
+            Replaces the existing shader for <paramref name="name"/> if found.
+            </summary>
+            <param name="name">A unique shader name</param>
+            <param name="shaderBinary">The compiled shader binary</param>
+            <param name="binaryFormat">The platform specific shader binary format</param>
+            <returns><c>true</c> if the shader was successfully linked and added</returns>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.GetShader(System.String)">
+            <summary>
+            Attempts to find the shader named <paramref name="shaderName"/>.
+            </summary>
+            <param name="shaderName">The unique name used when the shader was added</param>
+            <returns>the appropriate shader or <c>null</c> if not found</returns>
+        </member>
+        <member name="M:SFShaderLoader.ShaderLoader.CreateProgramBinary(System.String,System.Byte[]@,OpenTK.Graphics.OpenGL.BinaryFormat@)">
+            <summary>
+            Creates the compiled program binary for the shader specified by <paramref name="shaderName"/>.
+            </summary>
+            <param name="shaderName">The unique name used when the shader was added</param>
+            <param name="programBinary">The compiled shader program binary</param>
+            <param name="binaryFormat">The platform specific shader binary format</param>
+            <returns><c>true</c> if the binary was created successfully</returns>
+            <exception cref="T:System.ArgumentException"><paramref name="shaderName"/> is not a valid shader.</exception>
+        </member>
+    </members>
+</doc>
