@@ -11,7 +11,6 @@ namespace CrossMod.Nodes
     /// </summary>
     public class DirectoryNode : FileNode
     {
-        private bool isOpened = false;
         private bool hasOpenedFiles = false;
 
         /// <summary>
@@ -27,27 +26,19 @@ namespace CrossMod.Nodes
             // Make the font color use the default foreground color.
             // TODO: "IsActive" should be reworked at some point (it only applies to renderables).
             IsActive = true;
+
+            CreateAndAddChildren();
+            Expanded += (s, e) => OpenFileNodes();
         }
 
-        /// <summary>
-        /// Reads the directory, populating all subnodes.
-        /// Subnodes are not opened, use <see cref="OpenChildNodes"/> afterwards to do that.
-        /// Repeated executions are no-ops.
-        /// </summary>
-        public override void Open()
+        private void CreateAndAddChildren()
         {
-            if (isOpened)
-            {
-                return;
-            }
-
             foreach (var name in Directory.EnumerateFileSystemEntries(AbsolutePath))
             {
                 if (Directory.Exists(name))
                 {
                     var dirNode = new DirectoryNode(name, isRoot: false);
                     AddNode(dirNode);
-                    dirNode.Open();
                 }
                 else
                 {
@@ -56,18 +47,14 @@ namespace CrossMod.Nodes
                         AddNode(fileNode);
                 }
             }
-
-            isOpened = true;
         }
 
-        /// <summary>
-        /// Opens all files in this directory.
-        /// Repeated calls are ignored.
-        /// </summary>
-        public void OpenFileNodes()
+        private void OpenFileNodes()
         {
+            // Nodes only need to be opened once.
             if (hasOpenedFiles)
                 return;
+
 
             // Some nodes take a while to open, so use a threadpool to save time.
             var openNodes = new List<Task>();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace CrossMod.Nodes
 {
@@ -21,11 +22,22 @@ namespace CrossMod.Nodes
         /// </summary>
         public bool IsActive { get; set; }
 
-        public FileNode Parent { get; private set; }
+        public FileNode? Parent { get; private set; }
 
         public string ImageKey { get; set; }
 
-        public bool IsExpanded { get; set; }
+        public event EventHandler<bool>? Expanded;
+
+        public bool IsExpanded
+        { 
+            get => isExpanded;
+            set
+            {
+                isExpanded = value;
+                Expanded?.Invoke(this, isExpanded);
+            }
+        }
+        private bool isExpanded;
 
         public List<FileNode> Nodes { get; set; } = new List<FileNode>();
 

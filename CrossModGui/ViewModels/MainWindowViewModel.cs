@@ -1,29 +1,14 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
-using SSBHLib.Formats.Materials;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace CrossModGui.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase
     {
-        public class BoneTreeItem : ViewModelBase
-        {
-            public string Name { get; set; } = "";
-
-            public List<BoneTreeItem> Children { get; set; } = new List<BoneTreeItem>();
-        }
-
-        public class MeshListItem : ViewModelBase
-        {
-            public string Name { get; set; } = "";
-
-            public bool IsChecked { get; set; }
-        }
-
         public bool ShouldLoopAnimation { get; set; } = true;
 
         public float CurrentFrame
@@ -93,10 +78,7 @@ namespace CrossModGui.ViewModels
 
         public void PopulateFileTree(string folderPath)
         {
-            var rootNode = new DirectoryNode(folderPath);
-
-            rootNode.Open();
-            rootNode.OpenFileNodes();
+            var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
 
             FileTreeItems.Clear();
             FileTreeItems.Add(rootNode);

@@ -11,7 +11,6 @@ namespace CrossMod.Tools
             {
                 IsExpanded = true
             };
-            mainNode.Open();
             return mainNode;
         }
     }

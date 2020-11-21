@@ -92,7 +92,6 @@ namespace CrossMod.Tools
         {
             // Loading the numdlb node will load the texture as well.
             var mainNode = WorkSpaceTools.CreateDirectoryNodeAndExpand(sourceFolder);
-            mainNode.OpenFileNodes();
 
             foreach (FileNode node in mainNode.Nodes)
             {
@@ -108,14 +107,14 @@ namespace CrossMod.Tools
                 }
             }
 
-            return null;
+            return new List<IRenderableNode>();
         }
 
         private static string GetCondensedPathName(string folderPath, string file)
         {
             string condensedName = file.Replace(folderPath, "");
             condensedName = condensedName.Replace(Path.DirectorySeparatorChar, '_');
-            condensedName = condensedName.Substring(1); // remove leading underscore
+            condensedName = condensedName[1..]; // remove leading underscore
             return condensedName;
         }
 
@@ -123,7 +122,7 @@ namespace CrossMod.Tools
         {
             while (isBatchRendering)
             {
-                if (imagesToSave.TryDequeue(out SaveImageWorkItem item))
+                if (imagesToSave.TryDequeue(out SaveImageWorkItem? item))
                 {
                     string condensedName = GetCondensedPathName(item.FolderPath, item.FileName);
                     item.Image.Save(Path.Combine(item.OutputPath, $"{condensedName}.png"));

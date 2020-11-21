@@ -126,13 +126,6 @@ namespace CrossModGui.Views
             if (!(e.NewValue is FileNode item))
                 return;
 
-            // Open all files in the folder when the folder is selected.
-            // TODO: This could be moved to the expanded event instead.
-            if (item.Parent is DirectoryNode dir)
-            {
-                dir.OpenFileNodes();
-            }
-
             // Update the current viewport item.
             viewModel.UpdateCurrentRenderableNode(item);
             RenderFrameIfNeeded();
