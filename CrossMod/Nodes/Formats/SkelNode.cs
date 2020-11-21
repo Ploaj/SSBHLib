@@ -1,5 +1,5 @@
 ﻿using CrossMod.Rendering;
-using OpenTK;
+using CrossMod.Tools;
 using SSBHLib;
 using SSBHLib.Formats;
 
@@ -24,7 +24,8 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            if (skel == null) return null;
+            if (skel == null) 
+                return null;
 
             if (skeleton == null)
             {
@@ -37,10 +38,10 @@ namespace CrossMod.Nodes
                         Name = skel.BoneEntries[i].Name,
                         Id = skel.BoneEntries[i].Id,
                         ParentId = skel.BoneEntries[i].ParentId,
-                        Transform = SkelToTkMatrix(skel.Transform[i]),
-                        InvTransform = SkelToTkMatrix(skel.InvTransform[i]),
-                        WorldTransform = SkelToTkMatrix(skel.WorldTransform[i]),
-                        InvWorldTransform = SkelToTkMatrix(skel.InvWorldTransform[i])
+                        Transform = skel.Transform[i].ToOpenTK(),
+                        InvTransform = skel.InvTransform[i].ToOpenTK(),
+                        WorldTransform = skel.WorldTransform[i].ToOpenTK(),
+                        InvWorldTransform = skel.InvWorldTransform[i].ToOpenTK()
                     };
                     skeleton.Bones.Add(bone);
                 }
@@ -49,14 +50,6 @@ namespace CrossMod.Nodes
             skeleton.Reset();
 
             return skeleton;
-        }
-
-        private static Matrix4 SkelToTkMatrix(Matrix4x4 sm)
-        {
-            return new Matrix4(sm.Row1.X, sm.Row1.Y, sm.Row1.Z, sm.Row1.W,
-                sm.Row2.X, sm.Row2.Y, sm.Row2.Z, sm.Row2.W,
-                sm.Row3.X, sm.Row3.Y, sm.Row3.Z, sm.Row3.W,
-                sm.Row4.X, sm.Row4.Y, sm.Row4.Z, sm.Row4.W);
         }
     }
 }

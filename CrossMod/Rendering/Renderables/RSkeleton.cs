@@ -76,36 +76,6 @@ namespace CrossMod.Rendering
                 transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
             }
 
-            // Process HelperBones
-
-            foreach (RHelperBone hBone in HelperBone)
-            {
-                // get watcher bone
-                /*RBone WatcherBone = Bones[GetBoneIndex(hBone.WatcherBone)];
-                Quaternion watcherCurrentRotation = WatcherBone.AnimationTransform.ExtractRotation();
-                RBone helpBone = Bones[GetBoneIndex(hBone.HelperBoneName)];
-                Quaternion helpCurrentRotation = helpBone.AnimationTransform.ExtractRotation();
-                RBone parBone = Bones[GetBoneIndex(hBone.ParentBone)];
-                Quaternion parCurrentRotation = parBone.AnimationTransform.ExtractRotation();
-                ;
-                //if(hBone.HelperBoneName.Equals("H_SholderL"))
-                System.Diagnostics.Debug.WriteLine(hBone.HelperBoneName + " " + hBone.WatcherBone);
-
-                System.Diagnostics.Debug.WriteLine("\t" + hBone.AOI.ToString());
-                System.Diagnostics.Debug.WriteLine("\t" + hBone.HelperTargetRotation.ToString() + " " + hBone.WatchRotation.ToString());
-                System.Diagnostics.Debug.WriteLine("\t" + watcherCurrentRotation.ToString());
-                System.Diagnostics.Debug.WriteLine("\t" + helpCurrentRotation.ToString());
-                System.Diagnostics.Debug.WriteLine("\t" + parCurrentRotation.ToString());
-                //float Angl = Angle(hBone.WatchRotation, watcherCurrentRotation);
-
-                /*int index = GetBoneIndex(hBone.HelperBoneName);
-                RBone HelperBone = Bones[index];
-                HelperBone.AnimationTransform =
-                Matrix4.CreateFromQuaternion(Quaternion.Slerp(HelperBone.Rotation, hBone.HelperTargetRotation, Angl)) * 
-                Matrix4.CreateTranslation(HelperBone.Position);
-                Transforms[index] = HelperBone.InvWorldTransform * HelperBone.GetAnimationTransform(this);*/
-            }
-
             return transforms;
         }
 
@@ -120,6 +90,7 @@ namespace CrossMod.Rendering
             return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
         }
         public const float KEpsilon = 0.000001F;
+
         private static bool IsEqualUsingDot(float dot)
         {
             // Returns false in the presence of NaN values.
@@ -188,9 +159,9 @@ namespace CrossMod.Rendering
 
     public class RBone
     {
-        public string Name;
-        public int Id;
-        public int ParentId;
+        public string Name { get; set; }
+        public int Id { get; set; }
+        public int ParentId { get; set; }
 
         public Matrix4 Transform
         {
@@ -205,36 +176,13 @@ namespace CrossMod.Rendering
             }
         }
         private Matrix4 transform;
-        public Matrix4 InvTransform;
-        public Matrix4 WorldTransform;
-        public Matrix4 InvWorldTransform;
+
+        public Matrix4 InvTransform { get; set; }
+        public Matrix4 WorldTransform { get; set; }
+        public Matrix4 InvWorldTransform { get; set; }
 
         // for rendering animation
         public Matrix4 AnimationTransform;
-
-        public Vector3 Position
-        {
-            get
-            {
-                return Transform.ExtractTranslation();
-            }
-        }
-        public Quaternion Rotation
-        {
-            get
-            {
-                return Transform.ExtractRotation();
-            }
-        }
-        public Vector3 EulerRotation { get => Tools.CrossMath.ToEulerAngles(InvTransform.ExtractRotation()); }
-
-        public Vector3 Scale
-        {
-            get
-            {
-                return Transform.ExtractScale();
-            }
-        }
 
         public Matrix4 GetAnimationTransform(RSkeleton skeleton)
         {
@@ -249,14 +197,14 @@ namespace CrossMod.Rendering
 
     public class RHelperBone
     {
-        public string WatcherBone;
-        public string ParentBone;
-        public string HelperBoneName;
+        public string WatcherBone { get; set; }
+        public string ParentBone { get; set; }
+        public string HelperBoneName { get; set; }
 
-        public Vector3 Aoi;
-        public Quaternion WatchRotation;
-        public Quaternion HelperTargetRotation;
-        public Vector3 MinRange;
-        public Vector3 MaxRange;
+        public Vector3 Aoi { get; set; }
+        public Quaternion WatchRotation { get; set; }
+        public Quaternion HelperTargetRotation { get; set; }
+        public Vector3 MinRange { get; set; }
+        public Vector3 MaxRange { get; set; }
     }
 }
