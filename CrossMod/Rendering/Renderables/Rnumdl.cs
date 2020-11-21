@@ -38,25 +38,12 @@ namespace CrossMod.Rendering
             LodXmb = lodXmb?.Xmb;
             TextureByName = textureByName;
 
-            if (meshNode != null)
-                RenderModel = meshNode.GetRenderModel(Skeleton);
+            RenderModel = meshNode.GetRenderModel(Skeleton);
 
             UpdateMaterials(matl);
             if (Skeleton != null)
             {
                 hlpbNode?.AddToRenderSkeleton(Skeleton);
-                UpdateBinds();
-            }
-        }
-
-        private void UpdateBinds()
-        {
-            if (RenderModel != null)
-            {
-                foreach (RMesh m in RenderModel.SubMeshes)
-                {
-                    m.SingleBindIndex = Skeleton.GetBoneIndex(m.SingleBindName);
-                }
             }
         }
 

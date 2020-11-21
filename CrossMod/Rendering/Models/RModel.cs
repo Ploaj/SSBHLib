@@ -45,7 +45,7 @@ namespace CrossMod.Rendering.Models
 
                     if (meshName.Contains(pattern.ToLower()))
                     {
-                        mesh.Visible = false;
+                        mesh.IsVisible = false;
                     }
                 }
             }

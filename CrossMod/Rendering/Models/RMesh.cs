@@ -8,39 +8,46 @@ namespace CrossMod.Rendering.Models
 {
     public class RMesh
     {
-        // TODO: These properties shouldn't be mutable.
-        public static Resources.DefaultTextures defaultTextures = null;
+        public UltimateMesh RenderMesh { get; }
 
-        public UltimateMesh? RenderMesh { get; set; } = null;
+        public string Name { get; }
 
-        public string Name { get; set; }
+        public long SubIndex { get; }
 
-        public long SubIndex { get; set; }
+        public Vector4 BoundingSphere { get; }
 
-        public Vector4 BoundingSphere { get; set; }
-
-        public string SingleBindName { get; set; } = "";
-        public int SingleBindIndex { get; set; } = -1;
+        public string SingleBindName { get; }
+        public int SingleBindIndex { get; }
 
         public RMaterial? Material { get; set; } = null;
 
-        public bool Visible
+        public bool IsVisible
         {
-            get => visible;
+            get => isVisible;
             set
             {
-                if (value != visible)
+                if (value != isVisible)
                     VisibilityChanged?.Invoke(this, value);
-                visible = value;
+                isVisible = value;
             }
         }
-        private bool visible = true;
+        private bool isVisible = true;
 
-        public event EventHandler<bool> VisibilityChanged;
+        public event EventHandler<bool>? VisibilityChanged;
+
+        public RMesh(string name, long subIndex, string singleBindName, int singleBindIndex, Vector4 boundingSphere, UltimateMesh renderMesh)
+        {
+            Name = name;
+            SubIndex = subIndex;
+            SingleBindName = singleBindName;
+            SingleBindIndex = singleBindIndex;
+            BoundingSphere = boundingSphere;
+            RenderMesh = renderMesh;
+        }
 
         public void Draw(Shader shader, RSkeleton skeleton)
         {
-            if (!Visible)
+            if (!IsVisible)
                 return;
 
             if (skeleton != null)

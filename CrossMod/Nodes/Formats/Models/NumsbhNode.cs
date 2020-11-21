@@ -35,7 +35,7 @@ namespace CrossMod.Nodes
             Ssbh.TryParseSsbhFile(AbsolutePath, out mesh);
         }
 
-        public RModel GetRenderModel(RSkeleton skeleton = null)
+        public RModel GetRenderModel(RSkeleton skeleton)
         {
             var model = new RModel
             {
@@ -52,15 +52,16 @@ namespace CrossMod.Nodes
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
-                var rMesh = new RMesh
-                {
-                    Name = meshObject.Name,
-                    SubIndex = meshObject.SubIndex,
-                    SingleBindName = meshObject.ParentBoneName,
-                    BoundingSphere = new Vector4(meshObject.BoundingSphereCenter.X, meshObject.BoundingSphereCenter.Y,
-                        meshObject.BoundingSphereCenter.Z, meshObject.BoundingSphereRadius),
-                    RenderMesh = CreateRenderMesh(skeleton, meshObject, vertexBuffer0, vertexBuffer1),
-                };
+                var singleBindIndex = skeleton.GetBoneIndex(meshObject.ParentBoneName);
+
+                var rMesh = new RMesh(meshObject.Name, 
+                    meshObject.SubIndex, 
+                    meshObject.ParentBoneName,
+                    singleBindIndex,
+                    new Vector4(meshObject.BoundingSphereCenter.ToOpenTK(), 
+                    meshObject.BoundingSphereRadius),
+                    CreateRenderMesh(skeleton, meshObject, vertexBuffer0, vertexBuffer1)
+                );
 
                 model.SubMeshes.Add(rMesh);
             }

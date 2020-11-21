@@ -208,16 +208,14 @@ namespace CrossModGui.ViewModels
                 var newItem = new MeshListItem
                 {
                     Name = mesh.Name,
-                    IsChecked = mesh.Visible
+                    IsChecked = mesh.IsVisible
                 };
 
                 // Sync in both directions to support expression hiding.
                 newItem.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == nameof(MeshListItem.IsChecked))
-                        mesh.Visible = newItem.IsChecked;
-                    else if (e.PropertyName == nameof(MeshListItem.Name))
-                        mesh.Name = newItem.Name;
+                        mesh.IsVisible = newItem.IsChecked;
                 };
                 mesh.VisibilityChanged += (s, e) => newItem.IsChecked = e;
 

@@ -29,7 +29,7 @@ namespace CrossMod.Rendering
                     // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))
                     {
-                        m.Visible = a.Visibility.GetValue(frame);
+                        m.IsVisible = a.Visibility.GetValue(frame);
                     }
                 }
             }
