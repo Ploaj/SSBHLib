@@ -13,35 +13,35 @@ namespace CrossMod.Rendering
 {
     public class RNumdl : IRenderableModel
     {
-        public Modl? Modl { get; }
+        public Modl Modl { get; }
 
         public Dictionary<string, RTexture> TextureByName { get; }
 
         public RSkeleton? Skeleton { get; }
 
-        public RModel? RenderModel { get; }
+        public RModel RenderModel { get; }
 
+        // TODO: Why are these saved as is?
         public Matl? Matl { get; }
-
         public Xmb? ModelXmb { get; }
         public Xmb? LodXmb { get; }
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl modl, RSkeleton skeleton, Matl material, NumsbhNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
+        public RNumdl(Modl modl, RSkeleton skeleton, Matl matl, NumsbhNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;
             Skeleton = skeleton;
-            Matl = material;
+            Matl = matl;
             ModelXmb = modelXmb?.Xmb;
             LodXmb = lodXmb?.Xmb;
             TextureByName = textureByName;
 
             if (meshNode != null)
                 RenderModel = meshNode.GetRenderModel(Skeleton);
-            if (Matl != null)
-                UpdateMaterials();
+
+            UpdateMaterials(matl);
             if (Skeleton != null)
             {
                 hlpbNode?.AddToRenderSkeleton(Skeleton);
@@ -60,28 +60,40 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void UpdateMaterials()
+        private void UpdateMaterials(Matl? matl)
         {
-            InitializeMaterials();
+            InitializeMaterials(matl);
             AssignMaterials();
         }
 
         private void AssignMaterials()
         {
+            // Match materials based on the Modl.
             foreach (ModlEntry modlEntry in Modl.ModelEntries)
             {
-                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial meshMaterial))
+                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial? meshMaterial))
                     continue;
 
                 AssignMaterialToMeshes(modlEntry, meshMaterial);
             }
+
+            // Fix any potentially unassigned materials.
+            // TODO: Display some sort of error color in the viewport?
+            foreach (var mesh in RenderModel.SubMeshes)
+            {
+                if (mesh.Material == null)
+                    mesh.Material = new RMaterial();
+            }
         }
 
-        private void InitializeMaterials()
+        private void InitializeMaterials(Matl? matl)
         {
-            for (int i = 0; i < Matl.Entries.Length; i++)
+            if (matl == null)
+                return;
+
+            for (int i = 0; i < matl.Entries.Length; i++)
             {
-                var entry = Matl.Entries[i];
+                var entry = matl.Entries[i];
                 var rMaterial = MatlToMaterial.CreateMaterial(entry, i, TextureByName);
                 MaterialByName.Add(rMaterial.MaterialLabel, rMaterial);
             }

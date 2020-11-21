@@ -11,7 +11,7 @@ namespace CrossMod.Rendering.Models
         // TODO: These properties shouldn't be mutable.
         public static Resources.DefaultTextures defaultTextures = null;
 
-        public UltimateMesh RenderMesh { get; set; } = null;
+        public UltimateMesh? RenderMesh { get; set; } = null;
 
         public string Name { get; set; }
 
@@ -22,7 +22,7 @@ namespace CrossMod.Rendering.Models
         public string SingleBindName { get; set; } = "";
         public int SingleBindIndex { get; set; } = -1;
 
-        public RMaterial Material { get; set; } = null;
+        public RMaterial? Material { get; set; } = null;
 
         public bool Visible
         {

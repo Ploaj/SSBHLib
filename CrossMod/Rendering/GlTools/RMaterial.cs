@@ -16,15 +16,14 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public class RMaterial
     {
-
-        public string MaterialLabel { get; set; }
-        public string ShaderLabel { get; set; }
+        public string MaterialLabel { get; set; } = "";
+        public string ShaderLabel { get; set; } = "";
         public int Index { get; set; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
 
-        private GenericMaterial genericMaterial = null;
-        private UniformBlock uniformBlock = null;
+        private GenericMaterial? genericMaterial = null;
+        private UniformBlock? uniformBlock = null;
 
         // The parameters don't matter because the default texture are solid color.
         private readonly SamplerObject defaultSampler = new SamplerObject();
@@ -107,7 +106,7 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public void SetMaterialUniforms(Shader shader, RMaterial previousMaterial)
+        public void SetMaterialUniforms(Shader shader, RMaterial? previousMaterial)
         {
             // TODO: This code could be moved to the constructor.
             if (genericMaterial == null || shouldUpdateTexturesAndSamplers)

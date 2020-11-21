@@ -136,7 +136,7 @@ namespace CrossMod.Rendering.Models
             GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.
-            RMaterial previousMaterial = null;
+            RMaterial? previousMaterial = null;
 
             foreach (RMesh m in opaqueMeshes)
             {
@@ -173,7 +173,6 @@ namespace CrossMod.Rendering.Models
             farMeshes = new List<RMesh>();
 
             // Meshes are split into render passes based on the shader label.
-            // TODO: Use a setter in the material class to cache the result.
             foreach (RMesh m in SubMeshes)
             {
                 if (m.Material == null)
@@ -182,6 +181,8 @@ namespace CrossMod.Rendering.Models
                     continue;
                 }
 
+                // Unrecognized meshes will just be placed in the first pass.
+                // TODO: Does the game use a red checkerboard for missing labels?
                 if (m.Material.ShaderLabel.EndsWith("_far"))
                     farMeshes.Add(m);
                 else if (m.Material.ShaderLabel.EndsWith("_sort"))
@@ -191,11 +192,11 @@ namespace CrossMod.Rendering.Models
                 else if (m.Material.ShaderLabel.EndsWith("_opaque"))
                     opaqueMeshes.Add(m);
                 else
-                    throw new NotImplementedException($"{m.Material.ShaderLabel} does not have a recognized sort modifier");
+                    opaqueMeshes.Add(m);
             }
         }
 
-        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, RMaterial previousMaterial)
+        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, RMaterial? previousMaterial)
         {
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
