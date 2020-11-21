@@ -10,7 +10,6 @@ using System.IO;
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".nutexb")]
     public class NutexNode : FileNode, IRenderableNode
     {
         public string TexName { get; private set; }
@@ -21,6 +20,7 @@ namespace CrossMod.Nodes
         public NutexNode(string path) : base(path)
         {
             ImageKey = "texture";
+            IsActive = true;
         }
 
         public override string ToString()

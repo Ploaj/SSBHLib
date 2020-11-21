@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".numdlb")]
     public class NumdlNode : FileNode, IRenderableNode
     {
         private Modl model;
@@ -16,6 +15,7 @@ namespace CrossMod.Nodes
         public NumdlNode(string path) : base(path)
         {
             ImageKey = "model";
+            IsActive = true;
         }
 
         public IRenderable GetRenderableNode()

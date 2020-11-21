@@ -5,7 +5,6 @@ using SSBHLib.Formats;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".nusktb")]
     public class SkelNode : FileNode, IRenderableNode
     {
         private Skel skel;

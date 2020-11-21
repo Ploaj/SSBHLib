@@ -4,7 +4,6 @@ using SSBHLib.Formats;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".nuhlpb")]
     public class NuhlpbNode : FileNode
     {
         public Hlpb helperBones;

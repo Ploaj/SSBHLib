@@ -3,7 +3,6 @@ using SSBHLib.Formats.Materials;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".numatb")]
     public class MatlNode : FileNode
     {
         public Matl Material { get; set; }

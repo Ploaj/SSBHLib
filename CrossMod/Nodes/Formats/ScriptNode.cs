@@ -13,7 +13,6 @@ using System.IO;
 
 namespace CrossMod.Nodes
 {
-    [FileType(".script")]
     public class ScriptNode : FileNode
     {
         public Dictionary<string, Script> Scripts { get; set; }

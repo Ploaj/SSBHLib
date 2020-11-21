@@ -1,8 +1,6 @@
-﻿using System;
+﻿using CrossMod.Nodes.Formats.Models;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CrossMod.Nodes
@@ -16,13 +14,6 @@ namespace CrossMod.Nodes
         private bool isOpened = false;
         private bool hasOpenedFiles = false;
 
-        // Convert to list to avoid evaluating the LINQ more than once.
-        private static readonly List<Type> fileNodeTypes = (from assemblyType in Assembly.GetAssembly(typeof(NuanimNode)).GetTypes()
-                                                            where typeof(FileNode).IsAssignableFrom(assemblyType)
-                                                            select assemblyType).ToList();
-
-        private static readonly Dictionary<string, Type> typeByExtension = new Dictionary<string, Type>();
-
         /// <summary>
         /// Creates a new DirectoryNode. The FilePath is set to the given value
         /// </summary>
@@ -30,7 +21,7 @@ namespace CrossMod.Nodes
         /// <param name="isRoot">Whether this is the topmost parent. Decides whether to display full or partial name.</param>
         public DirectoryNode(string path, bool isRoot = true) : base(path)
         {
-            Text = (isRoot) ? Path.GetFullPath(path) : Path.GetFileName(path);
+            Text = isRoot ? Path.GetFullPath(path) : Path.GetFileName(path);
             ImageKey = "folder";
 
             // Make the font color use the default foreground color.
@@ -60,7 +51,9 @@ namespace CrossMod.Nodes
                 }
                 else
                 {
-                    AddNode(CreateFileNode(name));
+                    var fileNode = CreateFileNode(name);
+                    if (fileNode != null)
+                        AddNode(fileNode);
                 }
             }
 
@@ -90,56 +83,22 @@ namespace CrossMod.Nodes
             hasOpenedFiles = true;
         }
 
-        /// <summary>
-        /// Internal helper to open a file entry.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        private FileNode CreateFileNode(string file)
+        private FileNode? CreateFileNode(string filePath)
         {
-            FileNode fileNode = null;
-
-            var type = GetType(Path.GetExtension(file));
-            if (type != null)
-                fileNode = (FileNode)Activator.CreateInstance(type, file);
-
-            if (fileNode == null)
-                fileNode = new FileNode(file);
-
-            fileNode.IsActive = (fileNode is IRenderableNode) || (fileNode is NuanimNode);
-
-            fileNode.Text = Path.GetFileName(file);
-            return fileNode;
-        }
-
-        private static Type GetType(string extension)
-        {
-            // Cache results to avoid doing lots of lookups.
-            if (typeByExtension.ContainsKey(extension))
+            return Path.GetExtension(filePath) switch
             {
-                return typeByExtension[extension];
-            }
-            else
-            {
-                var type = FindType(extension);
-                typeByExtension[extension] = type;
-                return type;
-            }
-        }
-
-        private static Type FindType(string extension)
-        {
-            foreach (var type in fileNodeTypes)
-            {
-                if (type.GetCustomAttributes(typeof(FileTypeAttribute), true).FirstOrDefault() is FileTypeAttribute attr)
-                {
-                    if (attr.Extension.Equals(extension))
-                    {
-                        return type;
-                    }
-                }
-            }
-            return null;
+                ".nutexb" => new NutexNode(filePath),
+                ".numshb" => new NumsbhNode(filePath),
+                ".numatb" => new MatlNode(filePath),
+                ".numdlb" => new NumdlNode(filePath),
+                ".nusktb" => new SkelNode(filePath),
+                ".script" => new ScriptNode(filePath),
+                ".nuanmb" => new NuanimNode(filePath),
+                ".xmb" => new XmbNode(filePath),
+                ".prc" => new ParamNode(filePath),
+                ".nuhlp" => new NuhlpbNode(filePath),
+                _ => null
+            };
         }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".shpcanim")]
     public class ShanNode : FileNode
     {
 

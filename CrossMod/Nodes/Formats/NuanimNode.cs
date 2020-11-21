@@ -3,11 +3,9 @@ using OpenTK;
 using SSBHLib;
 using SSBHLib.Formats.Animation;
 using SSBHLib.Tools;
-using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".nuanmb")]
     public class NuanimNode : FileNode
     {
         private Anim animation;
@@ -15,34 +13,12 @@ namespace CrossMod.Nodes
         public NuanimNode(string path) : base(path)
         {
             ImageKey = "animation";
+            IsActive = true;
         }
 
         public override void Open()
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out animation);
-        }
-
-        public string GetLightInformation()
-        {
-            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
-
-            var output = new System.Text.StringBuilder();
-            foreach (AnimGroup animGroup in animation.Animations)
-            {
-                AddLightSetInfo(output, decoder, animGroup);
-            }
-
-            return output.ToString();
-        }
-
-        public void UpdateUniqueLightValues(Dictionary<string, HashSet<string>> valuesByName)
-        {
-            SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);
-
-            foreach (AnimGroup animGroup in animation.Animations)
-            {
-                AddLightValues(valuesByName, decoder, animGroup);
-            }
         }
 
         public IRenderableAnimation GetRenderableAnimation()
@@ -163,46 +139,6 @@ namespace CrossMod.Nodes
                     }
                 }
                 renderAnimation.VisibilityNodes.Add(visAnim);
-            }
-        }
-
-        private static void AddLightSetInfo(System.Text.StringBuilder output, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
-        {
-            foreach (AnimNode animNode in animGroup.Nodes)
-            {
-                output.AppendLine(animNode.Name);
-
-                foreach (AnimTrack track in animNode.Tracks)
-                {
-                    object[] values = decoder.ReadTrack(track);
-
-                    output.AppendLine($"\t{track.Name}");
-                    foreach (var value in values)
-                    {
-                        output.AppendLine($"\t\t{value}");
-                    }
-                }
-            }
-        }
-
-        private static void AddLightValues(Dictionary<string, HashSet<string>> valuesByName, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
-        {
-            // Store all unique values for each parameter.
-            foreach (AnimNode animNode in animGroup.Nodes)
-            {
-                foreach (AnimTrack track in animNode.Tracks)
-                {
-                    if (!valuesByName.ContainsKey(track.Name))
-                        valuesByName[track.Name] = new HashSet<string>();
-
-                    object[] values = decoder.ReadTrack(track);
-
-                    foreach (var value in values)
-                    {
-                        if (!valuesByName[track.Name].Contains(value.ToString()))
-                            valuesByName[track.Name].Add(value.ToString());
-                    }
-                }
             }
         }
 

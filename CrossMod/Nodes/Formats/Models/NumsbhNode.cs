@@ -13,7 +13,6 @@ using System.IO;
 
 namespace CrossMod.Nodes
 {
-    [FileTypeAttribute(".numshb")]
     public class NumsbhNode : FileNode
     {
         public Mesh mesh;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace CrossMod.Nodes
 {
@@ -31,6 +32,7 @@ namespace CrossMod.Nodes
         public FileNode(string path)
         {
             AbsolutePath = path;
+            Text = Path.GetFileName(path);
         }
 
         // TODO: Ensure nodes can only be added using this method to avoid messing up parent/child relationships.

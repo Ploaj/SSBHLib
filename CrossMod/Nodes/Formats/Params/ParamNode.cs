@@ -2,7 +2,6 @@
 
 namespace CrossMod.Nodes
 {
-    [FileType(".prc")]
     public class ParamNode : FileNode
     {
         public ParamFile Param { get; set; }
