@@ -79,8 +79,6 @@ namespace CrossModGui.ViewModels
         public void PopulateFileTree(string folderPath)
         {
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
-
-            FileTreeItems.Clear();
             FileTreeItems.Add(rootNode);
         }
 
