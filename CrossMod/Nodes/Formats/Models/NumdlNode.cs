@@ -64,7 +64,11 @@ namespace CrossMod.Nodes
                 else if (fileNode is NutexNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
-                    textureByName[nutexNode.TexName.ToLower()] = texture;
+
+                    // Use the file name instead of the internal name.
+                    // Ignore case.
+                    var textureName = System.IO.Path.GetFileNameWithoutExtension(fileNode.Text).ToLower();
+                    textureByName[textureName] = texture;
                 }
                 else if (fileNode.Text.Equals(model.MeshString))
                 {
