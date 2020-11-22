@@ -110,50 +110,61 @@ vec3 GetBumpMapNormal(vec3 normal, vec3 tangent, vec3 bitangent, vec4 norColor);
 // Defined in Gamma.frag.
 vec3 GetSrgb(vec3 linear);
 
+// Schlick fresnel approximation.
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 } 
 
-// GGX calculations adapted from https://learnopengl.com/PBR/IBL/Specular-IBL
-float Ggx(float nDotH, float roughness)
+// Ultimate shaders use a schlick geometry masking term.
+// http://cwyman.org/code/dxrTutors/tutors/Tutor14/tutorial14.md.html
+float SchlickMaskingTerm(float nDotL, float nDotV, float a2) 
 {
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float nDotH2 = nDotH * nDotH;
-
-    float numerator = a2;
-    float denominator = (nDotH2 * (a2 - 1.0) + 1.0);
-    denominator = 3.14159 * denominator * denominator;
-
-    return numerator / denominator;
+    float k = a2 * 0.5;
+    float gV = nDotV / (nDotV * (1 - k) + k);
+    float gL = nDotL / (nDotL * (1 - k) + k);
+    return gV * gL;
 }
 
-// Code adapted from equations listed here:
+// Ultimate shaders use a standard GGX BRDF for specular.
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+float Ggx(float nDotH, float nDotL, float nDotV, float roughness)
+{
+    // Clamp to 0.01 to prevent divide by 0.
+    float a = max(roughness, 0.01);
+    float a2 = a * a;
+    const float PI = 3.14159;
+    float nDotH2 = nDotH * nDotH;
+
+    float denominator = ((nDotH2) * (a2 - 1.0) + 1.0);
+    float specular = a2 / (PI * denominator * denominator);
+    float shadowing = SchlickMaskingTerm(nDotL, nDotV, a2);
+    // TODO: kSpecular, missing 4*nDotL*nDotV in denominator?
+    return specular * shadowing;
+}
+
+// A very similar BRDF as used for GGX.
 float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
+    // Clamp to 0.01 to prevent divide by 0.
     float roughnessX = max(roughness * anisotropy, 0.01);
     float roughnessY = max(roughness / anisotropy, 0.01);
 
-    // TODO: Anisotropic rotation using PRM alpha?
+    float roughnessX4 = pow(roughnessX, 4);
+    float roughnessY4 = pow(roughnessY, 4);
+
+    float xDotH = dot(bitangent, H);
+    float xTerm = (xDotH * xDotH) / roughnessX4;
+
+    float yDotH = dot(tangent, H);
+    float yTerm = (yDotH * yDotH) / roughnessY4;
 
     // TODO: Check this section of code.
-    float normalization = (3.14159 * roughnessX * roughnessY);
-
     float nDotH2 = nDotH * nDotH;
-
-    float roughnessX2 = roughnessX * roughnessX;
-    float roughnessY2 = roughnessY * roughnessY;
-
-    float xDotH = dot(tangent, H);
-    float xTerm = (xDotH * xDotH) / roughnessX2;
-
-    float yDotH = dot(bitangent, H);
-    float yTerm = (yDotH * yDotH) / roughnessY2;
-
     float denominator = xTerm + yTerm + nDotH2;
 
+    // TODO: Is there a geometry term for anisotropic?
+    float normalization = (3.14159 * roughnessX * roughnessY);
     return 1.0 / (normalization * denominator * denominator);
 }
 
@@ -176,9 +187,9 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     directShading = clamp(directShading, 0, 1);
 
     // Hardcoded shader constant.
-    float directLightScale = 0.3183000087738037;
+    float oneOverPI = 0.3183000087738037;
     
-    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * directLightScale;
+    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * oneOverPI;
     
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
@@ -205,22 +216,22 @@ vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBle
     return diffuseTerm;
 }
 
-float SpecularBrdf(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness)
+float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness)
 {
     // The two BRDFs look very different so don't just use anisotropic for everything.
     if (hasCustomFloat10 == 1)
         return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat[10].x);
     else
-        return Ggx(nDotH, roughness);
+        return Ggx(nDotH, nDotL, nDotV, roughness);
 }
 
-vec3 SpecularTerm(float nDotH, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
+vec3 SpecularTerm(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
 {
     // Direct specular intensity from cbuf1.
-    // TODO: Is this always constant.
-    float directLightScale = 0.3183000087738037;
+    // TODO: Is this always constant?
+    float oneOverPI = 0.3183000087738037;
 
-    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, halfAngle, bitangent, roughness) * directLightIntensity * directLightScale;
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, bitangent, roughness) * directLightIntensity;// * oneOverPI;
     vec3 indirectSpecular = specularIbl;
     vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x);
 
@@ -352,9 +363,6 @@ void main()
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
-    // albedoColor = vec4(vec3(0.25), 1.0);
-    // prmColor = vec4(1.1,0,1,0);
-
     // Override the PRM color with default texture colors if disabled.
     if (renderPrmMetalness != 1)
         prmColor.r = 0;
@@ -399,17 +407,22 @@ void main()
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat[1] + 1.0));
 
     // Image based lighting.
+    // The texture is currently using exported values, 
+    // so multiply by 0.5 to fix the intensity.
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; // TODO: constant?
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5; // TODO: constant?
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
+    
+    // TODO: This should be an irradiance map.
+    // TODO: Models with no irradiance map use a vertex attribute?
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; 
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
-    vec3 specularPass = SpecularTerm(nDotH, halfAngle, bitangent, roughness, specularIbl, metalness);
+    vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
     vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
