@@ -908,7 +908,7 @@
             result.WrapR = (Formats.Materials.MatlWrapMode)parser.ReadInt32();
             result.MinFilter = (Formats.Materials.MatlMinFilter)parser.ReadInt32();
             result.MagFilter = (Formats.Materials.MatlMagFilter)parser.ReadInt32();
-            result.Unk6 = parser.ReadInt32();
+            result.TextureFilteringType = (Formats.Materials.FilteringType)parser.ReadInt32();
             result.Unk7 = parser.ReadInt32();
             result.Unk8 = parser.ReadInt32();
             result.Unk9 = parser.ReadInt32();

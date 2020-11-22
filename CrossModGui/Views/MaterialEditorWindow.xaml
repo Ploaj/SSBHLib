@@ -111,7 +111,7 @@
                                         <Expander.Header>
                                             <StackPanel Orientation="Horizontal">
                                                 <Rectangle Width="16" Height="16" Fill="White" Stroke="Black"></Rectangle>
-                                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding ParamId}"></TextBlock>
+                                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding TextureSamplerText}"></TextBlock>
                                             </StackPanel>
                                         </Expander.Header>
                                         <StackPanel>
@@ -148,6 +148,10 @@
                                                                                                   Path=DataContext.DescriptionByMagFilter}"
                                                                      SelectedValue="{Binding MagFilter}"></usercontrols:EnumEditor>
                                             <usercontrols:LabeledFloatEditor Margin="5,2" Label="Lod Bias" Value="{Binding LodBias}"></usercontrols:LabeledFloatEditor>
+                                            <usercontrols:EnumEditor Margin="5,2" Label="Filtering Type" 
+                                                                     DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
+                                                                                                  Path=DataContext.DescriptionByFilteringType}"
+                                                                     SelectedValue="{Binding TextureFilteringType}"></usercontrols:EnumEditor>
                                             <usercontrols:EnumEditor Margin="5,2" Label="Max Anisotropy" 
                                                                      DescriptionByValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, 
                                                                                                   Path=DataContext.DescriptionByAnisotropy}"

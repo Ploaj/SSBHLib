@@ -19,7 +19,7 @@ namespace CrossMod.Rendering.GlTools
                 LodBias = samplerStruct.LodBias,
             };
 
-            if (samplerStruct.Unk6 == 2)
+            if (samplerStruct.TextureFilteringType == FilteringType.AnisotropicFiltering)
                 sampler.MaxAnisotropy = samplerStruct.MaxAnisotropy;
             else
                 sampler.MaxAnisotropy = 1;

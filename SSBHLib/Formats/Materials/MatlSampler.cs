@@ -22,6 +22,13 @@
         Linear2 = 2,
     }
 
+    public enum FilteringType : int
+    {
+        Default = 0,
+        Default2 = 1,
+        AnisotropicFiltering = 2
+    }
+
     public partial class MatlAttribute
     {
         public class MatlSampler : SsbhFile
@@ -31,7 +38,7 @@
             public MatlWrapMode WrapR { get; set; }
             public MatlMinFilter MinFilter { get; set; }
             public MatlMagFilter MagFilter { get; set; }
-            public int Unk6 { get; set; }
+            public FilteringType TextureFilteringType { get; set; }
             public int Unk7 { get; set; }
             public int Unk8 { get; set; }
             public int Unk9 { get; set; }

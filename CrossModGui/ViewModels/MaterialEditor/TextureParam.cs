@@ -14,6 +14,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public MatlWrapMode WrapR { get; set; }
         public MatlMinFilter MinFilter { get; set; }
         public MatlMagFilter MagFilter { get; set; }
+        public FilteringType TextureFilteringType { get; set; }
+        public string TextureSamplerText => $"{ParamId} / {SamplerParamId}";
+
         public float LodBias { get; set; }
         public int MaxAnisotropy { get; set; }
     }

@@ -69,6 +69,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlMinFilter.LinearMipmapLinear2, "Linear Mipmap Linear2" },
         };
 
+        public Dictionary<FilteringType, string> DescriptionByFilteringType { get; } = new Dictionary<FilteringType, string>
+        {
+            { FilteringType.Default, "Default" },
+            { FilteringType.Default2, "Default2" },
+            { FilteringType.AnisotropicFiltering, "Anisotropic Filtering" },
+        };
+
         public Dictionary<MatlWrapMode, string> DescriptionByWrapMode { get; } = new Dictionary<MatlWrapMode, string>
         {
             { MatlWrapMode.Repeat, "Repeat" },
@@ -212,7 +219,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 WrapT = param.WrapT.ToOpenTk(),
                 WrapR = param.WrapR.ToOpenTk(),
                 LodBias = param.LodBias,
-                MaxAnisotropy = param.MaxAnisotropy
+                // Disable anisotropic filtering if it's disabled in the material.
+                MaxAnisotropy = param.TextureFilteringType == FilteringType.AnisotropicFiltering ? param.MaxAnisotropy : 1,       
             };
         }
 
@@ -254,8 +262,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 TryAssignValuesFromDescription(param);
             }
 
+            // TODO: Are texture names case sensitive?
             material.TextureParams.AddRange(entry.GetTextures()
-                .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value, SamplerParamId = ParamIdExtensions.GetSampler(t.Key).ToString() }));
+                .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value.ToLower(), SamplerParamId = ParamIdExtensions.GetSampler(t.Key).ToString() }));
 
             UpdateTextureParamsFromSamplers(entry, material);
         }
@@ -278,6 +287,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 param.MagFilter = sampler.MagFilter;
                 param.LodBias = sampler.LodBias;
                 param.MaxAnisotropy = sampler.MaxAnisotropy;
+                param.TextureFilteringType = sampler.TextureFilteringType;
             }
         }
 
@@ -338,6 +348,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         private MatlAttribute.MatlBlendState GetBlendState(Material material, MatlAttribute.MatlBlendState previous)
         {
             // TODO: Completely remake the data object.
+            // TODO: This modifies the previous object.
             previous.SourceColor = material.SourceColor;
             previous.DestinationColor = material.DestinationColor;
             return previous;
@@ -346,6 +357,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         private MatlAttribute.MatlRasterizerState GetRasterizerState(Material material, MatlAttribute.MatlRasterizerState previous)
         {
             // TODO: Completely remake the data object.
+            // TODO: This modifies the previous object.
             previous.CullMode = material.CullMode;
             previous.FillMode = material.FillMode;
             return previous;
@@ -365,6 +377,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         private MatlAttribute.MatlSampler GetMatlSampler(TextureParam param, MatlAttribute.MatlSampler previous)
         {
             // TODO: Completely remake the data object.
+            // TODO: This modifies the previous object.
             previous.WrapS = param.WrapS;
             previous.WrapT = param.WrapT;
             previous.WrapR = param.WrapR;
@@ -372,6 +385,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             previous.MinFilter = param.MinFilter;
             previous.LodBias = param.LodBias;
             previous.MaxAnisotropy = param.MaxAnisotropy;
+            previous.TextureFilteringType = param.TextureFilteringType;
 
             return previous;
         }
