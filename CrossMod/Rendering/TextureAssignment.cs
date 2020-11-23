@@ -15,7 +15,7 @@ namespace CrossMod.Rendering
             { MatlEnums.ParamId.Texture3, DefaultTextures.Instance.DefaultWhite },
             { MatlEnums.ParamId.Texture4, DefaultTextures.Instance.DefaultNormal },
             { MatlEnums.ParamId.Texture5, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultParams },
+            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultPrm },
             { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.BlackCube },
             { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.BlackCube },
             { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultWhite },
@@ -31,11 +31,11 @@ namespace CrossMod.Rendering
         {
             { "#replace_cubemap", DefaultTextures.Instance.SpecularPbr },
             { "/common/shader/sfxpbs/default_normal", DefaultTextures.Instance.DefaultNormal },
-            { "/common/shader/sfxpbs/default_params", DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/default_params", DefaultTextures.Instance.DefaultParamsFighter },
             { "/common/shader/sfxpbs/default_black", DefaultTextures.Instance.DefaultBlack },
             { "/common/shader/sfxpbs/default_white", DefaultTextures.Instance.DefaultWhite },
             { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.DefaultWhite },
-            { "/common/shader/sfxpbs/fighter/default_params", DefaultTextures.Instance.DefaultParams },
+            { "/common/shader/sfxpbs/fighter/default_params", DefaultTextures.Instance.DefaultParamsFighter },
             { "/common/shader/sfxpbs/fighter/default_normal", DefaultTextures.Instance.DefaultNormal }
         };
 
