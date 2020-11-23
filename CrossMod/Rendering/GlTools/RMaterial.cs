@@ -231,7 +231,6 @@ namespace CrossMod.Rendering.GlTools
             customVectors[6] = new Vector4(1, 1, 0, 0);
             customVectors[8] = Vector4.One;
             customVectors[13] = Vector4.One;
-            customVectors[14] = Vector4.One;
             customVectors[18] = Vector4.One;
             customVectors[31] = new Vector4(1, 1, 0, 0);
             customVectors[32] = new Vector4(1, 1, 0, 0);
