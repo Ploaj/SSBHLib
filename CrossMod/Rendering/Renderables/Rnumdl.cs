@@ -19,7 +19,7 @@ namespace CrossMod.Rendering
 
         public RSkeleton? Skeleton { get; }
 
-        public RModel RenderModel { get; }
+        public RModel? RenderModel { get; }
 
         // TODO: Why are these saved as is?
         public Matl? Matl { get; }
@@ -38,7 +38,8 @@ namespace CrossMod.Rendering
             LodXmb = lodXmb?.Xmb;
             TextureByName = textureByName;
 
-            RenderModel = meshNode.GetRenderModel(Skeleton);
+            if (meshNode != null)
+                RenderModel = meshNode.GetRenderModel(Skeleton);
 
             UpdateMaterials(matl);
             if (Skeleton != null)
@@ -66,10 +67,13 @@ namespace CrossMod.Rendering
 
             // Fix any potentially unassigned materials.
             // TODO: Display some sort of error color in the viewport?
-            foreach (var mesh in RenderModel.SubMeshes)
+            if (RenderModel != null)
             {
-                if (mesh.Material == null)
-                    mesh.Material = new RMaterial();
+                foreach (var mesh in RenderModel.SubMeshes)
+                {
+                    if (mesh.Material == null)
+                        mesh.Material = new RMaterial();
+                }
             }
         }
 
@@ -88,6 +92,9 @@ namespace CrossMod.Rendering
 
         private void AssignMaterialToMeshes(ModlEntry modlEntry, RMaterial meshMaterial)
         {
+            if (RenderModel == null)
+                return;
+
             var meshes = RenderModel.SubMeshes.Where(m => m.Name == modlEntry.MeshName && m.SubIndex == modlEntry.SubIndex);
             foreach (var mesh in meshes)
             {
