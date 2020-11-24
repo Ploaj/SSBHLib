@@ -197,22 +197,22 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     return result;
 }
 
-vec3 DiffuseTerm(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBlend)
+vec3 GetAlbedoColorFinal(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBlend)
 {
-    vec3 diffuseTerm = albedoColor.rgb;
+    vec3 albedoColorFinal = albedoColor.rgb;
 
     // Color multiplier param.
-    diffuseTerm *= CustomVector[13].rgb;
+    albedoColorFinal *= CustomVector[13].rgb;
 
     // TODO: Wiifit stage model color.
     if (hasCustomVector44 == 1)
-        diffuseTerm = CustomVector[44].rgb + CustomVector[45].rgb;
+        albedoColorFinal = CustomVector[44].rgb + CustomVector[45].rgb;
 
     // Fake subsurface scattering.
-    diffuseTerm = mix(diffuseTerm, CustomVector[11].rgb, sssBlend);
-    diffuseTerm += CustomVector[11].rgb * sssBlend;
+    albedoColorFinal = mix(albedoColorFinal, CustomVector[11].rgb, sssBlend);
+    albedoColorFinal += CustomVector[11].rgb * sssBlend;
 
-    return diffuseTerm;
+    return albedoColorFinal;
 }
 
 float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness)
@@ -251,27 +251,31 @@ float Luminance(vec3 rgb)
 
 vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
-    // TODO: How does this work in game?
-    vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8].x); 
-
     // Metals use albedo instead of the specular color/tint.
-    vec3 specularReflectionF0 = vec3(f0) * tintColor;
+    vec3 specularReflectionF0 = vec3(f0);
     vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetRimLighting(float nDotV)
+vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
-    float fresnel = pow(1 - nDotV, 5);
+
+    // TODO: Black edges for large blend values?
+    // Edge tint.
+    rimColor *= clamp(mix(vec3(1), diffusePass, CustomFloat[8].x), 0.0, 1.0);
+
     // TODO: There some sort of directional lighting that controls the intensity of this effect.
     // This appears to be lighting done in the vertex shader.
-    float rimUnkLighting = 0.6;
 
+    // TODO: How is the overall intensity controlled?
     // Hardcoded shader constant.
     float rimIntensity = 0.2125999927520752; 
 
-    return rimColor * fresnel * LightCustomVector8.w * CustomVector[14].w * rimUnkLighting * rimIntensity;
+    float fresnel = pow(1 - nDotV, 5);
+    float rimBlend = fresnel * LightCustomVector8.w * CustomVector[14].w * 0.6;
+
+    return mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
 }
 
 float RoughnessToLod(float roughness)
@@ -316,6 +320,7 @@ vec3 GetBloomBrightColor(vec3 color0)
 
 void main()
 {
+    // TODO: Organize this code.
     fragColor0 = vec4(0, 0, 0, 1);
 
     vec4 norColor = texture(norMap, map1).xyzw;
@@ -408,31 +413,31 @@ void main()
     
     // TODO: This should be an irradiance map.
     // TODO: Models with no irradiance map use a vertex attribute?
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * 0.5 * iblIntensity; 
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity; 
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
-    vec3 diffusePass = DiffuseTerm(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
+    vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
+
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
-    vec3 kSpecular = GetSpecularWeight(specular, diffusePass.rgb, metalness, nDotV, roughness);
+    vec3 kSpecular = GetSpecularWeight(specular, albedoColorFinal.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
 
     // Color Passes.
     if (renderDiffuse == 1)
-        fragColor0.rgb += diffusePass * diffuseLight * kDiffuse / 3.14159;
+        fragColor0.rgb += albedoColorFinal * diffuseLight * kDiffuse / 3.14159;
 
     if (renderSpecular == 1)
         fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
 
-    // TODO: This is probably a blend instead of additive.
-    if (renderRimLighting == 1)
-        fragColor0.rgb += GetRimLighting(nDotV);
-
     if (renderEmission == 1)
         fragColor0.rgb += EmissionTerm(emissionColor);
+
+    if (renderRimLighting == 1)
+        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV);
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
