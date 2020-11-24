@@ -120,6 +120,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 // http://cwyman.org/code/dxrTutors/tutors/Tutor14/tutorial14.md.html
 float SchlickMaskingTerm(float nDotL, float nDotV, float a2) 
 {
+    // TODO: Double check this masking term.
     float k = a2 * 0.5;
     float gV = nDotV / (nDotV * (1 - k) + k);
     float gL = nDotL / (nDotL * (1 - k) + k);
@@ -131,21 +132,22 @@ float SchlickMaskingTerm(float nDotL, float nDotV, float a2)
 float Ggx(float nDotH, float nDotL, float nDotV, float roughness)
 {
     // Clamp to 0.01 to prevent divide by 0.
-    float a = max(roughness, 0.01);
-    float a2 = a * a;
+    float a = max(roughness, 0.01) * max(roughness, 0.01);
+    float a2 = a*a;
     const float PI = 3.14159;
     float nDotH2 = nDotH * nDotH;
 
     float denominator = ((nDotH2) * (a2 - 1.0) + 1.0);
     float specular = a2 / (PI * denominator * denominator);
     float shadowing = SchlickMaskingTerm(nDotL, nDotV, a2);
-    // TODO: kSpecular, missing 4*nDotL*nDotV in denominator?
+    // TODO: missing 4*nDotL*nDotV in denominator?
     return specular * shadowing;
 }
 
 // A very similar BRDF as used for GGX.
 float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float roughness, float anisotropy)
 {
+    // TODO: How much of this is shared with GGX?
     // Clamp to 0.01 to prevent divide by 0.
     float roughnessX = max(roughness * anisotropy, 0.01);
     float roughnessY = max(roughness / anisotropy, 0.01);
@@ -186,10 +188,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     }
     directShading = clamp(directShading, 0, 1);
 
-    // Hardcoded shader constant.
-    float oneOverPI = 0.3183000087738037;
-    
-    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * oneOverPI;
+    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0;
     
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
@@ -227,11 +226,7 @@ float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 b
 
 vec3 SpecularTerm(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
 {
-    // Direct specular intensity from cbuf1.
-    // TODO: Is this always constant?
-    float oneOverPI = 0.3183000087738037;
-
-    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, bitangent, roughness) * directLightIntensity;// * oneOverPI;
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, bitangent, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
     vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x);
 
@@ -256,19 +251,19 @@ float Luminance(vec3 rgb)
 
 vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV, float roughness)
 {
+    // TODO: How does this work in game?
     vec3 tintColor = mix(vec3(1), diffusePass, CustomFloat[8].x); 
 
     // Metals use albedo instead of the specular color/tint.
     vec3 specularReflectionF0 = vec3(f0) * tintColor;
     vec3 f0Final = mix(specularReflectionF0, diffusePass, metalness);
-
     return FresnelSchlick(nDotV, f0Final);
 }
 
 vec3 GetRimLighting(float nDotV)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
-    float rimBlend = pow(1 - nDotV, 5);
+    float fresnel = pow(1 - nDotV, 5);
     // TODO: There some sort of directional lighting that controls the intensity of this effect.
     // This appears to be lighting done in the vertex shader.
     float rimUnkLighting = 0.6;
@@ -276,19 +271,17 @@ vec3 GetRimLighting(float nDotV)
     // Hardcoded shader constant.
     float rimIntensity = 0.2125999927520752; 
 
-    return rimColor * rimBlend * LightCustomVector8.w * CustomVector[14].w * rimUnkLighting * rimIntensity;
+    return rimColor * fresnel * LightCustomVector8.w * CustomVector[14].w * rimUnkLighting * rimIntensity;
 }
 
 float RoughnessToLod(float roughness)
 {
     // Adapted from decompiled shader source.
     // Applies a curves adjustment to roughness.
-    float gpr23 = max(roughness, 0.01);
-    float gpr21 = (gpr23 * gpr23);
-    float gpr0 = (1.0 / gpr21);
-    float gpr1 = log2(gpr0 * 2 - 2);
-    gpr1 = gpr1 * -0.4545 + 4;
-    return gpr1;
+    // Clamp roughness to avoid divide by 0.
+    float roughnessClamped = max(roughness, 0.01);
+    float a = (roughnessClamped * roughnessClamped);
+    return log2((1.0 / a) * 2 - 2) * -0.4545 + 4;
 }
 
 // A very useful function...
@@ -429,11 +422,12 @@ void main()
 
     // Color Passes.
     if (renderDiffuse == 1)
-        fragColor0.rgb += diffusePass * diffuseLight * kDiffuse;
+        fragColor0.rgb += diffusePass * diffuseLight * kDiffuse / 3.14159;
 
     if (renderSpecular == 1)
         fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
 
+    // TODO: This is probably a blend instead of additive.
     if (renderRimLighting == 1)
         fragColor0.rgb += GetRimLighting(nDotV);
 
