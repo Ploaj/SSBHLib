@@ -9,9 +9,9 @@
             A container for 4x4 matrices. The matrices can not be set directly.
             </summary>
         </member>
-        <member name="P:SFGraphics.Cameras.Camera.TransformedPosition">
+        <member name="P:SFGraphics.Cameras.Camera.PositionWorldSpace">
             <summary>
-            The position of the camera in scene units, taking into account translation and rotation.
+            The position of the camera in scene units, taking into account translation, rotation, and scale.
             </summary>
         </member>
         <member name="P:SFGraphics.Cameras.Camera.Translation">
@@ -137,7 +137,7 @@
         </member>
         <member name="P:SFGraphics.Cameras.Camera.TranslationMatrix">
             <summary>
-            The result of <see cref="M:OpenTK.Matrix4.CreateTranslation(System.Single,System.Single,System.Single)"/> for X, -Y, Z of <see cref="P:SFGraphics.Cameras.Camera.TransformedPosition"/>
+            The result of <see cref="M:OpenTK.Matrix4.CreateTranslation(System.Single,System.Single,System.Single)"/> for X, -Y, Z of <see cref="P:SFGraphics.Cameras.Camera.Translation"/>
             </summary>
         </member>
         <member name="F:SFGraphics.Cameras.Camera.perspectiveMatrix">
@@ -171,7 +171,7 @@
             </summary>
             <param name="amount">The amount to zoom in scene units</param>
             <param name="scaleByDistanceToOrigin">When <c>true</c>, the <paramref name="amount"/> 
-            is multiplied by the magnitude of <see cref="P:SFGraphics.Cameras.Camera.TransformedPosition"/></param>
+            is multiplied by the magnitude of <see cref="P:SFGraphics.Cameras.Camera.PositionWorldSpace"/></param>
         </member>
         <member name="M:SFGraphics.Cameras.Camera.UpdateTransformationMatrices">
             <summary>

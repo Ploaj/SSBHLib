@@ -238,7 +238,7 @@ vec3 EmissionTerm(vec4 emissionColor)
     return emissionColor.rgb * CustomVector[3].rgb;
 }
 
-float GetF0(float ior)
+float GetF0FromIor(float ior)
 {
     return pow((1 - ior) / (1 + ior), 2);
 }
@@ -303,7 +303,7 @@ float GetAngleFade(float nDotV, float ior, float specularf0)
 {
     // CustomFloat19 defines the IOR for a separate fresnel based fade.
     // The specular f0 value is used to set the minimum opacity.
-    float f0AngleFade = GetF0(ior + 1.0);
+    float f0AngleFade = GetF0FromIor(ior + 1.0);
     float facingRatio = FresnelSchlick(nDotV, vec3(f0AngleFade)).x;
     return max(facingRatio, specularf0);
 }
@@ -318,6 +318,16 @@ vec3 GetBloomBrightColor(vec3 color0)
     return color0.rgb * scale * scale2 * 6;
 }
 
+float GetF0FromSpecular(float specular) 
+{
+    // Specular gets remapped from [0.0,1.0] to [0.0,0.2].
+    // The value is 0.16*0.2 = 0.032 if the PRM alpha is ignored.
+    if (CustomBoolean[1].x == 0)
+        specular = 0.16;
+
+    return specular * 0.2;
+}
+
 void main()
 {
     // TODO: Organize this code.
@@ -327,24 +337,22 @@ void main()
     if (hasInkNorMap == 1)
         norColor.xyz = texture(inkNorMap, map1).rga;
 
-    vec3 fragmentNormal = normalize(vertexNormal);
     vec3 bitangent = GetBitangent(vertexNormal, tangent.xyz, tangent.w);
+
+    vec3 fragmentNormal = normalize(vertexNormal);
     if (renderNorMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
-    // Transform the view vector to world space.
-    vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
+    vec3 viewVector = normalize(cameraPos - position);
 
     // A hack to ensure backfaces render the same as front faces.
     // TODO: Does the game actually do this?
     if (dot(viewVector, fragmentNormal) < 0.0)
         fragmentNormal *= -1.0;
 
-    // TODO: Double check the orientation.
+    // Shading vectors.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
-
-    // Shading vectors.
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
     float nDotV = max(dot(fragmentNormal, viewVector), 0);
     float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
@@ -388,13 +396,7 @@ void main()
         metalness = 0.0;
 
     // TODO: Is specular overridden by default?
-    float specular = prmColor.a;
-    if (CustomBoolean[1].x == 0)
-        specular = 0.16;
-
-    // Hardcoded shader constant.
-    float specularScale = 0.2;
-    specular *= specularScale;
+    float specularF0 = GetF0FromSpecular(prmColor.a);
 
     float specularOcclusion = norColor.a;
     // These materials don't have a nor map.
@@ -407,6 +409,7 @@ void main()
     // Image based lighting.
     // The texture is currently using exported values, 
     // so multiply by 0.5 to fix the intensity.
+    // TODO: Use an existing cube map.
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
     vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
@@ -423,7 +426,7 @@ void main()
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
-    vec3 kSpecular = GetSpecularWeight(specular, albedoColorFinal.rgb, metalness, nDotV, roughness);
+    vec3 kSpecular = GetSpecularWeight(specularF0, albedoColorFinal.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
 
     // Color Passes.
@@ -452,7 +455,7 @@ void main()
         fragColor0.a *= colorSet1.a;
 
     if (hasCustomFloat19 == 1 && renderExperimental == 1)
-        fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specular);
+        fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specularF0);
 
     // Premultiplied alpha. 
     fragColor0.a = clamp(fragColor0.a, 0, 1); // TODO: krool???

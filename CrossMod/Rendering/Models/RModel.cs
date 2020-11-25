@@ -80,7 +80,7 @@ namespace CrossMod.Rendering.Models
             DrawMeshes(Skeleton, shader);
         }
 
-        private static void SetCameraUniforms(Camera Camera, Shader currentShader)
+        private static void SetCameraUniforms(Camera camera, Shader currentShader)
         {
             if (RenderSettings.Instance.RenderUVs)
             {
@@ -92,12 +92,12 @@ namespace CrossMod.Rendering.Models
             }
             else
             {
-                Matrix4 mvp = Camera.MvpMatrix;
+                Matrix4 mvp = camera.MvpMatrix;
                 currentShader.SetMatrix4x4("mvp", ref mvp);
             }
 
-            currentShader.SetMatrix4x4("modelView", Camera.ModelViewMatrix);
-            currentShader.SetVector3("cameraPos", Camera.TransformedPosition);
+            currentShader.SetMatrix4x4("modelView", camera.ModelViewMatrix);
+            currentShader.SetVector3("cameraPos", camera.PositionWorldSpace);
         }
 
         private static void SetRenderSettingsUniforms(Shader currentShader)

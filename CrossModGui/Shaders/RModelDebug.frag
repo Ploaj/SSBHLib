@@ -123,10 +123,8 @@ void main()
     if (renderNorMaps == 1)
         fragmentNormal = GetBumpMapNormal(vertexNormal, tangent.xyz, bitangent, norColor);
 
-    // Transform the view vector to world space.
-    vec3 viewVector = normalize(vec3(0,0,-1) * mat3(mvp));
+    vec3 viewVector = normalize(cameraPos - position);
 
-    // TODO: Double check the orientation.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
 

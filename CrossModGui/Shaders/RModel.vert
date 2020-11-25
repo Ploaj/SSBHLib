@@ -79,6 +79,7 @@ void main()
     vec4 transformedNormal = transform * vec4(Normal0.xyz, 0);
     vec4 transformedTangent = transform * vec4(Tangent0.xyz, 0);
 
+
     // Vertex skinning
     if (boneWeights.x != 0) {
         position = vec4(0);
@@ -91,6 +92,8 @@ void main()
             transformedTangent.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Tangent0.xyz, 1) * boneWeights[i]).xyz;
         }
     }
+    
+    geomPosition = position.xyz;
 
     transformedNormal.xyz = normalize(transformedNormal.xyz);
     transformedTangent.xyz = normalize(transformedTangent.xyz);
@@ -123,6 +126,4 @@ void main()
     // The w component flips mirrored tangents.
     geomTangent = vec4(transformedTangent.xyz, Tangent0.w);
     gl_Position = mvp * vec4(position.xyz, 1);
-
-    geomPosition = gl_Position.xyz;
 }
