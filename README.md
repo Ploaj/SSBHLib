@@ -4,9 +4,8 @@ example of how the library can be used. If you discover a bug in any of these pr
 [issues](https://github.com/Ploaj/CrossMod/issues).
 
 # Cross Mod Gui
-<img src="https://github.com/Ploaj/SSBHLib/blob/master/CrossModApp.jpg" align="top" height="auto" width="auto" >
-An experimental Smash Ultimate model viewer designed for shader development, testing SSBHLib, and reverse engineering Smash Ultimate's rendering.  
-
+<img src="https://github.com/Ploaj/SSBHLib/blob/master/CrossModApp.jpg" align="top" height="auto" width="auto"><br>
+An experimental Smash Ultimate model viewer designed for shader development, testing SSBHLib, and reverse engineering Smash Ultimate's rendering.
 For creating model imports, see [StudioSB](https://github.com/Ploaj/StudioSB). Original application code moved to [Cross-Mod-Old](https://github.com/Ploaj/SSBHLib/tree/cross-mod-old). An executable can be downloaded from [releases](https://github.com/Ploaj/SSBHLib/releases).
 
 ### System Requirements
