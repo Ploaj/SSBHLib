@@ -111,6 +111,7 @@ float GgxShading(vec3 N, vec3 H, float roughness)
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec3 GetAlbedoColorFinal(vec4 albedoColor, float metalness);
 
 void main()
 {
@@ -196,6 +197,10 @@ void main()
 			break;
         case 16:
             fragColor = vec4(materialId, 1);
+            break;
+        case 17:
+            vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
+            fragColor = vec4(GetSrgb(albedoColorFinal), 1);
             break;
 		default:
 			fragColor = vec4(0, 0, 0, 1);

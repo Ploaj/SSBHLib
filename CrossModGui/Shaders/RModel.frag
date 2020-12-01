@@ -173,6 +173,7 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
+vec3 GetAlbedoColorFinal(vec4 albedoColor, float metalness);
 
 vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 {
@@ -195,24 +196,6 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 
     vec3 result = directLight * directLightIntensity  + ambientLight;
     return result;
-}
-
-vec3 GetAlbedoColorFinal(vec4 albedoColor, vec3 diffuseIbl, vec3 N, vec3 V, float sssBlend)
-{
-    vec3 albedoColorFinal = albedoColor.rgb;
-
-    // Color multiplier param.
-    albedoColorFinal *= CustomVector[13].rgb;
-
-    // TODO: Wiifit stage model color.
-    if (hasCustomVector44 == 1)
-        albedoColorFinal = CustomVector[44].rgb + CustomVector[45].rgb;
-
-    // Fake subsurface scattering.
-    albedoColorFinal = mix(albedoColorFinal, CustomVector[11].rgb, sssBlend);
-    albedoColorFinal += CustomVector[11].rgb * sssBlend;
-
-    return albedoColorFinal;
 }
 
 float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness)
@@ -420,7 +403,7 @@ void main()
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
-    vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, diffuseIbl, fragmentNormal, viewVector, sssBlend);
+    vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
 
     vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 

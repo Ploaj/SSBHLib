@@ -12,6 +12,7 @@ namespace CrossModGui.ViewModels
             { RenderSettings.RenderMode.Shaded, "Shaded" },
             { RenderSettings.RenderMode.Basic, "Basic" },
             { RenderSettings.RenderMode.Col, "Col" },
+            { RenderSettings.RenderMode.Albedo, "Albedo" },
             { RenderSettings.RenderMode.Prm, "Prm" },
             { RenderSettings.RenderMode.Nor, "Nor" },
             { RenderSettings.RenderMode.Emi, "Emi" },

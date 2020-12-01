@@ -22,7 +22,8 @@ namespace CrossMod.Rendering
             BakeUV,
             UVPattern,
             ParamID,
-            MaterialID
+            MaterialID,
+            Albedo
         }
 
         public static RenderSettings Instance { get; } = new RenderSettings();
