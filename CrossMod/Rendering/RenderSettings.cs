@@ -58,8 +58,6 @@ namespace CrossMod.Rendering
 
         public bool EnableWireframe { get; set; } = false;
 
-        public bool RenderUVs { get; set; } = false;
-
         public bool RenderBones { get; set; } = false;
 
         public bool RenderHitCollisions { get; set; } = false;

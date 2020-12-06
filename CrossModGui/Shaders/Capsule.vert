@@ -18,12 +18,12 @@ void main()
 
 	if(point.w == 1)
 	{
-		position = bone * vec4((orientation * point).xyz * size + offset2, 1);
+		position = bone * vec4((orientation * point).xyz * size + offset2, 1.0);
 	}
 	else
 	{
-		position = bone * vec4((orientation * point).xyz * size + offset1, 1);
+		position = bone * vec4((orientation * point).xyz * size + offset1, 1.0);
 	}
 
-    gl_Position = mvp * vec4(position.xyz, 1);
+    gl_Position = mvp * vec4(position.xyz, 1.0);
 }

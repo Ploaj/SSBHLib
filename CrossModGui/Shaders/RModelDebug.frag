@@ -85,7 +85,7 @@ vec3 GetSrgb(vec3 linear);
 
 float LambertShading(vec3 N, vec3 V)
 {
-	float lambert = max(dot(N, V), 0);
+	float lambert = max(dot(N, V), 0.0);
 	return lambert;
 }
 
@@ -144,7 +144,7 @@ void main()
 	switch (renderMode)
 	{
         case 1:
-            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, viewVector), 0);
+            fragColor.rgb = vec3(0.218) * max(dot(fragmentNormal, viewVector), 0.0);
             fragColor.rgb = GetSrgb(fragColor.rgb);
             break;
 		case 2:
@@ -177,17 +177,17 @@ void main()
 			fragColor = colorSet1;
 			break;
 		case 10:
-            vec4 viewNormal = transpose(inverse(modelView)) * vec4(fragmentNormal, 0);
-			fragColor = vec4(normalize(viewNormal.xyz) * 0.5 + 0.5, 1);
+            vec4 viewNormal = transpose(inverse(modelView)) * vec4(fragmentNormal, 0.0);
+			fragColor = vec4(normalize(viewNormal.xyz) * 0.5 + 0.5, 1.0);
 			break;
 		case 11:
 			fragColor = vec4(tangent.xyz * 0.5 + 0.5, tangent.w);
 			break;
         case 12:
-            fragColor = vec4(bitangent * 0.5 + 0.5, 1);
+            fragColor = vec4(bitangent * 0.5 + 0.5, 1.0);
             break;
 		case 13:
-			fragColor = vec4(bake1, 1, 1);
+			fragColor = vec4(bake1, 1.0, 1.0);
 			break;
         case 14:
             fragColor = uvPatternColor;
@@ -200,10 +200,10 @@ void main()
             break;
         case 17:
             vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
-            fragColor = vec4(GetSrgb(albedoColorFinal), 1);
+            fragColor = vec4(GetSrgb(albedoColorFinal), 1.0);
             break;
 		default:
-			fragColor = vec4(0, 0, 0, 1);
+			fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 			break;
 	}
 
@@ -216,10 +216,10 @@ void main()
         fragColor.rgb = fragColor.bbb;
 
     if (renderChannels.a == 1 && renderChannels.r == 0 && renderChannels.g == 0 && renderChannels.b == 0)
-        fragColor = vec4(fragColor.aaa, 1);
+        fragColor = vec4(fragColor.aaa, 1.0);
 
 	// Don't use alpha blending with debug shading.
-	fragColor.a = 1;
+	fragColor.a = 1.0;
 
 	if (renderWireframe == 1)
 	{

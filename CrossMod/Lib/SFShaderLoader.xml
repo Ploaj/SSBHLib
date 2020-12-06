@@ -9,6 +9,11 @@
             Loads and stores <see cref="T:SFGraphics.GLObjects.Shaders.Shader"/> objects from source strings or precompiled binaries.
             </summary>
         </member>
+        <member name="P:SFShaderLoader.ShaderLoader.ShaderNames">
+            <summary>
+            The names of all the currently added shaders.
+            </summary>
+        </member>
         <member name="M:SFShaderLoader.ShaderLoader.AddSource(System.String,System.String,OpenTK.Graphics.OpenGL.ShaderType)">
             <summary>
             Creates and compiles a new <see cref="T:SFGraphics.GLObjects.Shaders.ShaderObject"/> to be accessed by <paramref name="name"/>

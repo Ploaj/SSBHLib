@@ -12,7 +12,7 @@ vec3 GetSrgb(vec3 linear);
 
 void main()
 {
-    fragColor = vec4(texture(image, texCoord).rgb, 1);
+    fragColor = vec4(texture(image, texCoord).rgb, 1.0);
     if (isSrgb == 1)
         fragColor.rgb = GetSrgb(fragColor.rgb);
 }

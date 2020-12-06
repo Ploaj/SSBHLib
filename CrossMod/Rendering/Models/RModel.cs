@@ -55,7 +55,7 @@ namespace CrossMod.Rendering.Models
             Render(camera, null);
         }
 
-        public void Render(Camera camera, RSkeleton Skeleton = null)
+        public void Render(Camera camera, RSkeleton skeleton = null)
         {
             Shader shader = ShaderContainer.GetCurrentRModelShader();
             if (!shader.LinkStatusIsOk)
@@ -70,31 +70,20 @@ namespace CrossMod.Rendering.Models
             if (boneUniformBuffer != null)
             {
                 boneUniformBuffer.BindBlock(shader);
-                if (Skeleton != null)
+                if (skeleton != null)
                 {
-                    boneBinds = Skeleton.GetAnimationTransforms();
+                    boneBinds = skeleton.GetAnimationTransforms();
                 }
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(Skeleton, shader);
+            DrawMeshes(skeleton, shader);
         }
 
         private static void SetCameraUniforms(Camera camera, Shader currentShader)
         {
-            if (RenderSettings.Instance.RenderUVs)
-            {
-                // TODO: Adjust scale.
-                // Flip UVs vertically.
-                float scale = 2;
-                Matrix4 mvp = Matrix4.CreateOrthographicOffCenter(-scale, scale, scale, -scale, -scale, scale);
-                currentShader.SetMatrix4x4("mvp", ref mvp);
-            }
-            else
-            {
-                Matrix4 mvp = camera.MvpMatrix;
-                currentShader.SetMatrix4x4("mvp", ref mvp);
-            }
+            Matrix4 mvp = camera.MvpMatrix;
+            currentShader.SetMatrix4x4("mvp", ref mvp);
 
             currentShader.SetMatrix4x4("modelView", camera.ModelViewMatrix);
             currentShader.SetVector3("cameraPos", camera.PositionWorldSpace);

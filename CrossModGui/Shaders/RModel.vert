@@ -75,21 +75,21 @@ uniform MaterialParams
 void main()
 {
     // Single bind transform
-    vec4 position = transform * vec4(Position0.xyz, 1);
-    vec4 transformedNormal = transform * vec4(Normal0.xyz, 0);
-    vec4 transformedTangent = transform * vec4(Tangent0.xyz, 0);
+    vec4 position = transform * vec4(Position0.xyz, 1.0);
+    vec4 transformedNormal = transform * vec4(Normal0.xyz, 0.0);
+    vec4 transformedTangent = transform * vec4(Tangent0.xyz, 0.0);
 
 
     // Vertex skinning
-    if (boneWeights.x != 0) {
-        position = vec4(0);
-        transformedNormal = vec4(0);
+    if (boneWeights.x != 0.0) {
+        position = vec4(0.0);
+        transformedNormal = vec4(0.0);
 
         for (int i = 0; i < 4; i++)
         {
-            position += transforms[boneIndices[i]] * vec4(Position0.xyz, 1) * boneWeights[i];
-            transformedNormal.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Normal0.xyz, 1) * boneWeights[i]).xyz;
-            transformedTangent.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Tangent0.xyz, 1) * boneWeights[i]).xyz;
+            position += transforms[boneIndices[i]] * vec4(Position0.xyz, 1.0) * boneWeights[i];
+            transformedNormal.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Normal0.xyz, 1.0) * boneWeights[i]).xyz;
+            transformedTangent.xyz += (inverse(transpose(transforms[boneIndices[i]])) * vec4(Tangent0.xyz, 1.0) * boneWeights[i]).xyz;
         }
     }
     
@@ -100,7 +100,7 @@ void main()
 
     // Assign geometry inputs
     geomVertexNormal = transformedNormal.xyz;
-    geomColorSet1 = colorSet1 * 2;
+    geomColorSet1 = colorSet1 * 2.0;
 
     // TODO: Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
     geomColorSet2 =   vec4(0);
@@ -125,5 +125,5 @@ void main()
 
     // The w component flips mirrored tangents.
     geomTangent = vec4(transformedTangent.xyz, Tangent0.w);
-    gl_Position = mvp * vec4(position.xyz, 1);
+    gl_Position = mvp * vec4(position.xyz, 1.0);
 }

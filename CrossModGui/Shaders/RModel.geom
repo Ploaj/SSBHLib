@@ -65,11 +65,11 @@ void main()
 
         // The distance from a point to each of the edges.
         if (i == 0)
-            edgeDistance = vec3(distances.x, 0, 0);
+            edgeDistance = vec3(distances.x, 0.0, 0.0);
         else if (i == 1)
-            edgeDistance = vec3(0, distances.y, 0);
+            edgeDistance = vec3(0.0, distances.y, 0.0);
         else if (i == 2)
-            edgeDistance = vec3(0, 0, distances.z);
+            edgeDistance = vec3(0.0, 0.0, distances.z);
 
         EmitVertex();
     }

@@ -7,7 +7,7 @@ uniform mat4 bone;
 
 void main()
 {
-    vec4 transformed = bone * vec4(point.xyz, 1);
+    vec4 transformed = bone * vec4(point.xyz, 1.0);
 
-    gl_Position = mvp * vec4(transformed.xyz, 1);
+    gl_Position = mvp * vec4(transformed.xyz, 1.0);
 }

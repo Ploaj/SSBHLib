@@ -26,7 +26,7 @@ vec3 GetSrgb(vec3 linear)
 
 void main()
 {
-    fragColor = vec4(0, 0, 0, 1);
+    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 color = texture(colorTex, vec2(texCoord.x, texCoord.y)).rgba;
     vec4 brightColor = texture(colorBrightTex, vec2(texCoord.x, texCoord.y)).rgba;
     // TODO: In game appears to just render the texture to the screen with additive blending.

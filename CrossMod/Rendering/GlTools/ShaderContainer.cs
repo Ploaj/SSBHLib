@@ -25,8 +25,6 @@ namespace CrossMod.Rendering.GlTools
         public static bool HasSetUp { get; private set; }
         public static Shader GetCurrentRModelShader()
         {
-            if (RenderSettings.Instance.RenderUVs)
-                return GetShader("RModelUV");
             if (RenderSettings.Instance.UseDebugShading)
                 return GetShader("RModelDebug");
 
@@ -49,7 +47,6 @@ namespace CrossMod.Rendering.GlTools
         private static void CreateAllShaders()
         {
             CreateRModelShader();
-            CreateRModelUvShader();
             CreateTextureShader();
             CreateTextureCubeShader();
             CreateScreenTextureShader();
@@ -80,13 +77,12 @@ namespace CrossMod.Rendering.GlTools
         {
             SetUpShaders();
 
-            // TODO: Log errors for all shaders.
-            var modelShader = GetShader("RModel");
-            var debugShader = GetShader("RModelDebug");
-
             Directory.CreateDirectory("Error Logs");
-            File.WriteAllText("Error Logs//RModel_shader_errors.txt", modelShader.GetErrorLog());
-            File.WriteAllText("Error Logs//RModelDebug_shader_errors.txt", debugShader.GetErrorLog());
+            foreach (var shaderName in shaderLoader.ShaderNames)
+            {
+                var shader = shaderLoader.GetShader(shaderName);
+                File.WriteAllText(Path.Combine("Error Logs", $"{shaderName}_error_log.txt"), shader.GetErrorLog());
+            }
         }
 
         private static void CreateTextureShader()

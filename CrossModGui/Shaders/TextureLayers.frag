@@ -69,7 +69,7 @@ vec2 TransformUv(vec2 uv, vec4 transform)
     {
         // dUdV Map.
         // Remap [0,1] to [-1,1].
-        vec2 textureOffset = texture(norMap, uv*2).xy * 2 - 1; 
+        vec2 textureOffset = texture(norMap, uv*2).xy * 2.0 - 1.0; 
         result += (textureOffset) * CustomFloat[4].x;
     }
 
@@ -94,7 +94,7 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 
 {
     // HACK: The default albedo color is white, which won't work with emission.
     if (emissionOverride == 1)
-        return vec4(0, 0, 0, 1);
+        return vec4(0.0, 0.0, 0.0, 1.0);
 
     vec2 uvLayer1 = TransformUv(uv1, transform1);
     vec2 uvLayer2 = TransformUv(uv2, transform2);

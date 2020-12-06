@@ -122,8 +122,8 @@ float SchlickMaskingTerm(float nDotL, float nDotV, float a2)
 {
     // TODO: Double check this masking term.
     float k = a2 * 0.5;
-    float gV = nDotV / (nDotV * (1 - k) + k);
-    float gL = nDotL / (nDotL * (1 - k) + k);
+    float gV = nDotV / (nDotV * (1.0 - k) + k);
+    float gL = nDotL / (nDotL * (1.0 - k) + k);
     return gV * gL;
 }
 
@@ -152,8 +152,8 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
     float roughnessX = max(roughness * anisotropy, 0.01);
     float roughnessY = max(roughness / anisotropy, 0.01);
 
-    float roughnessX4 = pow(roughnessX, 4);
-    float roughnessY4 = pow(roughnessY, 4);
+    float roughnessX4 = pow(roughnessX, 4.0);
+    float roughnessY4 = pow(roughnessY, 4.0);
 
     float xDotH = dot(bitangent, H);
     float xTerm = (xDotH * xDotH) / roughnessX4;
@@ -187,7 +187,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
         skinShading = skinShading * 0.5 + 0.5;
         directShading = mix(directShading, skinShading, sssBlend);
     }
-    directShading = clamp(directShading, 0, 1);
+    directShading = clamp(directShading, 0.0, 1.0);
 
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0;
     
@@ -223,7 +223,7 @@ vec3 EmissionTerm(vec4 emissionColor)
 
 float GetF0FromIor(float ior)
 {
-    return pow((1 - ior) / (1 + ior), 2);
+    return pow((1.0 - ior) / (1.0 + ior), 2.0);
 }
 
 float Luminance(vec3 rgb)
@@ -246,7 +246,7 @@ vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV)
 
     // TODO: Black edges for large blend values?
     // Edge tint.
-    rimColor *= clamp(mix(vec3(1), diffusePass, CustomFloat[8].x), 0.0, 1.0);
+    rimColor *= clamp(mix(vec3(1.0), diffusePass, CustomFloat[8].x), 0.0, 1.0);
 
     // TODO: There some sort of directional lighting that controls the intensity of this effect.
     // This appears to be lighting done in the vertex shader.
@@ -255,7 +255,7 @@ vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV)
     // Hardcoded shader constant.
     float rimIntensity = 0.2125999927520752; 
 
-    float fresnel = pow(1 - nDotV, 5);
+    float fresnel = pow(1 - nDotV, 5.0);
     float rimBlend = fresnel * LightCustomVector8.w * CustomVector[14].w * 0.6;
 
     return mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
@@ -268,7 +268,7 @@ float RoughnessToLod(float roughness)
     // Clamp roughness to avoid divide by 0.
     float roughnessClamped = max(roughness, 0.01);
     float a = (roughnessClamped * roughnessClamped);
-    return log2((1.0 / a) * 2 - 2) * -0.4545 + 4;
+    return log2((1.0 / a) * 2.0 - 2.0) * -0.4545 + 4.0;
 }
 
 // A very useful function...
@@ -277,9 +277,9 @@ vec3 GetInvalidShaderLabelColor()
     // TODO: Account for screen resolution and use the values from in game for scaling.
     vec3 screenPosition = gl_FragCoord.xyz;
     float checkSize = 0.2;
-    float checkerBoard = mod(floor(screenPosition.x * checkSize) + floor(screenPosition.y * checkSize), 2);
+    float checkerBoard = mod(floor(screenPosition.x * checkSize) + floor(screenPosition.y * checkSize), 2.0);
     float checkerBoardFinal = max(sign(checkerBoard), 0.0);
-    return vec3(checkerBoardFinal, 0, 0);
+    return vec3(checkerBoardFinal, 0.0, 0.0);
 }
 
 float GetAngleFade(float nDotV, float ior, float specularf0) 
@@ -297,8 +297,8 @@ vec3 GetBloomBrightColor(vec3 color0)
     // TODO: Where do the uniform buffer values come from?
     float componentMax = max(max(color0.r, max(color0.g, color0.b)), 0.001);
     float scale = 1 / componentMax;
-    float scale2 = max(0.925 * -0.5 + componentMax, 0);
-    return color0.rgb * scale * scale2 * 6;
+    float scale2 = max(0.925 * -0.5 + componentMax, 0.0);
+    return color0.rgb * scale * scale2 * 6.0;
 }
 
 float GetF0FromSpecular(float specular) 
@@ -314,7 +314,7 @@ float GetF0FromSpecular(float specular)
 void main()
 {
     // TODO: Organize this code.
-    fragColor0 = vec4(0, 0, 0, 1);
+    fragColor0 = vec4(0.0, 0.0, 0.0, 1.0);
 
     vec4 norColor = texture(norMap, map1).xyzw;
     if (hasInkNorMap == 1)
@@ -337,7 +337,7 @@ void main()
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
-    float nDotV = max(dot(fragmentNormal, viewVector), 0);
+    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
     float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
     // Don't clamp to allow remapping the range of values later.
     float nDotL = dot(fragmentNormal, chrLightDir.xyz);
@@ -354,11 +354,11 @@ void main()
 
     // Override the PRM color with default texture colors if disabled.
     if (renderPrmMetalness != 1)
-        prmColor.r = 0;
+        prmColor.r = 0.0;
     if (renderPrmRoughness != 1)
-        prmColor.g = 1;
+        prmColor.g = 1.0;
     if (renderPrmAo != 1)
-        prmColor.b = 1;
+        prmColor.b = 1.0;
     if (renderPrmSpec != 1)
         prmColor.a = 0.5;
 
@@ -410,7 +410,7 @@ void main()
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
     vec3 kSpecular = GetSpecularWeight(specularF0, albedoColorFinal.rgb, metalness, nDotV, roughness);
-    vec3 kDiffuse = max((vec3(1) - kSpecular) * (1 - metalness), 0);
+    vec3 kDiffuse = max((vec3(1.0) - kSpecular) * (1.0 - metalness), 0.0);
 
     // Color Passes.
     if (renderDiffuse == 1)
@@ -441,7 +441,7 @@ void main()
         fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specularF0);
 
     // Premultiplied alpha. 
-    fragColor0.a = clamp(fragColor0.a, 0, 1); // TODO: krool???
+    fragColor0.a = clamp(fragColor0.a, 0.0, 1.0); // TODO: krool???
     fragColor0.rgb *= fragColor0.a;
 
     // TODO: Move this to post-processing.
