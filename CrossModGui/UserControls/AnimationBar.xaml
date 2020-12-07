@@ -24,9 +24,9 @@
             <TextBox VerticalAlignment="Center" Margin="5" Text="{Binding Path=CurrentFrame, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             <TextBlock VerticalAlignment="Center" Margin="5" Text="{Binding Path=TotalFrames, StringFormat={}of {0}}" />
         </StackPanel>
-        <Button Grid.Column="2" Click="FirstFrame_Click">&lt;&lt;</Button>
-        <Button Grid.Column="3" Click="PreviousFrame_Click">&lt;</Button>
-        <Button Grid.Column="4" Click="PlayButton_Click">
+        <Button Margin="2,0" Grid.Column="2" Click="FirstFrame_Click">&lt;&lt;</Button>
+        <Button Margin="2,0" Grid.Column="3" Click="PreviousFrame_Click">&lt;</Button>
+        <Button Margin="2,0" Grid.Column="4" Click="PlayButton_Click">
             <TextBlock>
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
@@ -40,7 +40,7 @@
                 </TextBlock.Style>
             </TextBlock>
         </Button>
-        <Button Grid.Column="5" Click="NextFrame_Click">&gt;</Button>
-        <Button Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
+        <Button Margin="2,0" Grid.Column="5" Click="NextFrame_Click">&gt;</Button>
+        <Button Margin="2,0" Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
     </Grid>
 </UserControl>
