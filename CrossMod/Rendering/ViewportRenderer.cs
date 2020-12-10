@@ -32,7 +32,7 @@ namespace CrossMod.Rendering
 
         public ScriptNode ScriptNode { get; set; }
 
-        public Camera Camera { get; } = new Camera() { FarClipPlane = 500000 };
+        public Camera Camera { get; } = new Camera() { NearClipPlane = 2, FarClipPlane = 500000 };
 
         public void UpdateMouseScroll() => mouseScrollWheel = Mouse.GetState().WheelPrecise;
 

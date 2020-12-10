@@ -14,6 +14,9 @@ namespace CrossModGui.ViewModels
 
         public float RotationYDegrees { get; set; }
 
+        public float FovDegrees { get; set; }
+
+
         public CameraSettingsWindowViewModel(Camera camera)
         {
             PositionX = camera.Translation.X;
@@ -21,6 +24,7 @@ namespace CrossModGui.ViewModels
             PositionZ = camera.Translation.Z;
             RotationXDegrees = camera.RotationXDegrees;
             RotationYDegrees = camera.RotationYDegrees;
+            FovDegrees = camera.FovDegrees;
         }
 
         public void SetValues(Camera camera)
@@ -28,6 +32,7 @@ namespace CrossModGui.ViewModels
             camera.Translation = new OpenTK.Vector3(PositionX, PositionY, PositionZ);
             camera.RotationXDegrees = RotationXDegrees;
             camera.RotationYDegrees = RotationYDegrees;
+            camera.FovDegrees = FovDegrees;
         }
     }
 }
