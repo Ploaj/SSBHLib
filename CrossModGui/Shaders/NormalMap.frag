@@ -9,14 +9,14 @@ vec3 GetBitangent(vec3 normal, vec3 tangent, float tangentSign)
 
 vec3 GetBumpMapNormal(vec3 normal, vec3 tangent, vec3 bitangent, vec4 norColor)
 {
-    // Calculate the resulting normal map.
+    // Remap the normal map to the correct range.
     float x = 2 * norColor.x - 1.0;
     float y = 2 * norColor.y - 1.0;
-    float z = sqrt(1 - ((x * x) + (y * y))) * 0.5 + 0.5;
-    vec3 normalMapColor = vec3(norColor.rg, z);
 
-    // Remap the normal map to the correct range.
-    vec3 normalMapNormal = 2.0 * normalMapColor - vec3(1.0);
+    // Calculate z based on the fact that x*x + y*y + z*z = 1.
+    float z = sqrt(1 - (x * x) + (y * y));
+
+    vec3 normalMapNormal = vec3(x, y, z);
 
     mat3 tbnMatrix = mat3(tangent, bitangent, normal);
 
