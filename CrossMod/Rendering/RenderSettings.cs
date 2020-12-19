@@ -23,7 +23,8 @@ namespace CrossMod.Rendering
             UVPattern,
             ParamID,
             MaterialID,
-            Albedo
+            Albedo,
+            AnisotropyLines
         }
 
         public static RenderSettings Instance { get; } = new RenderSettings();

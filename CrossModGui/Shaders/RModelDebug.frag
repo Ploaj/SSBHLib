@@ -202,6 +202,10 @@ void main()
             vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
             fragColor = vec4(GetSrgb(albedoColorFinal), 1.0);
             break;
+        case 18:
+            float anisotropyLines = (dot(viewVector, normalize(vertexNormal)) * 0.5 + 0.5) * abs(sin(map1.y * 150.0));
+            fragColor = vec4(vec3(anisotropyLines), 1.0);
+            break;
 		default:
 			fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 			break;
