@@ -107,42 +107,46 @@ namespace CrossMod.Nodes
             }
 
             // Configure unused attributes to just use black.
-            Vector4[] defaultColorSet = CreateDefaultColorSetBuffer(meshObject);
+            Vector4[] defaultColorSet1 = CreateBuffer(meshObject, new Vector4(0.5f));
+            // x^2 * 7 should equal 1.0 to have no effect when multiplying.
+            Vector4[] defaultColorSet2 = CreateBuffer(meshObject, new Vector4((float)System.Math.Sqrt(1.0 / 7.0)));
 
             renderMesh.AddBuffer("defaultBlack", new Vector4[meshObject.VertexCount]);
-            renderMesh.AddBuffer("defaultColorSet", defaultColorSet);
+            renderMesh.AddBuffer("defaultColorSet1", defaultColorSet1);
+            renderMesh.AddBuffer("defaultColorSet2", defaultColorSet2);
 
-            if (!usedAttributes.Contains("Normal0"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("Normal0", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+            ConfigureDefaultBufferVec4(renderMesh, "Normal0", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec4(renderMesh, "Tangent0", usedAttributes, "defaultBlack");
 
-            if (!usedAttributes.Contains("Tangent0"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("Tangent0", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
+            ConfigureDefaultBufferVec2(renderMesh, "map1", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec2(renderMesh, "uvSet", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec2(renderMesh, "uvSet1", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec2(renderMesh, "uvSet2", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec2(renderMesh, "bake1", usedAttributes, "defaultBlack");
 
-            if (!usedAttributes.Contains("map1"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("map1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
-
-            if (!usedAttributes.Contains("uvSet"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
-
-            if (!usedAttributes.Contains("uvSet1"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
-
-            if (!usedAttributes.Contains("uvSet2"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("uvSet2", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
-
-            if (!usedAttributes.Contains("bake1"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("bake1", ValueCount.Two, VertexAttribPointerType.Float, false), "defaultBlack", 0, sizeof(float) * 4);
-
-            if (!usedAttributes.Contains("colorSet1"))
-                renderMesh.ConfigureAttribute(new VertexFloatAttribute("colorSet1", ValueCount.Four, VertexAttribPointerType.Float, false), "defaultColorSet", 0, sizeof(float) * 4);
+            ConfigureDefaultBufferVec4(renderMesh, "colorSet1", usedAttributes, "defaultColorSet1");
+            ConfigureDefaultBufferVec4(renderMesh, "colorSet2", usedAttributes, "defaultColorSet2");
+            ConfigureDefaultBufferVec4(renderMesh, "colorSet5", usedAttributes, "defaultBlack");
         }
 
-        private static Vector4[] CreateDefaultColorSetBuffer(MeshObject meshObject)
+        private static void ConfigureDefaultBufferVec2(UltimateMesh renderMesh, string attributeName, HashSet<string> usedAttributes, string bufferName)
+        {
+            if (!usedAttributes.Contains(attributeName))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute(attributeName, ValueCount.Two, VertexAttribPointerType.Float, false), bufferName, 0, sizeof(float) * 4);
+        }
+
+        private static void ConfigureDefaultBufferVec4(UltimateMesh renderMesh, string attributeName, HashSet<string> usedAttributes, string bufferName)
+        {
+            if (!usedAttributes.Contains(attributeName))
+                renderMesh.ConfigureAttribute(new VertexFloatAttribute(attributeName, ValueCount.Four, VertexAttribPointerType.Float, false), bufferName, 0, sizeof(float) * 4);
+        }
+
+        private static Vector4[] CreateBuffer(MeshObject meshObject, Vector4 value)
         {
             var defaultColorSet = new Vector4[meshObject.VertexCount];
             for (int i = 0; i < defaultColorSet.Length; i++)
             {
-                defaultColorSet[i] = new Vector4(0.5f);
+                defaultColorSet[i] = value;
             }
 
             return defaultColorSet;

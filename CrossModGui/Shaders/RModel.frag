@@ -8,6 +8,7 @@ in vec2 uvSet;
 in vec2 uvSet1;
 in vec2 uvSet2;
 in vec4 colorSet1;
+in vec4 colorSet2Combined;
 in vec4 colorSet5;
 in vec2 bake1;
 
@@ -194,7 +195,8 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     vec4 bakedLitColor = texture(bakeLitMap, bake1);
     vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
 
-    vec3 result = directLight * directLightIntensity  + ambientLight;
+    vec3 result = directLight * directLightIntensity + ambientLight;
+    result *= colorSet2Combined.rgb;
     return result;
 }
 
