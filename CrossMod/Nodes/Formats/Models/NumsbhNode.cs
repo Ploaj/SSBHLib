@@ -108,12 +108,17 @@ namespace CrossMod.Nodes
 
             // Configure unused attributes to just use black.
             Vector4[] defaultColorSet1 = CreateBuffer(meshObject, new Vector4(0.5f));
+
             // x^2 * 7 should equal 1.0 to have no effect when multiplying.
             Vector4[] defaultColorSet2 = CreateBuffer(meshObject, new Vector4((float)System.Math.Sqrt(1.0 / 7.0)));
+
+            // x * 3 should equal 1.0 to have no effect when multiplying.
+            Vector4[] defaultColorSet5 = CreateBuffer(meshObject, new Vector4(1.0f / 3.0f));
 
             renderMesh.AddBuffer("defaultBlack", new Vector4[meshObject.VertexCount]);
             renderMesh.AddBuffer("defaultColorSet1", defaultColorSet1);
             renderMesh.AddBuffer("defaultColorSet2", defaultColorSet2);
+            renderMesh.AddBuffer("defaultColorSet5", defaultColorSet5);
 
             ConfigureDefaultBufferVec4(renderMesh, "Normal0", usedAttributes, "defaultBlack");
             ConfigureDefaultBufferVec4(renderMesh, "Tangent0", usedAttributes, "defaultBlack");
@@ -126,7 +131,7 @@ namespace CrossMod.Nodes
 
             ConfigureDefaultBufferVec4(renderMesh, "colorSet1", usedAttributes, "defaultColorSet1");
             ConfigureDefaultBufferVec4(renderMesh, "colorSet2", usedAttributes, "defaultColorSet2");
-            ConfigureDefaultBufferVec4(renderMesh, "colorSet5", usedAttributes, "defaultBlack");
+            ConfigureDefaultBufferVec4(renderMesh, "colorSet5", usedAttributes, "defaultColorSet5");
         }
 
         private static void ConfigureDefaultBufferVec2(UltimateMesh renderMesh, string attributeName, HashSet<string> usedAttributes, string bufferName)
