@@ -8,66 +8,60 @@ namespace CrossModGui.ViewModels
 {
     public class RenderSettingsWindowViewModel : ViewModelBase
     {
-        public Dictionary<RenderSettings.RenderMode, string> DescriptionByRenderMode { get; } = new Dictionary<RenderSettings.RenderMode, string>()
-        {
-            { RenderSettings.RenderMode.Shaded, "Shaded" },
-            { RenderSettings.RenderMode.Basic, "Basic" },
-            { RenderSettings.RenderMode.Col, "Col" },
-            { RenderSettings.RenderMode.Albedo, "Albedo (Generated)" },
-            { RenderSettings.RenderMode.Prm, "PRM" },
-            { RenderSettings.RenderMode.Nor, "NOR" },
-            { RenderSettings.RenderMode.Emi, "Emi" },
-            { RenderSettings.RenderMode.BakedLighting, "Baked Lighting" },
-            { RenderSettings.RenderMode.Gao, "GAO" },
-            { RenderSettings.RenderMode.Proj, "Proj Maps" },
-            { RenderSettings.RenderMode.ColorSet1, "ColorSet1" },
-            { RenderSettings.RenderMode.Normals, "Normals" },
-            { RenderSettings.RenderMode.Tangent0, "Tangents" },
-            { RenderSettings.RenderMode.Bitangents, "Bitangents (Generated)" },
-            { RenderSettings.RenderMode.Bake1, "bake1" },
-            { RenderSettings.RenderMode.UVPattern, "UV Test Pattern" },
-            { RenderSettings.RenderMode.AnisotropyLines, "Anisotropic Highlight Direction" },
-            { RenderSettings.RenderMode.ParamID, "Param Values" },
-            { RenderSettings.RenderMode.MaterialID, "Material ID" }
-        };
-
-        public class EnumItem
+        public class RenderModeItem
         {
             public RenderSettings.RenderMode Value { get; set; }
-            public string Description { get; set; }
-            public string Category { get; set; }
+            public string Description { get; set; } = "";
+            public string Category { get; set; } = "";
         }
 
-        private static readonly List<EnumItem> renderModeItems = new List<EnumItem>
+        private static readonly List<RenderModeItem> renderModeItems = new List<RenderModeItem>
         {
-            new EnumItem { Value = RenderSettings.RenderMode.Shaded, Description = "Shaded", Category = "Shading" },
-            new EnumItem { Value = RenderSettings.RenderMode.Basic, Description = "Basic", Category = "Shading"  },
-            new EnumItem { Value = RenderSettings.RenderMode.Normals, Description = "Normals", Category = "Shading" },
-            new EnumItem { Value = RenderSettings.RenderMode.Bitangents, Description = "Bitangents", Category = "Shading" },
-            new EnumItem { Value = RenderSettings.RenderMode.Albedo, Description = "Albedo (Generated)", Category = "Shading"  },
-            new EnumItem { Value = RenderSettings.RenderMode.Col, Description = "Col", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.Prm, Description = "PRM", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.Nor, Description = "NOR", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.Emi, Description = "Emi", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.BakedLighting, Description = "Baked Lighting", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.Gao, Description = "GAO", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.Proj, Description = "Proj", Category = "Textures" },
-            new EnumItem { Value = RenderSettings.RenderMode.ColorSet1, Description = "colorSet1", Category = "Vertex Attributes" },
-            new EnumItem { Value = RenderSettings.RenderMode.Tangent0, Description = "Tangent0", Category = "Vertex Attributes" },
-            new EnumItem { Value = RenderSettings.RenderMode.Bake1, Description = "bake1", Category = "Vertex Attributes" },
-            new EnumItem { Value = RenderSettings.RenderMode.UVPattern, Description = "UV Test Pattern", Category = "Debug" },
-            new EnumItem { Value = RenderSettings.RenderMode.AnisotropyLines, Description = "Anisotropic Highlight Direction", Category = "Debug" },
-            new EnumItem { Value = RenderSettings.RenderMode.ParamID, Description = "Param Values", Category = "Debug" },
-            new EnumItem { Value = RenderSettings.RenderMode.MaterialID, Description = "Material ID", Category = "Debug" }
+            new RenderModeItem { Value = RenderSettings.RenderMode.Shaded, Description = "Shaded", Category = "Shading" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Basic, Description = "Basic", Category = "Shading"  },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Normals, Description = "Normals", Category = "Shading" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Bitangents, Description = "Bitangents", Category = "Shading" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Albedo, Description = "Albedo", Category = "Shading"  },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Col, Description = "Col (Texture0)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Gao, Description = "GAO (Texture3)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Nor, Description = "NOR (Texture4)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Emi, Description = "Emi (Texture5)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Prm, Description = "PRM (Texture6)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Proj, Description = "Specular Cube (Texture7)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.BakedLighting, Description = "Baked Lighting (Texture9)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Proj, Description = "Proj (Texture13)", Category = "Textures" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.ColorSet1, Description = "colorSet1", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.ColorSet2, Description = "colorSet2", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.ColorSet3, Description = "colorSet3", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Tangent0, Description = "Tangent0", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Map1, Description = "map1", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.Bake1, Description = "bake1", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.UvSet, Description = "uvSet", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.UvSet1, Description = "uvSet1", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.UvSet2, Description = "uvSet2", Category = "Vertex Attributes" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.AnisotropyLines, Description = "Anisotropic Highlight Direction", Category = "Debug" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.ParamID, Description = "Param Values", Category = "Debug" },
+            new RenderModeItem { Value = RenderSettings.RenderMode.MaterialID, Description = "Material ID", Category = "Debug" }
+        };
+
+        private static readonly List<RenderSettings.RenderMode> uvModes = new List<RenderSettings.RenderMode>() 
+        {
+            RenderSettings.RenderMode.Map1,
+            RenderSettings.RenderMode.Bake1,
+            RenderSettings.RenderMode.UvSet,
+            RenderSettings.RenderMode.UvSet1,
+            RenderSettings.RenderMode.UvSet2,
         };
 
         public ListCollectionView RenderModes { get; } = new ListCollectionView(renderModeItems);
 
-        public EnumItem SelectedRenderMode { get; set; } = renderModeItems[0];
+        public RenderModeItem SelectedRenderMode { get; set; } = renderModeItems[0];
 
         public bool ShowParamControls => SelectedRenderMode.Value == RenderSettings.RenderMode.ParamID;
 
         public bool ShowChannelControls => SelectedRenderMode.Value != RenderSettings.RenderMode.Shaded;
+
+        public bool ShowUvDisplayMode => uvModes.Contains(SelectedRenderMode.Value);
 
         public bool EnableBloom { get; set; }
         public float BloomIntensity { get; set; }
@@ -102,6 +96,8 @@ namespace CrossModGui.ViewModels
 
         public bool EnableAlpha { get; set; }
 
+        public bool UseUvPattern { get; set; }
+
         public bool EnableWireframe { get; set; }
 
         // TODO: This should use an enum and combobox.
@@ -110,6 +106,7 @@ namespace CrossModGui.ViewModels
 
         public RenderSettingsWindowViewModel(RenderSettings renderSettings)
         {
+            UseUvPattern = renderSettings.UseUvPattern;
             EnableRed = renderSettings.EnableRed;
             EnableGreen = renderSettings.EnableGreen;
             EnableBlue = renderSettings.EnableBlue;
@@ -152,6 +149,7 @@ namespace CrossModGui.ViewModels
             settings.RenderPrmAo = EnablePrmAo;
             settings.RenderPrmSpecular = EnablePrmSpecular;
             settings.EnableWireframe = EnableWireframe;
+            settings.UseUvPattern = UseUvPattern;
 
             settings.DirectLightIntensity = DirectLightIntensity;
             settings.IblIntensity = IndirectLightIntensity;

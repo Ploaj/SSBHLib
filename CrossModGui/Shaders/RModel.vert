@@ -6,6 +6,7 @@ in vec4 Normal0;
 
 in vec4 colorSet1;
 in vec4 colorSet2;
+in vec4 colorSet3;
 in vec4 colorSet5;
 
 in vec2 map1;
@@ -24,7 +25,7 @@ out vec2 geomUvSet;
 out vec2 geomUvSet1;
 out vec2 geomUvSet2;
 out vec4 geomColorSet1;
-out vec4 geomColorSet2Combined;
+out vec4 geomColorSet2;
 out vec4 geomColorSet3;
 out vec4 geomColorSet4;
 out vec4 geomColorSet5;
@@ -99,8 +100,8 @@ void main()
     geomColorSet1 = colorSet1 * 2.0;
 
     // TODO: Pack colors together to avoid hitting hardware limits of 16 attributes for some vendors.
-    geomColorSet2Combined = colorSet2 * colorSet2 * 7.0;
-    geomColorSet3 = vec4(0);
+    geomColorSet2 = colorSet2 * colorSet2 * 7.0;
+    geomColorSet3 = colorSet3 * 2.0;
     geomColorSet4 = vec4(0);
     geomColorSet5 = colorSet5 * 3.0;
     geomColorSet6 = vec4(0);

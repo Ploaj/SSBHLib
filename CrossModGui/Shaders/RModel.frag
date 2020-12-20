@@ -8,7 +8,8 @@ in vec2 uvSet;
 in vec2 uvSet1;
 in vec2 uvSet2;
 in vec4 colorSet1;
-in vec4 colorSet2Combined;
+in vec4 colorSet2;
+in vec4 colorSet3;
 in vec4 colorSet5;
 in vec2 bake1;
 
@@ -201,7 +202,8 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     vec3 result = directLight * directLightIntensity + ambientLight;
 
     // Baked stage lighting.
-    result *= colorSet2Combined.rgb;
+    if (renderVertexColor == 1)
+        result *= colorSet2.rgb;
 
     return result;
 }
@@ -435,7 +437,10 @@ void main()
 
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
+    {
         fragColor0.rgb *= colorSet1.rgb; 
+        fragColor0.rgb *= colorSet3.rgb;
+    }
 
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
@@ -443,7 +448,10 @@ void main()
     // Alpha calculations
     // HACK: Some models have black vertex color for some reason.
     if (renderVertexColor == 1 && colorSet1.a != 0)
+    {
         fragColor0.a *= colorSet1.a;
+        fragColor0.a *= colorSet3.a;
+    }
 
     if (hasCustomFloat19 == 1 && renderExperimental == 1)
         fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specularF0);

@@ -1,14 +1,18 @@
 #version 330
 
+in vec3 position;
 in vec3 vertexNormal;
 in vec4 tangent;
 in vec2 map1;
 in vec2 uvSet;
 in vec2 uvSet1;
+in vec2 uvSet2;
 in vec4 colorSet1;
+in vec4 colorSet2;
+in vec4 colorSet3;
 in vec4 colorSet5;
 in vec2 bake1;
-in vec3 position;
+
 noperspective in vec3 edgeDistance;
 
 uniform sampler2D colMap;
@@ -36,6 +40,7 @@ uniform samplerCube specularPbrCube;
 
 uniform vec4 renderChannels;
 uniform int renderMode;
+uniform int useUvPattern;
 
 uniform int renderWireframe;
 uniform int renderNorMaps;
@@ -129,6 +134,8 @@ void main()
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
 
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, 0.0).rgb;
+
     // Get texture colors.
 	vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
 	vec4 prmColor = texture(prmMap, map1).xyzw;
@@ -137,9 +144,6 @@ void main()
     vec4 gaoColor = texture(gaoMap, bake1).rgba;
     vec4 projColor = texture(projMap, map1).rgba;
 
-    vec4 uvPatternColor = texture(uvPattern, map1).rgba;
-
-	// Just gamma correct albedo maps.
 	fragColor = vec4(1);
 	switch (renderMode)
 	{
@@ -176,35 +180,68 @@ void main()
 		case 9:
 			fragColor = colorSet1;
 			break;
-		case 10:
+        case 10:
+			fragColor = colorSet2;
+			break;
+        case 11:
+			fragColor = colorSet3;
+			break;
+		case 12:
             vec4 viewNormal = transpose(inverse(modelView)) * vec4(fragmentNormal, 0.0);
 			fragColor = vec4(normalize(viewNormal.xyz) * 0.5 + 0.5, 1.0);
 			break;
-		case 11:
+		case 13:
 			fragColor = vec4(tangent.xyz * 0.5 + 0.5, tangent.w);
 			break;
-        case 12:
+        case 14:
             fragColor = vec4(bitangent * 0.5 + 0.5, 1.0);
             break;
-		case 13:
-			fragColor = vec4(bake1, 1.0, 1.0);
-			break;
-        case 14:
-            fragColor = uvPatternColor;
-            break;
 		case 15:
-			fragColor = vec4Param;
+            if (useUvPattern == 1)
+                fragColor = texture(uvPattern, map1).rgba;
+            else
+			    fragColor = vec4(map1, 1.0, 1.0);
 			break;
         case 16:
-            fragColor = vec4(materialId, 1);
+            if (useUvPattern == 1)
+                fragColor = texture(uvPattern, bake1).rgba;
+            else
+			    fragColor = vec4(bake1, 1.0, 1.0);
             break;
         case 17:
+            if (useUvPattern == 1)
+                fragColor = texture(uvPattern, uvSet).rgba;
+            else
+			    fragColor = vec4(uvSet, 1.0, 1.0);
+            break;
+        case 18:
+            if (useUvPattern == 1)
+                fragColor = texture(uvPattern, uvSet1).rgba;
+            else
+			    fragColor = vec4(uvSet1, 1.0, 1.0);
+            break;
+        case 19:
+            if (useUvPattern == 1)
+                fragColor = texture(uvPattern, uvSet2).rgba;
+            else
+			    fragColor = vec4(uvSet2, 1.0, 1.0);
+            break;
+		case 20:
+			fragColor = vec4Param;
+			break;
+        case 21:
+            fragColor = vec4(materialId, 1);
+            break;
+        case 22:
             vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
             fragColor = vec4(GetSrgb(albedoColorFinal), 1.0);
             break;
-        case 18:
+        case 23:
             float anisotropyLines = (dot(viewVector, normalize(vertexNormal)) * 0.5 + 0.5) * abs(sin(map1.y * 150.0));
             fragColor = vec4(vec3(anisotropyLines), 1.0);
+            break;
+        case 24:
+            fragColor = vec4(specularIbl, 1.0);
             break;
 		default:
 			fragColor = vec4(0.0, 0.0, 0.0, 1.0);

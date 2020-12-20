@@ -16,15 +16,21 @@ namespace CrossMod.Rendering
             Gao,
             Proj,
             ColorSet1,
+            ColorSet2,
+            ColorSet3,
             Normals,
             Tangent0,
             Bitangents,
+            Map1,
             Bake1,
-            UVPattern,
+            UvSet,
+            UvSet1,
+            UvSet2,
             ParamID,
             MaterialID,
             Albedo,
-            AnisotropyLines
+            AnisotropyLines,
+            SpecularCube
         }
 
         public static RenderSettings Instance { get; } = new RenderSettings();
@@ -74,6 +80,8 @@ namespace CrossMod.Rendering
         public OpenTK.Vector4 BoneColor { get; set; } = new OpenTK.Vector4(1);
 
         public RenderMode ShadingMode { get; set; } = RenderMode.Shaded;
+
+        public bool UseUvPattern { get; set; } = true;
 
         public bool EnableRed
         {

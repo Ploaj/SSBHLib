@@ -93,6 +93,7 @@ namespace CrossMod.Rendering.Models
         {
             currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
             currentShader.SetInt("renderMode", (int)RenderSettings.Instance.ShadingMode);
+            currentShader.SetBoolToInt("useUvPattern", RenderSettings.Instance.UseUvPattern);
 
             currentShader.SetFloat("floatTestParam", RenderSettings.Instance.FloatTestParam);
 

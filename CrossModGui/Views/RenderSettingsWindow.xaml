@@ -4,10 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
+        xmlns:converters="clr-namespace:CrossModGui.Converters"
         mc:Ignorable="d"
-        Title="Render Settings" Height="560.688" Width="504.688">
+        Title="Render Settings" Height="588" Width="504.688">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
+        <converters:InverseBoolConverter x:Key="inverseBoolConverter" />
     </Window.Resources>
     <StackPanel Margin="10">
         <Expander Header="Render Passes" IsExpanded="True">
@@ -67,6 +69,10 @@
                     <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
                     <CheckBox Name="blueCheckBox" Margin="10,2" IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
                     <CheckBox Name="alphaCheckBox" Margin="10,2" IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
+                </StackPanel>
+                <StackPanel Visibility="{Binding ShowUvDisplayMode, Converter={StaticResource booleanVisibilityConverter}}" Orientation="Horizontal">
+                    <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern, Converter={StaticResource inverseBoolConverter}}">UV Coords</RadioButton>
+                    <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern}">UV Test Pattern</RadioButton>
                 </StackPanel>
                 <Grid Visibility="{Binding ShowParamControls, Converter={StaticResource booleanVisibilityConverter}}">
                     <Grid.ColumnDefinitions>

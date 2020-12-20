@@ -130,7 +130,10 @@ namespace CrossMod.Nodes
             ConfigureDefaultBufferVec2(renderMesh, "bake1", usedAttributes, "defaultBlack");
 
             ConfigureDefaultBufferVec4(renderMesh, "colorSet1", usedAttributes, "defaultColorSet1");
+            ConfigureDefaultBufferVec4(renderMesh, "colorSet3", usedAttributes, "defaultColorSet1");
+
             ConfigureDefaultBufferVec4(renderMesh, "colorSet2", usedAttributes, "defaultColorSet2");
+
             ConfigureDefaultBufferVec4(renderMesh, "colorSet5", usedAttributes, "defaultColorSet5");
         }
 
