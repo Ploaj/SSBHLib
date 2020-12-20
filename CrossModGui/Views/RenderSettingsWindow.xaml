@@ -39,8 +39,29 @@
         </Expander>
         <Expander Header="Debug Shading" IsExpanded="True">
             <StackPanel>
-                <usercontrols:EnumEditor Label="Render Mode" DescriptionByValue="{Binding DescriptionByRenderMode}" SelectedValue="{Binding SelectedRenderMode}"></usercontrols:EnumEditor>
-                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Render Mode" Margin="5,2"></TextBlock>
+                    <ComboBox Grid.Column="1" Margin="0,2" ItemsSource="{Binding RenderModes}" SelectedItem="{Binding SelectedRenderMode}">
+                        <ComboBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ComboBox.GroupStyle>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Description}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
                 <StackPanel Visibility="{Binding ShowChannelControls, Converter={StaticResource booleanVisibilityConverter}}">
                     <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
                     <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
