@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossMod", "CrossMod\CrossMod.csproj", "{F9AA9734-A74E-4E28-BA16-6E97A063DD20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod", "CrossMod\CrossMod.csproj", "{F9AA9734-A74E-4E28-BA16-6E97A063DD20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossModGui", "CrossModGui\CrossModGui.csproj", "{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossModGui", "CrossModGui\CrossModGui.csproj", "{AC7551CA-97B0-4DBB-BE05-DEC8E9ABC441}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XmbLib", "XMBLib\XmbLib.csproj", "{A95F40A2-5645-4E2A-A69D-E9ADD09FA9D2}"
 EndProject
@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatLab", "MatLab\MatLab.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuanmbToJson", "NuanmbToJson\NuanmbToJson.csproj", "{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossMod.Test", "CrossMod.Test\CrossMod.Test.csproj", "{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod.Test", "CrossMod.Test\CrossMod.Test.csproj", "{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchExportNumatbToXml", "BatchExportNumatbToXml\BatchExportNumatbToXml.csproj", "{B6A9E036-1A83-48D4-9335-289D465E3731}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6A9E036-1A83-48D4-9335-289D465E3731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A9E036-1A83-48D4-9335-289D465E3731}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A9E036-1A83-48D4-9335-289D465E3731}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A9E036-1A83-48D4-9335-289D465E3731}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

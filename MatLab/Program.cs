@@ -26,7 +26,7 @@ namespace MatLab
             ConvertFiles(inputPath, outputPath, hasSpecifiedOutPath);
         }
 
-        private static void ConvertFiles(string inputPath, string outputPath, bool hasSpecifiedOutPath)
+        public static void ConvertFiles(string inputPath, string outputPath, bool hasSpecifiedOutPath)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(MaterialLibrary));
             switch (Path.GetExtension(inputPath))
