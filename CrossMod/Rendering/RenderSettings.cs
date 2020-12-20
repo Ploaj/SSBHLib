@@ -19,6 +19,7 @@ namespace CrossMod.Rendering
             ColorSet2,
             ColorSet3,
             Normals,
+            Normal0,
             Tangent0,
             Bitangents,
             Map1,
