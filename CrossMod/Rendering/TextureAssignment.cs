@@ -18,7 +18,7 @@ namespace CrossMod.Rendering
             { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultPrm },
             { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.BlackCube },
             { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.BlackCube },
-            { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultBakedLit },
+            { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultBlack },
             { MatlEnums.ParamId.Texture10, DefaultTextures.Instance.DefaultWhite },
             { MatlEnums.ParamId.Texture11, DefaultTextures.Instance.DefaultWhite },
             { MatlEnums.ParamId.Texture12, DefaultTextures.Instance.DefaultWhite },

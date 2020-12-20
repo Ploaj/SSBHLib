@@ -61,9 +61,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="DefaultTextures\default_baked_lit.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="DefaultTextures\default_prm.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
