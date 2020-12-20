@@ -14,7 +14,8 @@ vec3 GetBumpMapNormal(vec3 normal, vec3 tangent, vec3 bitangent, vec4 norColor)
     float y = 2 * norColor.y - 1.0;
 
     // Calculate z based on the fact that x*x + y*y + z*z = 1.
-    float z = sqrt(1 - (x * x) + (y * y));
+    // Clamp to prevent z being 0.0.
+    float z = sqrt(max(1 - (x * x) + (y * y), 0.001));
 
     vec3 normalMapNormal = vec3(x, y, z);
 
