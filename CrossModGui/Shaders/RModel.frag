@@ -190,13 +190,19 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     }
     directShading = clamp(directShading, 0.0, 1.0);
 
-    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0;
-    
-    vec4 bakedLitColor = texture(bakeLitMap, bake1);
-    vec3 ambientLight = ambientIbl * ao * bakedLitColor.rgb;
+    vec4 bakedLitColor = texture(bakeLitMap, bake1).rgba;
+
+    vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
+
+    // Baked lighting maps are not affected by ambient occlusion.
+    vec3 ambientLight = ambientIbl * ao;
+    ambientLight += bakedLitColor.rgb * 8.0;
 
     vec3 result = directLight * directLightIntensity + ambientLight;
+
+    // Baked stage lighting.
     result *= colorSet2Combined.rgb;
+
     return result;
 }
 

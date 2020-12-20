@@ -15,6 +15,7 @@ namespace CrossMod.Rendering.Resources
         public Texture2D DefaultWhite { get; } = new Texture2D();
         public Texture2D DefaultNormal { get; } = new Texture2D();
         public Texture2D DefaultBlack { get; } = new Texture2D();
+        public Texture2D DefaultBakedLit { get; } = new Texture2D();
 
         /// <summary>
         /// /common/shader/sfxpbs/fighter/default_params or 
@@ -56,6 +57,7 @@ namespace CrossMod.Rendering.Resources
             LoadBitmap(DefaultPrm, "DefaultTextures/default_prm.tif");
             LoadBitmap(DefaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(DefaultBlack, "DefaultTextures/default_black.png");
+            LoadBitmap(DefaultBakedLit, "DefaultTextures/default_baked_lit.png");
 
             using (var bmp = new Bitmap("DefaultTextures/default_cube_black.png"))
                 BlackCube.LoadImageData(bmp, 8);
