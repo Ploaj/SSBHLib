@@ -4,11 +4,12 @@ using SFGenericModel.Materials;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Models
 {
-    public class RModel : IRenderable
+    public class RModel
     {
         public Vector4 BoundingSphere { get; set; }
         public List<RMesh> SubMeshes { get; } = new List<RMesh>();
@@ -50,7 +51,7 @@ namespace CrossMod.Rendering.Models
                 }
             }
         }
-        public void Render(Camera camera)
+        private void Render(Camera camera)
         {
             Render(camera, null);
         }
@@ -77,7 +78,7 @@ namespace CrossMod.Rendering.Models
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(SubMeshes, skeleton, shader);
+            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, skeleton)), shader, boneUniformBuffer);
         }
 
         public static void SetCameraUniforms(Camera camera, Shader currentShader)
@@ -121,72 +122,45 @@ namespace CrossMod.Rendering.Models
             currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
         }
 
-        public static void DrawMeshes(List<RMesh> subMeshes, RSkeleton? skeleton, Shader currentShader)
+        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton>> subMeshes, Shader currentShader, UniformBlock boneUniformBuffer)
         {
-            GroupSubMeshesByPass(subMeshes, out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
+            GroupSubMeshesByPass(subMeshes,
+                out List<Tuple<RMesh, RSkeleton>> opaqueMeshes,
+                out List<Tuple<RMesh, RSkeleton>> sortMeshes,
+                out List<Tuple<RMesh, RSkeleton>> nearMeshes,
+                out List<Tuple<RMesh, RSkeleton>> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
 
-            foreach (RMesh m in opaqueMeshes)
+            foreach (var m in opaqueMeshes)
             {
-                DrawMesh(m, skeleton, currentShader, previousMaterial);
-                previousMaterial = m.Material;
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                previousMaterial = m.Item1.Material;
             }
 
             // Shader labels with _sort or _far get rendered in a second pass for proper alpha blending.
-            foreach (RMesh m in farMeshes)
+            foreach (var m in farMeshes)
             {
-                DrawMesh(m, skeleton, currentShader, previousMaterial);
-                previousMaterial = m.Material;
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                previousMaterial = m.Item1.Material;
             }
 
-            foreach (RMesh m in sortMeshes)
+            foreach (var m in sortMeshes)
             {
-                DrawMesh(m, skeleton, currentShader, previousMaterial);
-                previousMaterial = m.Material;
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                previousMaterial = m.Item1.Material;
             }
 
             // Shader labels with _near get rendered last after post processing is done.
-            foreach (RMesh m in nearMeshes)
+            foreach (var m in nearMeshes)
             {
-                DrawMesh(m, skeleton, currentShader, previousMaterial);
-                previousMaterial = m.Material;
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                previousMaterial = m.Item1.Material;
             }
         }
 
-        public static void GroupSubMeshesByPass(List<RMesh> subMeshes, out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes)
-        {
-            opaqueMeshes = new List<RMesh>();
-            sortMeshes = new List<RMesh>();
-            nearMeshes = new List<RMesh>();
-            farMeshes = new List<RMesh>();
-
-            // Meshes are split into render passes based on the shader label.
-            foreach (RMesh m in subMeshes)
-            {
-                if (m.Material == null)
-                {
-                    opaqueMeshes.Add(m);
-                    continue;
-                }
-
-                // Unrecognized meshes will just be placed in the first pass.
-                // TODO: Does the game use a red checkerboard for missing labels?
-                if (m.Material.ShaderLabel.EndsWith("_far"))
-                    farMeshes.Add(m);
-                else if (m.Material.ShaderLabel.EndsWith("_sort"))
-                    sortMeshes.Add(m);
-                else if (m.Material.ShaderLabel.EndsWith("_near"))
-                    nearMeshes.Add(m);
-                else if (m.Material.ShaderLabel.EndsWith("_opaque"))
-                    opaqueMeshes.Add(m);
-                else
-                    opaqueMeshes.Add(m);
-            }
-        }
-
-        private static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial)
+        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock boneUniformBuffer)
         {
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
@@ -195,7 +169,48 @@ namespace CrossMod.Rendering.Models
                 m.Material?.SetRenderState();
             }
 
+            if (skeleton != null)
+            {
+                var boneBinds = skeleton.GetAnimationTransforms();
+                boneUniformBuffer.SetValues("transforms", boneBinds);
+            }
+
             m.Draw(currentShader, skeleton);
+        }
+
+        private static void GroupSubMeshesByPass(IEnumerable<Tuple<RMesh, RSkeleton>> subMeshes,
+            out List<Tuple<RMesh, RSkeleton>> opaqueMeshes,
+            out List<Tuple<RMesh, RSkeleton>> sortMeshes,
+            out List<Tuple<RMesh, RSkeleton>> nearMeshes,
+            out List<Tuple<RMesh, RSkeleton>> farMeshes)
+        {
+            opaqueMeshes = new List<Tuple<RMesh, RSkeleton>>();
+            sortMeshes = new List<Tuple<RMesh, RSkeleton>>();
+            nearMeshes = new List<Tuple<RMesh, RSkeleton>>();
+            farMeshes = new List<Tuple<RMesh, RSkeleton>>();
+
+            // Meshes are split into render passes based on the shader label.
+            foreach (var m in subMeshes)
+            {
+                if (m.Item1.Material == null)
+                {
+                    opaqueMeshes.Add(m);
+                    continue;
+                }
+
+                // Unrecognized meshes will just be placed in the first pass.
+                // TODO: Does the game use a red checkerboard for missing labels?
+                if (m.Item1.Material.ShaderLabel.EndsWith("_far"))
+                    farMeshes.Add(m);
+                else if (m.Item1.Material.ShaderLabel.EndsWith("_sort"))
+                    sortMeshes.Add(m);
+                else if (m.Item1.Material.ShaderLabel.EndsWith("_near"))
+                    nearMeshes.Add(m);
+                else if (m.Item1.Material.ShaderLabel.EndsWith("_opaque"))
+                    opaqueMeshes.Add(m);
+                else
+                    opaqueMeshes.Add(m);
+            }
         }
     }
 }

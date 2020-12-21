@@ -83,18 +83,30 @@ namespace CrossModGui.ViewModels
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
 
-
             // Load model collection.
             var collection = new ModelCollection();
 
             // TODO: Move bounding sphere to model collection.
             var boundingSpheres = new List<Vector4>();
 
+            AddModelsToCollection(rootNode, collection, boundingSpheres);
+
+            var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
+            Renderer.Camera.FrameBoundingSphere(boundingSphere);
+
+            Renderer.ItemToRender = collection;
+        }
+
+        private void AddModelsToCollection(DirectoryNode rootNode, ModelCollection collection, List<Vector4> boundingSpheres)
+        {
             rootNode.IsExpanded = true;
             foreach (var child in rootNode.Nodes)
             {
                 child.IsExpanded = true;
-                var numdlb = child.Nodes.OfType<NumdlbNode>().FirstOrDefault();
+
+                // If the node is a model, add the meshes.
+                // Otherwise, recurse into the child folders if possible.
+                var numdlb = child as NumdlbNode ?? child.Nodes.OfType<NumdlbNode>().FirstOrDefault();
                 if (numdlb != null)
                 {
                     var rnumdl = numdlb.GetRenderableNode();
@@ -107,13 +119,12 @@ namespace CrossModGui.ViewModels
 
                     AddMeshesToGui(child.Text, rnumdl.RenderModel);
                     AddSkeletonToGui(rnumdl.Skeleton);
+                } 
+                else if (child is DirectoryNode directory)
+                {
+                    AddModelsToCollection(directory, collection, boundingSpheres);
                 }
             }
-
-            var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
-            Renderer.Camera.FrameBoundingSphere(boundingSphere);
-
-            Renderer.ItemToRender = collection;
         }
 
         public void UpdateBones(IRenderable newNode)
