@@ -30,7 +30,7 @@ namespace CrossMod.Nodes
         {
             set
             {
-                Skel = value.GetRenderableNode() as RSkeleton;
+                Skel = value.Renderable.Value as RSkeleton;
                 BoneIDs.Clear();
                 BoneIDs.Add(Hash.Hash40("top"), 0);
                 for (int i = 0; i < Skel.Bones.Count; i++)

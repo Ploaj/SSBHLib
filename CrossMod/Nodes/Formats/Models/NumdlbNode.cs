@@ -55,7 +55,7 @@ namespace CrossMod.Nodes
                 }
                 else if (fileNode is NutexbNode nutexNode)
                 {
-                    var texture = (RTexture)nutexNode.GetRenderableNode();
+                    var texture = (RTexture)nutexNode.Renderable.Value;
 
                     // Use the file name instead of the internal name.
                     // Ignore case.
@@ -68,7 +68,7 @@ namespace CrossMod.Nodes
                 }
                 else if (fileNode.Text.Equals(model.SkeletonFileName))
                 {
-                    skeleton = (RSkeleton)((NusktbNode)fileNode).GetRenderableNode();
+                    skeleton = (RSkeleton)((NusktbNode)fileNode).Renderable.Value;
                 }
                 else if (fileNode.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
                 {
