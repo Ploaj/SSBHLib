@@ -51,10 +51,6 @@ namespace CrossMod.Rendering.Models
                 }
             }
         }
-        private void Render(Camera camera)
-        {
-            Render(camera, null);
-        }
 
         public void Render(Camera camera, RSkeleton? skeleton = null)
         {
@@ -132,35 +128,40 @@ namespace CrossMod.Rendering.Models
 
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
+            RSkeleton? previousSkeleton = null;
 
             foreach (var m in opaqueMeshes)
             {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
+                previousSkeleton = m.Item2;
             }
 
             // Shader labels with _sort or _far get rendered in a second pass for proper alpha blending.
             foreach (var m in farMeshes)
             {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
+                previousSkeleton = m.Item2;
             }
 
             foreach (var m in sortMeshes)
             {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
+                previousSkeleton = m.Item2;
             }
 
             // Shader labels with _near get rendered last after post processing is done.
             foreach (var m in nearMeshes)
             {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer);
+                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
+                previousSkeleton = m.Item2;
             }
         }
 
-        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock boneUniformBuffer)
+        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock boneUniformBuffer, RSkeleton? previousSkeleton)
         {
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
@@ -169,7 +170,7 @@ namespace CrossMod.Rendering.Models
                 m.Material?.SetRenderState();
             }
 
-            if (skeleton != null)
+            if (skeleton != null && skeleton != previousSkeleton)
             {
                 var boneBinds = skeleton.GetAnimationTransforms();
                 boneUniformBuffer.SetValues("transforms", boneBinds);

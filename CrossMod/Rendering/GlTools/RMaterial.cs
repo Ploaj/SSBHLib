@@ -30,8 +30,6 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<string, RTexture> TextureByName { get; set; } = new Dictionary<string, RTexture>();
 
-        public float CurrentFrame { get; set; } = 0;
-
         public bool EnableFaceCulling { get; set; }
         public CullFaceMode CullMode { get; set; } = CullFaceMode.Back;
 
@@ -157,8 +155,6 @@ namespace CrossMod.Rendering.GlTools
 
             AddTextures(genericMaterial);
 
-            // HACK: There isn't an easy way to access the current frame.
-            genericMaterial.AddFloat("currentFrame", CurrentFrame);
             genericMaterial.AddFloat("depthBias", DepthBias);
             genericMaterial.AddVector3("materialId", MaterialIdColorRgb255 / 255f);
 

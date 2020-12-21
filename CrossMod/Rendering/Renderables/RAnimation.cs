@@ -40,7 +40,6 @@ namespace CrossMod.Rendering
                 if (m.Material != null)
                 {
                     m.Material.Vec4ParamsMaterialAnimation.Clear();
-                    m.Material.CurrentFrame = frame;
                 }
             }
 
