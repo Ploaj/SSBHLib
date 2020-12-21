@@ -139,18 +139,6 @@ namespace CrossMod.Rendering.GlTools
             );
         }
 
-        private static void CreateRModelUvShader()
-        {
-            shaderLoader.AddShader("RModelUV",
-                "RModelUV.vert",
-                "RModelUV.frag",
-                "NormalMap.frag",
-                "Gamma.frag",
-                "Wireframe.frag",
-                "RModel.geom"
-            );
-        }
-
         private static void CreateRModelShader()
         {
             shaderLoader.AddShader("RModel",

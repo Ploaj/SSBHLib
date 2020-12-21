@@ -142,14 +142,13 @@ namespace CrossMod.Nodes
 
         private static PixelType GetPixelType(NUTEX_FORMAT format)
         {
-            switch (format)
+            return format switch
             {
-                case NUTEX_FORMAT.R32G32B32A32_FLOAT:
-                    return PixelType.Float;
-                default:
-                    return PixelType.UnsignedByte;
-            }
+                NUTEX_FORMAT.R32G32B32A32_FLOAT => PixelType.Float,
+                _ => PixelType.UnsignedByte,
+            };
         }
+
         /// <summary>
         /// Channel information for uncompressed formats.
         /// </summary>

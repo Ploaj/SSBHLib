@@ -229,19 +229,14 @@ namespace CrossMod.Nodes
         private static VertexAttribPointerType GetGlAttributeType(MeshAttribute meshAttribute)
         {
             // Render bytes as unsigned because of attribute normalization.
-            switch (meshAttribute.DataType)
+            return meshAttribute.DataType switch
             {
-                case MeshAttribute.AttributeDataType.Float:
-                    return VertexAttribPointerType.Float;
-                case MeshAttribute.AttributeDataType.Byte:
-                    return VertexAttribPointerType.UnsignedByte;
-                case MeshAttribute.AttributeDataType.HalfFloat:
-                    return VertexAttribPointerType.HalfFloat;
-                case MeshAttribute.AttributeDataType.HalfFloat2:
-                    return VertexAttribPointerType.HalfFloat;
-                default:
-                    return VertexAttribPointerType.Float;
-            }
+                MeshAttribute.AttributeDataType.Float => VertexAttribPointerType.Float,
+                MeshAttribute.AttributeDataType.Byte => VertexAttribPointerType.UnsignedByte,
+                MeshAttribute.AttributeDataType.HalfFloat => VertexAttribPointerType.HalfFloat,
+                MeshAttribute.AttributeDataType.HalfFloat2 => VertexAttribPointerType.HalfFloat,
+                _ => VertexAttribPointerType.Float,
+            };
         }
     }
 }

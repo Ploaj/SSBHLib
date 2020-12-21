@@ -23,8 +23,6 @@ namespace CrossMod.Rendering
             var shader = ShaderContainer.GetShader("ScreenTexture");
             shader.UseProgram();
 
-            // TODO: Add a sampler to this class and use that instead.
-            // TODO: Samplers are bound from the previous model drawing.
             sampler.Bind(0);
             shader.SetTexture("image", texture, 0);
 

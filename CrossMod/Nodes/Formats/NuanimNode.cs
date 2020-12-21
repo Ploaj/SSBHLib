@@ -8,7 +8,7 @@ namespace CrossMod.Nodes
 {
     public class NuanimNode : FileNode
     {
-        private Anim animation;
+        private readonly Anim animation;
 
         public NuanimNode(string path) : base(path, "animation", true)
         {

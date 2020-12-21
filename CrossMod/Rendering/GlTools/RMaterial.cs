@@ -58,6 +58,7 @@ namespace CrossMod.Rendering.GlTools
         public string GetTextureName(MatlEnums.ParamId paramId) => textureNameByParamId[paramId];
 
         // TODO: These can just be arrays.
+        // TODO: The dictionary is only useful for keeping track of what parameters are used.
         private readonly Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
         private readonly Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
         private readonly Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
