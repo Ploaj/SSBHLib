@@ -39,7 +39,6 @@ namespace CrossMod.Rendering.GlTools
 
         public BlendingFactor SourceColor { get; set; } = BlendingFactor.One;
         public BlendingFactor DestinationColor { get; set; } = BlendingFactor.Zero;
-        public bool HasSortLabel => ShaderLabel.EndsWith("_sort");
 
         public bool UseAlphaSampleCoverage { get; set; } = false;
 

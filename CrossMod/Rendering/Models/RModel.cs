@@ -55,7 +55,7 @@ namespace CrossMod.Rendering.Models
             Render(camera, null);
         }
 
-        public void Render(Camera camera, RSkeleton skeleton = null)
+        public void Render(Camera camera, RSkeleton? skeleton = null)
         {
             Shader shader = ShaderContainer.GetCurrentRModelShader();
             if (!shader.LinkStatusIsOk)
@@ -77,10 +77,10 @@ namespace CrossMod.Rendering.Models
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(skeleton, shader);
+            DrawMeshes(SubMeshes, skeleton, shader);
         }
 
-        private static void SetCameraUniforms(Camera camera, Shader currentShader)
+        public static void SetCameraUniforms(Camera camera, Shader currentShader)
         {
             Matrix4 mvp = camera.MvpMatrix;
             currentShader.SetMatrix4x4("mvp", ref mvp);
@@ -89,7 +89,7 @@ namespace CrossMod.Rendering.Models
             currentShader.SetVector3("cameraPos", camera.PositionWorldSpace);
         }
 
-        private static void SetRenderSettingsUniforms(Shader currentShader)
+        public static void SetRenderSettingsUniforms(Shader currentShader)
         {
             currentShader.SetVector4("renderChannels", RenderSettings.Instance.renderChannels);
             currentShader.SetInt("renderMode", (int)RenderSettings.Instance.ShadingMode);
@@ -121,9 +121,9 @@ namespace CrossMod.Rendering.Models
             currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
         }
 
-        private void DrawMeshes(RSkeleton skeleton, Shader currentShader)
+        public static void DrawMeshes(List<RMesh> subMeshes, RSkeleton? skeleton, Shader currentShader)
         {
-            GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
+            GroupSubMeshesByPass(subMeshes, out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
@@ -155,7 +155,7 @@ namespace CrossMod.Rendering.Models
             }
         }
 
-        private void GroupSubMeshesByPass(out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes)
+        public static void GroupSubMeshesByPass(List<RMesh> subMeshes, out List<RMesh> opaqueMeshes, out List<RMesh> sortMeshes, out List<RMesh> nearMeshes, out List<RMesh> farMeshes)
         {
             opaqueMeshes = new List<RMesh>();
             sortMeshes = new List<RMesh>();
@@ -163,7 +163,7 @@ namespace CrossMod.Rendering.Models
             farMeshes = new List<RMesh>();
 
             // Meshes are split into render passes based on the shader label.
-            foreach (RMesh m in SubMeshes)
+            foreach (RMesh m in subMeshes)
             {
                 if (m.Material == null)
                 {
@@ -186,7 +186,7 @@ namespace CrossMod.Rendering.Models
             }
         }
 
-        private static void DrawMesh(RMesh m, RSkeleton skeleton, Shader currentShader, RMaterial? previousMaterial)
+        private static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial)
         {
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))

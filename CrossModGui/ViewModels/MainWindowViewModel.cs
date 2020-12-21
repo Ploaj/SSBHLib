@@ -1,9 +1,11 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
+using OpenTK;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System;
 
 namespace CrossModGui.ViewModels
 {
@@ -80,6 +82,35 @@ namespace CrossModGui.ViewModels
         {
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
+
+
+            // Load model collection.
+            var collection = new ModelCollection();
+
+            // TODO: Move bounding sphere to model collection.
+            var boundingSpheres = new List<Vector4>();
+
+            rootNode.IsExpanded = true;
+            foreach (var child in rootNode.Nodes.Where(c => c.Text != "transition_temporary"))
+            {
+                child.IsExpanded = true;
+                var numdlb = child.Nodes.OfType<NumdlNode>().FirstOrDefault();
+                if (numdlb != null)
+                {
+                    var rnumdl = (RNumdl)numdlb.GetRenderableNode();
+
+                    if (rnumdl.RenderModel != null)
+                    {
+                        boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
+                        collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, rnumdl.Skeleton)));
+                    }
+                }
+            }
+
+            var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
+            Renderer.Camera.FrameBoundingSphere(boundingSphere);
+
+            Renderer.ItemToRender = collection;
         }
 
         public void UpdateMeshesAndBones(IRenderable newNode)

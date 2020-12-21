@@ -45,7 +45,7 @@ namespace CrossMod.Rendering.Models
             RenderMesh = renderMesh;
         }
 
-        public void Draw(Shader shader, RSkeleton skeleton)
+        public void Draw(Shader shader, RSkeleton? skeleton)
         {
             if (!IsVisible)
                 return;
