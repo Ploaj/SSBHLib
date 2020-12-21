@@ -30,7 +30,12 @@ namespace CrossModGui.Views
 
         private void MaterialReference_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://github.com/ScanMountGoat/Smush-Material-Research/blob/master/Material%20Parameters.md"));
+            var info = new ProcessStartInfo
+            {
+                FileName = "https://github.com/ScanMountGoat/Smush-Material-Research/blob/master/Material%20Parameters.md",
+                UseShellExecute = true
+            };
+            Process.Start(info);
         }
 
         private void ComboBox_DropDownOpened(object sender, System.EventArgs e)
