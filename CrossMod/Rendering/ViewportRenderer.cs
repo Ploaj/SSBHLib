@@ -17,6 +17,9 @@ namespace CrossMod.Rendering
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
+        // TODO: Find a cleaner way to override the main item?
+        public IRenderable? ItemToRenderOverride { get; set;} = null;
+
         public IRenderable? ItemToRender
         {
             get => itemToRender;
@@ -52,6 +55,7 @@ namespace CrossMod.Rendering
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
                 ItemToRender = null;
+                ItemToRenderOverride = null;
                 GC.WaitForPendingFinalizers();
                 GLObjectManager.DeleteUnusedGLObjects();
             });
@@ -107,12 +111,18 @@ namespace CrossMod.Rendering
 
         private void DrawItemToRender(float currentFrame)
         {
-            if (itemToRender is IRenderableModel model)
+            if (ItemToRenderOverride != null)
+            {
+                ItemToRenderOverride.Render(Camera);
+                return;
+            }
+
+            if (ItemToRender is IRenderableModel model)
             {
                 RenderableAnimation?.SetFrameModel(model.RenderModel, currentFrame);
                 RenderableAnimation?.SetFrameSkeleton(model.Skeleton, currentFrame);
             }
-            itemToRender?.Render(Camera);
+            ItemToRender?.Render(Camera);
         }
 
         public System.Drawing.Bitmap GetScreenshot()

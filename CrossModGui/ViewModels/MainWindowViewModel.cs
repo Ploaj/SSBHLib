@@ -158,12 +158,17 @@ namespace CrossModGui.ViewModels
 
             ResetAnimation();
 
+            // Preserve the existing model collection when drawing individual items.
             if (item is IRenderableNode renderableNode)
             {
-                //UpdateBones(renderableNode.Renderable.Value);
-                //Renderer.ItemToRender = renderableNode.Renderable.Value;
+                Renderer.ItemToRenderOverride = renderableNode.Renderable.Value;
             }
-            else if (item is NuanmbNode animation)
+            else
+            {
+                Renderer.ItemToRenderOverride = null;
+            }
+            
+            if (item is NuanmbNode animation)
             {
                 Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
