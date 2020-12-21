@@ -8,12 +8,7 @@ namespace CrossMod.Nodes
     {
         public Hlpb helperBones;
 
-        public NuhlpbNode(string path) : base(path)
-        {
-            ImageKey = "skeleton";
-        }
-
-        public override void Open()
+        public NuhlpbNode(string path) : base(path, "skeleton", false)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out helperBones);
         }

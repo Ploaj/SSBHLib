@@ -10,33 +10,33 @@ namespace CrossMod.Rendering
     {
         private static readonly Dictionary<MatlEnums.ParamId, Texture> defaultTextureByParamId = new Dictionary<MatlEnums.ParamId, Texture>
         {
-            { MatlEnums.ParamId.Texture0, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture1, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture3, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture4, DefaultTextures.Instance.DefaultNormal },
-            { MatlEnums.ParamId.Texture5, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.DefaultPrm },
-            { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.BlackCube },
-            { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.BlackCube },
-            { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture10, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture11, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture12, DefaultTextures.Instance.DefaultWhite },
-            { MatlEnums.ParamId.Texture13, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture14, DefaultTextures.Instance.DefaultBlack },
-            { MatlEnums.ParamId.Texture16, DefaultTextures.Instance.DefaultWhite },
+            { MatlEnums.ParamId.Texture0, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture1, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture3, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture4, DefaultTextures.Instance.Value.DefaultNormal },
+            { MatlEnums.ParamId.Texture5, DefaultTextures.Instance.Value.DefaultBlack },
+            { MatlEnums.ParamId.Texture6, DefaultTextures.Instance.Value.DefaultPrm },
+            { MatlEnums.ParamId.Texture7, DefaultTextures.Instance.Value.BlackCube },
+            { MatlEnums.ParamId.Texture8, DefaultTextures.Instance.Value.BlackCube },
+            { MatlEnums.ParamId.Texture9, DefaultTextures.Instance.Value.DefaultBlack },
+            { MatlEnums.ParamId.Texture10, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture11, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture12, DefaultTextures.Instance.Value.DefaultWhite },
+            { MatlEnums.ParamId.Texture13, DefaultTextures.Instance.Value.DefaultBlack },
+            { MatlEnums.ParamId.Texture14, DefaultTextures.Instance.Value.DefaultBlack },
+            { MatlEnums.ParamId.Texture16, DefaultTextures.Instance.Value.DefaultWhite },
         };
 
         public static readonly Dictionary<string, Texture> defaultTexturesByName = new Dictionary<string, Texture>
         {
-            { "#replace_cubemap", DefaultTextures.Instance.SpecularPbr },
-            { "/common/shader/sfxpbs/default_normal", DefaultTextures.Instance.DefaultNormal },
-            { "/common/shader/sfxpbs/default_params", DefaultTextures.Instance.DefaultParamsFighter },
-            { "/common/shader/sfxpbs/default_black", DefaultTextures.Instance.DefaultBlack },
-            { "/common/shader/sfxpbs/default_white", DefaultTextures.Instance.DefaultWhite },
-            { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.DefaultWhite },
-            { "/common/shader/sfxpbs/fighter/default_params", DefaultTextures.Instance.DefaultParamsFighter },
-            { "/common/shader/sfxpbs/fighter/default_normal", DefaultTextures.Instance.DefaultNormal }
+            { "#replace_cubemap", DefaultTextures.Instance.Value.SpecularPbr },
+            { "/common/shader/sfxpbs/default_normal", DefaultTextures.Instance.Value.DefaultNormal },
+            { "/common/shader/sfxpbs/default_params", DefaultTextures.Instance.Value.DefaultParamsFighter },
+            { "/common/shader/sfxpbs/default_black", DefaultTextures.Instance.Value.DefaultBlack },
+            { "/common/shader/sfxpbs/default_white", DefaultTextures.Instance.Value.DefaultWhite },
+            { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.Value.DefaultWhite },
+            { "/common/shader/sfxpbs/fighter/default_params", DefaultTextures.Instance.Value.DefaultParamsFighter },
+            { "/common/shader/sfxpbs/fighter/default_normal", DefaultTextures.Instance.Value.DefaultNormal }
         };
 
         public static Texture GetTexture(RMaterial material, MatlEnums.ParamId paramId)
@@ -52,7 +52,7 @@ namespace CrossMod.Rendering
             if (defaultTexturesByName.ContainsKey(textureName))
                 return defaultTexturesByName[textureName];
             else
-                return DefaultTextures.Instance.DefaultWhite;
+                return DefaultTextures.Instance.Value.DefaultWhite;
         }
     }
 }

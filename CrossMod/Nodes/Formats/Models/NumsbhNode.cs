@@ -18,12 +18,12 @@ namespace CrossMod.Nodes
         public Mesh mesh;
         public Adjb ExtendedMesh;
 
-        public NumsbhNode(string path) : base(path)
+        public NumsbhNode(string path) : base(path, "mesh", false)
         {
-            ImageKey = "mesh";
+            Open();
         }
 
-        public override void Open()
+        private void Open()
         {
             string adjb = Path.GetDirectoryName(AbsolutePath) + "/model.adjb";
             if (File.Exists(adjb))

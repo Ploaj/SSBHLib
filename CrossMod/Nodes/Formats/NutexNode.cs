@@ -1,4 +1,5 @@
 ﻿using CrossMod.Rendering;
+using CrossMod.Rendering.Resources;
 using CrossMod.Tools;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -12,15 +13,20 @@ namespace CrossMod.Nodes
 {
     public class NutexNode : FileNode, IRenderableNode
     {
-        public string TexName { get; private set; }
+        public string TexName { get; }
 
-        private RTexture renderableTexture;
-        private SBSurface surface;
+        public Lazy<IRenderable> Renderable { get; }
 
-        public NutexNode(string path) : base(path)
+        public NutexNode(string path) : base(path, "texture", true)
         {
-            ImageKey = "texture";
-            IsActive = true;
+            var surface = Open(AbsolutePath);
+            TexName = surface?.Name ?? Path.GetFileNameWithoutExtension(AbsolutePath);
+
+
+            if (surface == null)
+                Renderable = new Lazy<IRenderable>(new RTexture(DefaultTextures.Instance.Value.DefaultBlack, false));
+            else
+                Renderable = new Lazy<IRenderable>(new RTexture(surface.GetRenderTexture(), surface.IsSRGB));
         }
 
         public override string ToString()
@@ -28,24 +34,7 @@ namespace CrossMod.Nodes
             return Text.Contains(".") ? Text.Substring(0, Text.IndexOf(".")) : Text;
         }
 
-        public override void Open()
-        {
-            surface = Open(AbsolutePath);
-            // HACK: Empty streams?
-            if (surface == null)
-            {
-                // TODO: Don't read from disk every time?
-                using (var image = Image.FromFile("DefaultTextures/default_black.png"))
-                {
-                    surface = SBSurface.FromBitmap((Bitmap)image);
-                    surface.Name = Path.GetFileNameWithoutExtension(AbsolutePath);
-                }
-            }
-
-            TexName = surface.Name;
-        }
-
-        public static SBSurface Open(string FilePath)
+        private static SBSurface? Open(string FilePath)
         {
             using (BinaryReader reader = new BinaryReader(new FileStream(FilePath, FileMode.Open)))
             {
@@ -113,22 +102,7 @@ namespace CrossMod.Nodes
 
         public IRenderable GetRenderableNode()
         {
-            // Don't initialize more than once.
-            // We'll assume the context isn't destroyed.
-            if (renderableTexture == null)
-            {
-                // HACK: Nutex loading doesn't always work.
-                try
-                {
-                    renderableTexture = new RTexture(surface.GetRenderTexture(), surface.IsSRGB);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-
-            return renderableTexture;
+            return Renderable.Value;
         }
 
         private static string ReadTexName(BinaryReader reader)
@@ -144,7 +118,7 @@ namespace CrossMod.Nodes
             return result;
         }
 
-        public static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
+        private static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
             { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Srgb8Alpha8 },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba8 },
@@ -179,7 +153,7 @@ namespace CrossMod.Nodes
         /// <summary>
         /// Channel information for uncompressed formats.
         /// </summary>
-        public static readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
+        private static readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
         {
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, PixelFormat.Rgba },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, PixelFormat.Rgba },

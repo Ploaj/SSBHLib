@@ -24,7 +24,7 @@ namespace CrossMod.Nodes
 
         public FileNode? Parent { get; private set; }
 
-        public string ImageKey { get; set; }
+        public string ImageKey { get; }
 
         public event EventHandler<bool>? Expanded;
 
@@ -41,9 +41,11 @@ namespace CrossMod.Nodes
 
         public List<FileNode> Nodes { get; set; } = new List<FileNode>();
 
-        public FileNode(string path)
+        public FileNode(string path, string imageKey, bool isActive)
         {
             AbsolutePath = path;
+            IsActive = isActive;
+            ImageKey = imageKey;
             Text = Path.GetFileName(path);
         }
 
@@ -52,11 +54,6 @@ namespace CrossMod.Nodes
         {
             node.Parent = this;
             Nodes.Add(node);
-        }
-
-        public virtual void Open()
-        {
-
         }
     }
 }

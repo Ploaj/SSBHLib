@@ -3,40 +3,32 @@ using CrossMod.Rendering;
 using SSBHLib;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
+using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
     public class NumdlNode : FileNode, IRenderableNode
     {
-        private Modl model;
-        private IRenderable renderableNode = null;
+        public Lazy<IRenderable> Renderable { get; }
 
-        public NumdlNode(string path) : base(path)
+        private readonly Modl model;
+
+        public NumdlNode(string path) : base(path, "model", true)
         {
-            ImageKey = "model";
-            IsActive = true;
+            Ssbh.TryParseSsbhFile(AbsolutePath, out model);
+            Renderable = new Lazy<IRenderable>(() => GetRenderableNode());
         }
 
-        public IRenderable GetRenderableNode()
+        public RNumdl GetRenderableNode()
         {
-            // Don't initialize more than once.
-            // We'll assume the context isn't destroyed.
-            if (renderableNode == null)
-                renderableNode = CreateRenderableModel();
+            var rnumdl = CreateRnumdl();
+            rnumdl.Skeleton?.Reset();
 
-            if (renderableNode is RNumdl MDL)
-            {
-                if (MDL.Skeleton != null)
-                {
-                    MDL.Skeleton.Reset();
-                }
-            }
-
-            return renderableNode;
+            return rnumdl;
         }
 
-        private IRenderable CreateRenderableModel()
+        private RNumdl CreateRnumdl()
         {
             NumsbhNode? meshNode = null;
             NuhlpbNode? hlpbNode = null;
@@ -91,11 +83,6 @@ namespace CrossMod.Nodes
                     lodXmb = (XmbNode)fileNode;
                 }
             }
-        }
-
-        public override void Open()
-        {
-            Ssbh.TryParseSsbhFile(AbsolutePath, out model);
         }
     }
 }

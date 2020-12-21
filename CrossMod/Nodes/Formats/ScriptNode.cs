@@ -45,7 +45,7 @@ namespace CrossMod.Nodes
         public RSkeleton Skel { get; set; }
         public string CurrentAnimationName { get; set; }
 
-        public ScriptNode(string path) : base(path)
+        public ScriptNode(string path) : base(path, "", false)
         {
             Scripts = new Dictionary<string, Script>();
             BoneIDs = new Dictionary<ulong, int>();

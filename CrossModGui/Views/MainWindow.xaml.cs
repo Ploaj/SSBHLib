@@ -36,7 +36,6 @@ namespace CrossModGui.Views
             // so do any setup here before rendering starts.
             glViewport.FrameRendering += GlViewport_OnRenderFrame;
 
-            CrossMod.Rendering.Resources.DefaultTextures.Initialize();
             CrossMod.Rendering.GlTools.ShaderContainer.SetUpShaders();
         }
 

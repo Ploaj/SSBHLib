@@ -1,9 +1,10 @@
 ﻿using CrossMod.Rendering;
+using System;
 
 namespace CrossMod.Nodes
 {
     public interface IRenderableNode
     {
-        IRenderable GetRenderableNode();
+        Lazy<IRenderable> Renderable { get; }
     }
 }

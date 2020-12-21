@@ -317,12 +317,12 @@ namespace CrossMod.Rendering.GlTools
 
         private void AddRenderModeTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("uvPattern", DefaultTextures.Instance.UvPattern);
+            genericMaterial.AddTexture("uvPattern", DefaultTextures.Instance.Value.UvPattern);
         }
 
         private void AddImageBasedLightingTextures(GenericMaterial genericMaterial)
         {
-            genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.DiffusePbr);
+            genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.Value.DiffusePbr);
             genericMaterial.AddTexture("specularPbrCube", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture7));
         }
 

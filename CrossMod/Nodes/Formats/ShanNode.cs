@@ -5,12 +5,12 @@ namespace CrossMod.Nodes
     public class ShanNode : FileNode
     {
 
-        public ShanNode(string path) : base(path)
+        public ShanNode(string path) : base(path, "animation", false)
         {
-            ImageKey = "animation";
+            Open();
         }
 
-        public override void Open()
+        private void Open()
         {
             using (BinaryReader r = new BinaryReader(new FileStream(AbsolutePath, FileMode.Open)))
             {

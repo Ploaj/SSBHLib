@@ -4,12 +4,12 @@
     {
         public XMBLib.Xmb Xmb { get; set; }
 
-        public XmbNode(string absolutePath) : base(absolutePath)
+        public XmbNode(string absolutePath) : base(absolutePath, "", false)
         {
-
+            Open();
         }
 
-        public override void Open()
+        private void Open()
         {
             Xmb = new XMBLib.Xmb(AbsolutePath);
         }

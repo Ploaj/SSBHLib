@@ -1,7 +1,5 @@
 ﻿using CrossMod.Nodes.Formats.Models;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace CrossMod.Nodes
 {
@@ -18,17 +16,12 @@ namespace CrossMod.Nodes
         /// </summary>
         /// <param name="path"></param>
         /// <param name="isRoot">Whether this is the topmost parent. Decides whether to display full or partial name.</param>
-        public DirectoryNode(string path, bool isRoot = true) : base(path)
+        public DirectoryNode(string path, bool isRoot = true) : base(path, "folder", true)
         {
             Text = isRoot ? Path.GetFullPath(path) : Path.GetFileName(path);
-            ImageKey = "folder";
-
-            // Make the font color use the default foreground color.
-            // TODO: "IsActive" should be reworked at some point (it only applies to renderables).
-            IsActive = true;
 
             CreateAndAddChildren();
-            Expanded += (s, e) => OpenFileNodes();
+            Expanded += (s, e) => OnExpand();
         }
 
         private void CreateAndAddChildren()
@@ -49,24 +42,14 @@ namespace CrossMod.Nodes
             }
         }
 
-        private void OpenFileNodes()
+        private void OnExpand()
         {
             // Nodes only need to be opened once.
             if (hasOpenedFiles)
                 return;
 
+            // TODO: Load children?
 
-            // Some nodes take a while to open, so use a threadpool to save time.
-            var openNodes = new List<Task>();
-            foreach (var node in Nodes)
-            {
-                if (node is FileNode file)
-                {
-                    openNodes.Add(Task.Run(() => file.Open()));
-                }
-            }
-
-            Task.WaitAll(openNodes.ToArray());
             hasOpenedFiles = true;
         }
 

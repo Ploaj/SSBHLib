@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Textures;
 using SFGraphics.GLObjects.Textures.TextureFormats;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -9,7 +10,7 @@ namespace CrossMod.Rendering.Resources
     public class DefaultTextures
     {
         // Don't initialize yet because an OpenGL context may not be current.
-        public static DefaultTextures? Instance { get; private set; }
+        public static Lazy<DefaultTextures> Instance { get; } = new Lazy<DefaultTextures>(new DefaultTextures());
 
         // Default textures.
         public Texture2D DefaultWhite { get; } = new Texture2D();
@@ -39,16 +40,12 @@ namespace CrossMod.Rendering.Resources
         public TextureCubeMap SpecularPbr { get; } = new TextureCubeMap();
         public TextureCubeMap BlackCube { get; } = new TextureCubeMap();
 
-        public static void Initialize()
-        {
-            Instance = new DefaultTextures();
-
-            // The default cube map sampling has artifacts between cube map faces.
-            GL.Enable(EnableCap.TextureCubeMapSeamless);
-        }
-
         private DefaultTextures()
         {
+            // TODO: Check for a context.
+            // The default cube map sampling has artifacts between cube map faces.
+            GL.Enable(EnableCap.TextureCubeMapSeamless);
+
             LoadBitmap(UvPattern, "DefaultTextures/UVPattern.png");
 
             LoadBitmap(DefaultWhite, "DefaultTextures/default_white.png");

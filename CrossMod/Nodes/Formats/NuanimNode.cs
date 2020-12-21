@@ -10,13 +10,7 @@ namespace CrossMod.Nodes
     {
         private Anim animation;
 
-        public NuanimNode(string path) : base(path)
-        {
-            ImageKey = "animation";
-            IsActive = true;
-        }
-
-        public override void Open()
+        public NuanimNode(string path) : base(path, "animation", true)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out animation);
         }

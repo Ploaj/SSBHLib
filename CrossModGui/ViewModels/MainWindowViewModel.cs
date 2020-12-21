@@ -148,8 +148,8 @@ namespace CrossModGui.ViewModels
 
             if (item is IRenderableNode renderableNode)
             {
-                UpdateMeshesAndBones(renderableNode.GetRenderableNode());
-                Renderer.ItemToRender = renderableNode.GetRenderableNode();
+                UpdateMeshesAndBones(renderableNode.Renderable.Value);
+                Renderer.ItemToRender = renderableNode.Renderable.Value;
             }
             else if (item is NuanimNode animation)
             {

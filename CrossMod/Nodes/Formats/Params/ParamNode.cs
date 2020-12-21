@@ -6,7 +6,7 @@ namespace CrossMod.Nodes
     {
         public ParamFile Param { get; set; }
 
-        public ParamNode(string path) : base(path)
+        public ParamNode(string path) : base(path, "", false)
         {
             try
             {

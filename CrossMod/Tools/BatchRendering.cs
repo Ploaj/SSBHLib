@@ -83,7 +83,7 @@ namespace CrossMod.Tools
             if (rnumdl?.RenderModel != null)
                 renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
 
-            renderer.ItemToRender = nodes[0].GetRenderableNode();
+            renderer.ItemToRender = nodes[0].Renderable.Value;
             renderer.RenderNodes();
             renderer.SwapBuffers();
         }
