@@ -26,7 +26,7 @@ namespace CrossMod.Nodes
         private static Capsule Capsule { get; set; }
         private static Line Line { get; set; }
 
-        public SkelNode SkelNode
+        public NusktbNode SkelNode
         {
             set
             {

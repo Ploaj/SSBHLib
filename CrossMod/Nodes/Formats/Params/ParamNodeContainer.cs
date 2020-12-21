@@ -17,7 +17,7 @@ namespace CrossMod.Nodes
         public static Collision[] HitData { get; set; }
         public static CliffHangShape[] CliffHangData { get; set; }
 
-        public static SkelNode SkelNode
+        public static NusktbNode SkelNode
         {
             set
             {

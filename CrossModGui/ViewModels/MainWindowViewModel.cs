@@ -94,7 +94,7 @@ namespace CrossModGui.ViewModels
             foreach (var child in rootNode.Nodes.Where(c => c.Text != "transition_temporary"))
             {
                 child.IsExpanded = true;
-                var numdlb = child.Nodes.OfType<NumdlNode>().FirstOrDefault();
+                var numdlb = child.Nodes.OfType<NumdlbNode>().FirstOrDefault();
                 if (numdlb != null)
                 {
                     var rnumdl = (RNumdl)numdlb.GetRenderableNode();
@@ -151,7 +151,7 @@ namespace CrossModGui.ViewModels
                 UpdateMeshesAndBones(renderableNode.Renderable.Value);
                 Renderer.ItemToRender = renderableNode.Renderable.Value;
             }
-            else if (item is NuanimNode animation)
+            else if (item is NuanmbNode animation)
             {
                 Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
@@ -167,7 +167,7 @@ namespace CrossModGui.ViewModels
             if (scriptNode != null)
             {
                 // Load hitboxes.
-                var skelNode = FindSiblingOfType<SkelNode>(item);
+                var skelNode = FindSiblingOfType<NusktbNode>(item);
                 if (skelNode != null)
                 {
                     scriptNode.SkelNode = skelNode;

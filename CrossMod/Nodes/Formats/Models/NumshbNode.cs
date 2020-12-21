@@ -13,12 +13,12 @@ using System.IO;
 
 namespace CrossMod.Nodes
 {
-    public class NumsbhNode : FileNode
+    public class NumshbNode : FileNode
     {
         public Mesh mesh;
         public Adjb ExtendedMesh;
 
-        public NumsbhNode(string path) : base(path, "mesh", false)
+        public NumshbNode(string path) : base(path, "mesh", false)
         {
             Open();
         }

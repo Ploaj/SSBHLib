@@ -97,7 +97,7 @@ namespace CrossMod.Tools
             {
                 if (node.Text.EndsWith("numdlb"))
                 {
-                    var renderable = (node as NumdlNode);
+                    var renderable = (node as NumdlbNode);
                     if (renderable != null)
                     {
                         var model = renderable.GetRenderableNode() as RNumdl;

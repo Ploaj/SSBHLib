@@ -8,13 +8,13 @@ using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
-    public class NumdlNode : FileNode, IRenderableNode
+    public class NumdlbNode : FileNode, IRenderableNode
     {
         public Lazy<IRenderable> Renderable { get; }
 
         private readonly Modl model;
 
-        public NumdlNode(string path) : base(path, "model", true)
+        public NumdlbNode(string path) : base(path, "model", true)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out model);
             Renderable = new Lazy<IRenderable>(() => GetRenderableNode());
@@ -30,7 +30,7 @@ namespace CrossMod.Nodes
 
         private RNumdl CreateRnumdl()
         {
-            NumsbhNode? meshNode = null;
+            NumshbNode? meshNode = null;
             NuhlpbNode? hlpbNode = null;
             RSkeleton? skeleton = null;
             Matl? material = null;
@@ -43,7 +43,7 @@ namespace CrossMod.Nodes
             return new RNumdl(model, skeleton, material, meshNode, hlpbNode, modelXmb, lodXmb, textureByName);
         }
 
-        private void GetNodesForRendering(ref NumsbhNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, ref XmbNode modelXmb, ref XmbNode lodXmb,
+        private void GetNodesForRendering(ref NumshbNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, ref XmbNode modelXmb, ref XmbNode lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             // TODO: There's probably a cleaner way of doing this.
@@ -53,7 +53,7 @@ namespace CrossMod.Nodes
                 {
                     hlpbNode = node;
                 }
-                else if (fileNode is NutexNode nutexNode)
+                else if (fileNode is NutexbNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.GetRenderableNode();
 
@@ -64,15 +64,15 @@ namespace CrossMod.Nodes
                 }
                 else if (fileNode.Text.Equals(model.MeshString))
                 {
-                    meshNode = (NumsbhNode)fileNode;
+                    meshNode = (NumshbNode)fileNode;
                 }
                 else if (fileNode.Text.Equals(model.SkeletonFileName))
                 {
-                    skeleton = (RSkeleton)((SkelNode)fileNode).GetRenderableNode();
+                    skeleton = (RSkeleton)((NusktbNode)fileNode).GetRenderableNode();
                 }
                 else if (fileNode.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
                 {
-                    material = ((MatlNode)fileNode).Material;
+                    material = ((NumatbNode)fileNode).Material;
                 }
                 else if (fileNode.Text.Equals("model.xmb"))
                 {

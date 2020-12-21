@@ -6,11 +6,11 @@ using SSBHLib.Tools;
 
 namespace CrossMod.Nodes
 {
-    public class NuanimNode : FileNode
+    public class NuanmbNode : FileNode
     {
         private readonly Anim animation;
 
-        public NuanimNode(string path) : base(path, "animation", true)
+        public NuanmbNode(string path) : base(path, "animation", true)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out animation);
         }

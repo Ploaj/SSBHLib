@@ -11,13 +11,13 @@ using System.IO;
 // https://github.com/Ploaj/StudioSB/blob/master/LICENSE
 namespace CrossMod.Nodes
 {
-    public class NutexNode : FileNode, IRenderableNode
+    public class NutexbNode : FileNode, IRenderableNode
     {
         public string TexName { get; }
 
         public Lazy<IRenderable> Renderable { get; }
 
-        public NutexNode(string path) : base(path, "texture", true)
+        public NutexbNode(string path) : base(path, "texture", true)
         {
             var surface = Open(AbsolutePath);
             TexName = surface?.Name ?? Path.GetFileNameWithoutExtension(AbsolutePath);

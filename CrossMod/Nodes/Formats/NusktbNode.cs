@@ -6,11 +6,11 @@ using System;
 
 namespace CrossMod.Nodes
 {
-    public class SkelNode : FileNode, IRenderableNode
+    public class NusktbNode : FileNode, IRenderableNode
     {
         private readonly Skel skel;
 
-        public SkelNode(string path) : base(path, "skeleton", false)
+        public NusktbNode(string path) : base(path, "skeleton", false)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out skel);
             Renderable = new Lazy<IRenderable>(() => GetRenderableNode());

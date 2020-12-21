@@ -28,7 +28,7 @@ namespace CrossMod.Rendering
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl modl, RSkeleton skeleton, Matl matl, NumsbhNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
+        public RNumdl(Modl modl, RSkeleton skeleton, Matl matl, NumshbNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;

@@ -57,13 +57,13 @@ namespace CrossMod.Nodes
         {
             return Path.GetExtension(filePath) switch
             {
-                ".nutexb" => new NutexNode(filePath),
-                ".numshb" => new NumsbhNode(filePath),
-                ".numatb" => new MatlNode(filePath),
-                ".numdlb" => new NumdlNode(filePath),
-                ".nusktb" => new SkelNode(filePath),
+                ".nutexb" => new NutexbNode(filePath),
+                ".numshb" => new NumshbNode(filePath),
+                ".numatb" => new NumatbNode(filePath),
+                ".numdlb" => new NumdlbNode(filePath),
+                ".nusktb" => new NusktbNode(filePath),
                 ".script" => new ScriptNode(filePath),
-                ".nuanmb" => new NuanimNode(filePath),
+                ".nuanmb" => new NuanmbNode(filePath),
                 ".xmb" => new XmbNode(filePath),
                 ".prc" => new ParamNode(filePath),
                 ".nuhlp" => new NuhlpbNode(filePath),
