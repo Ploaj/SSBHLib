@@ -17,7 +17,7 @@ namespace CrossMod.Rendering
         private Vector2 mousePosition;
         private float mouseScrollWheel;
 
-        public IRenderable ItemToRender
+        public IRenderable? ItemToRender
         {
             get => itemToRender;
             set
@@ -26,11 +26,11 @@ namespace CrossMod.Rendering
                 FrameRenderableModels();
             }
         }
-        private IRenderable itemToRender;
+        private IRenderable? itemToRender;
 
-        public IRenderableAnimation RenderableAnimation { get; set; }
+        public IRenderableAnimation? RenderableAnimation { get; set; }
 
-        public ScriptNode ScriptNode { get; set; }
+        public ScriptNode? ScriptNode { get; set; }
 
         public Camera Camera { get; } = new Camera() { NearClipPlane = 2, FarClipPlane = 500000 };
 

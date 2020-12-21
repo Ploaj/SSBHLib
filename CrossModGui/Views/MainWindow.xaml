@@ -57,17 +57,22 @@
                                        SelectedItemChanged="FileTreeView_SelectedItemChanged"></usercontrols:FileTreeView>
             <TabControl Name="meshBoneTabControl" DockPanel.Dock="Right" Width="300">
                 <TabItem Header="Meshes">
-                    <ListView ItemsSource="{Binding MeshListItems}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
+                    <TreeView ItemsSource="{Binding MeshListItems}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <CheckBox IsChecked="{Binding IsChecked}" Click="MeshListCheckBox_Click">
                                     <CheckBox.Content>
                                         <TextBlock Text="{Binding Name}"></TextBlock>
                                     </CheckBox.Content>
                                 </CheckBox>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
                 </TabItem>
                 <TabItem Header="Bones">
                     <TreeView ItemsSource="{Binding BoneTreeItems}">

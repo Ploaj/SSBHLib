@@ -91,19 +91,22 @@ namespace CrossModGui.ViewModels
             var boundingSpheres = new List<Vector4>();
 
             rootNode.IsExpanded = true;
-            foreach (var child in rootNode.Nodes.Where(c => c.Text != "transition_temporary"))
+            foreach (var child in rootNode.Nodes)
             {
                 child.IsExpanded = true;
                 var numdlb = child.Nodes.OfType<NumdlbNode>().FirstOrDefault();
                 if (numdlb != null)
                 {
-                    var rnumdl = (RNumdl)numdlb.GetRenderableNode();
+                    var rnumdl = numdlb.GetRenderableNode();
 
                     if (rnumdl.RenderModel != null)
                     {
                         boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
                         collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, rnumdl.Skeleton)));
                     }
+
+                    AddMeshesToGui(child.Text, rnumdl.RenderModel);
+                    AddSkeletonToGui(rnumdl.Skeleton);
                 }
             }
 
@@ -113,9 +116,8 @@ namespace CrossModGui.ViewModels
             Renderer.ItemToRender = collection;
         }
 
-        public void UpdateMeshesAndBones(IRenderable newNode)
+        public void UpdateBones(IRenderable newNode)
         {
-            MeshListItems.Clear();
             BoneTreeItems.Clear();
 
             if (newNode == null)
@@ -129,7 +131,6 @@ namespace CrossModGui.ViewModels
             else if (newNode is RNumdl rnumdl)
             {
                 Rnumdl = rnumdl;
-                AddMeshesToGui(rnumdl.RenderModel);
                 AddSkeletonToGui(rnumdl.Skeleton);
             }
         }
@@ -148,8 +149,8 @@ namespace CrossModGui.ViewModels
 
             if (item is IRenderableNode renderableNode)
             {
-                UpdateMeshesAndBones(renderableNode.Renderable.Value);
-                Renderer.ItemToRender = renderableNode.Renderable.Value;
+                //UpdateBones(renderableNode.Renderable.Value);
+                //Renderer.ItemToRender = renderableNode.Renderable.Value;
             }
             else if (item is NuanmbNode animation)
             {
@@ -215,7 +216,7 @@ namespace CrossModGui.ViewModels
             TotalFrames = 0;
         }
 
-        private void AddSkeletonToGui(RSkeleton skeleton)
+        private void AddSkeletonToGui(RSkeleton? skeleton)
         {
             if (skeleton == null)
                 return;
@@ -225,14 +226,22 @@ namespace CrossModGui.ViewModels
                 BoneTreeItems.Add(item);
         }
 
-        private void AddMeshesToGui(RModel model)
+        private void AddMeshesToGui(string rootName, RModel? model)
         {
             if (model == null)
                 return;
 
             // Make fighters less painful to look at.
             // No one wants to see all those faces at once.
-            model.HideExpressionMeshes();
+            // TODO: This should work differently for stages.
+            //model.HideExpressionMeshes();
+
+            var parent = new MeshListItem
+            {
+                Name = rootName,
+                IsChecked = true,
+                IsExpanded = true
+            };
 
             foreach (var mesh in model.SubMeshes)
             {
@@ -246,12 +255,16 @@ namespace CrossModGui.ViewModels
                 newItem.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == nameof(MeshListItem.IsChecked))
+                    {
                         mesh.IsVisible = newItem.IsChecked;
+                    }
                 };
                 mesh.VisibilityChanged += (s, e) => newItem.IsChecked = e;
 
-                MeshListItems.Add(newItem);
+                parent.Children.Add(newItem);
             }
+
+            MeshListItems.Add(parent);
         }
 
         private static IEnumerable<BoneTreeItem> CreateBoneTreeGetRootLevel(IEnumerable<RBone> bones)
