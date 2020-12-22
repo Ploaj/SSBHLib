@@ -17,9 +17,9 @@ namespace CrossMod.MaterialValidation
             using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
             connection.Open();
 
-            // The current database only contains correlations 
-            // between shaders and mesh attributes based on material assignments.
-            // TODO: Use a dump of decompiled shaders to find the actual attributes?
+            // TODO: Use the decompiled shader attribute table.
+            // Color sets are split between three attributes, 
+            // so it isn't always possible to determine if an attribute is used.
             var command = connection.CreateCommand();
             command.CommandText =
                 @"
@@ -36,6 +36,41 @@ namespace CrossMod.MaterialValidation
             using var reader = command.ExecuteReader();
             return reader.Read();
         }
+
+        /// <summary>
+        /// Checks if <paramref name="shaderLabel"/> declares any color set attributes in the shader code.
+        /// Omit the tag when specifying the shader label. Example: "SFX_PBS_0000000000080089".
+        /// </summary>
+        /// <param name="shaderLabel">The name of the shader without the tag</param>
+        /// <returns><c>true</c> if a color set is declared in the shader</returns>
+        public static bool HasColorSets(string shaderLabel)
+        {
+            using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                    SELECT * FROM ShaderAttributes
+                    WHERE 
+	                    ShaderLabel = $shaderLabel AND 
+	                    ShaderLabel IN 
+	                    (
+		                    SELECT ShaderLabel
+		                    FROM ShaderAttributes 
+		                    WHERE 
+			                    Attribute = 'in_attr8' OR 
+			                    Attribute = 'in_attr9' OR
+			                    Attribute = 'in_attr10'
+	                    )
+                ";
+            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+
+            // Read() returns true if there are any results.
+            using var reader = command.ExecuteReader();
+            return reader.Read();
+        }
+
 
         /// <summary>
         /// Checks if <paramref name="shaderLabel"/> is a valid shader name.
