@@ -159,23 +159,24 @@ namespace CrossModGui.ViewModels
             ResetAnimation();
 
             // Preserve the existing model collection when drawing individual items.
+            // Models and textures will override the model collection.
+            // Updating the animation shouldn't clear the current renderable.
             if (item is IRenderableNode renderableNode)
             {
                 Renderer.ItemToRenderOverride = renderableNode.Renderable.Value;
             }
-            else
-            {
-                Renderer.ItemToRenderOverride = null;
-            }
-            
-            if (item is NuanmbNode animation)
+            else if (item is NuanmbNode animation)
             {
                 Renderer.RenderableAnimation = animation.GetRenderableAnimation();
                 TotalFrames = Renderer.RenderableAnimation.GetFrameCount();
                 if (Renderer.ScriptNode != null)
                     Renderer.ScriptNode.CurrentAnimationName = animation.Text;
             }
-
+            else
+            {
+                Renderer.ItemToRenderOverride = null;
+            }
+            
             // TODO: ScriptNode.MotionRate?
 
             // TODO: The script node should probably be stored with the model somehow.
