@@ -79,6 +79,7 @@
     <Content Include="Lib\SFShapes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CrossMod.MaterialValidation\CrossMod.MaterialValidation.csproj" />
     <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
     <ProjectReference Include="..\XMBLib\XmbLib.csproj" />
   </ItemGroup>

@@ -61,7 +61,9 @@ namespace CrossMod.MaterialValidation
 		                    WHERE 
 			                    Attribute = 'in_attr8' OR 
 			                    Attribute = 'in_attr9' OR
-			                    Attribute = 'in_attr10'
+			                    Attribute = 'in_attr10' OR 
+			                    Attribute = 'in_attr11' OR
+			                    Attribute = 'in_attr12'
 	                    )
                 ";
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);

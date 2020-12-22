@@ -72,7 +72,7 @@ namespace CrossMod.Rendering
                 foreach (var mesh in RenderModel.SubMeshes)
                 {
                     if (mesh.Material == null)
-                        mesh.Material = new RMaterial();
+                        mesh.Material = new RMaterial("", "", 0);
                 }
             }
         }

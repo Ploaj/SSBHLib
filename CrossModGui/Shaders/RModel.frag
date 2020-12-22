@@ -80,6 +80,9 @@ uniform MaterialParams
     int hasDiffuse2;
     int hasDiffuse3; 
     int emissionOverride;
+
+    int hasColorSets;
+    int isValidShaderLabel;
 };
 
 // TODO: Add lighting vectors to a uniform block.
@@ -202,7 +205,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     vec3 result = directLight * directLightIntensity + ambientLight;
 
     // Baked stage lighting.
-    if (renderVertexColor == 1)
+    if (renderVertexColor == 1 && hasColorSets == 1)
         result *= colorSet2.rgb;
 
     return result;
@@ -435,29 +438,20 @@ void main()
     if (renderRimLighting == 1)
         fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV);
 
-    // HACK: Some models have black vertex color for some reason.
-    if (renderVertexColor == 1 && Luminance(colorSet1.rgb) > 0.0)
-    {
-        fragColor0.rgb *= colorSet1.rgb; 
-        fragColor0.rgb *= colorSet3.rgb;
-    }
-
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
 
-    // Alpha calculations
-    // HACK: Some models have black vertex color for some reason.
-    if (renderVertexColor == 1 && colorSet1.a != 0)
+    if (renderVertexColor == 1 && hasColorSets == 1)
     {
-        fragColor0.a *= colorSet1.a;
-        fragColor0.a *= colorSet3.a;
+        fragColor0 *= colorSet1; 
+        fragColor0 *= colorSet3;
     }
 
     if (hasCustomFloat19 == 1 && renderExperimental == 1)
         fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specularF0);
 
     // Premultiplied alpha. 
-    fragColor0.a = clamp(fragColor0.a, 0.0, 1.0); // TODO: krool???
+    // fragColor0.a = clamp(fragColor0.a, 0.0, 1.0); // TODO: krool???
     fragColor0.rgb *= fragColor0.a;
 
     // TODO: Move this to post-processing.

@@ -8,11 +8,8 @@ namespace CrossMod.Rendering.GlTools
     {
         public static RMaterial CreateMaterial(MatlEntry currentEntry, int index, Dictionary<string, RTexture> textureByName)
         {
-            RMaterial meshMaterial = new RMaterial()
+            RMaterial meshMaterial = new RMaterial(currentEntry.MaterialLabel, currentEntry.ShaderLabel, index)
             {
-                MaterialLabel = currentEntry.MaterialLabel,
-                ShaderLabel = currentEntry.ShaderLabel,
-                Index = index,
                 TextureByName = textureByName
             };
 

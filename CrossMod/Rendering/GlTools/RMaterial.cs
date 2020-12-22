@@ -16,9 +16,12 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public class RMaterial
     {
-        public string MaterialLabel { get; set; } = "";
-        public string ShaderLabel { get; set; } = "";
-        public int Index { get; set; }
+        public string MaterialLabel { get; }
+        public string ShaderLabel { get; }
+        public int Index { get; }
+
+        public bool HasColorSets { get; }
+        public bool IsValidShaderLabel { get; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
 
@@ -71,6 +74,15 @@ namespace CrossMod.Rendering.GlTools
         // TODO: The performance impact is negligible, but not all uniforms need to be updated at once
         private bool shouldUpdateUniformBlock = false;
         private bool shouldUpdateTexturesAndSamplers = false;
+
+        public RMaterial(string materialLabel, string shaderLabel, int index)
+        {
+            MaterialLabel = materialLabel;
+            ShaderLabel = shaderLabel;
+            Index = index;
+            IsValidShaderLabel = MaterialValidation.ShaderValidation.IsValidShaderLabel(shaderLabel);
+            HasColorSets = MaterialValidation.ShaderValidation.HasColorSets(shaderLabel[0..24]);
+        }
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
         {
@@ -192,12 +204,6 @@ namespace CrossMod.Rendering.GlTools
             AddRenderModeTextures(genericMaterial);
         }
 
-        private void AddDebugParams(UniformBlock uniformBlock)
-        {
-            // Set specific parameters and use a default value if not present.
-            SetParamAsVec4Debug(uniformBlock, RenderSettings.Instance.ParamId);
-        }
-
         private void SetMaterialParams(UniformBlock uniformBlock)
         {
             SetVectors(uniformBlock);
@@ -218,6 +224,9 @@ namespace CrossMod.Rendering.GlTools
             uniformBlock.SetValue("hasDiffuse", HasDiffuse);
             uniformBlock.SetValue("hasDiffuse2", HasDiffuse2);
             uniformBlock.SetValue("hasDiffuse3", HasDiffuse3);
+
+            uniformBlock.SetValue("hasColorSets", HasColorSets);
+            uniformBlock.SetValue("isValidShaderLabel", IsValidShaderLabel);
 
             // HACK: There's probably a better way to handle blending emission and base color maps.
             var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;
