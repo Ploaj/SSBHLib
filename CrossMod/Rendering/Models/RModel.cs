@@ -173,7 +173,7 @@ namespace CrossMod.Rendering.Models
             if (skeleton != null && skeleton != previousSkeleton)
             {
                 var boneBinds = skeleton.GetAnimationTransforms();
-                boneUniformBuffer.SetValues("transforms", boneBinds);
+                boneUniformBuffer?.SetValues("transforms", boneBinds);
             }
 
             m.Draw(currentShader, skeleton);
