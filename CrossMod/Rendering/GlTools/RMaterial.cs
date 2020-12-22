@@ -80,8 +80,9 @@ namespace CrossMod.Rendering.GlTools
             MaterialLabel = materialLabel;
             ShaderLabel = shaderLabel;
             Index = index;
-            IsValidShaderLabel = MaterialValidation.ShaderValidation.IsValidShaderLabel(shaderLabel);
-            HasColorSets = MaterialValidation.ShaderValidation.HasColorSets(shaderLabel[0..24]);
+            IsValidShaderLabel = MaterialValidation.ShaderValidation.IsValidShaderLabel(ShaderLabel);
+            if (shaderLabel.Length >= 24)
+                HasColorSets = MaterialValidation.ShaderValidation.HasColorSets(shaderLabel[0..24]);
         }
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)

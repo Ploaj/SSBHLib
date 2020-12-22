@@ -284,15 +284,15 @@ float RoughnessToLod(float roughness)
     return log2((1.0 / a) * 2.0 - 2.0) * -0.4545 + 4.0;
 }
 
-// A very useful function...
 vec3 GetInvalidShaderLabelColor()
 {
     // TODO: Account for screen resolution and use the values from in game for scaling.
+    // TODO: Add proper bloom.
     vec3 screenPosition = gl_FragCoord.xyz;
-    float checkSize = 0.2;
+    float checkSize = 0.15;
     float checkerBoard = mod(floor(screenPosition.x * checkSize) + floor(screenPosition.y * checkSize), 2.0);
     float checkerBoardFinal = max(sign(checkerBoard), 0.0);
-    return vec3(checkerBoardFinal, 0.0, 0.0);
+    return vec3(mix(0.8,1.0,checkerBoardFinal), 0.0, 0.0);
 }
 
 float GetAngleFade(float nDotV, float ior, float specularf0) 
@@ -328,6 +328,10 @@ void main()
 {
     // TODO: Organize this code.
     fragColor0 = vec4(0.0, 0.0, 0.0, 1.0);
+    if (isValidShaderLabel != 1) {
+        fragColor0.rgb = GetInvalidShaderLabelColor();
+        return;
+    }
 
     vec4 norColor = texture(norMap, map1).xyzw;
     if (hasInkNorMap == 1)

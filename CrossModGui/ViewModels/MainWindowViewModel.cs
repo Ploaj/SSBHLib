@@ -251,7 +251,7 @@ namespace CrossModGui.ViewModels
             // Make fighters less painful to look at.
             // No one wants to see all those faces at once.
             // TODO: This should work differently for stages.
-            //model.HideExpressionMeshes();
+            model.HideExpressionMeshes();
 
             var parent = new MeshListItem
             {
