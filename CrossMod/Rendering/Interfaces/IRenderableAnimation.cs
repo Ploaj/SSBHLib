@@ -1,12 +1,14 @@
 ﻿
+using System.Collections.Generic;
+
 namespace CrossMod.Rendering
 {
     public interface IRenderableAnimation
     {
         int GetFrameCount();
 
-        void SetFrameSkeleton(RSkeleton Skeleton, float Frame);
+        void SetFrameSkeleton(IEnumerable<RBone> bones, float frame);
 
-        void SetFrameModel(Models.RModel Model, float Frame);
+        void SetFrameModel(IEnumerable<Models.RMesh> subMeshes, float frame);
     }
 }

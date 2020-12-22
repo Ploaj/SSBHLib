@@ -16,15 +16,12 @@ namespace CrossMod.Rendering
             return FrameCount;
         }
 
-        public void SetFrameModel(Models.RModel model, float frame)
+        public void SetFrameModel(IEnumerable<Models.RMesh> subMeshes, float frame)
         {
-            if (model == null)
-                return;
-
             // Visibility
             foreach (RVisibilityAnimation a in VisibilityNodes)
             {
-                foreach (Models.RMesh m in model.SubMeshes)
+                foreach (Models.RMesh m in subMeshes)
                 {
                     // names match with start ignoreing the _VIS tags
                     if (m.Name.StartsWith(a.MeshName))
@@ -35,7 +32,7 @@ namespace CrossMod.Rendering
             }
 
             // Material
-            foreach (Models.RMesh m in model.SubMeshes)
+            foreach (Models.RMesh m in subMeshes)
             {
                 if (m.Material != null)
                 {
@@ -45,7 +42,7 @@ namespace CrossMod.Rendering
 
             foreach (RMaterialAnimation a in MaterialNodes)
             {
-                foreach (Models.RMesh m in model.SubMeshes)
+                foreach (Models.RMesh m in subMeshes)
                 {
                     if (m.Material != null && m.Material.MaterialLabel.Equals(a.MaterialName))
                     {
@@ -58,20 +55,18 @@ namespace CrossMod.Rendering
             }
         }
 
-        public void SetFrameSkeleton(RSkeleton Skeleton, float Frame)
+        public void SetFrameSkeleton(IEnumerable<RBone> bones, float frame)
         {
-            if (Skeleton == null) return;
-
             // Model scale
             float scale = RenderSettings.Instance.ModelScale;
             // BoneTransform
-            foreach (RBone b in Skeleton.Bones)
+            foreach (RBone b in bones)
             {
                 foreach (RTransformAnimation a in TransformNodes)
                 {
                     if (b.Name.Equals(a.Name))
                     {
-                        var key = a.Transform.GetKey(Frame);
+                        var key = a.Transform.GetKey(frame);
                         b.AnimationTransform = key.Value;
                         // work around
                         /*if (key.AbsoluteScale != 1)

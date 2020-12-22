@@ -1,5 +1,6 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering.GlTools;
+using CrossMod.Rendering.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -7,6 +8,7 @@ using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Framebuffers;
 using SFGraphics.GLObjects.GLObjectManagement;
 using System;
+using System.Linq;
 
 namespace CrossMod.Rendering
 {
@@ -116,14 +118,30 @@ namespace CrossMod.Rendering
             // TODO: How to support animating model collections?
             if (ItemToRenderOverride is IRenderableModel model)
             {
-                RenderableAnimation?.SetFrameModel(model.RenderModel, currentFrame);
-                RenderableAnimation?.SetFrameSkeleton(model.Skeleton, currentFrame);
+                RenderableAnimation?.SetFrameModel(model.RenderModel.SubMeshes, currentFrame);
+                RenderableAnimation?.SetFrameSkeleton(model.Skeleton.Bones, currentFrame);
             }
 
             if (ItemToRenderOverride != null)
             {
                 ItemToRenderOverride.Render(Camera);
                 return;
+            }
+
+            if (ItemToRender is ModelCollection collection)
+            {
+                // TODO: There's probably a simpler/more efficient way to do this.
+                var meshes = collection.Meshes
+                    .Select(m => m.Item1);
+
+                var bones = collection
+                    .Meshes
+                    .Select(m => m.Item2)
+                    .Distinct()
+                    .SelectMany(s => s.Bones);
+
+                RenderableAnimation?.SetFrameModel(meshes, currentFrame);
+                RenderableAnimation?.SetFrameSkeleton(bones, currentFrame);
             }
 
             ItemToRender?.Render(Camera);
