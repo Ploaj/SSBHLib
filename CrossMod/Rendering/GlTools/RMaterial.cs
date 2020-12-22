@@ -125,27 +125,33 @@ namespace CrossMod.Rendering.GlTools
                 shouldUpdateUniformBlock = false;
             }
 
-            // This needs to be updated more than once.
-            AddDebugParams(uniformBlock);
-
             // Update the uniform values.
             genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
             uniformBlock.BindBlock(shader);
         }
 
-        public void SetRenderState()
+        public void SetRenderState(RMaterial? previousMaterial = null)
         {
-            var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, SourceColor, DestinationColor, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
-            SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(alphaBlendSettings);
+            if (previousMaterial != null && (SourceColor != previousMaterial.SourceColor || DestinationColor != previousMaterial.DestinationColor))
+            {
+                var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, SourceColor, DestinationColor, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
+                SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(alphaBlendSettings);
+            }
 
             // Meshes with screen door transparency enable this OpenGL extension.
-            if (RenderSettings.Instance.EnableExperimental && UseAlphaSampleCoverage)
-                GL.Enable(EnableCap.SampleAlphaToCoverage);
-            else
-                GL.Disable(EnableCap.SampleAlphaToCoverage);
+            if (previousMaterial != null && UseAlphaSampleCoverage != previousMaterial.UseAlphaSampleCoverage)
+            {
+                if (RenderSettings.Instance.EnableExperimental && UseAlphaSampleCoverage)
+                    GL.Enable(EnableCap.SampleAlphaToCoverage);
+                else
+                    GL.Disable(EnableCap.SampleAlphaToCoverage);
+            }
 
-            SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(EnableFaceCulling, CullMode));
-            SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
+            if (previousMaterial != null && (EnableFaceCulling != previousMaterial.EnableFaceCulling || CullMode != previousMaterial.CullMode))
+                SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(EnableFaceCulling, CullMode));
+
+            if (previousMaterial != null && FillMode != previousMaterial.FillMode)
+                SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
         }
 
         private GenericMaterial CreateGenericMaterial()

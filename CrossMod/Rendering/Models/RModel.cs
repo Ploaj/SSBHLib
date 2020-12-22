@@ -167,7 +167,7 @@ namespace CrossMod.Rendering.Models
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
                 m.Material?.SetMaterialUniforms(currentShader, previousMaterial);
-                m.Material?.SetRenderState();
+                m.Material?.SetRenderState(previousMaterial);
             }
 
             if (skeleton != null && skeleton != previousSkeleton)

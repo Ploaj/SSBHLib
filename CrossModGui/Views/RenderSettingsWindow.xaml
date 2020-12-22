@@ -74,14 +74,6 @@
                     <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern, Converter={StaticResource inverseBoolConverter}}">UV Coords</RadioButton>
                     <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern}">UV Test Pattern</RadioButton>
                 </StackPanel>
-                <Grid Visibility="{Binding ShowParamControls, Converter={StaticResource booleanVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Name="paramDebugLabel" Margin="10,2" Grid.Column="0" Text="Param Name" TextAlignment="Right"/>
-                    <TextBox Name="paramDebugText" Margin="10,2" Grid.Column="1" Text="{Binding ParamName, UpdateSourceTrigger=PropertyChanged}"/>
-                </Grid>
             </StackPanel>
         </Expander>
     </StackPanel>

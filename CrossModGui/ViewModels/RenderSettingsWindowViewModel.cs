@@ -41,7 +41,6 @@ namespace CrossModGui.ViewModels
             new RenderModeItem { Value = RenderSettings.RenderMode.UvSet1, Description = "uvSet1", Category = "Vertex Attributes" },
             new RenderModeItem { Value = RenderSettings.RenderMode.UvSet2, Description = "uvSet2", Category = "Vertex Attributes" },
             new RenderModeItem { Value = RenderSettings.RenderMode.AnisotropyLines, Description = "Anisotropic Highlight Direction", Category = "Debug" },
-            new RenderModeItem { Value = RenderSettings.RenderMode.ParamID, Description = "Param Values", Category = "Debug" },
             new RenderModeItem { Value = RenderSettings.RenderMode.MaterialID, Description = "Material ID", Category = "Debug" }
         };
 
