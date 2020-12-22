@@ -9,10 +9,10 @@ namespace CrossMod.MaterialValidation
         /// <summary>
         /// Checks if <paramref name="attributeName"/> is present for in game meshes referencing <paramref name="shaderLabel"/>.
         /// </summary>
-        /// <param name="attributeName">The name of the attribute</param>
         /// <param name="shaderLabel">The name of the shader, including the tag</param>
+        /// <param name="attributeName">The name of the attribute</param>
         /// <returns><c>true</c> if the attribute is associated with the shader</returns>
-        public static bool HasAttribute(string attributeName, string shaderLabel)
+        public static bool HasAttribute(string shaderLabel, string attributeName)
         {
             using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
             connection.Open();

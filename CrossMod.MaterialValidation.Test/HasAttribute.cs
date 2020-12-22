@@ -8,25 +8,25 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void ValidAttributeAndLabel()
         {
-            Assert.IsTrue(ShaderValidation.HasAttribute("colorSet1", "SFX_PBS_1b01000008008a68_opaque"));
+            Assert.IsTrue(ShaderValidation.HasAttribute("SFX_PBS_1b01000008008a68_opaque", "colorSet1"));
         }
 
         [TestMethod]
         public void InvalidLabel()
         {
-            Assert.IsFalse(ShaderValidation.HasAttribute("colorSet1", "SFX_PBS_1b01000008008a68_near"));
+            Assert.IsFalse(ShaderValidation.HasAttribute("SFX_PBS_1b01000008008a68_near", "colorSet1"));
         }
 
         [TestMethod]
         public void MissingTag()
         {
-            Assert.IsFalse(ShaderValidation.HasAttribute("colorSet1", "SFX_PBS_1b01000008008a68"));
+            Assert.IsFalse(ShaderValidation.HasAttribute("SFX_PBS_1b01000008008a68", "colorSet1"));
         }
 
         [TestMethod]
         public void InvalidAttribute()
         {
-            Assert.IsFalse(ShaderValidation.HasAttribute("colorSet10", "SFX_PBS_1b01000008008a68_opaque"));
+            Assert.IsFalse(ShaderValidation.HasAttribute("SFX_PBS_1b01000008008a68_opaque", "colorSet10"));
         }
     }
 }
