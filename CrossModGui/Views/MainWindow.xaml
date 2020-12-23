@@ -71,7 +71,7 @@
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                         <TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem">
+                            <Style TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                             </Style>
                         </TreeView.ItemContainerStyle>

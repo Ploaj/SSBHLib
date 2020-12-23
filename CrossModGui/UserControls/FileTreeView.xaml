@@ -17,9 +17,12 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                     <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsActive}">
-                        <Image Margin="2,0" Width="24" Height="24" VerticalAlignment="Center"
+                        <Image
+                               Width="{Binding Height, ElementName=fileItemText}"
+                               Height="{Binding Height, ElementName=fileItemText}"
                                Source="{Binding Path=ImageKey, Converter={StaticResource imageKeyImageConverter}}" 
-                               RenderOptions.BitmapScalingMode="NearestNeighbor"></Image>
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               VerticalAlignment="Center"></Image>
                         <TextBlock Margin="2,0" Name="fileItemText" Text="{Binding Text}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
@@ -27,6 +30,7 @@
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    <Setter Property="Margin" Value="0"></Setter>
                 </Style>
             </TreeView.ItemContainerStyle>
         </TreeView>
