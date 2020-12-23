@@ -10,6 +10,6 @@
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
     <StackPanel Margin="10">
-        <CheckBox IsChecked="{Binding EnableDarkTheme}">Dark Theme (requires restart)</CheckBox>
+        <CheckBox IsChecked="{Binding EnableDarkTheme}">Dark Theme</CheckBox>
     </StackPanel>
 </Window>

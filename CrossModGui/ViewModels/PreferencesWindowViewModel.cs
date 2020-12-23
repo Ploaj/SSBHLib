@@ -9,9 +9,20 @@ namespace CrossModGui.ViewModels
         public static PreferencesWindowViewModel Instance { get; } = FromJson();
 
         private const string path = "Preferences.json";
-        public bool EnableDarkTheme { get; set; }
 
-        public void Update()
+        public bool EnableDarkTheme 
+        { 
+            get => enableDarkTheme;
+            set
+            {
+                enableDarkTheme = value;
+                UpdateTheme();
+                OnPropertyChanged();
+            }
+        }
+        private bool enableDarkTheme = true;
+
+        public void UpdateTheme()
         {
             var replacingColorSchemeUri = new Uri("pack://application:,,,/CrossModGui;component/Resources/GrayscaleDark.xaml", UriKind.Absolute);
             var replacedColorSchemeUri = new Uri("pack://application:,,,/CrossModGui;component/Resources/GrayscaleLight.xaml", UriKind.Absolute);
@@ -41,7 +52,7 @@ namespace CrossModGui.ViewModels
             }
 
             var result = JsonConvert.DeserializeObject<PreferencesWindowViewModel>(System.IO.File.ReadAllText(path));
-            result.Update();
+            result.UpdateTheme();
             return result;
         }
     }

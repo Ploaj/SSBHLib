@@ -1,6 +1,5 @@
 ﻿using CrossModGui.ViewModels;
 using CrossModGui.Views;
-using System;
 using System.Windows;
 
 namespace CrossModGui
@@ -15,7 +14,8 @@ namespace CrossModGui
             // The behavior for PropertyChanged after .NET 4.5 doesn't work with separator chars for floats/doubles.
             FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
 
-            PreferencesWindowViewModel.Instance.Update();
+            // Force initialization and a theme refresh.
+            PreferencesWindowViewModel.Instance.UpdateTheme();
 
             MainWindow = new MainWindow();
             MainWindow.Show();
