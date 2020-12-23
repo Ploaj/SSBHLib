@@ -8,6 +8,8 @@ using CrossModGui.ViewModels.MaterialEditor;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using SSBHLib.Formats.Materials;
 
 namespace CrossModGui.Views
 {
@@ -85,7 +87,10 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(viewModel.Rnumdl)));
+            var materials = viewModel.MaterialNodes
+                .Select(n => n.Material)
+                .OfType<Matl>();
+            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(materials)));
         }
 
         private void DisplayWindowWithRealTimeViewportUpdates(Window window)

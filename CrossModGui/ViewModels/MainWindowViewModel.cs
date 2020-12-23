@@ -39,6 +39,8 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
+        public ObservableCollection<NumatbNode> MaterialNodes { get; } = new ObservableCollection<NumatbNode>();
+
         public bool IsPlayingAnimation
         {
             get => isPlayingAnimation;
@@ -76,6 +78,7 @@ namespace CrossModGui.ViewModels
             FileTreeItems.Clear();
             BoneTreeItems.Clear();
             MeshListItems.Clear();
+            MaterialNodes.Clear();
         }
 
         public void PopulateFileTree(string folderPath)
@@ -123,6 +126,10 @@ namespace CrossModGui.ViewModels
                 else if (child is DirectoryNode directory)
                 {
                     AddModelsToCollection(directory, collection, boundingSpheres);
+                }
+                else if (child is NumatbNode numatb)
+                {
+                    MaterialNodes.Add(numatb);
                 }
             }
         }
