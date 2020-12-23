@@ -202,13 +202,19 @@ namespace CrossModGui.Views
         private void FileTreeMenu_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuItem item)
+            {
                 fileTreeView.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+                RenderFrameIfNeeded();
+            }
         }
 
         private void MeshBoneTabMenu_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuItem item)
+            {
                 meshBoneTabControl.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+                RenderFrameIfNeeded();
+            }
         }
 
         private void Preferences_Click(object sender, RoutedEventArgs e)

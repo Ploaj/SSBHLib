@@ -57,7 +57,7 @@
                                        SelectedItemChanged="FileTreeView_SelectedItemChanged"></usercontrols:FileTreeView>
             <TabControl Name="meshBoneTabControl" DockPanel.Dock="Right" Width="300">
                 <TabItem Header="Meshes">
-                    <TreeView ItemsSource="{Binding MeshListItems}">
+                    <TreeView ItemsSource="{Binding MeshListItems}" BorderBrush="Transparent">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <CheckBox IsChecked="{Binding IsChecked}" Click="MeshListCheckBox_Click">
@@ -75,7 +75,7 @@
                     </TreeView>
                 </TabItem>
                 <TabItem Header="Bones">
-                    <TreeView ItemsSource="{Binding BoneTreeItems}">
+                    <TreeView ItemsSource="{Binding BoneTreeItems}" BorderBrush="Transparent">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <TextBlock Text="{Binding Name}"></TextBlock>
