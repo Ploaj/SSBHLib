@@ -101,7 +101,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="70"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
                 </Grid.RowDefinitions>
                 <WindowsFormsHost Grid.Row="0">
                     <sfcontrol:GLViewport x:Name="glViewport" 
