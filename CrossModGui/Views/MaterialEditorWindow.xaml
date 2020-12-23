@@ -6,6 +6,9 @@
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
         mc:Ignorable="d"
         Title="Material Editor" Height="800" Width="500">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
     </Window.Resources>

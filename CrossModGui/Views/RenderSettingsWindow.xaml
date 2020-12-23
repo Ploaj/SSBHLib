@@ -7,6 +7,9 @@
         xmlns:converters="clr-namespace:CrossModGui.Converters"
         mc:Ignorable="d"
         Title="Render Settings" Height="588" Width="504.688">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
         <converters:InverseBoolConverter x:Key="inverseBoolConverter" />

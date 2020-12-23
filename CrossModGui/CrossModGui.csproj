@@ -325,6 +325,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AdonisUI.ClassicTheme" Version="1.16.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.10" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>

@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Windows;
 
 namespace CrossModGui.ViewModels
 {
@@ -6,9 +8,19 @@ namespace CrossModGui.ViewModels
     {
         public static PreferencesWindowViewModel Instance { get; } = FromJson();
 
-        public bool EnableDarkTheme { get; set; } = true;
-
         private const string path = "Preferences.json";
+        public bool EnableDarkTheme { get; set; }
+
+        public void Update()
+        {
+            var replacingColorSchemeUri = new Uri("pack://application:,,,/CrossModGui;component/Resources/GrayscaleDark.xaml", UriKind.Absolute);
+            var replacedColorSchemeUri = new Uri("pack://application:,,,/CrossModGui;component/Resources/GrayscaleLight.xaml", UriKind.Absolute);
+
+            if (!EnableDarkTheme)
+                AdonisUI.ResourceLocator.SetColorScheme(Application.Current.Resources, AdonisUI.ResourceLocator.LightColorScheme);
+            else
+                AdonisUI.ResourceLocator.SetColorScheme(Application.Current.Resources, replacingColorSchemeUri, replacedColorSchemeUri);
+        }
 
         public void SaveChangesToFile()
         {
@@ -28,7 +40,9 @@ namespace CrossModGui.ViewModels
                 return new PreferencesWindowViewModel();
             }
 
-            return JsonConvert.DeserializeObject<PreferencesWindowViewModel>(System.IO.File.ReadAllText(path));
+            var result = JsonConvert.DeserializeObject<PreferencesWindowViewModel>(System.IO.File.ReadAllText(path));
+            result.Update();
+            return result;
         }
     }
 }

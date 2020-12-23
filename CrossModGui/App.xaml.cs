@@ -15,13 +15,7 @@ namespace CrossModGui
             // The behavior for PropertyChanged after .NET 4.5 doesn't work with separator chars for floats/doubles.
             FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
 
-            var darkTheme = new ResourceDictionary
-            {
-                Source = new Uri("/CrossModGUI;component/Resources/DarkTheme.xaml", UriKind.Relative)
-            };
-
-            if (PreferencesWindowViewModel.Instance.EnableDarkTheme)
-                Current.Resources.MergedDictionaries.Add(darkTheme);
+            PreferencesWindowViewModel.Instance.Update();
 
             MainWindow = new MainWindow();
             MainWindow.Show();

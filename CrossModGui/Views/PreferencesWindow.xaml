@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
         Title="Application Preferences" Height="450" Width="800">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
     <StackPanel Margin="10">
         <CheckBox IsChecked="{Binding EnableDarkTheme}">Dark Theme (requires restart)</CheckBox>
     </StackPanel>

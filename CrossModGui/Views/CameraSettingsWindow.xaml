@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
         Title="Camera Settings" Height="244.844" Width="387.856">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

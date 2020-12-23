@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/AdonisUI;component/ColorSchemes/Dark.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Color x:Key="{x:Static adonisUi:Colors.AccentColor}">#425595</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentHighlightColor}">#5168B7</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentIntenseHighlightColor}">#5B74CD</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentIntenseHighlightBorderColor}">#5B74CD</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentInteractionColor}">#495EA6</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentInteractionBorderColor}">#495EA6</Color>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.AccentInteractionForegroundColor}" ResourceKey="{x:Static adonisUi:Colors.AccentForegroundColor}"/>
+
+    <Color x:Key="{x:Static adonisUi:Colors.Layer0BackgroundColor}">#2d2d2d</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer0BorderColor}">#2d2d2d</Color>
+
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1BackgroundColor}">#424242</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1BorderColor}">#505050</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1HighlightColor}">#545454</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1HighlightBorderColor}">#7c7c7c</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1IntenseHighlightColor}">#656565</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer1IntenseHighlightBorderColor}">#b0b0b0</Color>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer1InteractionColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer1InteractionBorderColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer1InteractionForegroundColor}" ResourceKey="{x:Static adonisUi:Colors.AccentForegroundColor}"/>
+
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2BackgroundColor}">#363636</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2BorderColor}">#2a2a2a</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2HighlightColor}">#424242</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2HighlightBorderColor}">#606060</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2IntenseHighlightColor}">#4a4a4a</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer2IntenseHighlightBorderColor}">#858585</Color>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer2InteractionColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer2InteractionBorderColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer2InteractionForegroundColor}" ResourceKey="{x:Static adonisUi:Colors.AccentForegroundColor}"/>
+
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3BackgroundColor}">#292929</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3BorderColor}">#222222</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3HighlightColor}">#404040</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3HighlightBorderColor}">#515151</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3IntenseHighlightColor}">#4d4d4d</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer3IntenseHighlightBorderColor}">#7c7c7c</Color>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer3InteractionColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer3InteractionBorderColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer3InteractionForegroundColor}" ResourceKey="{x:Static adonisUi:Colors.AccentForegroundColor}"/>
+
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4BackgroundColor}">#373737</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4BorderColor}">#484848</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4HighlightColor}">#3e3e3e</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4HighlightBorderColor}">#595959</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4IntenseHighlightColor}">#4f4f4f</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.Layer4IntenseHighlightBorderColor}">#848484</Color>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer4InteractionColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer4InteractionBorderColor}" ResourceKey="{x:Static adonisUi:Colors.AccentColor}"/>
+    <DynamicResource x:Key="{x:Static adonisUi:Colors.Layer4InteractionForegroundColor}" ResourceKey="{x:Static adonisUi:Colors.AccentForegroundColor}"/>
+
+    <Color x:Key="{x:Static adonisUi:Colors.ForegroundColor}">#f0f0f0</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AccentForegroundColor}">#ffffff</Color>
+
+    <Color x:Key="{x:Static adonisUi:Colors.DisabledForegroundColor}">#8E8E8E</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.DisabledAccentForegroundColor}">#ACACAC</Color>
+
+    <Color x:Key="{x:Static adonisUi:Colors.SuccessColor}">#00b14a</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.ErrorColor}">#b00020</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.AlertColor}">#ffc107</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.HyperlinkColor}">#3377c6</Color>
+
+    <Color x:Key="{x:Static adonisUi:Colors.WindowButtonHighlightColor}">#3D3D4C</Color>
+    <Color x:Key="{x:Static adonisUi:Colors.WindowButtonInteractionColor}">#4C4F62</Color>
+</ResourceDictionary>
