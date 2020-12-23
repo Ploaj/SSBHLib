@@ -84,24 +84,13 @@
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem">
-                                <Style.Resources>
-                                    <!-- Style the inactive selection the same as active -->
-                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
-                                        Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
-                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
-                                        Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-                                </Style.Resources>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
                     </TreeView>
                 </TabItem>
             </TabControl>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
                 </Grid.RowDefinitions>
                 <WindowsFormsHost Grid.Row="0">
                     <sfcontrol:GLViewport x:Name="glViewport" 
@@ -110,7 +99,7 @@
                                           MouseWheel="glViewport_MouseInteract"
                                           MouseEnter="glViewport_MouseEnter"/>
                 </WindowsFormsHost>
-                <usercontrols:AnimationBar Grid.Row="1" Margin="20"
+                <usercontrols:AnimationBar Grid.Row="1" Margin="5"
                                            CurrentFrame="{Binding CurrentFrame}"
                                            TotalFrames="{Binding TotalFrames}"
                                            IsPlaying="{Binding IsPlayingAnimation}"></usercontrols:AnimationBar>

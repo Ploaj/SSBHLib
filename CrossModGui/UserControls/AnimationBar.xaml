@@ -5,28 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CrossModGui.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="40" d:DesignWidth="800"
              Name="animationBar">
     <Grid DataContext="{Binding ElementName=animationBar}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition Width="80"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Slider Grid.Column="0" VerticalAlignment="Center" Maximum="{Binding TotalFrames}" 
                             IsSnapToTickEnabled="True" Value="{Binding Path=CurrentFrame}" TickFrequency="1"></Slider>
         <StackPanel Grid.Column="1" Orientation="Horizontal">
-            <TextBlock VerticalAlignment="Center" Margin="5">Frame:</TextBlock>
-            <TextBox VerticalAlignment="Center" Margin="5" Text="{Binding Path=CurrentFrame, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <TextBlock VerticalAlignment="Center" Margin="5" Text="{Binding Path=TotalFrames, StringFormat={}of {0}}" />
+            <TextBlock VerticalAlignment="Center" Margin="5,0">Frame:</TextBlock>
+            <TextBox VerticalAlignment="Center" Margin="5,0" Text="{Binding Path=CurrentFrame, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock VerticalAlignment="Center" Margin="5,0" Text="{Binding Path=TotalFrames, StringFormat={}of {0}}" />
         </StackPanel>
-        <Button Margin="2,0" Grid.Column="2" Click="FirstFrame_Click">&lt;&lt;</Button>
-        <Button Margin="2,0" Grid.Column="3" Click="PreviousFrame_Click">&lt;</Button>
-        <Button Margin="2,0" Grid.Column="4" Click="PlayButton_Click">
+        <Button Margin="2,5" Grid.Column="2" Click="FirstFrame_Click">&lt;&lt;</Button>
+        <Button Margin="2,5" Grid.Column="3" Click="PreviousFrame_Click">&lt;</Button>
+        <Button Margin="2,5" Grid.Column="4" Click="PlayButton_Click">
             <TextBlock>
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
@@ -40,7 +40,7 @@
                 </TextBlock.Style>
             </TextBlock>
         </Button>
-        <Button Margin="2,0" Grid.Column="5" Click="NextFrame_Click">&gt;</Button>
-        <Button Margin="2,0" Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
+        <Button Margin="2,5" Grid.Column="5" Click="NextFrame_Click">&gt;</Button>
+        <Button Margin="2,5" Grid.Column="6" Click="LastFrame_Click">&gt;&gt;</Button>
     </Grid>
 </UserControl>
