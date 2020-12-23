@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         xmlns:converters="clr-namespace:CrossModGui.Converters"
         mc:Ignorable="d"
         Title="Render Settings" Height="588" Width="504.688">
@@ -13,6 +14,7 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
         <converters:InverseBoolConverter x:Key="inverseBoolConverter" />
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToggleSwitch}}"></Style>
     </Window.Resources>
     <StackPanel Margin="10">
         <Expander Header="Render Passes" IsExpanded="True">

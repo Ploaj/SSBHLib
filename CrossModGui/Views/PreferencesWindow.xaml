@@ -1,15 +1,16 @@
 ﻿<Window x:Class="CrossModGui.Views.PreferencesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
-        Title="Application Preferences" Height="450" Width="800">
+        Title="Application Preferences" Height="331" Width="330">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
     <StackPanel Margin="10">
-        <CheckBox IsChecked="{Binding EnableDarkTheme}">Dark Theme</CheckBox>
+        <CheckBox IsChecked="{Binding EnableDarkTheme}" Style="{DynamicResource {x:Static adonisUi:Styles.ToggleSwitch}}">Enable Dark Theme</CheckBox>
     </StackPanel>
 </Window>

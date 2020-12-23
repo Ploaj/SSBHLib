@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CrossModGui.Views"
         mc:Ignorable="d"
         Title="Camera Settings" Height="244.844" Width="387.856">
     <Window.Style>
@@ -22,20 +21,17 @@
             <ColumnDefinition Width="120"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <Label Grid.Row="0" Grid.Column="0">Translation X</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Label Grid.Row="1" Grid.Column="0">Translation Y</Label>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Label Grid.Row="2" Grid.Column="0">Translation Z</Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PositionZ, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-
-        <Label Grid.Row="3" Grid.Column="0">Rotation X (Degrees)</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding RotationXDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Label Grid.Row="4" Grid.Column="0">Rotation Y (Degrees)</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding RotationYDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-
-        <Label Grid.Row="5" Grid.Column="0">FOV (Degrees)</Label>
-        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding FovDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="0" Grid.Column="0">Translation X</Label>
+        <TextBox Margin="5,2" Grid.Row="0" Grid.Column="1" Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="1" Grid.Column="0">Translation Y</Label>
+        <TextBox Margin="5,2" Grid.Row="1" Grid.Column="1" Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="2" Grid.Column="0">Translation Z</Label>
+        <TextBox Margin="5,2" Grid.Row="2" Grid.Column="1" Text="{Binding PositionZ, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="3" Grid.Column="0">Rotation X (Degrees)</Label>
+        <TextBox Margin="5,2" Grid.Row="3" Grid.Column="1" Text="{Binding RotationXDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="4" Grid.Column="0">Rotation Y (Degrees)</Label>
+        <TextBox Margin="5,2" Grid.Row="4" Grid.Column="1" Text="{Binding RotationYDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Margin="5,2" Grid.Row="5" Grid.Column="0">FOV (Degrees)</Label>
+        <TextBox Margin="5,2" Grid.Row="5" Grid.Column="1" Text="{Binding FovDegrees, UpdateSourceTrigger=PropertyChanged}"></TextBox>
     </Grid>
 </Window>
