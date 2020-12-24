@@ -115,7 +115,9 @@ namespace CrossModGui.ViewModels
                     collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
                 }
 
-                AddMeshesToGui(node.Text, rnumdl.RenderModel);
+                // The parent will be a folder and should have a more descriptive name.
+                // Use model.numdlb as a fallback if there is no parent.
+                AddMeshesToGui(numdlb.Parent?.Text ?? numdlb.Text, rnumdl.RenderModel);
                 AddSkeletonToGui(rnumdl.Skeleton);
             }
             else if (node is DirectoryNode directory)
