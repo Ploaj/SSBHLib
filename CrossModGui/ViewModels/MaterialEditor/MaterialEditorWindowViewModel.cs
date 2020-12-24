@@ -84,6 +84,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
+        // TODO: Rework to store a current matl for saving/editing.
         private readonly Matl? matl;
 
         public MaterialEditorWindowViewModel(IEnumerable<Matl> materials)

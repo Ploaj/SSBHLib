@@ -2,7 +2,7 @@
 {
     public class BooleanParam : ViewModelBase
     {
-        public string ParamId { get; set; }
+        public string ParamId { get; set; } = "";
         public bool Value { get; set; }
     }
 }

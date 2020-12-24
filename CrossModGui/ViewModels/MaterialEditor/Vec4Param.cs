@@ -6,8 +6,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class Vec4Param : ViewModelBase
     {
 
-        public string ParamId { get; set; }
-        public Brush ColorBrush { get; set; }
+        public string ParamId { get; set; } = "";
+        public Brush? ColorBrush { get; set; }
 
         public string Label1 { get; set; } = "X";
         public float Min1 { get; set; } = 0.0f;

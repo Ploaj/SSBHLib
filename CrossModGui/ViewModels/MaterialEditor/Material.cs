@@ -6,11 +6,11 @@ namespace CrossModGui.ViewModels.MaterialEditor
 {
     public class Material : ViewModelBase
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public string ShaderLabel { get; set; }
+        public string ShaderLabel { get; set; } = "";
 
-        public SolidColorBrush MaterialIdColor { get; set; }
+        public SolidColorBrush? MaterialIdColor { get; set; }
 
         public bool HasFloats => FloatParams.Count > 0;
         public bool HasBooleans => BooleanParams.Count > 0;

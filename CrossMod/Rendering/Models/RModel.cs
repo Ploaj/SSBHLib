@@ -15,7 +15,7 @@ namespace CrossMod.Rendering.Models
         public List<RMesh> SubMeshes { get; } = new List<RMesh>();
 
         private Matrix4[] boneBinds = new Matrix4[200];
-        private readonly UniformBlock boneUniformBuffer;
+        private readonly UniformBlock? boneUniformBuffer;
 
         public RModel()
         {
@@ -74,7 +74,7 @@ namespace CrossMod.Rendering.Models
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, skeleton)), shader, boneUniformBuffer);
+            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer);
         }
 
         public static void SetCameraUniforms(Camera camera, Shader currentShader)
@@ -118,13 +118,13 @@ namespace CrossMod.Rendering.Models
             currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
         }
 
-        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton>> subMeshes, Shader currentShader, UniformBlock boneUniformBuffer)
+        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer)
         {
             GroupSubMeshesByPass(subMeshes,
-                out List<Tuple<RMesh, RSkeleton>> opaqueMeshes,
-                out List<Tuple<RMesh, RSkeleton>> sortMeshes,
-                out List<Tuple<RMesh, RSkeleton>> nearMeshes,
-                out List<Tuple<RMesh, RSkeleton>> farMeshes);
+                out List<Tuple<RMesh, RSkeleton?>> opaqueMeshes,
+                out List<Tuple<RMesh, RSkeleton?>> sortMeshes,
+                out List<Tuple<RMesh, RSkeleton?>> nearMeshes,
+                out List<Tuple<RMesh, RSkeleton?>> farMeshes);
 
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
@@ -161,7 +161,7 @@ namespace CrossMod.Rendering.Models
             }
         }
 
-        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock boneUniformBuffer, RSkeleton? previousSkeleton)
+        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
             // Check if the uniform values have already been set for this shader.
             if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
@@ -179,16 +179,16 @@ namespace CrossMod.Rendering.Models
             m.Draw(currentShader, skeleton);
         }
 
-        private static void GroupSubMeshesByPass(IEnumerable<Tuple<RMesh, RSkeleton>> subMeshes,
-            out List<Tuple<RMesh, RSkeleton>> opaqueMeshes,
-            out List<Tuple<RMesh, RSkeleton>> sortMeshes,
-            out List<Tuple<RMesh, RSkeleton>> nearMeshes,
-            out List<Tuple<RMesh, RSkeleton>> farMeshes)
+        private static void GroupSubMeshesByPass(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes,
+            out List<Tuple<RMesh, RSkeleton?>> opaqueMeshes,
+            out List<Tuple<RMesh, RSkeleton?>> sortMeshes,
+            out List<Tuple<RMesh, RSkeleton?>> nearMeshes,
+            out List<Tuple<RMesh, RSkeleton?>> farMeshes)
         {
-            opaqueMeshes = new List<Tuple<RMesh, RSkeleton>>();
-            sortMeshes = new List<Tuple<RMesh, RSkeleton>>();
-            nearMeshes = new List<Tuple<RMesh, RSkeleton>>();
-            farMeshes = new List<Tuple<RMesh, RSkeleton>>();
+            opaqueMeshes = new List<Tuple<RMesh, RSkeleton?>>();
+            sortMeshes = new List<Tuple<RMesh, RSkeleton?>>();
+            nearMeshes = new List<Tuple<RMesh, RSkeleton?>>();
+            farMeshes = new List<Tuple<RMesh, RSkeleton?>>();
 
             // Meshes are split into render passes based on the shader label.
             foreach (var m in subMeshes)

@@ -24,9 +24,9 @@ namespace CrossModGui.UserControls
 
         public Dictionary<object, string> DescriptionByValue { get; set; } = new Dictionary<object, string>();
 
-        public object SelectedValue { get; set; }
+        public object? SelectedValue { get; set; }
 
-        public string Label { get; set; }
+        public string Label { get; set; } = "";
 
         public EnumEditor()
         {

@@ -4,8 +4,7 @@ using System.IO;
 namespace CrossMod.Nodes
 {
     /// <summary>
-    /// Class for all Directory entries in the file system. Executing Open()
-    /// populates sub-nodes, and executing OpenNodes() calls Open() on all sub-nodes.
+    /// Class for all Directory entries in the file system
     /// </summary>
     public class DirectoryNode : FileNode
     {
@@ -15,8 +14,7 @@ namespace CrossMod.Nodes
         /// Creates a new DirectoryNode. The FilePath is set to the given value
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="isRoot">Whether this is the topmost parent. Decides whether to display full or partial name.</param>
-        public DirectoryNode(string path, bool isRoot = true) : base(path, "folder", true)
+        public DirectoryNode(string path) : base(path, "folder", true)
         {
             Text = Path.GetFileName(path);
 
@@ -30,7 +28,7 @@ namespace CrossMod.Nodes
             {
                 if (Directory.Exists(name))
                 {
-                    var dirNode = new DirectoryNode(name, isRoot: false);
+                    var dirNode = new DirectoryNode(name);
                     AddNode(dirNode);
                 }
                 else

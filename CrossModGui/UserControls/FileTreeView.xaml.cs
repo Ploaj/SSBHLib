@@ -15,9 +15,9 @@ namespace CrossModGui.UserControls
             typeof(ObservableCollection<FileNode>), typeof(FileTreeView),
             new FrameworkPropertyMetadata(null));
 
-        public event EventHandler<RoutedPropertyChangedEventArgs<object>> SelectedItemChanged;
+        public event EventHandler<RoutedPropertyChangedEventArgs<object>>? SelectedItemChanged;
 
-        public ObservableCollection<FileNode> Items
+        public ObservableCollection<FileNode>? Items
         {
             get => GetValue(ItemsProperty) as ObservableCollection<FileNode>;
             set => SetValue(ItemsProperty, value);

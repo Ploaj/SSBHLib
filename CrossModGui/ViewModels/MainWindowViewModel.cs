@@ -112,7 +112,7 @@ namespace CrossModGui.ViewModels
                 if (rnumdl.RenderModel != null)
                 {
                     boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
-                    collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, rnumdl.Skeleton)));
+                    collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
                 }
 
                 AddMeshesToGui(node.Text, rnumdl.RenderModel);
@@ -206,20 +206,13 @@ namespace CrossModGui.ViewModels
                 IsPlayingAnimation = true;
         }
 
-        private static T FindSiblingOfType<T>(FileNode item) where T : FileNode
+        private static T? FindSiblingOfType<T>(FileNode item) where T : FileNode
         {
-            if (item == null || item.Parent == null)
-                return null;
-
-            foreach (var node in item.Parent.Nodes)
-            {
-                if (node is T tNode)
-                {
-                    return tNode;
-                }
-            }
-
-            return null;
+            return item?
+                .Parent?
+                .Nodes
+                .OfType<T>()
+                .FirstOrDefault();
         }
 
         public void RenderNodes()

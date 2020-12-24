@@ -17,7 +17,6 @@
     </Window.Style>
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
-        <converters:IsActiveBrushConverter x:Key="colorBrushConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>

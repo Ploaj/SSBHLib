@@ -12,7 +12,6 @@
         <TreeView ItemsSource="{Binding Items}" SelectedItemChanged="TreeView_SelectedItemChanged">
             <TreeView.Resources>
                 <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
-                <converters:IsActiveBrushConverter x:Key="isActiveBrushConverter" />
             </TreeView.Resources>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">

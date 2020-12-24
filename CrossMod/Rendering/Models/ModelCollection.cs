@@ -1,11 +1,8 @@
 ﻿using CrossMod.Rendering.GlTools;
-using OpenTK;
 using SFGenericModel.Materials;
 using SFGraphics.Cameras;
-using SFGraphics.GLObjects.Shaders;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CrossMod.Rendering.Models
 {
@@ -14,7 +11,7 @@ namespace CrossMod.Rendering.Models
     /// </summary>
     public class ModelCollection : IRenderable
     {
-        public List<Tuple<RMesh, RSkeleton>> Meshes { get; } = new List<Tuple<RMesh, RSkeleton>>();
+        public List<Tuple<RMesh, RSkeleton?>> Meshes { get; } = new List<Tuple<RMesh, RSkeleton?>>();
 
         private UniformBlock? boneUniformBuffer;
 
