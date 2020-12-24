@@ -100,37 +100,35 @@ namespace CrossModGui.ViewModels
             Renderer.ItemToRender = collection;
         }
 
-        private void AddModelsToCollection(DirectoryNode rootNode, ModelCollection collection, List<Vector4> boundingSpheres)
+        private void AddModelsToCollection(FileNode node, ModelCollection collection, List<Vector4> boundingSpheres)
         {
-            rootNode.IsExpanded = true;
-            foreach (var child in rootNode.Nodes)
+            node.IsExpanded = true;
+
+            // Update the UI based on the type of node.
+            if (node is NumdlbNode numdlb)
             {
-                child.IsExpanded = true;
+                var rnumdl = numdlb.GetRenderableNode();
 
-                // If the node is a model, add the meshes.
-                // Otherwise, recurse into the child folders if possible.
-                var numdlb = child as NumdlbNode ?? child.Nodes.OfType<NumdlbNode>().FirstOrDefault();
-                if (numdlb != null)
+                if (rnumdl.RenderModel != null)
                 {
-                    var rnumdl = numdlb.GetRenderableNode();
-
-                    if (rnumdl.RenderModel != null)
-                    {
-                        boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
-                        collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, rnumdl.Skeleton)));
-                    }
-
-                    AddMeshesToGui(child.Text, rnumdl.RenderModel);
-                    AddSkeletonToGui(rnumdl.Skeleton);
-                } 
-                else if (child is DirectoryNode directory)
-                {
-                    AddModelsToCollection(directory, collection, boundingSpheres);
+                    boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
+                    collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton>(m, rnumdl.Skeleton)));
                 }
-                else if (child is NumatbNode numatb)
+
+                AddMeshesToGui(node.Text, rnumdl.RenderModel);
+                AddSkeletonToGui(rnumdl.Skeleton);
+            }
+            else if (node is DirectoryNode directory)
+            {
+                // Recurse over children.
+                foreach (var child in node.Nodes)
                 {
-                    MaterialNodes.Add(numatb);
+                    AddModelsToCollection(child, collection, boundingSpheres);
                 }
+            }
+            else if (node is NumatbNode numatb)
+            {
+                MaterialNodes.Add(numatb);
             }
         }
 
