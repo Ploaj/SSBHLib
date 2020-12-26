@@ -33,9 +33,19 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Material</TextBlock>
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2" ItemsSource="{Binding Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Matl</TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2" ItemsSource="{Binding MaterialCollections}" 
+                      SelectedItem="{Binding CurrentMaterialCollection}" SelectedIndex="0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Material</TextBlock>
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="5,2" ItemsSource="{Binding CurrentMaterialCollection.Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
                       DropDownOpened="ComboBox_DropDownOpened"
                       DropDownClosed="ComboBox_DropDownClosed">
                 <ComboBox.ItemTemplate>
@@ -47,8 +57,8 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
         <Grid DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">

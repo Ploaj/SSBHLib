@@ -39,7 +39,7 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
-        public ObservableCollection<RNumdl> Rnumdls { get; } = new ObservableCollection<RNumdl>();
+        public ObservableCollection<Tuple<string,RNumdl>> Rnumdls { get; } = new ObservableCollection<Tuple<string,RNumdl>>();
 
         public bool IsPlayingAnimation
         {
@@ -115,10 +115,11 @@ namespace CrossModGui.ViewModels
 
                 // The parent will be a folder and should have a more descriptive name.
                 // Use model.numdlb as a fallback if there is no parent.
-                AddMeshesToGui(numdlb.Parent?.Text ?? numdlb.Text, rnumdl.RenderModel);
+                var parentText = numdlb.Parent?.Text ?? numdlb.Text;
+                AddMeshesToGui(parentText, rnumdl.RenderModel);
                 AddSkeletonToGui(rnumdl.Skeleton);
 
-                Rnumdls.Add(rnumdl);
+                Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
             }
             else if (node is DirectoryNode directory)
             {

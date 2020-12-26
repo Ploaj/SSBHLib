@@ -12,8 +12,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
 {
     public partial class MaterialEditorWindowViewModel : ViewModelBase
     {
-        public ObservableCollection<Material> Materials { get; } = new ObservableCollection<Material>();
+        public ObservableCollection<MaterialCollection> MaterialCollections { get; } = new ObservableCollection<MaterialCollection>();
 
+        public MaterialCollection? CurrentMaterialCollection { get; set; }
         public Material? CurrentMaterial { get; set; }
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
@@ -84,34 +85,42 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
-        // TODO: Rework to store a current matl for saving/editing.
-        private readonly Matl? matl;
-
-        public MaterialEditorWindowViewModel(IEnumerable<RNumdl> rnumdls)
+        public MaterialEditorWindowViewModel(IEnumerable<System.Tuple<string, RNumdl>> rnumdls)
         {
-            // TODO: Each material should have a different set of available texture names.
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
-            // TODO: Group materials into matls?
-            // TODO: How to handle texture names?
-            foreach (var rnumdl in rnumdls)
+            // Group materials by matl.
+            foreach (var pair in rnumdls)
             {
+                var name = pair.Item1;
+                var rnumdl = pair.Item2;
+
                 if (rnumdl.Matl == null)
                     continue;
 
+                // TODO: Each material should have a different set of available texture names.
                 PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
 
-                for (int i = 0; i < rnumdl.Matl.Entries.Length; i++)
-                {
-                    // Pass a reference to the render material to enable real time updates.
-                    rnumdl.MaterialByName.TryGetValue(rnumdl.Matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
-
-                    var material = CreateMaterial(rnumdl.Matl.Entries[i], i, rMaterial);
-                    Materials.Add(material);
-                }
+                var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl);
+                MaterialCollections.Add(collection);
             }
+        }
+
+        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
+        {
+            var collection = new MaterialCollection { Name = name };
+            for (int i = 0; i < matl.Entries.Length; i++)
+            {
+                // Pass a reference to the render material to enable real time updates.
+                materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
+
+                var material = CreateMaterial(matl.Entries[i], i, rMaterial);
+                collection.Materials.Add(material);
+            }
+
+            return collection;
         }
 
         private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial)
@@ -295,15 +304,21 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public void SaveMatl(string outputPath)
         {
+            // TODO: How to access the current Matl for saving?
+            // TODO: Use an onsave event to avoid adding lots of dependencies?
+            Matl? matl = null;
             // TODO: Completely recreate the Matl from the view model.
             if (matl == null)
                 return;
 
             foreach (var entry in matl.Entries)
             {
-                var material = Materials.SingleOrDefault(m => m.Name == entry.MaterialLabel);
-                if (material == null)
+                var collection = MaterialCollections.SingleOrDefault(m => m.Name == entry.MaterialLabel);
+                if (collection == null)
                     continue;
+
+                // TODO: Only save the current matl?
+                var material = collection.Materials[0];
 
                 foreach (var attribute in entry.Attributes)
                 {
