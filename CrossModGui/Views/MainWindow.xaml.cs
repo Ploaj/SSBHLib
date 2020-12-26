@@ -87,9 +87,7 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            var materials = viewModel.MaterialNodes
-                .Select(n => n.Material)
-                .OfType<Matl>();
+            var materials = viewModel.Rnumdls;
             DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(materials)));
         }
 

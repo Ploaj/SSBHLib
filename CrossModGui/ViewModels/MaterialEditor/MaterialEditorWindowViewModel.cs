@@ -87,24 +87,28 @@ namespace CrossModGui.ViewModels.MaterialEditor
         // TODO: Rework to store a current matl for saving/editing.
         private readonly Matl? matl;
 
-        public MaterialEditorWindowViewModel(IEnumerable<Matl> materials)
+        public MaterialEditorWindowViewModel(IEnumerable<RNumdl> rnumdls)
         {
-            //PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
-
+            // TODO: Each material should have a different set of available texture names.
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
             // TODO: Group materials into matls?
             // TODO: How to handle texture names?
-            foreach (var matl in materials)
+            foreach (var rnumdl in rnumdls)
             {
-                for (int i = 0; i < matl.Entries.Length; i++)
+                if (rnumdl.Matl == null)
+                    continue;
+
+                PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
+
+                for (int i = 0; i < rnumdl.Matl.Entries.Length; i++)
                 {
                     // Pass a reference to the render material to enable real time updates.
-                    //rnumdl.MaterialByName.TryGetValue(rnumdl.Matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
+                    rnumdl.MaterialByName.TryGetValue(rnumdl.Matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
 
-                    var material = CreateMaterial(matl.Entries[i], i, null);
+                    var material = CreateMaterial(rnumdl.Matl.Entries[i], i, rMaterial);
                     Materials.Add(material);
                 }
             }

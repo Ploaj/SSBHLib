@@ -39,7 +39,7 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
-        public ObservableCollection<NumatbNode> MaterialNodes { get; } = new ObservableCollection<NumatbNode>();
+        public ObservableCollection<RNumdl> Rnumdls { get; } = new ObservableCollection<RNumdl>();
 
         public bool IsPlayingAnimation
         {
@@ -62,9 +62,6 @@ namespace CrossModGui.ViewModels
         }
         private bool isPlayingAnimation;
 
-        // TODO: Where to store this value?
-        public RNumdl? Rnumdl { get; set; }
-
         public MainWindowViewModel(ViewportRenderer renderer)
         {
             Renderer = renderer;
@@ -78,7 +75,7 @@ namespace CrossModGui.ViewModels
             FileTreeItems.Clear();
             BoneTreeItems.Clear();
             MeshListItems.Clear();
-            MaterialNodes.Clear();
+            Rnumdls.Clear();
         }
 
         public void PopulateFileTree(string folderPath)
@@ -86,8 +83,9 @@ namespace CrossModGui.ViewModels
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
 
-            // Load model collection.
-            var collection = new ModelCollection();
+            // Attempt to add models to the existing collection if possible.
+            // This prevents clearing the meshes when opening a new folder.
+            var collection = (Renderer.ItemToRender as ModelCollection) ?? new ModelCollection();
 
             // TODO: Move bounding sphere to model collection.
             var boundingSpheres = new List<Vector4>();
@@ -119,6 +117,8 @@ namespace CrossModGui.ViewModels
                 // Use model.numdlb as a fallback if there is no parent.
                 AddMeshesToGui(numdlb.Parent?.Text ?? numdlb.Text, rnumdl.RenderModel);
                 AddSkeletonToGui(rnumdl.Skeleton);
+
+                Rnumdls.Add(rnumdl);
             }
             else if (node is DirectoryNode directory)
             {
@@ -127,10 +127,6 @@ namespace CrossModGui.ViewModels
                 {
                     AddModelsToCollection(child, collection, boundingSpheres);
                 }
-            }
-            else if (node is NumatbNode numatb)
-            {
-                MaterialNodes.Add(numatb);
             }
         }
 
@@ -148,7 +144,6 @@ namespace CrossModGui.ViewModels
             }
             else if (newNode is RNumdl rnumdl)
             {
-                Rnumdl = rnumdl;
                 AddSkeletonToGui(rnumdl.Skeleton);
             }
         }
