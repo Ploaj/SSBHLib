@@ -17,6 +17,20 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public MaterialCollection? CurrentMaterialCollection { get; set; }
         public Material? CurrentMaterial { get; set; }
 
+        public class MaterialSaveEventArgs : System.EventArgs
+        {
+            public MaterialCollection MaterialCollection { get; }
+            public string FilePath { get; }
+
+            public MaterialSaveEventArgs(MaterialCollection materialCollection, string filePath)
+            {
+                MaterialCollection = materialCollection;
+                FilePath = filePath;
+            }
+        }
+
+        public event System.EventHandler<MaterialSaveEventArgs>? MatlSaving;
+
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
         public Dictionary<MatlCullMode, string> DescriptionByCullMode { get; } = new Dictionary<MatlCullMode, string>
@@ -106,6 +120,71 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl);
                 MaterialCollections.Add(collection);
             }
+
+            // Find the correct matl to update when saving.
+            MatlSaving += (s, e) =>
+            {
+                var matl = rnumdls.SingleOrDefault(r => r.Item1 == e.MaterialCollection.Name).Item2.Matl;
+                if (matl != null)
+                    UpdateAndSaveMatl(matl, e.MaterialCollection, e.FilePath);
+            };
+        }
+
+        private void UpdateAndSaveMatl(Matl matl, MaterialCollection collection, string outputPath)
+        {
+            // TODO: Completely recreate the Matl from the view model.
+
+            foreach (var entry in matl.Entries)
+            {
+                var material = collection.Materials.SingleOrDefault(m => m.ShaderLabel == entry.ShaderLabel && m.Name == entry.MaterialLabel);
+                if (material == null)
+                    continue;
+
+                foreach (var attribute in entry.Attributes)
+                {
+                    // The data type isn't known, so check each type.
+                    switch (attribute.DataType)
+                    {
+                        case MatlEnums.ParamDataType.Float:
+                            var floatParam = material.FloatParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = floatParam.Value;
+                            break;
+                        case MatlEnums.ParamDataType.Boolean:
+                            var boolparam = material.BooleanParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = boolparam.Value;
+                            break;
+                        case MatlEnums.ParamDataType.String:
+                            var textureParam = material.TextureParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = new MatlAttribute.MatlString { Text = textureParam.Value };
+                            break;
+                        case MatlEnums.ParamDataType.Vector4:
+                            var vec4Param = material.Vec4Params.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
+                            attribute.DataObject = GetMatlVec4(vec4Param);
+                            break;
+                        // TODO: Fully represent these types in the viewmodel.
+                        case MatlEnums.ParamDataType.Sampler:
+                            var samplerParam = material.TextureParams.FirstOrDefault(p => p.SamplerParamId == attribute.ParamId.ToString());
+                            if (attribute.DataObject is MatlAttribute.MatlSampler matlSampler)
+                                attribute.DataObject = GetMatlSampler(samplerParam, matlSampler);
+                            break;
+                        case MatlEnums.ParamDataType.RasterizerState:
+                            if (attribute.DataObject is MatlAttribute.MatlRasterizerState rasterizerState)
+                                attribute.DataObject = GetRasterizerState(material, rasterizerState);
+                            break;
+                        case MatlEnums.ParamDataType.BlendState:
+                            if (attribute.DataObject is MatlAttribute.MatlBlendState blendState)
+                                attribute.DataObject = GetBlendState(material, blendState);
+                            break;
+                    }
+                }
+            }
+
+            SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
+        }
+
+        private void MaterialEditorWindowViewModel_MatlSaving(object? sender, MaterialSaveEventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
 
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
@@ -304,62 +383,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public void SaveMatl(string outputPath)
         {
-            // TODO: How to access the current Matl for saving?
-            // TODO: Use an onsave event to avoid adding lots of dependencies?
-            Matl? matl = null;
-            // TODO: Completely recreate the Matl from the view model.
-            if (matl == null)
-                return;
-
-            foreach (var entry in matl.Entries)
-            {
-                var collection = MaterialCollections.SingleOrDefault(m => m.Name == entry.MaterialLabel);
-                if (collection == null)
-                    continue;
-
-                // TODO: Only save the current matl?
-                var material = collection.Materials[0];
-
-                foreach (var attribute in entry.Attributes)
-                {
-                    // The data type isn't known, so check each type.
-                    switch (attribute.DataType)
-                    {
-                        case MatlEnums.ParamDataType.Float:
-                            var floatParam = material.FloatParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-                            attribute.DataObject = floatParam.Value;
-                            break;
-                        case MatlEnums.ParamDataType.Boolean:
-                            var boolparam = material.BooleanParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-                            attribute.DataObject = boolparam.Value;
-                            break;
-                        case MatlEnums.ParamDataType.String:
-                            var textureParam = material.TextureParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-                            attribute.DataObject = new MatlAttribute.MatlString { Text = textureParam.Value };
-                            break;
-                        case MatlEnums.ParamDataType.Vector4:
-                            var vec4Param = material.Vec4Params.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-                            attribute.DataObject = GetMatlVec4(vec4Param);
-                            break;
-                        // TODO: Fully represent these types in the viewmodel.
-                        case MatlEnums.ParamDataType.Sampler:
-                            var samplerParam = material.TextureParams.FirstOrDefault(p => p.SamplerParamId == attribute.ParamId.ToString());
-                            if (attribute.DataObject is MatlAttribute.MatlSampler matlSampler)
-                                attribute.DataObject = GetMatlSampler(samplerParam, matlSampler);
-                            break;
-                        case MatlEnums.ParamDataType.RasterizerState:
-                            if (attribute.DataObject is MatlAttribute.MatlRasterizerState rasterizerState)
-                                attribute.DataObject = GetRasterizerState(material, rasterizerState);
-                            break;
-                        case MatlEnums.ParamDataType.BlendState:
-                            if (attribute.DataObject is MatlAttribute.MatlBlendState blendState)
-                                attribute.DataObject = GetBlendState(material, blendState);
-                            break;
-                    }
-                }
-            }
-
-            SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
+            if (CurrentMaterialCollection != null)
+                MatlSaving?.Invoke(this, new MaterialSaveEventArgs(CurrentMaterialCollection, outputPath));    
         }
 
         private MatlAttribute.MatlBlendState GetBlendState(Material material, MatlAttribute.MatlBlendState previous)
