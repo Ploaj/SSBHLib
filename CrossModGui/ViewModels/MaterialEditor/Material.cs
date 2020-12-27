@@ -28,8 +28,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public ObservableCollection<Vec4Param> Vec4Params { get; } = new ObservableCollection<Vec4Param>();
 
-        public ObservableCollection<TextureParam> TextureParams { get; } = new ObservableCollection<TextureParam>();
-
-        public ObservableCollection<SamplerParam> SamplerParams { get; } = new ObservableCollection<SamplerParam>();
+        public ObservableCollection<TextureSamplerParam> TextureParams { get; } = new ObservableCollection<TextureSamplerParam>();
     }
 }

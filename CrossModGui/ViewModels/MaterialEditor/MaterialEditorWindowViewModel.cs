@@ -153,22 +153,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 // The data type isn't known, so check each type.
                 switch (attribute.DataType)
                 {
-                    case MatlEnums.ParamDataType.Float:
-                        UpdateMatlFloat(material, attribute);
-                        break;
-                    case MatlEnums.ParamDataType.Boolean:
-                        UpdateMatlBoolean(material, attribute);
-                        break;
-                    case MatlEnums.ParamDataType.String:
-                        UpdateMatlTexture(material, attribute);
-                        break;
-                    case MatlEnums.ParamDataType.Vector4:
-                        UpdateMatlVec4(material, attribute);
-                        break;
                     // TODO: Fully represent these types in the viewmodel.
-                    case MatlEnums.ParamDataType.Sampler:
-                        UpdateMatlSampler(material, attribute);
-                        break;
                     case MatlEnums.ParamDataType.RasterizerState:
                         UpdateMatlRasterizerState(material, attribute);
                         break;
@@ -191,37 +176,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 attribute.DataObject = GetRasterizerState(material, rasterizerState);
         }
 
-        private static void UpdateMatlSampler(Material material, MatlAttribute attribute)
-        {
-            var samplerParam = material.TextureParams.FirstOrDefault(p => p.SamplerParamId == attribute.ParamId.ToString());
-            if (attribute.DataObject is MatlAttribute.MatlSampler matlSampler)
-                attribute.DataObject = GetMatlSampler(samplerParam, matlSampler);
-        }
-
-        private static void UpdateMatlVec4(Material material, MatlAttribute attribute)
-        {
-            var vec4Param = material.Vec4Params.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-            attribute.DataObject = GetMatlVec4(vec4Param);
-        }
-
-        private static void UpdateMatlFloat(Material material, MatlAttribute attribute)
-        {
-            var floatParam = material.FloatParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-            attribute.DataObject = floatParam.Value;
-        }
-
-        private static void UpdateMatlBoolean(Material material, MatlAttribute attribute)
-        {
-            var boolparam = material.BooleanParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-            attribute.DataObject = boolparam.Value;
-        }
-
-        private static void UpdateMatlTexture(Material material, MatlAttribute attribute)
-        {
-            var textureParam = material.TextureParams.FirstOrDefault(p => p.ParamId == attribute.ParamId.ToString());
-            attribute.DataObject = new MatlAttribute.MatlString { Text = textureParam.Value };
-        }
-
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
         {
             var collection = new MaterialCollection { Name = name };
@@ -241,6 +195,19 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             var idColor = UniqueColors.IndexToColor(index);
 
+            var material = CreateMaterial(entry, idColor);
+
+            // Enable real time viewport updates.
+            if (rMaterial != null)
+            {
+                SyncViewModelToRenderMaterial(entry, rMaterial, material);
+            }
+
+            return material;
+        }
+
+        private static Material CreateMaterial(MatlEntry entry, OpenTK.Vector3 idColor)
+        {
             var material = new Material
             {
                 Name = entry.MaterialLabel,
@@ -252,54 +219,38 @@ namespace CrossModGui.ViewModels.MaterialEditor
             };
 
             UpdateMaterialFromEntry(entry, material);
-
-            // Enable real time viewport updates.
-            if (rMaterial !=  null)
-            {
-                SyncBooleans(rMaterial, material, entry);
-                SyncFloats(rMaterial, material, entry);
-                SyncTexturesSamplers(rMaterial, material, entry);
-                SyncVectors(rMaterial, material, entry);
-
-                // Rasterizer state and blend state are stored with the material
-                // because there is only a single rasterizer state and blend state.
-
-                material.PropertyChanged += (s, e) =>
-                {
-                    var rasterizerState = entry.Attributes.FirstOrDefault(a => a.ParamId == MatlEnums.ParamId.RasterizerState0);
-                    var blendState = entry.Attributes.FirstOrDefault(a => a.ParamId == MatlEnums.ParamId.BlendState0);
-
-                    switch (e.PropertyName)
-                    {
-                        case nameof(material.CullMode):
-                            rMaterial.CullMode = material.CullMode.ToOpenTk();
-                            if (rasterizerState != null)
-                                UpdateMatlRasterizerState(material, rasterizerState);
-                            break;
-                        case nameof(material.FillMode):
-                            rMaterial.FillMode = material.FillMode.ToOpenTk();
-                            if (rasterizerState != null)
-                                UpdateMatlRasterizerState(material, rasterizerState);
-                            break;
-                        case nameof(material.SourceColor):
-                            rMaterial.SourceColor = material.SourceColor.ToOpenTk();
-                            if (blendState != null)
-                                UpdateMatlBlendState(material, blendState);
-                            break;
-                        case nameof(material.DestinationColor):
-                            rMaterial.DestinationColor = material.DestinationColor.ToOpenTk();
-                            if (blendState != null)
-                                UpdateMatlBlendState(material, blendState);
-                            break;
-                    }
-                };
-
-            }
-
             return material;
         }
 
-        private static void SyncBooleans(RMaterial rMaterial, Material material, MatlEntry entry)
+        private static void SyncViewModelToRenderMaterial(MatlEntry entry, RMaterial rMaterial, Material material)
+        {
+            SyncBooleans(rMaterial, material);
+            SyncFloats(rMaterial, material);
+            SyncTexturesSamplers(rMaterial, material);
+            SyncVectors(rMaterial, material);
+
+            // Rasterizer state and blend state are stored with the material because there is only a single rasterizer state and blend state.
+            material.PropertyChanged += (s, e) =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(material.CullMode):
+                        rMaterial.CullMode = material.CullMode.ToOpenTk();
+                        break;
+                    case nameof(material.FillMode):
+                        rMaterial.FillMode = material.FillMode.ToOpenTk();
+                        break;
+                    case nameof(material.SourceColor):
+                        rMaterial.SourceColor = material.SourceColor.ToOpenTk();
+                        break;
+                    case nameof(material.DestinationColor):
+                        rMaterial.DestinationColor = material.DestinationColor.ToOpenTk();
+                        break;
+                }
+            };
+        }
+
+        private static void SyncBooleans(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.BooleanParams)
             {
@@ -307,16 +258,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateBoolean(paramId, param.Value);
-                param.PropertyChanged += (s, e) =>
-                {
-                    var attribute = entry.Attributes.FirstOrDefault(a => a.ParamId == paramId);
-                    if (attribute != null)
-                        UpdateMatlBoolean(material, attribute);
-                };
             }
         }
 
-        private static void SyncFloats(RMaterial rMaterial, Material material, MatlEntry entry)
+        private static void SyncFloats(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.FloatParams)
             {
@@ -324,16 +269,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateFloat(paramId, param.Value);
-                param.PropertyChanged += (s, e) =>
-                {
-                    var attribute = entry.Attributes.FirstOrDefault(a => a.ParamId == paramId);
-                    if (attribute != null)
-                        UpdateMatlFloat(material, attribute);
-                };
             }
         }
 
-        private static void SyncTexturesSamplers(RMaterial rMaterial, Material material, MatlEntry entry)
+        private static void SyncTexturesSamplers(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.TextureParams)
             {
@@ -346,21 +285,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 param.PropertyChanged += (s, e) => 
                 { 
                     rMaterial.UpdateTexture(paramId, param.Value);
-                    rMaterial.UpdateSampler(samplerParamId, CreateSampler(param));
-                };
-                param.PropertyChanged += (s, e) =>
-                {
-                    var attribute = entry.Attributes.FirstOrDefault(a => a.ParamId == paramId);
-                    if (attribute != null)
-                        UpdateMatlTexture(material, attribute);
-                    var samplerAttribute = entry.Attributes.FirstOrDefault(a => a.ParamId == samplerParamId);
-                    if (samplerAttribute != null)
-                        UpdateMatlSampler(material, attribute);
+                    rMaterial.UpdateSampler(samplerParamId, GetSamplerData(param));
                 };
             }
         }
 
-        private static void SyncVectors(RMaterial rMaterial, Material material, MatlEntry entry)
+        private static void SyncVectors(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.Vec4Params)
             {
@@ -368,16 +298,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateVec4(paramId, new OpenTK.Vector4(param.Value1, param.Value2, param.Value3, param.Value4));
-                param.PropertyChanged += (s, e) =>
-                {
-                    var attribute = entry.Attributes.FirstOrDefault(a => a.ParamId == paramId);
-                    if (attribute != null)
-                        UpdateMatlVec4(material, attribute);
-                };
             }
         }
 
-        private static SamplerData CreateSampler(TextureParam param)
+        private static SamplerData GetSamplerData(TextureSamplerParam param)
         {
             return new SamplerData
             {
@@ -408,21 +332,17 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 material.DestinationColor = blendState.DestinationColor;
             }
 
-            material.BooleanParams.AddRange(entry.GetBools()
-                .Select(b => new BooleanParam { ParamId = b.Key.ToString(), Value = b.Value }));
+            material.FloatParams.AddRange(entry.Attributes
+                .Where(a => a.DataType == MatlEnums.ParamDataType.Float)
+                .Select(a => new FloatParam(a)));
 
-            material.FloatParams.AddRange(entry.GetFloats()
-                .Select(f => new FloatParam { ParamId = f.Key.ToString(), Value = f.Value }));
+            material.BooleanParams.AddRange(entry.Attributes
+                .Where(a => a.DataType == MatlEnums.ParamDataType.Boolean)
+                .Select(a => new BooleanParam(a)));
 
-            material.Vec4Params.AddRange(entry.GetVectors()
-                .Select(v => new Vec4Param
-                {
-                    ParamId = v.Key.ToString(),
-                    Value1 = v.Value.X,
-                    Value2 = v.Value.Y,
-                    Value3 = v.Value.Z,
-                    Value4 = v.Value.W
-                }));
+            material.Vec4Params.AddRange(entry.Attributes
+                .Where(a => a.DataType == MatlEnums.ParamDataType.Vector4)
+                .Select(a => new Vec4Param(a)));
 
             // Set descriptions and GUI info.
             foreach (var param in material.Vec4Params)
@@ -431,31 +351,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
 
             // TODO: Are texture names case sensitive?
-            material.TextureParams.AddRange(entry.GetTextures()
-                .Select(t => new TextureParam { ParamId = t.Key.ToString(), Value = t.Value.ToLower(), SamplerParamId = ParamIdExtensions.GetSampler(t.Key).ToString() }));
-
-            UpdateTextureParamsFromSamplers(entry, material);
-        }
-
-        private static void UpdateTextureParamsFromSamplers(MatlEntry entry, Material material)
-        {
-            var entrySamplers = entry.GetSamplers();
-            foreach (var param in material.TextureParams)
+            foreach (var texture in entry.Attributes.Where(a => a.DataType == MatlEnums.ParamDataType.String))
             {
-                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId textureId))
+                // TODO: Handle the case where samplers are missing?
+                var sampler = entry.Attributes.SingleOrDefault(a => a.ParamId == ParamIdExtensions.GetSampler(texture.ParamId));
+                if (sampler == null)
                     continue;
 
-                if (!entrySamplers.TryGetValue(ParamIdExtensions.GetSampler(textureId), out MatlAttribute.MatlSampler? sampler))
-                    continue;
-
-                param.WrapS = sampler.WrapS;
-                param.WrapT = sampler.WrapT;
-                param.WrapR = sampler.WrapR;
-                param.MinFilter = sampler.MinFilter;
-                param.MagFilter = sampler.MagFilter;
-                param.LodBias = sampler.LodBias;
-                param.MaxAnisotropy = sampler.MaxAnisotropy;
-                param.TextureFilteringType = sampler.TextureFilteringType;
+                material.TextureParams.Add(new TextureSamplerParam(texture, sampler));
             }
         }
 
@@ -494,7 +397,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             };
         }
 
-        private static MatlAttribute.MatlSampler GetMatlSampler(TextureParam param, MatlAttribute.MatlSampler previous)
+        private static MatlAttribute.MatlSampler GetMatlSampler(TextureSamplerParam param, MatlAttribute.MatlSampler previous)
         {
             // TODO: Completely remake the data object.
             // TODO: This modifies the previous object.

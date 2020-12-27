@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SSBHLib.Formats.Materials;
+using System;
 using System.Windows.Media;
 
 namespace CrossModGui.ViewModels.MaterialEditor
@@ -6,7 +7,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class Vec4Param : ViewModelBase
     {
 
-        public string ParamId { get; set; } = "";
+        public string ParamId { get; }
         public Brush? ColorBrush { get; set; }
 
         public string Label1 { get; set; } = "X";
@@ -14,56 +15,65 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public float Max1 { get; set; } = 1.0f;
         public float Value1
         {
-            get => value1;
+            get => ((MatlAttribute.MatlVector4)attribute.DataObject).X;
             set
             {
-                value1 = value;
+                ((MatlAttribute.MatlVector4)attribute.DataObject).X = value;
                 UpdateColor();
+                OnPropertyChanged();
             }
         }
-        private float value1;
 
         public string Label2 { get; set; } = "Y";
         public float Min2 { get; set; } = 0.0f;
         public float Max2 { get; set; } = 1.0f;
         public float Value2
         {
-            get => value2;
+            get => ((MatlAttribute.MatlVector4)attribute.DataObject).Y;
             set
             {
-                value2 = value;
+                ((MatlAttribute.MatlVector4)attribute.DataObject).Y = value;
                 UpdateColor();
+                OnPropertyChanged();
             }
         }
-        private float value2;
 
         public string Label3 { get; set; } = "Z";
         public float Min3 { get; set; } = 0.0f;
         public float Max3 { get; set; } = 1.0f;
         public float Value3
         {
-            get => value3;
+            get => ((MatlAttribute.MatlVector4)attribute.DataObject).Z;
             set
             {
-                value3 = value;
+                ((MatlAttribute.MatlVector4)attribute.DataObject).Z = value;
                 UpdateColor();
+                OnPropertyChanged();
             }
         }
-        private float value3;
 
         public string Label4 { get; set; } = "W";
         public float Min4 { get; set; } = 0.0f;
         public float Max4 { get; set; } = 1.0f;
         public float Value4
         {
-            get => value4;
+            get => ((MatlAttribute.MatlVector4)attribute.DataObject).W;
             set
             {
-                value4 = value;
+                ((MatlAttribute.MatlVector4)attribute.DataObject).W = value;
                 UpdateColor();
+                OnPropertyChanged();
             }
         }
-        private float value4;
+
+        private readonly MatlAttribute attribute;
+
+        public Vec4Param(MatlAttribute attribute)
+        {
+            this.attribute = attribute;
+            ParamId = attribute.ParamId.ToString();
+            UpdateColor();
+        }
 
         private void UpdateColor()
         {
