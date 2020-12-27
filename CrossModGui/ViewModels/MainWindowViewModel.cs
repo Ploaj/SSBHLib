@@ -91,9 +91,13 @@ namespace CrossModGui.ViewModels
             var boundingSpheres = new List<Vector4>();
 
             AddModelsToCollection(rootNode, collection, boundingSpheres);
-
-            var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
-            Renderer.Camera.FrameBoundingSphere(boundingSphere);
+            
+            // Attempting to frame zero models would place the camera at the origin.
+            if (boundingSpheres.Count > 0)
+            {
+                var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
+                Renderer.Camera.FrameBoundingSphere(boundingSphere);
+            }
 
             Renderer.ItemToRender = collection;
         }
