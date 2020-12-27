@@ -166,9 +166,9 @@ namespace CrossModGui.ViewModels
             ResetAnimation();
 
             // Preserve the existing model collection when drawing individual items.
-            // Models and textures will override the model collection.
+            // Textures and bones will override the model collection.
             // Updating the animation shouldn't clear the current renderable.
-            if (item is IRenderableNode renderableNode)
+            if (item is IRenderableNode renderableNode && !(item is NumdlbNode))
             {
                 Renderer.ItemToRenderOverride = renderableNode.Renderable.Value;
             }
