@@ -200,7 +200,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Enable real time viewport updates.
             if (rMaterial != null)
             {
-                SyncViewModelToRenderMaterial(entry, rMaterial, material);
+                SyncViewModelToRenderMaterial(rMaterial, material);
             }
 
             return material;
@@ -222,7 +222,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static void SyncViewModelToRenderMaterial(MatlEntry entry, RMaterial rMaterial, Material material)
+        private static void SyncViewModelToRenderMaterial(RMaterial rMaterial, Material material)
         {
             SyncBooleans(rMaterial, material);
             SyncFloats(rMaterial, material);

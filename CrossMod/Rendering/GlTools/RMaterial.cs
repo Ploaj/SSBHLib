@@ -145,14 +145,15 @@ namespace CrossMod.Rendering.GlTools
 
         public void SetRenderState(RMaterial? previousMaterial = null)
         {
-            if (previousMaterial != null && (SourceColor != previousMaterial.SourceColor || DestinationColor != previousMaterial.DestinationColor))
+            // Only set the render state if it changed from the previous material to improve performance.
+            if (previousMaterial == null || SourceColor != previousMaterial.SourceColor || DestinationColor != previousMaterial.DestinationColor)
             {
                 var alphaBlendSettings = new SFGenericModel.RenderState.AlphaBlendSettings(true, SourceColor, DestinationColor, BlendEquationMode.FuncAdd, BlendEquationMode.FuncAdd);
                 SFGenericModel.RenderState.GLRenderSettings.SetAlphaBlending(alphaBlendSettings);
             }
 
             // Meshes with screen door transparency enable this OpenGL extension.
-            if (previousMaterial != null && UseAlphaSampleCoverage != previousMaterial.UseAlphaSampleCoverage)
+            if (previousMaterial == null || UseAlphaSampleCoverage != previousMaterial.UseAlphaSampleCoverage)
             {
                 if (RenderSettings.Instance.EnableExperimental && UseAlphaSampleCoverage)
                     GL.Enable(EnableCap.SampleAlphaToCoverage);
@@ -160,10 +161,10 @@ namespace CrossMod.Rendering.GlTools
                     GL.Disable(EnableCap.SampleAlphaToCoverage);
             }
 
-            if (previousMaterial != null && (EnableFaceCulling != previousMaterial.EnableFaceCulling || CullMode != previousMaterial.CullMode))
+            if (previousMaterial == null || EnableFaceCulling != previousMaterial.EnableFaceCulling || CullMode != previousMaterial.CullMode)
                 SFGenericModel.RenderState.GLRenderSettings.SetFaceCulling(new SFGenericModel.RenderState.FaceCullingSettings(EnableFaceCulling, CullMode));
 
-            if (previousMaterial != null && FillMode != previousMaterial.FillMode)
+            if (previousMaterial == null || FillMode != previousMaterial.FillMode)
                 SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
         }
 
