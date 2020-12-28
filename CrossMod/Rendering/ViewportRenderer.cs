@@ -52,12 +52,13 @@ namespace CrossMod.Rendering
 
         public bool IsRendering { get; protected set; }
 
-        public void ClearRenderableNodes()
+        public void Clear()
         {
             SwitchContextToCurrentThreadAndPerformAction(() =>
             {
                 ItemToRender = null;
                 ItemToRenderOverride = null;
+                RenderableAnimation = null;
                 GC.WaitForPendingFinalizers();
                 GLObjectManager.DeleteUnusedGLObjects();
             });

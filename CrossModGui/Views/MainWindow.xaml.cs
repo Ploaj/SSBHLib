@@ -118,7 +118,7 @@ namespace CrossModGui.Views
         private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
         {
             viewModel.Clear();
-            viewModel.Renderer.ClearRenderableNodes();
+            viewModel.Renderer.Clear();
             // Make sure the viewport buffer clears.
             glViewport.RenderFrame();
         }
@@ -163,7 +163,7 @@ namespace CrossModGui.Views
 
         private void ClearViewport_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.Renderer.ClearRenderableNodes();
+            viewModel.Renderer.Clear();
             RenderFrameIfNeeded();
         }
 

@@ -59,7 +59,7 @@ namespace CrossMod.Tools
                 }
                 finally
                 {
-                    renderer.ClearRenderableNodes();
+                    renderer.Clear();
                 }
             }
 
