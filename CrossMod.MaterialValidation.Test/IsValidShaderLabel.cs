@@ -29,6 +29,12 @@ namespace CrossMod.MaterialValidation.Test
             Assert.IsFalse(ShaderValidation.IsValidShaderLabel("SFX_PBS_1b01000008008a68"));
         }
 
-
+        [TestMethod]
+        public void TerryShaders()
+        {
+            // Test DLC characters.
+            Assert.IsTrue(ShaderValidation.IsValidShaderLabel("SFX_PBS_010000000808866b_opaque"));
+            Assert.IsTrue(ShaderValidation.IsValidShaderLabel("SFX_PBS_0100000008018669_sort"));  
+        }
     }
 }
