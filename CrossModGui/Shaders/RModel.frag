@@ -81,7 +81,14 @@ uniform MaterialParams
     int hasDiffuse3; 
     int emissionOverride;
 
-    int hasColorSets;
+    int hasColorSet1;
+    int hasColorSet2;
+    int hasColorSet3;
+    int hasColorSet4;
+    int hasColorSet5;
+    int hasColorSet6;
+    int hasColorSet7;
+
     int isValidShaderLabel;
 };
 
@@ -205,7 +212,7 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     vec3 result = directLight * directLightIntensity + ambientLight;
 
     // Baked stage lighting.
-    if (renderVertexColor == 1 && hasColorSets == 1)
+    if (renderVertexColor == 1 && hasColorSet2 == 1)
         result *= colorSet2.rgb;
 
     return result;
@@ -445,10 +452,13 @@ void main()
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
 
-    if (renderVertexColor == 1 && hasColorSets == 1)
+    if (renderVertexColor == 1)
     {
-        fragColor0 *= colorSet1; 
-        fragColor0 *= colorSet3;
+        if (hasColorSet1 == 1)
+            fragColor0 *= colorSet1; 
+
+        if (hasColorSet3 == 1)
+            fragColor0 *= colorSet3;
     }
 
     if (hasCustomFloat19 == 1 && renderExperimental == 1)

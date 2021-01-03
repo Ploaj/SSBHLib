@@ -71,7 +71,14 @@ uniform MaterialParams
     int hasDiffuse3; 
     int emissionOverride;
 
-    int hasColorSets;
+    int hasColorSet1;
+    int hasColorSet2;
+    int hasColorSet3;
+    int hasColorSet4;
+    int hasColorSet5;
+    int hasColorSet6;
+    int hasColorSet7;
+
     int isValidShaderLabel;
 };
 

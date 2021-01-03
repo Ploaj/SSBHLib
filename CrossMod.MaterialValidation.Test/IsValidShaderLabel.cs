@@ -14,7 +14,7 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void InvalidTag()
         {
-            Assert.IsFalse(ShaderValidation.IsValidShaderLabel("SFX_PBS_1b01000008008a68_near"));
+            Assert.IsFalse(ShaderValidation.IsValidShaderLabel("SFX_PBS_1b01000008008a68_invalid"));
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void MissingTag()
         {
-            Assert.IsFalse(ShaderValidation.IsValidShaderLabel("SFX_PBS_1b01000008008a68"));
+            Assert.IsTrue(ShaderValidation.IsValidShaderLabel("SFX_PBS_1b01000008008a68"));
         }
 
         [TestMethod]

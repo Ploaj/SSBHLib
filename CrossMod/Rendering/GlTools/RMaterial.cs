@@ -20,7 +20,14 @@ namespace CrossMod.Rendering.GlTools
         public string ShaderLabel { get; }
         public int Index { get; }
 
-        public bool HasColorSets { get; }
+        public bool HasColorSet1 { get; }
+        public bool HasColorSet2 { get; }
+        public bool HasColorSet3 { get; }
+        public bool HasColorSet4 { get; }
+        public bool HasColorSet5 { get; }
+        public bool HasColorSet6 { get; }
+        public bool HasColorSet7 { get; }
+
         public bool IsValidShaderLabel { get; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
@@ -81,8 +88,14 @@ namespace CrossMod.Rendering.GlTools
             ShaderLabel = shaderLabel;
             Index = index;
             IsValidShaderLabel = MaterialValidation.ShaderValidation.IsValidShaderLabel(ShaderLabel);
-            if (shaderLabel.Length >= 24)
-                HasColorSets = MaterialValidation.ShaderValidation.HasColorSets(shaderLabel[0..24]);
+            HasColorSet1 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet1");
+            HasColorSet2 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet2");
+            HasColorSet3 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet3");
+            HasColorSet4 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet4");
+            HasColorSet5 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet5");
+            HasColorSet6 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet6");
+            HasColorSet7 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet7");
+
         }
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
@@ -227,8 +240,15 @@ namespace CrossMod.Rendering.GlTools
             uniformBlock.SetValue("hasDiffuse2", HasDiffuse2);
             uniformBlock.SetValue("hasDiffuse3", HasDiffuse3);
 
-            uniformBlock.SetValue("hasColorSets", HasColorSets);
+            // Validate shaders, materials, and attributes.
             uniformBlock.SetValue("isValidShaderLabel", IsValidShaderLabel);
+            uniformBlock.SetValue("hasColorSet1", HasColorSet1);
+            uniformBlock.SetValue("hasColorSet2", HasColorSet2);
+            uniformBlock.SetValue("hasColorSet3", HasColorSet3);
+            uniformBlock.SetValue("hasColorSet4", HasColorSet4);
+            uniformBlock.SetValue("hasColorSet5", HasColorSet5);
+            uniformBlock.SetValue("hasColorSet6", HasColorSet6);
+            uniformBlock.SetValue("hasColorSet7", HasColorSet7);
 
             // HACK: There's probably a better way to handle blending emission and base color maps.
             var hasDiffuseMaps = HasCol || HasCol2 || HasDiffuse || HasDiffuse2 || HasDiffuse3;

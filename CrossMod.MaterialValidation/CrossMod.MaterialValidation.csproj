@@ -9,6 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Nufxb.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SmushAttributes.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

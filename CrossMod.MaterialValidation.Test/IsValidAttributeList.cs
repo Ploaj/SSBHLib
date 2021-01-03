@@ -23,14 +23,12 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void ValidLabelAndAttributeList()
         {
-            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_1b01000008008a68_opaque",
+            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_0100000008008269_opaque",
                 new string[] {
                     "Position0",
                     "Normal0",
                     "Tangent0",
                     "map1",
-                    "colorSet1",
-                    "colorSet2" 
                 })
             );
         }
@@ -38,14 +36,12 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void ValidLabelAndAttributeListDifferentOrder()
         {
-            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_1b01000008008a68_opaque",
+            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_0100000008008269_opaque",
                 new string[] {
                     "Normal0",
-                    "colorSet1",
-                    "Tangent0",
-                    "colorSet2",
+                    "Position0",
                     "map1",
-                    "Position0"
+                    "Tangent0",
                 })
             );
         }

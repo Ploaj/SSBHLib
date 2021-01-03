@@ -6,6 +6,8 @@ namespace CrossMod.MaterialValidation
 {
     public static class ShaderValidation
     {
+        const string connectionString = "Data Source=Nufxb.db";
+
         /// <summary>
         /// Checks if <paramref name="attributeName"/> is present for in game meshes referencing <paramref name="shaderLabel"/>.
         /// </summary>
@@ -14,7 +16,7 @@ namespace CrossMod.MaterialValidation
         /// <returns><c>true</c> if the attribute is associated with the shader</returns>
         public static bool HasAttribute(string shaderLabel, string attributeName)
         {
-            using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
+            using var connection = new SqliteConnection("Data Source=Nufxb.db");
             connection.Open();
 
             // TODO: Use the decompiled shader attribute table.
@@ -23,11 +25,15 @@ namespace CrossMod.MaterialValidation
             var command = connection.CreateCommand();
             command.CommandText =
                 @"
-                    SELECT *
-                    FROM ShaderMeshAttributes
-                    WHERE 
-                        MeshAttribute = $attribute AND
-                        ShaderLabel = $shaderLabel
+                    SELECT * FROM 
+                    VertexAttribute
+                    WHERE VertexAttribute.AttributeName = $attribute AND ShaderProgramID IN 
+                    (
+	                    SELECT ID
+	                    FROM ShaderProgram
+	                    WHERE 
+		                    Name = $shaderLabel
+                    )
                 ";
             command.Parameters.AddWithValue("$attribute", attributeName);
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
@@ -36,43 +42,6 @@ namespace CrossMod.MaterialValidation
             using var reader = command.ExecuteReader();
             return reader.Read();
         }
-
-        /// <summary>
-        /// Checks if <paramref name="shaderLabel"/> declares any color set attributes in the shader code.
-        /// Omit the tag when specifying the shader label. Example: "SFX_PBS_0000000000080089".
-        /// </summary>
-        /// <param name="shaderLabel">The name of the shader without the tag</param>
-        /// <returns><c>true</c> if a color set is declared in the shader</returns>
-        public static bool HasColorSets(string shaderLabel)
-        {
-            using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
-            connection.Open();
-
-            var command = connection.CreateCommand();
-            command.CommandText =
-                @"
-                    SELECT * FROM ShaderAttributes
-                    WHERE 
-	                    ShaderLabel = $shaderLabel AND 
-	                    ShaderLabel IN 
-	                    (
-		                    SELECT ShaderLabel
-		                    FROM ShaderAttributes 
-		                    WHERE 
-			                    Attribute = 'in_attr8' OR 
-			                    Attribute = 'in_attr9' OR
-			                    Attribute = 'in_attr10' OR 
-			                    Attribute = 'in_attr11' OR
-			                    Attribute = 'in_attr12'
-	                    )
-                ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
-
-            // Read() returns true if there are any results.
-            using var reader = command.ExecuteReader();
-            return reader.Read();
-        }
-
 
         /// <summary>
         /// Checks if <paramref name="shaderLabel"/> is a valid shader name.
@@ -86,7 +55,7 @@ namespace CrossMod.MaterialValidation
             if (shaderLabel == "SFX_PBS_010000000808866b_opaque" || shaderLabel == "SFX_PBS_0100000008018669_sort")
                 return true;
 
-            using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
+            using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
             // The current database only contains correlations 
@@ -96,9 +65,9 @@ namespace CrossMod.MaterialValidation
             command.CommandText =
                 @"
                     SELECT *
-                    FROM ShaderMeshAttributes
+                    FROM ShaderProgram
                     WHERE 
-                        ShaderLabel = $shaderLabel
+                        Name = $shaderLabel
                 ";
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
 
@@ -116,16 +85,21 @@ namespace CrossMod.MaterialValidation
         /// <returns><c>true</c> if the attribute lists match</returns>
         public static bool IsValidAttributeList(string shaderLabel, ICollection<string> expectedAttributes)
         {
-            using var connection = new SqliteConnection("Data Source=SmushAttributes.db");
+            using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
             var command = connection.CreateCommand();
             command.CommandText =
                 @"
-                    SELECT MeshAttribute
-                    FROM ShaderMeshAttributes
-                    WHERE 
-                        ShaderLabel = $shaderLabel
+                    SELECT AttributeName FROM 
+                    VertexAttribute
+                    WHERE ShaderProgramID IN 
+                    (
+	                    SELECT ID
+	                    FROM ShaderProgram
+	                    WHERE 
+		                    Name = $shaderLabel
+                    )
                 ";
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
 
@@ -137,6 +111,12 @@ namespace CrossMod.MaterialValidation
                     actualAttributes.Add(reader.GetString(0));
                 }
             }
+
+            // TODO: Don't assume that shaders have position, normals, and tangents.
+            // Only color sets and texture coordinates are in the current database.
+            actualAttributes.Add("Position0");
+            actualAttributes.Add("Normal0");
+            actualAttributes.Add("Tangent0");
 
             // Check that the two lists have the same elements, regardless of order.
             return (actualAttributes.Count == expectedAttributes.Count)
