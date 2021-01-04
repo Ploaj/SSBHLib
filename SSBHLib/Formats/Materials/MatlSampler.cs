@@ -39,10 +39,7 @@
             public MatlMinFilter MinFilter { get; set; }
             public MatlMagFilter MagFilter { get; set; }
             public FilteringType TextureFilteringType { get; set; }
-            public int Unk7 { get; set; }
-            public int Unk8 { get; set; }
-            public int Unk9 { get; set; }
-            public int Unk10 { get; set; }
+            public MatlVector4 BorderColor { get; set; }
             public int Unk11 { get; set; }
             public int Unk12 { get; set; }
             public float LodBias { get; set; }

@@ -909,10 +909,7 @@
             result.MinFilter = (Formats.Materials.MatlMinFilter)parser.ReadInt32();
             result.MagFilter = (Formats.Materials.MatlMagFilter)parser.ReadInt32();
             result.TextureFilteringType = (Formats.Materials.FilteringType)parser.ReadInt32();
-            result.Unk7 = parser.ReadInt32();
-            result.Unk8 = parser.ReadInt32();
-            result.Unk9 = parser.ReadInt32();
-            result.Unk10 = parser.ReadInt32();
+            result.BorderColor = parser.ParseMatlVector4();
             result.Unk11 = parser.ReadInt32();
             result.Unk12 = parser.ReadInt32();
             result.LodBias = parser.ReadSingle();
