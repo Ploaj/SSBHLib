@@ -111,7 +111,15 @@ namespace CrossModGui.Views
         {
             if (FileTools.TryOpenFolderDialog(out string folderPath))
             {
-                viewModel.PopulateFileTree(folderPath);
+                viewModel.PopulateFileTree(folderPath, false);
+            }
+        }
+
+        private void OpenFolderRecursive_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileTools.TryOpenFolderDialog(out string folderPath))
+            {
+                viewModel.PopulateFileTree(folderPath, true);
             }
         }
 

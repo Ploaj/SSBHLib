@@ -18,10 +18,12 @@
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
+        <RoutedUICommand x:Key="OpenFolderRecursiveCommand" Text="Open Folder and all Subfolders" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolder_Click" />
+        <CommandBinding Command="{StaticResource OpenFolderRecursiveCommand}" Executed="OpenFolderRecursive_Click" />
         <CommandBinding Command="{StaticResource ClearWorkspaceCommand}" Executed="ClearWorkspace_Click" />
     </Window.CommandBindings>
     <Window.InputBindings>
@@ -31,6 +33,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Open Folder and all Subfolders" Command="{StaticResource OpenFolderRecursiveCommand}"/>
                 <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
                 <Separator></Separator>
                 <MenuItem Header="Reload Shaders" Click="ReloadShaders_Click"/>
