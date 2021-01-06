@@ -10,7 +10,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public string Value 
         {
-            get => ((MatlString)textureAttribute.DataObject).Text;
+            // TODO: Are these case sensitive?
+            // TODO: Does the nutexb in game name matter?
+            get => ((MatlString)textureAttribute.DataObject).Text.ToLower();
             set
             {
                 ((MatlString)textureAttribute.DataObject).Text = value;
