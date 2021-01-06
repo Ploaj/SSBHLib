@@ -86,8 +86,10 @@ namespace CrossModGui.ViewModels
             // Use the existing collection when possible.
             var collection = (Renderer.ItemToRender as ModelCollection) ?? new ModelCollection();
 
-            // Load the children when opening a single folder.
-            AddModelsToCollection(rootNode, collection, isRecursive);
+            foreach (var child in rootNode.Nodes)
+            {
+                AddModelsToCollection(child, collection, isRecursive);
+            }
 
             Renderer.ItemToRender = collection;
         }
