@@ -18,7 +18,10 @@ namespace CrossMod.Nodes
         {
             Text = Path.GetFileName(path);
 
+            // Add the children to enable expanding in the GUI.
             CreateAndAddChildren();
+            hasOpenedFiles = true;
+
             Expanded += (s, e) => OnExpand();
         }
 
@@ -46,7 +49,11 @@ namespace CrossMod.Nodes
             if (hasOpenedFiles)
                 return;
 
-            // TODO: Load children?
+            foreach (var child in Nodes)
+            {
+                if (child is DirectoryNode directory)
+                    directory.CreateAndAddChildren();
+            }    
 
             hasOpenedFiles = true;
         }

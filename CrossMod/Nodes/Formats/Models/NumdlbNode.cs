@@ -14,6 +14,8 @@ namespace CrossMod.Nodes
 
         private readonly Modl model;
 
+        public bool HasBeenAddedToCollection { get; set; }
+
         public NumdlbNode(string path) : base(path, "model", true)
         {
             Ssbh.TryParseSsbhFile(AbsolutePath, out model);

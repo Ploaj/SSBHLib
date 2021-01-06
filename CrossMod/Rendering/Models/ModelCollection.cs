@@ -2,6 +2,7 @@
 using SFGenericModel.Materials;
 using SFGraphics.Cameras;
 using System;
+using OpenTK;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Models
@@ -14,6 +15,17 @@ namespace CrossMod.Rendering.Models
         public List<Tuple<RMesh, RSkeleton?>> Meshes { get; } = new List<Tuple<RMesh, RSkeleton?>>();
 
         private UniformBlock? boneUniformBuffer;
+
+        /// <summary>
+        /// The bounding sphere containing all spheres added by <see cref="AddBoundingSphere(Vector4)"/>.
+        /// </summary>
+        public Vector4 BoundingSphere { get; private set; }
+
+        public void AddBoundingSphere(Vector4 newMeshBoundingSphere)
+        {
+            // Keep extending the bounding sphere as needed.
+            BoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(new Vector4[] { BoundingSphere, newMeshBoundingSphere });
+        }
 
         public void Render(Camera camera)
         {

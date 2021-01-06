@@ -125,6 +125,7 @@ namespace CrossModGui.Views
 
         private void FileTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            // TODO: This can just be a property on the view model.
             if (!(e.NewValue is FileNode item))
                 return;
 

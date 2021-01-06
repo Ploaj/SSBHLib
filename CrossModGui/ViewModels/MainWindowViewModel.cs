@@ -39,7 +39,7 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
-        public ObservableCollection<Tuple<string,RNumdl>> Rnumdls { get; } = new ObservableCollection<Tuple<string,RNumdl>>();
+        public ObservableCollection<Tuple<string, RNumdl>> Rnumdls { get; } = new ObservableCollection<Tuple<string, RNumdl>>();
 
         public bool IsPlayingAnimation
         {
@@ -83,56 +83,43 @@ namespace CrossModGui.ViewModels
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
 
-            // Attempt to add models to the existing collection if possible.
-            // This prevents clearing the meshes when opening a new folder.
+            // Use the existing collection when possible.
             var collection = (Renderer.ItemToRender as ModelCollection) ?? new ModelCollection();
 
-            // TODO: Move bounding sphere to model collection.
-            var boundingSpheres = new List<Vector4>();
-
-            AddModelsToCollection(rootNode, collection, boundingSpheres);
-            
-            // Attempting to frame zero models would place the camera at the origin.
-            if (boundingSpheres.Count > 0)
+            // Load the children when opening a single folder.
+            foreach (var item in rootNode.Nodes)
             {
-                var boundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(boundingSpheres);
-                Renderer.Camera.FrameBoundingSphere(boundingSphere);
+                if (item is NumdlbNode numdlb)
+                    AddModelsToCollection(numdlb, collection);
             }
 
             Renderer.ItemToRender = collection;
         }
 
-        private void AddModelsToCollection(FileNode node, ModelCollection collection, List<Vector4> boundingSpheres)
+        private void AddModelsToCollection(NumdlbNode numdlb, ModelCollection collection)
         {
-            node.IsExpanded = true;
+            // TODO: There's probably a better way to avoid adding a numdlb twice.
+            if (numdlb.HasBeenAddedToCollection)
+                return;
 
-            // Update the UI based on the type of node.
-            if (node is NumdlbNode numdlb)
+            var rnumdl = numdlb.GetRenderableNode();
+
+            if (rnumdl.RenderModel != null)
             {
-                var rnumdl = numdlb.GetRenderableNode();
-
-                if (rnumdl.RenderModel != null)
-                {
-                    boundingSpheres.Add(rnumdl.RenderModel.BoundingSphere);
-                    collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
-                }
-
-                // The parent will be a folder and should have a more descriptive name.
-                // Use model.numdlb as a fallback if there is no parent.
-                var parentText = numdlb.Parent?.Text ?? numdlb.Text;
-                AddMeshesToGui(parentText, rnumdl.RenderModel);
-                AddSkeletonToGui(rnumdl.Skeleton);
-
-                Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
+                collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
+                collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
+                Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
             }
-            else if (node is DirectoryNode directory)
-            {
-                // Recurse over children.
-                foreach (var child in node.Nodes)
-                {
-                    AddModelsToCollection(child, collection, boundingSpheres);
-                }
-            }
+
+            // The parent will be a folder and should have a more descriptive name.
+            // Use model.numdlb as a fallback if there is no parent.
+            var parentText = numdlb.Parent?.Text ?? numdlb.Text;
+            AddMeshesToGui(parentText, rnumdl.RenderModel);
+            AddSkeletonToGui(rnumdl.Skeleton);
+
+            Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
+
+            numdlb.HasBeenAddedToCollection = true;
         }
 
         public void UpdateBones(IRenderable newNode)
@@ -163,6 +150,20 @@ namespace CrossModGui.ViewModels
             var wasPlaying = IsPlayingAnimation;
             IsPlayingAnimation = false;
 
+            if (item is NumdlbNode numdlb && Renderer.ItemToRender is ModelCollection collection)
+                AddModelsToCollection(numdlb, collection);
+
+            UpdateRendererItems(item);
+
+            if (wasRendering)
+                Renderer.RestartRendering();
+
+            if (wasPlaying)
+                IsPlayingAnimation = true;
+        }
+
+        private void UpdateRendererItems(FileNode item)
+        {
             ResetAnimation();
 
             // Preserve the existing model collection when drawing individual items.
@@ -183,7 +184,7 @@ namespace CrossModGui.ViewModels
             {
                 Renderer.ItemToRenderOverride = null;
             }
-            
+
             // TODO: ScriptNode.MotionRate?
 
             // TODO: The script node should probably be stored with the model somehow.
@@ -200,12 +201,6 @@ namespace CrossModGui.ViewModels
                     ParamNodeContainer.SkelNode = skelNode;
                 }
             }
-
-            if (wasRendering)
-                Renderer.RestartRendering();
-
-            if (wasPlaying)
-                IsPlayingAnimation = true;
         }
 
         private static T? FindSiblingOfType<T>(FileNode item) where T : FileNode
