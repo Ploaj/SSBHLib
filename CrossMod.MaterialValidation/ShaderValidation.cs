@@ -50,11 +50,6 @@ namespace CrossMod.MaterialValidation
         /// <returns><c>true</c> if a shader exists with the name <paramref name="shaderLabel"/></returns>
         public static bool IsValidShaderLabel(string shaderLabel)
         {
-            // TODO: Update the decompiled shader dump to the latest game version.
-            // The current dump is only version 5.0.
-            if (shaderLabel == "SFX_PBS_010000000808866b_opaque" || shaderLabel == "SFX_PBS_0100000008018669_sort")
-                return true;
-
             using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
