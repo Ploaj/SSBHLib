@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Nufxb.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

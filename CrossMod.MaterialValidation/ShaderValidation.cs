@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Linq;
+using SSBHLib.Formats.Materials;
 
 namespace CrossMod.MaterialValidation
 {
@@ -69,6 +70,48 @@ namespace CrossMod.MaterialValidation
             // Read() returns true if there are any results.
             using var reader = command.ExecuteReader();
             return reader.Read();
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="expectedParameters"/> has exactly the same set of material parameters
+        /// as <paramref name="shaderLabel"/>, ignoring the order of elements.
+        /// </summary>
+        /// <param name="shaderLabel">The name of the shader, including the tag</param>
+        /// <param name="expectedParameters">The material parameter list to check for the shader</param>
+        /// <returns><c>true</c> if the parameter lists match</returns>
+        public static bool IsValidParameterList(string shaderLabel, ICollection<MatlEnums.ParamId> expectedParameters)
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                    SELECT ParamID FROM 
+                    MaterialParameter
+                    WHERE ShaderProgramID IN 
+                    (
+	                    SELECT ID
+	                    FROM ShaderProgram
+	                    WHERE 
+		                    Name = $shaderLabel
+                    )
+                ";
+            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+
+            var actualAttributes = new List<MatlEnums.ParamId>();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    // These are in game values, so the conversion should be safe.
+                    actualAttributes.Add((MatlEnums.ParamId)reader.GetInt64(0));
+                }
+            }
+
+            // Check that the two lists have the same elements, regardless of order.
+            return (actualAttributes.Count == expectedParameters.Count)
+                && !actualAttributes.Except(expectedParameters).Any();
         }
 
         /// <summary>
