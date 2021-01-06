@@ -78,23 +78,22 @@ namespace CrossModGui.ViewModels
             Rnumdls.Clear();
         }
 
-        public void PopulateFileTree(string folderPath, bool isRecursive)
+        public void PopulateFileTree(string folderPath, bool isRecursive, Action onLoadModel)
         {
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
 
             // Use the existing collection when possible.
             var collection = (Renderer.ItemToRender as ModelCollection) ?? new ModelCollection();
+            Renderer.ItemToRender = collection;
 
             foreach (var child in rootNode.Nodes)
             {
-                AddModelsToCollection(child, collection, isRecursive);
+                AddModelsToCollection(child, collection, isRecursive, onLoadModel);
             }
-
-            Renderer.ItemToRender = collection;
         }
 
-        private void AddModelsToCollection(FileNode node, ModelCollection collection, bool isRecursive)
+        private void AddModelsToCollection(FileNode node, ModelCollection collection, bool isRecursive, Action onLoadModel)
         {
             // TODO: There's probably a better way to avoid adding a numdlb twice.
             if (node is NumdlbNode numdlb && !numdlb.HasBeenAddedToCollection)
@@ -106,6 +105,8 @@ namespace CrossModGui.ViewModels
                     collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
                     collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
                     Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
+
+                    onLoadModel();
                 }
 
                 // The parent will be a folder and should have a more descriptive name.
@@ -122,7 +123,7 @@ namespace CrossModGui.ViewModels
             {
                 foreach (var child in directory.Nodes)
                 {
-                    AddModelsToCollection(child, collection, isRecursive);
+                    AddModelsToCollection(child, collection, isRecursive, onLoadModel);
                 }
             }
         }
@@ -156,7 +157,7 @@ namespace CrossModGui.ViewModels
             IsPlayingAnimation = false;
 
             if (item is NumdlbNode numdlb && Renderer.ItemToRender is ModelCollection collection)
-                AddModelsToCollection(numdlb, collection, false);
+                AddModelsToCollection(numdlb, collection, false, () => { });
 
             UpdateRendererItems(item);
 
