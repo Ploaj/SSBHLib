@@ -139,7 +139,7 @@ float SchlickMaskingTerm(float nDotL, float nDotV, float a2)
     return gV * gL;
 }
 
-// Ultimate shaders use a standard GGX BRDF for specular.
+// Ultimate shaders use a mostly standard GGX BRDF for specular.
 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
 float Ggx(float nDotH, float nDotL, float nDotV, float roughness)
 {
@@ -152,8 +152,8 @@ float Ggx(float nDotH, float nDotL, float nDotV, float roughness)
     float denominator = ((nDotH2) * (a2 - 1.0) + 1.0);
     float specular = a2 / (PI * denominator * denominator);
     float shadowing = SchlickMaskingTerm(nDotL, nDotV, a2);
-    // TODO: missing 4*nDotL*nDotV in denominator?
-    return specular * shadowing;
+    // TODO: double check the denominator
+    return specular * shadowing / 3.141519;
 }
 
 // A very similar BRDF as used for GGX.
@@ -368,7 +368,6 @@ void main()
 
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
-
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector[6], CustomVector[31]);
     // TODO: Mega man's eyes?.
     // if (CustomBoolean11 == 0)
