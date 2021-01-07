@@ -200,7 +200,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Enable real time viewport updates.
             if (rMaterial != null)
             {
-                SyncViewModelToRenderMaterial(rMaterial, material);
+                SyncViewModelToModel(rMaterial, material, entry);
             }
 
             return material;
@@ -222,7 +222,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static void SyncViewModelToRenderMaterial(RMaterial rMaterial, Material material)
+        private static void SyncViewModelToModel(RMaterial rMaterial, Material material, MatlEntry entry)
         {
             SyncBooleans(rMaterial, material);
             SyncFloats(rMaterial, material);
@@ -235,10 +235,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 switch (e.PropertyName)
                 {
                     case nameof(material.CullMode):
-                        rMaterial.CullMode = material.CullMode.ToOpenTk();
-                        break;
                     case nameof(material.FillMode):
+                        rMaterial.CullMode = material.CullMode.ToOpenTk();
                         rMaterial.FillMode = material.FillMode.ToOpenTk();
+
+                        // Ensure the MATL is up to date so changes are preserved when reopening the editor.
+                        var rasterizer = entry.Attributes.FirstOrDefault(a => a.ParamId == MatlEnums.ParamId.RasterizerState0);
+                        if (rasterizer != null)
+                            UpdateMatlRasterizerState(material, rasterizer);
                         break;
                     case nameof(material.SourceColor):
                         rMaterial.SourceColor = material.SourceColor.ToOpenTk();
