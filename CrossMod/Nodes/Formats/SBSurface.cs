@@ -117,16 +117,25 @@ namespace CrossMod.Nodes
                 reader.BaseStream.Position = 0;
                 byte[] ImageData = reader.ReadBytes(ImageSize);
 
-                for (int array = 0; array < surface.ArrayCount; array++)
+                try
                 {
-                    MipArray arr = new MipArray();
-                    for (int i = 0; i < MipCount; i++)
+                    for (int array = 0; array < surface.ArrayCount; array++)
                     {
-                        byte[] deswiz = SwitchSwizzler.GetImageData(surface, ImageData, array, i, MipCount);
-                        arr.Mipmaps.Add(deswiz);
+                        MipArray arr = new MipArray();
+                        for (int i = 0; i < MipCount; i++)
+                        {
+                            byte[] deswiz = SwitchSwizzler.GetImageData(surface, ImageData, array, i, MipCount);
+                            arr.Mipmaps.Add(deswiz);
+                        }
+                        surface.Arrays.Add(arr);
                     }
-                    surface.Arrays.Add(arr);
                 }
+                catch (System.Exception)
+                {
+                    // TODO: Swizzling is really unstable.
+                    return null;
+                }
+
 
                 return surface;
             }
