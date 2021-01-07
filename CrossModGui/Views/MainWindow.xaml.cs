@@ -111,7 +111,7 @@ namespace CrossModGui.Views
         {
             if (FileTools.TryOpenFolderDialog(out string folderPath))
             {
-                viewModel.PopulateFileTree(folderPath, false, () => RenderFrameIfNeeded());
+                viewModel.PopulateFileTree(folderPath, false, () => { });
             }
         }
 
@@ -119,6 +119,7 @@ namespace CrossModGui.Views
         {
             if (FileTools.TryOpenFolderDialog(out string folderPath))
             {
+                // Render a frame on update to show progress when opening lots of model folders.
                 viewModel.PopulateFileTree(folderPath, true, () => RenderFrameIfNeeded());
             }
         }
