@@ -106,6 +106,10 @@ namespace CrossModGui.ViewModels
                     collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
                     Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
 
+                    // Make sure the camera isn't so far away that models aren't visible.
+                    if (Renderer.Camera.Translation.LengthSquared > 200000f)
+                        Renderer.Camera.Translation = Renderer.Camera.Translation.Normalized() * 200000f;
+
                     onLoadModel();
                 }
 
