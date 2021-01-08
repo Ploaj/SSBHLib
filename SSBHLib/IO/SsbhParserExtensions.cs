@@ -877,12 +877,10 @@
             result.Unk4 = parser.ReadInt32();
             result.Unk5 = parser.ReadInt32();
             result.Unk6 = parser.ReadInt32();
-            result.Unk7 = parser.ReadInt32();
+            result.EnableAlphaSampleToCoverage = parser.ReadInt32();
             result.Unk8 = parser.ReadInt32();
             result.Unk9 = parser.ReadInt32();
             result.Unk10 = parser.ReadInt32();
-            result.Unk11 = parser.ReadInt32();
-            result.Unk12 = parser.ReadInt32();
             return result;
         }
 

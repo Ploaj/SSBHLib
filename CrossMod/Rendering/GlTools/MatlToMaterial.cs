@@ -65,10 +65,7 @@ namespace CrossMod.Rendering.GlTools
             meshMaterial.SourceColor = blendState.SourceColor.ToOpenTk();
             meshMaterial.DestinationColor = blendState.DestinationColor.ToOpenTk();
 
-            // TODO: Unk6?
-
-            // TODO: Do both need to be set?
-            meshMaterial.UseAlphaSampleCoverage = blendState.Unk7 == 1 || blendState.Unk8 == 1;
+            meshMaterial.UseAlphaSampleCoverage = blendState.EnableAlphaSampleToCoverage != 0;
         }
     }
 }
