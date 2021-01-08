@@ -331,6 +331,19 @@ float GetF0FromSpecular(float specular)
     return specular * 0.2;
 }
 
+vec3 GetPostProcessingResult(vec3 linear)
+{
+    // Post Processing.
+    vec3 srgb = pow(fragColor0.rgb, vec3(0.4545449912548065));
+    vec3 result = srgb * 0.9375 + 0.03125;
+    // TODO: Color grading LUT
+    // result = texture(colorGradingLut, result).rgb;
+    result = (result - srgb) * 0.99961 + srgb;
+    result *= 1.3703;
+    result = pow(result, vec3(2.2));
+    return result;
+}
+
 void main()
 {
     // TODO: Organize this code.
@@ -418,11 +431,11 @@ void main()
     // TODO: Use an existing cube map.
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * 0.5;
     
     // TODO: This should be an irradiance map.
     // TODO: Models with no irradiance map use a vertex attribute?
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity; 
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.5; 
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
@@ -464,16 +477,23 @@ void main()
         fragColor0.a = GetAngleFade(nDotV, CustomFloat[19].x, specularF0);
 
     // Premultiplied alpha. 
-    // fragColor0.a = clamp(fragColor0.a, 0.0, 1.0); // TODO: krool???
+    // TODO: Is this always enabled?
     fragColor0.rgb *= fragColor0.a;
+
+    //return;
 
     // TODO: Move this to post-processing.
     // This is a temporary workaround for FBOs not working on Intel.
     if (enableBloom == 1)
         fragColor0.rgb += GetBloomBrightColor(fragColor0.rgb) * bloomIntensity;
 
-    // Gamma correction.
-    fragColor0.rgb = GetSrgb(fragColor0.rgb);
+    // fragColor0.rgb = vec3(0.4,0.5,0.6);
+
+    // Post Processing.
+    vec3 result = GetPostProcessingResult(fragColor0.rgb);
+
+    // Gamma correction to simulate an SRGB framebuffer.
+    fragColor0.rgb = GetSrgb(result);
 
     if (renderWireframe == 1)
     {

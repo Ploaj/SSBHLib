@@ -123,7 +123,7 @@ namespace CrossModGui.ViewModels
             EnablePrmAo = renderSettings.RenderPrmAo;
             EnablePrmSpecular = renderSettings.RenderPrmSpecular;
             DirectLightIntensity = renderSettings.DirectLightIntensity;
-            IndirectLightIntensity = renderSettings.DirectLightIntensity;
+            IndirectLightIntensity = renderSettings.IblIntensity;
             EnableBloom = renderSettings.EnableBloom;
             BloomIntensity = renderSettings.BloomIntensity;
             EnableWireframe = renderSettings.EnableWireframe;
