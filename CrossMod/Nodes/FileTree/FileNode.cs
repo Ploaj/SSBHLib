@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace CrossMod.Nodes
 {
@@ -8,7 +10,7 @@ namespace CrossMod.Nodes
     /// Base class for all nodes that represent a file system entry.
     /// Contains the string absolute path and an overridable Open() method.
     /// </summary>
-    public class FileNode
+    public class FileNode : INotifyPropertyChanged
     {
         /// <summary>
         /// Path to the file system entry that this <see cref="FileNode"/> represents
@@ -28,6 +30,8 @@ namespace CrossMod.Nodes
 
         public event EventHandler<bool>? Expanded;
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public bool IsExpanded
         { 
             get => isExpanded;
@@ -39,7 +43,7 @@ namespace CrossMod.Nodes
         }
         private bool isExpanded;
 
-        public List<FileNode> Nodes { get; set; } = new List<FileNode>();
+        public ObservableCollection<FileNode> Nodes { get; set; } = new ObservableCollection<FileNode>();
 
         public FileNode(string path, string imageKey, bool isActive)
         {
