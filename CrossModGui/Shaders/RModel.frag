@@ -383,8 +383,6 @@ void main()
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector[6], CustomVector[31]);
     // TODO: Mega man's eyes?.
-    // if (CustomBoolean11 == 0)
-    //     emissionColor.rgb *= (1 - texture(col2Map, uvSet).a);
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
@@ -435,13 +433,13 @@ void main()
     
     // TODO: This should be an irradiance map.
     // TODO: Models with no irradiance map use a vertex attribute?
-    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.5; 
+    vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
 
-    vec3 diffuseLight = GetDiffuseLighting(nDotL, diffuseIbl, ambientOcclusion, sssBlend);
+    vec3 diffuseLight = GetDiffuseLighting(nDotL / 3.14159, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
@@ -480,14 +478,13 @@ void main()
     // TODO: Is this always enabled?
     fragColor0.rgb *= fragColor0.a;
 
-    //return;
+    if (CustomBoolean[2].x != 0.0)
+        fragColor0.a = 0;
 
     // TODO: Move this to post-processing.
     // This is a temporary workaround for FBOs not working on Intel.
     if (enableBloom == 1)
         fragColor0.rgb += GetBloomBrightColor(fragColor0.rgb) * bloomIntensity;
-
-    // fragColor0.rgb = vec3(0.4,0.5,0.6);
 
     // Post Processing.
     vec3 result = GetPostProcessingResult(fragColor0.rgb);
