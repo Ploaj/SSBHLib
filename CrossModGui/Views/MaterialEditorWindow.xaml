@@ -122,10 +122,7 @@
                                 <DataTemplate>
                                     <Expander Margin="15,0,0,0" IsExpanded="False">
                                         <Expander.Header>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Rectangle Width="16" Height="16" Fill="White" Stroke="Black"></Rectangle>
-                                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding TextureSamplerText}"></TextBlock>
-                                            </StackPanel>
+                                            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" Text="{Binding TextureSamplerText}"></TextBlock>
                                         </Expander.Header>
                                         <StackPanel>
                                             <Grid Margin="5,2">
