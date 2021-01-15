@@ -154,40 +154,31 @@ namespace SSBHLib.Tools
         /// <returns></returns>
         private int GetTrackTypeFlag(object o)
         {
-            if (o is AnimTrackTransform transform)
+            if (o is AnimTrackTransform)
             {
                 return (int)AnimTrackFlags.Transform;
             }
-            else if (o is AnimTrackCustomVector4 vector)
+            else if (o is AnimTrackCustomVector4)
             {
                 return (int)AnimTrackFlags.Vector4;
             }
-            else if (o is AnimTrackTexture tex)
+            else if (o is AnimTrackTexture)
             {
                 return (int)AnimTrackFlags.Texture;
             }
-            else if (o is bool b)
+            else if (o is bool)
             {
                 return (int)AnimTrackFlags.Boolean;
             }
-            else if (o is float f)
+            else if (o is float)
             {
                 return (int)AnimTrackFlags.Float;
             }
-            else
-            if (o is int)
+            else if (o is int)
             {
                 return (int)AnimTrackFlags.PatternIndex;
             }
             return 0;
-            /*
-        Transform = 0x0001,
-        Texture = 0x0002,
-        Float = 0x0003,
-        PatternIndex = 0x0005,
-        Boolean = 0x0008,
-        Vector4 = 0x0009,
-             * */
         }
 
         /// <summary>
@@ -262,6 +253,9 @@ namespace SSBHLib.Tools
 
             public void Add(float v)
             {
+                if (float.IsNaN(v))
+                    v = 0.0f;
+
                 Max = Math.Max(v, Max);
                 Min = Math.Min(v, Min);
                 values.Add(v);
@@ -275,26 +269,28 @@ namespace SSBHLib.Tools
             /// <returns></returns>
             public int GetBitCount(float epsilon)
             {
-                if (Constant)
-                    return 0x10;
-
-                if (epsilon == currentError)
+                if (Constant || values.Count == 0)
+                    return 0;
+                if (epsilon == (double)currentError)
                     return bitCount;
-
                 currentError = epsilon;
-
-                // try to find an optimal bit length
-                for (var i = 1; i < 31; i++)
+                while (FindOptimalBitCount(epsilon) == -1)
                 {
-                    bitCount = i;
-                    float error = ComputeError(i);
-                    if (error < epsilon)
-                    {
-                        return i;
-                    }
+                    epsilon *= 2f;
+                    if (epsilon > 1.0)
+                        break;
                 }
+                return bitCount;
+            }
 
-                bitCount = 0;
+            private int FindOptimalBitCount(float epsilon)
+            {
+                for (int bits = 1; bits < 31; ++bits)
+                {
+                    bitCount = bits;
+                    if (ComputeError(bits) < (double)epsilon)
+                        return bits;
+                }
                 return -1;
             }
 
@@ -326,9 +322,9 @@ namespace SSBHLib.Tools
             /// <returns></returns>
             public int GetQuantanizedValue(float v)
             {
-                float quan = (v - Min) / (Max - Min);
-                int quantanized = (int)(quan * QuantanizationValue);
-                return quantanized;
+                if ((double)v <= Min)
+                    return 0;
+                return v >= (double)Max ? QuantanizationValue : (int)((v - (double)Min) / (Max - (double)Min) * QuantanizationValue);
             }
 
             /// <summary>
@@ -503,9 +499,13 @@ namespace SSBHLib.Tools
             bool hasRotation = (!rx.Constant || !ry.Constant || !rz.Constant);
             bool hasPosition = (!x.Constant || !y.Constant || !z.Constant);
 
+            if (sx.GetBitCount(epsilon) == -1 || sy.GetBitCount(epsilon) == -1 || (sz.GetBitCount(epsilon) == -1 || rx.GetBitCount(epsilon) == -1) || (ry.GetBitCount(epsilon) == -1 || rz.GetBitCount(epsilon) == -1 || (x.GetBitCount(epsilon) == -1 || y.GetBitCount(epsilon) == -1)) || z.GetBitCount(epsilon) == -1)
+                throw new Exception("Compression Level is too small to compress!");
 
             if (!hasScale)
+            {
                 flags |= 0x02;
+            }
             else
             {
                 bitsPerEntry += (ushort)((sx.Constant ? 0 : sx.GetBitCount(epsilon)) + (sy.Constant ? 0 : sy.GetBitCount(epsilon)) + (sz.Constant ? 0 : sz.GetBitCount(epsilon)));
@@ -525,23 +525,37 @@ namespace SSBHLib.Tools
             // Compressed Header
             w.Write((short)0x04);
             w.Write(flags);
-            w.Write((short)(0x10 + 0x10 * 9)); // default values offset
+            w.Write((short)160);
             w.Write(bitsPerEntry);
-            w.Write(0x10 + 0x10 * 9 + sizeof(float) * 11); // compressed data start
-            w.Write(values.Count); // frame count
-
-            // write chunks
-            w.Write(sx.Min); w.Write(sx.Max); w.Write((long)sx.GetBitCount(epsilon));
-            w.Write(sy.Min); w.Write(sy.Max); w.Write((long)sy.GetBitCount(epsilon));
-            w.Write(sz.Min); w.Write(sz.Max); w.Write((long)sz.GetBitCount(epsilon));
-            w.Write(rx.Min); w.Write(rx.Max); w.Write((long)rx.GetBitCount(epsilon));
-            w.Write(ry.Min); w.Write(ry.Max); w.Write((long)ry.GetBitCount(epsilon));
-            w.Write(rz.Min); w.Write(rz.Max); w.Write((long)rz.GetBitCount(epsilon));
-            w.Write(x.Min); w.Write(x.Max); w.Write((long)x.GetBitCount(epsilon));
-            w.Write(y.Min); w.Write(y.Max); w.Write((long)y.GetBitCount(epsilon));
-            w.Write(z.Min); w.Write(z.Max); w.Write((long)z.GetBitCount(epsilon));
-
-            // write default values
+            w.Write(204);
+            w.Write(values.Count);
+            w.Write(sx.Min);
+            w.Write(sx.Max);
+            w.Write(hasScale ? sx.GetBitCount(epsilon) : 16L);
+            w.Write(sy.Min);
+            w.Write(sy.Max);
+            w.Write(hasScale ? sy.GetBitCount(epsilon) : 16L);
+            w.Write(sz.Min);
+            w.Write(sz.Max);
+            w.Write(hasScale ? sz.GetBitCount(epsilon) : 16L);
+            w.Write(rx.Min);
+            w.Write(rx.Max);
+            w.Write(hasRotation ? rx.GetBitCount(epsilon) : 16L);
+            w.Write(ry.Min);
+            w.Write(ry.Max);
+            w.Write(hasRotation ? ry.GetBitCount(epsilon) : 16L);
+            w.Write(rz.Min);
+            w.Write(rz.Max);
+            w.Write(hasRotation ? rz.GetBitCount(epsilon) : 16L);
+            w.Write(x.Min);
+            w.Write(x.Max);
+            w.Write(hasPosition ? x.GetBitCount(epsilon) : 16L);
+            w.Write(y.Min);
+            w.Write(y.Max);
+            w.Write(hasPosition ? y.GetBitCount(epsilon) : 16L);
+            w.Write(z.Min);
+            w.Write(z.Max);
+            w.Write(hasPosition ? z.GetBitCount(epsilon) : 16L);
             AnimTrackTransform defaultValue = (AnimTrackTransform)values[0];
             w.Write(defaultValue.Sx);
             w.Write(defaultValue.Sy);
