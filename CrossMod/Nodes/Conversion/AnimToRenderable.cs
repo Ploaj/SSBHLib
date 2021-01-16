@@ -14,7 +14,7 @@ namespace CrossMod.Nodes.Conversion
 
             RAnimation renderAnimation = new RAnimation()
             {
-                FrameCount = (int)animation.FrameCount
+                FrameCount = (int)animation.FinalFrameIndex + 1
             };
 
             SsbhAnimTrackDecoder decoder = new SsbhAnimTrackDecoder(animation);

@@ -12,7 +12,7 @@ namespace SSBHLib.Tools
     {
         public SsbhAnimTrackEncoder(float frameCount)
         {
-            animFile.FrameCount = frameCount;
+            animFile.FinalFrameIndex = frameCount;
         }
 
         private readonly List<AnimGroup> groups = new List<AnimGroup>();

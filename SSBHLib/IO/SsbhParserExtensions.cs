@@ -776,7 +776,7 @@
             result.Magic = parser.ReadUInt32();
             result.VersionMajor = parser.ReadUInt16();
             result.VersionMinor = parser.ReadUInt16();
-            result.FrameCount = parser.ReadSingle();
+            result.FinalFrameIndex = parser.ReadSingle();
             result.Unk1 = parser.ReadUInt16();
             result.Unk2 = parser.ReadUInt16();
             result.Name = parser.ReadOffsetReadString();

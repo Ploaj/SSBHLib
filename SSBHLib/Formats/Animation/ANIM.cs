@@ -9,7 +9,10 @@
 
         public ushort VersionMinor { get; set; } = 0x0000;
 
-        public float FrameCount { get; set; }
+        /// <summary>
+        /// The <see cref="AnimTrack.FrameCount"/> will be in the inclusive range 1 to <see cref="FinalFrameIndex"/> + 1.
+        /// </summary>
+        public float FinalFrameIndex { get; set; }
 
         public ushort Unk1 { get; set; } = 1;
 
