@@ -6,6 +6,14 @@
                     xmlns:adonisConverters="clr-namespace:AdonisUI.Converters;assembly=AdonisUI"
                     xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="adonisExtensions:RippleExtension.FadeInDuration" Value="0"></Setter>
+        <Setter Property="adonisExtensions:RippleExtension.FadeOutDuration" Value="0"></Setter>
+    </Style>
+    <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+        <Setter Property="adonisExtensions:RippleExtension.FadeInDuration" Value="0"></Setter>
+        <Setter Property="adonisExtensions:RippleExtension.FadeOutDuration" Value="0"></Setter>
+    </Style>
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUi:Brushes.ForegroundBrush}}"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static adonisUi:Brushes.Layer1BackgroundBrush}}"/>
