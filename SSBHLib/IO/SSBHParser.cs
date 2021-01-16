@@ -103,43 +103,21 @@ namespace SSBHLib.IO
 
         public Vector3 ReadVector3()
         {
-            return new Vector3
-            {
-                X = ReadSingle(),
-                Y = ReadSingle(),
-                Z = ReadSingle()
-            };
+            return new Vector3(ReadSingle(), ReadSingle(), ReadSingle());
         }
 
         public Vector4 ReadVector4()
         {
-            return new Vector4
-            {
-                X = ReadSingle(),
-                Y = ReadSingle(),
-                Z = ReadSingle(),
-                W = ReadSingle()
-            };
+            return new Vector4(ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle());
         }
         public Matrix3x3 ReadMatrix3x3()
         {
-            return new Matrix3x3
-            {
-                Row1 = ReadVector3(),
-                Row2 = ReadVector3(),
-                Row3 = ReadVector3(),
-            };
+            return new Matrix3x3(ReadVector3(), ReadVector3(), ReadVector3());
         }
 
         public Matrix4x4 ReadMatrix4x4()
         {
-            return new Matrix4x4
-            {
-                Row1 = ReadVector4(),
-                Row2 = ReadVector4(),
-                Row3 = ReadVector4(),
-                Row4 = ReadVector4()
-            };
+            return new Matrix4x4(ReadVector4(), ReadVector4(), ReadVector4(), ReadVector4());
         }
 
         public int ReadBits(int bitCount)

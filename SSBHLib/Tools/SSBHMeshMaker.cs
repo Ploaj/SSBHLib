@@ -180,7 +180,7 @@ namespace SSBHLib.Tools
             {
                 MeshObject mo = new MeshObject
                 {
-                    Name = tempmesh.Name
+                    Name = tempmesh.Name,
                 };
                 if (meshGroups.ContainsKey(mo.Name))
                     meshGroups[mo.Name] += 1;
@@ -188,25 +188,21 @@ namespace SSBHLib.Tools
                     meshGroups.Add(mo.Name, 0);
 
                 mo.SubIndex = meshGroups[mo.Name];
-                mo.BoundingSphereCenter = new Formats.Vector3 { X = tempmesh.BoundingSphere.X, Y = tempmesh.BoundingSphere.Y, Z = tempmesh.BoundingSphere.Z };
+                mo.BoundingSphereCenter = new Vector3(tempmesh.BoundingSphere.X, tempmesh.BoundingSphere.Y, tempmesh.BoundingSphere.Z);
                 mo.BoundingSphereRadius = tempmesh.BoundingSphere.W;
 
-                mo.BoundingBoxMax = new Formats.Vector3 { X = tempmesh.BbMax.X, Y = tempmesh.BbMax.Y, Z = tempmesh.BbMax.Z };
-                mo.BoundingBoxMin = new Formats.Vector3 { X = tempmesh.BbMin.X, Y = tempmesh.BbMin.Y, Z = tempmesh.BbMin.Z };
-                mo.OrientedBoundingBoxCenter = new Formats.Vector3 { X = tempmesh.ObbCenter.X, Y = tempmesh.ObbCenter.Y, Z = tempmesh.ObbCenter.Z };
+                mo.BoundingBoxMax = new Vector3(tempmesh.BbMax.X, tempmesh.BbMax.Y, tempmesh.BbMax.Z);
+                mo.BoundingBoxMin = new Vector3(tempmesh.BbMin.X, tempmesh.BbMin.Y, tempmesh.BbMin.Z);
+                mo.OrientedBoundingBoxCenter = new Vector3(tempmesh.ObbCenter.X, tempmesh.ObbCenter.Y, tempmesh.ObbCenter.Z);
 
-                mo.OrientedBoundingBoxSize = new Formats.Vector3 { X = tempmesh.ObbSize.X, Y = tempmesh.ObbSize.Y, Z = tempmesh.ObbSize.Z };
+                mo.OrientedBoundingBoxSize = new Vector3(tempmesh.ObbSize.X, tempmesh.ObbSize.Y, tempmesh.ObbSize.Z);
 
-                mo.OrientedBoundingBoxTransform.Row1.X = tempmesh.ObbMatrix3X3[0];
-                mo.OrientedBoundingBoxTransform.Row1.Y = tempmesh.ObbMatrix3X3[1];
-                mo.OrientedBoundingBoxTransform.Row1.Z = tempmesh.ObbMatrix3X3[2];
-                mo.OrientedBoundingBoxTransform.Row2.X = tempmesh.ObbMatrix3X3[3];
-                mo.OrientedBoundingBoxTransform.Row2.Y = tempmesh.ObbMatrix3X3[4];
-                mo.OrientedBoundingBoxTransform.Row2.Z = tempmesh.ObbMatrix3X3[5];
-                mo.OrientedBoundingBoxTransform.Row3.X = tempmesh.ObbMatrix3X3[6];
-                mo.OrientedBoundingBoxTransform.Row3.Y = tempmesh.ObbMatrix3X3[7];
-                mo.OrientedBoundingBoxTransform.Row3.Z = tempmesh.ObbMatrix3X3[8];
+                mo.OrientedBoundingBoxTransform = new Matrix3x3(
 
+                    new Vector3(tempmesh.ObbMatrix3X3[0], tempmesh.ObbMatrix3X3[1], tempmesh.ObbMatrix3X3[2]),
+                    new Vector3(tempmesh.ObbMatrix3X3[3], tempmesh.ObbMatrix3X3[4], tempmesh.ObbMatrix3X3[5]),
+                    new Vector3(tempmesh.ObbMatrix3X3[6], tempmesh.ObbMatrix3X3[7], tempmesh.ObbMatrix3X3[8])
+                );
 
                 // Create Rigging
                 riggingGroups.Add(SsbhRiggingCompiler.CreateRiggingGroup(mo.Name, (int)mo.SubIndex, tempmesh.Influences.ToArray()));
