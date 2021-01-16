@@ -10,9 +10,9 @@ namespace SSBHLib.Tools
     /// </summary>
     public class SsbhAnimTrackEncoder
     {
-        public SsbhAnimTrackEncoder(float frameCount)
+        public SsbhAnimTrackEncoder(float finalFrameIndex)
         {
-            animFile.FinalFrameIndex = frameCount;
+            animFile.FinalFrameIndex = finalFrameIndex;
         }
 
         private readonly List<AnimGroup> groups = new List<AnimGroup>();
