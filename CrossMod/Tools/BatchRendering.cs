@@ -95,15 +95,15 @@ namespace CrossMod.Tools
 
             foreach (FileNode node in mainNode.Nodes)
             {
-                if (node.Text.EndsWith("numdlb"))
+                if (node is NumdlbNode renderable)
                 {
-                    var renderable = (node as NumdlbNode);
-                    if (renderable != null)
+                    var model = renderable.GetRenderableNode();
+                    if (model != null)
                     {
-                        var model = renderable.GetRenderableNode();
-                        model?.RenderModel?.HideExpressionMeshes();
+                        model.RenderModel?.HideExpressionMeshes();
                         return new List<IRenderableNode>() { renderable };
                     }
+
                 }
             }
 
