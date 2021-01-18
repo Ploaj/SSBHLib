@@ -299,7 +299,7 @@ namespace CrossMod.Rendering.GlTools
             // Use a 16 byte type to avoid alignment issues.
             var customBooleans = new IVec4[20];
             customBooleans[1] = new IVec4 { X = 1 };
-            customBooleans[2] = new IVec4 { X = 1 };
+            customBooleans[2] = new IVec4 { X = 0 };
             customBooleans[3] = new IVec4 { X = 1 };
             customBooleans[4] = new IVec4 { X = 1 };
             customBooleans[5] = new IVec4 { X = 0 };
