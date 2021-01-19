@@ -187,19 +187,19 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 vec3 GetAlbedoColorFinal(vec4 albedoColor, float metalness);
 
-vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
+vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 {
     // Diffuse shading is remapped to be softer.
     // Multiplying be a constant and clamping affects the "smoothness".
-    float directShading = nDotL;
+    vec3 directShading = albedo * max(nDotL, 0.0);
     if (hasCustomVector11 == 1)
     {
-        float skinShading = nDotL;
-        skinShading *= CustomVector[30].y;
-        skinShading = skinShading * 0.5 + 0.5;
+        // TODO: nDotL is a vertex attribute for skin shading.
+        float nDotLSkin = nDotL * CustomVector[30].y;
+        nDotLSkin = clamp(nDotLSkin * 0.5 + 0.5, 0.0, 1.0);
+        vec3 skinShading = CustomVector[11].rgb * sssBlend * nDotLSkin;
         directShading = mix(directShading, skinShading, sssBlend);
     }
-    directShading = clamp(directShading, 0.0, 1.0);
 
     vec4 bakedLitColor = texture(bakeLitMap, bake1).rgba;
 
@@ -208,6 +208,8 @@ vec3 GetDiffuseLighting(float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
     // Baked lighting maps are not affected by ambient occlusion.
     vec3 ambientLight = ambientIbl * ao;
     ambientLight += bakedLitColor.rgb * 8.0;
+    vec3 finalAlbedo = mix(albedo, CustomVector[11].rgb, sssBlend);
+    ambientLight *= finalAlbedo;
 
     vec3 result = directLight * directLightIntensity + ambientLight;
 
@@ -439,7 +441,7 @@ void main()
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
 
-    vec3 diffuseLight = GetDiffuseLighting(nDotL / 3.14159, diffuseIbl, ambientOcclusion, sssBlend);
+    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL / 3.14159, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
@@ -448,7 +450,7 @@ void main()
 
     // Color Passes.
     if (renderDiffuse == 1)
-        fragColor0.rgb += albedoColorFinal * diffuseLight * kDiffuse / 3.14159;
+        fragColor0.rgb += diffusePass * kDiffuse / 3.14159;
 
     if (renderSpecular == 1)
         fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
