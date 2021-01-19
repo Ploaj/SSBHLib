@@ -189,20 +189,20 @@ vec3 GetAlbedoColorFinal(vec4 albedoColor);
 
 vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 {
+    vec3 directShading = albedo * max(nDotL, 0.0);
+
+    // TODO: nDotL is a vertex attribute for skin shading.
+    float nDotLSkin = nDotL * CustomVector[30].y;
+
     // Diffuse shading is remapped to be softer.
     // Multiplying be a constant and clamping affects the "smoothness".
-    vec3 directShading = albedo * max(nDotL, 0.0);
-    if (hasCustomVector11 == 1)
-    {
-        // TODO: nDotL is a vertex attribute for skin shading.
-        float nDotLSkin = nDotL * CustomVector[30].y;
-        nDotLSkin = clamp(nDotLSkin * 0.5 + 0.5, 0.0, 1.0);
-        vec3 skinShading = CustomVector[11].rgb * sssBlend * nDotLSkin;
-        directShading = mix(directShading, skinShading, sssBlend);
-    }
+    nDotLSkin = clamp(nDotLSkin * 0.5 + 0.5, 0.0, 1.0);
+    vec3 skinShading = CustomVector[11].rgb * sssBlend * nDotLSkin;
 
+    // TODO: How many PI terms are there?
+    directShading = mix(directShading, skinShading, sssBlend) / 3.14159;
+    
     vec4 bakedLitColor = texture(bakeLitMap, bake1).rgba;
-
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
 
     // Baked lighting maps are not affected by ambient occlusion.
@@ -441,7 +441,7 @@ void main()
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor);
 
-    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL / 3.14159, diffuseIbl, ambientOcclusion, sssBlend);
+    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, diffuseIbl, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
