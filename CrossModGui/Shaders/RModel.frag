@@ -187,8 +187,9 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
 vec3 GetAlbedoColorFinal(vec4 albedoColor);
 
-vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
+vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sssBlend)
 {
+    // TODO: This can be cleaned up.
     vec3 directShading = albedo * max(nDotL, 0.0);
 
     // TODO: nDotL is a vertex attribute for skin shading.
@@ -206,12 +207,12 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientIbl, vec3 ao, float sssBl
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
 
     // Baked lighting maps are not affected by ambient occlusion.
-    vec3 ambientLight = ambientIbl * ao;
-    ambientLight += bakedLitColor.rgb * 8.0;
+    vec3 ambientTerm = ambientLight * ao;
+    ambientTerm += bakedLitColor.rgb * 8.0;
     vec3 finalAlbedo = mix(albedo, CustomVector[11].rgb, sssBlend);
-    ambientLight *= finalAlbedo;
+    ambientTerm *= finalAlbedo;
 
-    vec3 result = directLight * directLightIntensity + ambientLight;
+    vec3 result = directLight * directLightIntensity + ambientTerm;
 
     // Baked stage lighting.
     if (renderVertexColor == 1 && hasColorSet2 == 1)
@@ -433,15 +434,22 @@ void main()
     float specularLod = RoughnessToLod(roughness);
     vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * 0.5;
     
-    // TODO: This should be an irradiance map.
-    // TODO: Models with no irradiance map use a vertex attribute?
+    // TODO: This should be an irradiance map and may override the vertex attribute.
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
+
+    // TODO: This should be done in the vertex shader.
+    // TODO: Where do the cbuf11[19], cbuf11[20], and cbuf11[21] vectors come from?
+    // TODO: Matrix multiplication?
+    float ambientR = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14186, 0.04903, -0.082, 1.11054));
+    float ambientG = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14717, 0.03699, -0.08283, 1.11036));
+    float ambientB = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.1419, 0.04334, -0.08283, 1.11018));
+    vec3 vertexAmbient = vec3(ambientR, ambientG, ambientB) * iblIntensity;
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor);
 
-    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, diffuseIbl, ambientOcclusion, sssBlend);
+    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, vertexAmbient, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
 
