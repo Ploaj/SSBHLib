@@ -185,7 +185,7 @@ float GgxAnisotropic(float nDotH, vec3 H, vec3 tangent, vec3 bitangent, float ro
 // Defined in TextureLayers.frag.
 vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2);
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5);
-vec3 GetAlbedoColorFinal(vec4 albedoColor, float metalness);
+vec3 GetAlbedoColorFinal(vec4 albedoColor);
 
 vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientIbl, vec3 ao, float sssBlend)
 {
@@ -439,7 +439,7 @@ void main()
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
-    vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor, prmColor.r);
+    vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor);
 
     vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL / 3.14159, diffuseIbl, ambientOcclusion, sssBlend);
 
