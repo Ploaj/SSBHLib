@@ -193,10 +193,10 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sss
     vec3 directShading = albedo * max(nDotL, 0.0);
 
     // TODO: nDotL is a vertex attribute for skin shading.
-    float nDotLSkin = nDotL * CustomVector[30].y;
-
+    
     // Diffuse shading is remapped to be softer.
     // Multiplying be a constant and clamping affects the "smoothness".
+    float nDotLSkin = nDotL * CustomVector[30].y;
     nDotLSkin = clamp(nDotLSkin * 0.5 + 0.5, 0.0, 1.0);
     vec3 skinShading = CustomVector[11].rgb * sssBlend * nDotLSkin;
 
@@ -207,12 +207,10 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sss
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
 
     // Baked lighting maps are not affected by ambient occlusion.
-    vec3 ambientTerm = ambientLight * ao;
-    ambientTerm += bakedLitColor.rgb * 8.0;
-    vec3 finalAlbedo = mix(albedo, CustomVector[11].rgb, sssBlend);
-    ambientTerm *= finalAlbedo;
+    vec3 ambientTerm = (ambientLight * ao) + (bakedLitColor.rgb * 8.0);
+    ambientTerm *= mix(albedo, CustomVector[11].rgb, sssBlend);
 
-    vec3 result = directLight * directLightIntensity + ambientTerm;
+    vec3 result = directLight * directLightIntensity + ambientTerm * iblIntensity;
 
     // Baked stage lighting.
     if (renderVertexColor == 1 && hasColorSet2 == 1)
@@ -234,7 +232,8 @@ vec3 SpecularTerm(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bi
 {
     vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, bitangent, roughness) * directLightIntensity;
     vec3 indirectSpecular = specularIbl;
-    vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x);
+    // TODO: Why is the indirect specular off by a factor of 0.5?
+    vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x * 0.5);
 
     return specularTerm;
 }
@@ -263,7 +262,7 @@ vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV,
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV)
+vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float occlusion)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
 
@@ -280,6 +279,7 @@ vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV)
 
     float fresnel = pow(1 - nDotV, 5.0);
     float rimBlend = fresnel * LightCustomVector8.w * CustomVector[14].w * 0.6;
+    rimBlend *= occlusion;
 
     return mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
 }
@@ -443,7 +443,7 @@ void main()
     float ambientR = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14186, 0.04903, -0.082, 1.11054));
     float ambientG = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14717, 0.03699, -0.08283, 1.11036));
     float ambientB = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.1419, 0.04334, -0.08283, 1.11018));
-    vec3 vertexAmbient = vec3(ambientR, ambientG, ambientB) * iblIntensity;
+    vec3 vertexAmbient = vec3(ambientR, ambientG, ambientB);
 
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
@@ -467,7 +467,7 @@ void main()
         fragColor0.rgb += EmissionTerm(emissionColor);
 
     if (renderRimLighting == 1)
-        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV);
+        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, norColor.a * prmColor.b);
 
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
