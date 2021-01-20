@@ -201,7 +201,8 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sss
     vec3 skinShading = CustomVector[11].rgb * sssBlend * nDotLSkin;
 
     // TODO: How many PI terms are there?
-    directShading = mix(directShading, skinShading, sssBlend) / 3.14159;
+    // TODO: Skin shading looks correct without the PI term?
+    directShading = mix(directShading / 3.14159, skinShading, sssBlend);
     
     vec4 bakedLitColor = texture(bakeLitMap, bake1).rgba;
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
