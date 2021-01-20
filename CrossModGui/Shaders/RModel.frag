@@ -34,7 +34,7 @@ uniform sampler2D difMap;
 uniform sampler2D dif2Map;
 uniform sampler2D dif3Map;
 
-uniform sampler2D iblLut;
+uniform sampler3D colorLut;
 
 uniform samplerCube diffusePbrCube;
 uniform samplerCube specularPbrCube;
@@ -336,11 +336,13 @@ float GetF0FromSpecular(float specular)
 
 vec3 GetPostProcessingResult(vec3 linear)
 {
-    // Post Processing.
     vec3 srgb = pow(fragColor0.rgb, vec3(0.4545449912548065));
     vec3 result = srgb * 0.9375 + 0.03125;
-    // TODO: Color grading LUT
-    // result = texture(colorGradingLut, result).rgb;
+
+    // Color Grading.
+    result = texture(colorLut, result).rgb;
+
+    // Post Processing.
     result = (result - srgb) * 0.99961 + srgb;
     result *= 1.3703;
     result = pow(result, vec3(2.2));

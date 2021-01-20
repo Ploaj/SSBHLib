@@ -217,6 +217,7 @@ namespace CrossMod.Rendering.GlTools
             AddMaterialTextures(genericMaterial);
             AddImageBasedLightingTextures(genericMaterial);
             AddRenderModeTextures(genericMaterial);
+            genericMaterial.AddTexture("colorLut", DefaultTextures.Instance.Value.ColorGradingLut);
         }
 
         private void SetMaterialParams(UniformBlock uniformBlock)

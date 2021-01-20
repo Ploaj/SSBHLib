@@ -4,6 +4,7 @@ using SFGraphics.GLObjects.Textures.TextureFormats;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace CrossMod.Rendering.Resources
 {
@@ -16,6 +17,8 @@ namespace CrossMod.Rendering.Resources
         public Texture2D DefaultWhite { get; } = new Texture2D();
         public Texture2D DefaultNormal { get; } = new Texture2D();
         public Texture2D DefaultBlack { get; } = new Texture2D();
+        public Texture3D ColorGradingLut { get; } = new Texture3D();
+
 
         /// <summary>
         /// /common/shader/sfxpbs/fighter/default_params or 
@@ -54,11 +57,19 @@ namespace CrossMod.Rendering.Resources
             LoadBitmap(DefaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(DefaultBlack, "DefaultTextures/default_black.png");
 
+            Load3dCube();
+
             using (var bmp = new Bitmap("DefaultTextures/default_cube_black.png"))
                 BlackCube.LoadImageData(bmp, 8);
 
             LoadDiffusePbr();
             LoadSpecularPbr();
+        }
+
+        private void Load3dCube()
+        {
+            ColorGradingLut.LoadImageData(16, 16, 16, File.ReadAllBytes("DefaultTextures/neutral.bin"), new TextureFormatUncompressed(PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte));
+
         }
 
         private void LoadBitmap(Texture2D texture, string path)
