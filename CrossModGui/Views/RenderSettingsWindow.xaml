@@ -7,7 +7,7 @@
         xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         xmlns:converters="clr-namespace:CrossModGui.Converters"
         mc:Ignorable="d"
-        Title="Render Settings" Height="588" Width="504.688">
+        Title="Render Settings" Height="678" Width="504.688">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
@@ -17,69 +17,65 @@
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToggleSwitch}}"></Style>
     </Window.Resources>
     <StackPanel Margin="10">
-        <Expander Header="Render Passes" IsExpanded="True">
-            <StackPanel>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableBloom}">Enable Bloom</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableRimLighting}">Enable Rim Lighting</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableWireframe}">Enable Wireframe</CheckBox>
+        <Label>Render Passes</Label>
+        <StackPanel>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableDiffuse}">Enable Diffuse</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableSpecular}">Enable Specular</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableEmission}">Enable Emission</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableBloom}">Enable Bloom</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableRimLighting}">Enable Rim Lighting</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableWireframe}">Enable Wireframe</CheckBox>
+        </StackPanel>
+        <Label>Lighting</Label>
+        <StackPanel>
+            <usercontrols:LabeledFloatEditor Grid.Row="0" Label="Direct Light Intensity" LabelWidth="150" Value="{Binding DirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
+            <usercontrols:LabeledFloatEditor Grid.Row="1" Label="Indirect Light Intensity" LabelWidth="150" Value="{Binding IndirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
+            <usercontrols:LabeledFloatEditor Grid.Row="2" Label="Bloom Intensity" LabelWidth="150" Value="{Binding BloomIntensity}" Min="0" Max="1"></usercontrols:LabeledFloatEditor>
+        </StackPanel>
+        <Label>Materials</Label>
+        <StackPanel>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableNorMaps}">Enable Nor Maps</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmMetalness}">Enable Prm Metalness</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmRoughness}">Enable Prm Roughness</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmAo}">Enable Prm AO</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmSpecular}">Enable Prm Specular</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
+        </StackPanel>
+        <Label>Debug Shading</Label>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Render Mode" Margin="5,2"></TextBlock>
+                <ComboBox Grid.Column="1" Margin="0,2" ItemsSource="{Binding RenderModes}" SelectedItem="{Binding SelectedRenderMode}">
+                    <ComboBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ComboBox.GroupStyle>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <StackPanel Visibility="{Binding ShowChannelControls, Converter={StaticResource booleanVisibilityConverter}}">
+                <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
+                <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
+                <CheckBox Name="blueCheckBox" Margin="10,2" IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
+                <CheckBox Name="alphaCheckBox" Margin="10,2" IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
             </StackPanel>
-        </Expander>
-        <Expander Header="Lighting" IsExpanded="True">
-            <StackPanel>
-                <usercontrols:LabeledFloatEditor Grid.Row="0" Label="Direct Light Intensity" LabelWidth="150" Value="{Binding DirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
-                <usercontrols:LabeledFloatEditor Grid.Row="1" Label="Indirect Light Intensity" LabelWidth="150" Value="{Binding IndirectLightIntensity}" Min="0" Max="2"></usercontrols:LabeledFloatEditor>
-                <usercontrols:LabeledFloatEditor Grid.Row="2" Label="Bloom Intensity" LabelWidth="150" Value="{Binding BloomIntensity}" Min="0" Max="1"></usercontrols:LabeledFloatEditor>
+            <StackPanel Visibility="{Binding ShowUvDisplayMode, Converter={StaticResource booleanVisibilityConverter}}" Orientation="Horizontal">
+                <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern, Converter={StaticResource inverseBoolConverter}}">UV Coords</RadioButton>
+                <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern}">UV Test Pattern</RadioButton>
             </StackPanel>
-        </Expander>
-        <Expander Header="Materials" IsExpanded="True">
-            <StackPanel>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableNorMaps}">Enable Nor Maps</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmMetalness}">Enable Prm Metalness</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmRoughness}">Enable Prm Roughness</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmAo}">Enable Prm AO</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmSpecular}">Enable Prm Specular</CheckBox>
-                <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
-            </StackPanel>
-        </Expander>
-        <Expander Header="Debug Shading" IsExpanded="True">
-            <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Render Mode" Margin="5,2"></TextBlock>
-                    <ComboBox Grid.Column="1" Margin="0,2" ItemsSource="{Binding RenderModes}" SelectedItem="{Binding SelectedRenderMode}">
-                        <ComboBox.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ComboBox.GroupStyle>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Description}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Grid>
-                <StackPanel Visibility="{Binding ShowChannelControls, Converter={StaticResource booleanVisibilityConverter}}">
-                    <CheckBox Name="redCheckBox" Margin="10,2" IsChecked="{Binding EnableRed}">Enable Red Channel</CheckBox>
-                    <CheckBox Name="greenCheckBox" Margin="10,2" IsChecked="{Binding EnableGreen}">Enable Green Channel</CheckBox>
-                    <CheckBox Name="blueCheckBox" Margin="10,2" IsChecked="{Binding EnableBlue}">Enable Blue Channel</CheckBox>
-                    <CheckBox Name="alphaCheckBox" Margin="10,2" IsChecked="{Binding EnableAlpha}">Enable Alpha Channel</CheckBox>
-                </StackPanel>
-                <StackPanel Visibility="{Binding ShowUvDisplayMode, Converter={StaticResource booleanVisibilityConverter}}" Orientation="Horizontal">
-                    <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern, Converter={StaticResource inverseBoolConverter}}">UV Coords</RadioButton>
-                    <RadioButton Margin="10,2" IsChecked="{Binding UseUvPattern}">UV Test Pattern</RadioButton>
-                </StackPanel>
-            </StackPanel>
-        </Expander>
+        </StackPanel>
     </StackPanel>
 </Window>
