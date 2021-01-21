@@ -160,7 +160,7 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="*"></RowDefinition>
                                                 </Grid.RowDefinitions>
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="Lod Bias"></TextBlock>
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="Lod Bias" VerticalAlignment="Center"></TextBlock>
                                                 <TextBox Grid.Row="0" Grid.Column="1" Margin="0,2" Text="{Binding LodBias, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                             </Grid>
                                             <usercontrols:EnumEditor Margin="5,2" Label="Filtering Type" 
