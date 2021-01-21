@@ -65,7 +65,7 @@ namespace CrossMod.Rendering.GlTools
             meshMaterial.SourceColor = blendState.SourceColor.ToOpenTk();
             meshMaterial.DestinationColor = blendState.DestinationColor.ToOpenTk();
 
-            meshMaterial.UseAlphaSampleCoverage = blendState.EnableAlphaSampleToCoverage != 0;
+            meshMaterial.EnableAlphaSampleCoverage = blendState.EnableAlphaSampleToCoverage != 0;
         }
     }
 }

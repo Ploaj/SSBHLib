@@ -211,6 +211,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 {
                     rMaterial.SourceColor = material.BlendState0.SourceColor.ToOpenTk();
                     rMaterial.DestinationColor = material.BlendState0.DestinationColor.ToOpenTk();
+                    rMaterial.EnableAlphaSampleCoverage = material.BlendState0.EnableAlphaSampleToCoverage;
                 };
             }
         }

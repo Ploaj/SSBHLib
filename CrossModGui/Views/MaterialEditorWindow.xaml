@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:usercontrols="clr-namespace:CrossModGui.UserControls"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         mc:Ignorable="d"
         Title="Material Editor" Height="800" Width="500">
     <Window.Style>
@@ -11,6 +12,7 @@
     </Window.Style>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
+        <!--<Style TargetType="CheckBox" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToggleSwitch}}"></Style>-->
     </Window.Resources>
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
@@ -69,15 +71,11 @@
                             <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"></ColumnDefinition>
-                                        <ColumnDefinition Width="100"></ColumnDefinition>
+                                        <ColumnDefinition Width="150"></ColumnDefinition>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"></RowDefinition>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding ParamId}" TextAlignment="Right" Margin="5,2"></TextBlock>
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding Value}" Margin="5,2">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Value}" Margin="5,2">
+                                        <TextBlock Text="{Binding ParamId}"></TextBlock>
                                     </CheckBox>
                                 </Grid>
                             </DataTemplate>
@@ -192,6 +190,16 @@
                             <usercontrols:EnumEditor Label="Destination Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
                                                      SelectedValue="{Binding CurrentMaterial.BlendState0.DestinationColor}"></usercontrols:EnumEditor>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <CheckBox Grid.Column="0" IsChecked="{Binding CurrentMaterial.BlendState0.EnableAlphaSampleToCoverage}" Margin="5,2" HorizontalAlignment="Right">Alpha Sample to Coverage</CheckBox>
+                            </Grid>
                         </StackPanel>
                     </Expander>
                 </StackPanel>

@@ -49,7 +49,7 @@ namespace CrossMod.Rendering.GlTools
         public BlendingFactor SourceColor { get; set; } = BlendingFactor.One;
         public BlendingFactor DestinationColor { get; set; } = BlendingFactor.Zero;
 
-        public bool UseAlphaSampleCoverage { get; set; } = false;
+        public bool EnableAlphaSampleCoverage { get; set; } = false;
 
         public float DepthBias { get; set; } = 0.0f;
 
@@ -167,9 +167,9 @@ namespace CrossMod.Rendering.GlTools
             }
 
             // Meshes with screen door transparency enable this OpenGL extension.
-            if (previousMaterial == null || UseAlphaSampleCoverage != previousMaterial.UseAlphaSampleCoverage)
+            if (previousMaterial == null || EnableAlphaSampleCoverage != previousMaterial.EnableAlphaSampleCoverage)
             {
-                if (RenderSettings.Instance.EnableExperimental && UseAlphaSampleCoverage)
+                if (RenderSettings.Instance.EnableExperimental && EnableAlphaSampleCoverage)
                     GL.Enable(EnableCap.SampleAlphaToCoverage);
                 else
                     GL.Disable(EnableCap.SampleAlphaToCoverage);

@@ -16,6 +16,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
             set => blendState.DestinationColor = value;
         }
 
+        public bool EnableAlphaSampleToCoverage
+        {
+            get => blendState.EnableAlphaSampleToCoverage != 0;
+            set => blendState.EnableAlphaSampleToCoverage = value ? 1 : 0;
+        }
+
         private readonly MatlAttribute.MatlBlendState blendState;
 
         public BlendStateParam(MatlAttribute.MatlBlendState blendState)
