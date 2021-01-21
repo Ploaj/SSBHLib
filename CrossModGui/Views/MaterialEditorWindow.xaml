@@ -118,12 +118,12 @@
                     <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Expander IsExpanded="False" HorizontalAlignment="Stretch">
+                                    <Expander IsExpanded="False">
                                         <Expander.Header>
                                             <Grid HorizontalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="120"></ColumnDefinition>
-                                                    <ColumnDefinition Width="300"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding TextureSamplerText}"></TextBlock>
                                                 <ComboBox Margin="5,0" Grid.Column="1"
