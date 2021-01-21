@@ -7,6 +7,7 @@ using SFGraphics.GLObjects.Samplers;
 using SFGraphics.GLObjects.Shaders;
 using SSBHLib.Formats.Materials;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering.GlTools
@@ -67,14 +68,14 @@ namespace CrossMod.Rendering.GlTools
 
         // TODO: These can just be arrays.
         // TODO: The dictionary is only useful for keeping track of what parameters are used.
-        private readonly Dictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new Dictionary<MatlEnums.ParamId, Vector4>();
-        private readonly Dictionary<MatlEnums.ParamId, bool> boolByParamId = new Dictionary<MatlEnums.ParamId, bool>();
-        private readonly Dictionary<MatlEnums.ParamId, float> floatByParamId = new Dictionary<MatlEnums.ParamId, float>();
-        private readonly Dictionary<MatlEnums.ParamId, string> textureNameByParamId = new Dictionary<MatlEnums.ParamId, string>();
-        private readonly Dictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new Dictionary<MatlEnums.ParamId, SamplerObject>();
+        private readonly ConcurrentDictionary<MatlEnums.ParamId, Vector4> vec4ByParamId = new ConcurrentDictionary<MatlEnums.ParamId, Vector4>();
+        private readonly ConcurrentDictionary<MatlEnums.ParamId, bool> boolByParamId = new ConcurrentDictionary<MatlEnums.ParamId, bool>();
+        private readonly ConcurrentDictionary<MatlEnums.ParamId, float> floatByParamId = new ConcurrentDictionary<MatlEnums.ParamId, float>();
+        private readonly ConcurrentDictionary<MatlEnums.ParamId, string> textureNameByParamId = new ConcurrentDictionary<MatlEnums.ParamId, string>();
+        private readonly ConcurrentDictionary<MatlEnums.ParamId, SamplerObject> samplerByParamId = new ConcurrentDictionary<MatlEnums.ParamId, SamplerObject>();
 
         // The context probably won't be current on the correct thread, so just queue updates for the next frame.
-        private readonly Queue<Tuple<MatlEnums.ParamId, SamplerData>> samplerUpdates = new Queue<Tuple<MatlEnums.ParamId, SamplerData>>();
+        private readonly ConcurrentQueue<Tuple<MatlEnums.ParamId, SamplerData>> samplerUpdates = new ConcurrentQueue<Tuple<MatlEnums.ParamId, SamplerData>>();
 
         // Add a flag to ensure the uniforms get updated for rendering.
         // TODO: Updating the uniform block from the update methods doesn't work.
@@ -319,9 +320,8 @@ namespace CrossMod.Rendering.GlTools
         {
             // Make sure the sampler info is updated.
             // Creating the samplers on another thread likely won't work due to the context not being current.
-            while (samplerUpdates.Count > 0)
+            while (samplerUpdates.TryDequeue(out Tuple<MatlEnums.ParamId, SamplerData>? update))
             {
-                var update = samplerUpdates.Dequeue();
                 samplerByParamId[update.Item1] = update.Item2.ToSampler();
             }
 
