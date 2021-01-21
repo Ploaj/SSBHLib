@@ -115,8 +115,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}" 
-                                      Visibility="{Binding CurrentMaterial.HasTextures, Converter={StaticResource booleanVisibilityConverter}}">
+                    <ItemsControl ItemsSource="{Binding CurrentMaterial.TextureParams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Expander IsExpanded="False" HorizontalAlignment="Stretch">
@@ -181,18 +180,18 @@
                         </ItemsControl>
                     <Expander Header="RasterizerState0" IsExpanded="False">
                         <StackPanel>
-                            <usercontrols:EnumEditor Margin="5,0" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.FillMode}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.CullMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,0" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.FillMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.CullMode}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
                     <Expander Header="BlendState0" IsExpanded="False">
                         <StackPanel>
                             <usercontrols:EnumEditor Label="Source Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
-                                                     SelectedValue="{Binding CurrentMaterial.SourceColor}"></usercontrols:EnumEditor>
+                                                     SelectedValue="{Binding CurrentMaterial.BlendState0.SourceColor}"></usercontrols:EnumEditor>
                             <usercontrols:EnumEditor Label="Destination Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
-                                                     SelectedValue="{Binding CurrentMaterial.DestinationColor}"></usercontrols:EnumEditor>
+                                                     SelectedValue="{Binding CurrentMaterial.BlendState0.DestinationColor}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
                 </StackPanel>

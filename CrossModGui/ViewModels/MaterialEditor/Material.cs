@@ -1,5 +1,4 @@
-﻿using SSBHLib.Formats.Materials;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace CrossModGui.ViewModels.MaterialEditor
@@ -12,15 +11,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public SolidColorBrush? MaterialIdColor { get; set; }
 
-        public bool HasFloats => FloatParams.Count > 0;
-        public bool HasBooleans => BooleanParams.Count > 0;
-        public bool HasVec4Params => Vec4Params.Count > 0;
-        public bool HasTextures => TextureParams.Count > 0;
-
-        public MatlCullMode CullMode { get; set; }
-        public MatlFillMode FillMode { get; set; }
-        public MatlBlendFactor SourceColor { get; set; }
-        public MatlBlendFactor DestinationColor { get; set; }
+        public RasterizerStateParam? RasterizerState0 { get; set; }
+        public BlendStateParam? BlendState0 { get; set; }
 
         public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 

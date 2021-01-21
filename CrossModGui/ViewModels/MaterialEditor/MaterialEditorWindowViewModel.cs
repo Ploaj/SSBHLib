@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace CrossModGui.ViewModels.MaterialEditor
 {
-    public partial class MaterialEditorWindowViewModel : ViewModelBase
+    public class MaterialEditorWindowViewModel : ViewModelBase
     {
         public ObservableCollection<MaterialCollection> MaterialCollections { get; } = new ObservableCollection<MaterialCollection>();
 
@@ -126,54 +126,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
             {
                 var matl = rnumdls.SingleOrDefault(r => r.Item1 == e.MaterialCollection.Name).Item2.Matl;
                 if (matl != null)
-                    UpdateAndSaveMatl(matl, e.MaterialCollection, e.FilePath);
+                    UpdateAndSaveMatl(matl, e.FilePath);
             };
         }
 
-        private void UpdateAndSaveMatl(Matl matl, MaterialCollection collection, string outputPath)
+        private void UpdateAndSaveMatl(Matl matl, string outputPath)
         {
-            // TODO: Completely recreate the Matl from the view model.
-
-            foreach (var entry in matl.Entries)
-            {
-                var material = collection.Materials.SingleOrDefault(m => m.ShaderLabel == entry.ShaderLabel && m.Name == entry.MaterialLabel);
-                if (material == null)
-                    continue;
-
-                UpdateAttributes(entry, material);
-            }
-
             SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
-        }
-
-        private void UpdateAttributes(MatlEntry entry, Material material)
-        {
-            foreach (var attribute in entry.Attributes)
-            {
-                // The data type isn't known, so check each type.
-                switch (attribute.DataType)
-                {
-                    // TODO: Fully represent these types in the viewmodel.
-                    case MatlEnums.ParamDataType.RasterizerState:
-                        UpdateMatlRasterizerState(material, attribute);
-                        break;
-                    case MatlEnums.ParamDataType.BlendState:
-                        UpdateMatlBlendState(material, attribute);
-                        break;
-                }
-            }
-        }
-
-        private static void UpdateMatlBlendState(Material material, MatlAttribute attribute)
-        {
-            if (attribute.DataObject is MatlAttribute.MatlBlendState blendState)
-                attribute.DataObject = GetBlendState(material, blendState);
-        }
-
-        private static void UpdateMatlRasterizerState(Material material, MatlAttribute attribute)
-        {
-            if (attribute.DataObject is MatlAttribute.MatlRasterizerState rasterizerState)
-                attribute.DataObject = GetRasterizerState(material, rasterizerState);
         }
 
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
@@ -228,30 +187,32 @@ namespace CrossModGui.ViewModels.MaterialEditor
             SyncFloats(rMaterial, material);
             SyncTexturesSamplers(rMaterial, material);
             SyncVectors(rMaterial, material);
+            SyncBlendState(rMaterial, material);
+            SyncRasterizerState(rMaterial, material);
+        }
 
-            // Rasterizer state and blend state are stored with the material because there is only a single rasterizer state and blend state.
-            material.PropertyChanged += (s, e) =>
+        private static void SyncRasterizerState(RMaterial rMaterial, Material material)
+        {
+            if (material.RasterizerState0 != null)
             {
-                switch (e.PropertyName)
+                material.RasterizerState0.PropertyChanged += (s, e) =>
                 {
-                    case nameof(material.CullMode):
-                    case nameof(material.FillMode):
-                        rMaterial.CullMode = material.CullMode.ToOpenTk();
-                        rMaterial.FillMode = material.FillMode.ToOpenTk();
+                    rMaterial.CullMode = material.RasterizerState0.CullMode.ToOpenTk();
+                    rMaterial.FillMode = material.RasterizerState0.FillMode.ToOpenTk();
+                };
+            }
+        }
 
-                        // Ensure the MATL is up to date so changes are preserved when reopening the editor.
-                        var rasterizer = entry.Attributes.FirstOrDefault(a => a.ParamId == MatlEnums.ParamId.RasterizerState0);
-                        if (rasterizer != null)
-                            UpdateMatlRasterizerState(material, rasterizer);
-                        break;
-                    case nameof(material.SourceColor):
-                        rMaterial.SourceColor = material.SourceColor.ToOpenTk();
-                        break;
-                    case nameof(material.DestinationColor):
-                        rMaterial.DestinationColor = material.DestinationColor.ToOpenTk();
-                        break;
-                }
-            };
+        private static void SyncBlendState(RMaterial rMaterial, Material material)
+        {
+            if (material.BlendState0 != null)
+            {
+                material.BlendState0.PropertyChanged += (s, e) =>
+                {
+                    rMaterial.SourceColor = material.BlendState0.SourceColor.ToOpenTk();
+                    rMaterial.DestinationColor = material.BlendState0.DestinationColor.ToOpenTk();
+                };
+            }
         }
 
         private static void SyncBooleans(RMaterial rMaterial, Material material)
@@ -325,15 +286,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // There should only be a single rasterizer state in each material.
             if (entry.GetRasterizerStates().TryGetValue(MatlEnums.ParamId.RasterizerState0, out MatlAttribute.MatlRasterizerState? rasterizerState))
             {
-                material.CullMode = rasterizerState.CullMode;
-                material.FillMode = rasterizerState.FillMode;
+                material.RasterizerState0 = new RasterizerStateParam(rasterizerState);
             }
 
             // There should only be a single blend state in each material.
             if (entry.GetBlendStates().TryGetValue(MatlEnums.ParamId.BlendState0, out MatlAttribute.MatlBlendState? blendState))
             {
-                material.SourceColor = blendState.SourceColor;
-                material.DestinationColor = blendState.DestinationColor;
+                material.BlendState0 = new BlendStateParam(blendState);
             }
 
             material.FloatParams.AddRange(entry.Attributes
@@ -370,51 +329,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             if (CurrentMaterialCollection != null)
                 MatlSaving?.Invoke(this, new MaterialSaveEventArgs(CurrentMaterialCollection, outputPath));    
-        }
-
-        private static MatlAttribute.MatlBlendState GetBlendState(Material material, MatlAttribute.MatlBlendState previous)
-        {
-            // TODO: Completely remake the data object.
-            // TODO: This modifies the previous object.
-            previous.SourceColor = material.SourceColor;
-            previous.DestinationColor = material.DestinationColor;
-            return previous;
-        }
-
-        private static MatlAttribute.MatlRasterizerState GetRasterizerState(Material material, MatlAttribute.MatlRasterizerState previous)
-        {
-            // TODO: Completely remake the data object.
-            // TODO: This modifies the previous object.
-            previous.CullMode = material.CullMode;
-            previous.FillMode = material.FillMode;
-            return previous;
-        }
-
-        private static MatlAttribute.MatlVector4 GetMatlVec4(Vec4Param param)
-        {
-            return new MatlAttribute.MatlVector4
-            {
-                X = param.Value1,
-                Y = param.Value2,
-                Z = param.Value3,
-                W = param.Value4
-            };
-        }
-
-        private static MatlAttribute.MatlSampler GetMatlSampler(TextureSamplerParam param, MatlAttribute.MatlSampler previous)
-        {
-            // TODO: Completely remake the data object.
-            // TODO: This modifies the previous object.
-            previous.WrapS = param.WrapS;
-            previous.WrapT = param.WrapT;
-            previous.WrapR = param.WrapR;
-            previous.MagFilter = param.MagFilter;
-            previous.MinFilter = param.MinFilter;
-            previous.LodBias = param.LodBias;
-            previous.MaxAnisotropy = param.MaxAnisotropy;
-            previous.TextureFilteringType = param.TextureFilteringType;
-
-            return previous;
         }
 
         private static bool TryAssignValuesFromDescription(Vec4Param vec4Param)
