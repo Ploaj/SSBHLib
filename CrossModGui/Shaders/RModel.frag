@@ -341,7 +341,8 @@ vec3 GetPostProcessingResult(vec3 linear)
     vec3 result = srgb * 0.9375 + 0.03125;
 
     // Color Grading.
-    result = texture(colorLut, result).rgb;
+    // TODO: workaround for color fringing when swapping shaders.
+    result = texture(colorLut, clamp(result, 0.0001, 0.9)).rgb;
 
     // Post Processing.
     result = (result - srgb) * 0.99961 + srgb;
