@@ -1,4 +1,5 @@
-﻿using CrossMod.Rendering;
+﻿using CrossMod.MaterialValidation;
+using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.Tools;
@@ -175,8 +176,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     (byte)idColor.X,
                     (byte)idColor.Y,
                     (byte)idColor.Z)),
+                ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
+                ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
             };
-
             UpdateMaterialFromEntry(entry, material);
             return material;
         }

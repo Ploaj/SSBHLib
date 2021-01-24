@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace CrossModGui.ViewModels.MaterialEditor
@@ -13,6 +14,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public RasterizerStateParam? RasterizerState0 { get; set; }
         public BlendStateParam? BlendState0 { get; set; }
+
+        public string ShaderAttributeNames { get; set; } = "";
+        public string ShaderParameterNames { get; set; } = "";
 
         public ObservableCollection<BooleanParam> BooleanParams { get; } = new ObservableCollection<BooleanParam>();
 

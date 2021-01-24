@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" Text="{Binding Label}"></TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5,2" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Label}"></TextBlock>
         <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         <Slider Grid.Row="0" Grid.Column="2" Margin="5,2" Value="{Binding Value}" Minimum="{Binding Min}" Maximum="{Binding Max}"></Slider>
     </Grid>

@@ -35,10 +35,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Matl</TextBlock>
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2" ItemsSource="{Binding MaterialCollections}" 
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="5,2,8,2" ItemsSource="{Binding MaterialCollections}" 
                       SelectedItem="{Binding CurrentMaterialCollection}" SelectedIndex="0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -47,7 +46,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Current Material</TextBlock>
-            <ComboBox Grid.Row="1" Grid.Column="1" Margin="5,2" ItemsSource="{Binding CurrentMaterialCollection.Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="5,2,8,2" ItemsSource="{Binding CurrentMaterialCollection.Materials}" SelectedItem="{Binding CurrentMaterial}" SelectedIndex="0"
                       DropDownOpened="ComboBox_DropDownOpened"
                       DropDownClosed="ComboBox_DropDownClosed">
                 <ComboBox.ItemTemplate>
@@ -59,13 +58,27 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         </Grid>
         <Grid DockPanel.Dock="Bottom">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <Label>Material Parameters</Label>
+                    <Label>Shader Program</Label>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5,2">Shader Label</TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5,2">Vertex Attributes</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
+                    </Grid>
+                    <Label Margin="0,10,0,0">Material Parameters</Label>
                     <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -178,16 +191,16 @@
                         </ItemsControl>
                     <Expander Header="RasterizerState0" IsExpanded="False">
                         <StackPanel>
-                            <usercontrols:EnumEditor Margin="5,0" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.FillMode}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Margin="5,0" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.CullMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,2" Label="Polygon Fill" DescriptionByValue="{Binding DescriptionByFillMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.FillMode}"></usercontrols:EnumEditor>
+                            <usercontrols:EnumEditor Margin="5,2" Label="Cull Mode" DescriptionByValue="{Binding DescriptionByCullMode}" SelectedValue="{Binding CurrentMaterial.RasterizerState0.CullMode}"></usercontrols:EnumEditor>
                         </StackPanel>
                     </Expander>
                     <Expander Header="BlendState0" IsExpanded="False">
                         <StackPanel>
-                            <usercontrols:EnumEditor Label="Source Color"
+                            <usercontrols:EnumEditor  Margin="5,2" Label="Source Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
                                                      SelectedValue="{Binding CurrentMaterial.BlendState0.SourceColor}"></usercontrols:EnumEditor>
-                            <usercontrols:EnumEditor Label="Destination Color"
+                            <usercontrols:EnumEditor  Margin="5,2" Label="Destination Color"
                                                      DescriptionByValue="{Binding DescriptionByBlendFactor}"
                                                      SelectedValue="{Binding CurrentMaterial.BlendState0.DestinationColor}"></usercontrols:EnumEditor>
                             <Grid>
