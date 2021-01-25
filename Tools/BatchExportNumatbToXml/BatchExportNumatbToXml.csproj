@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MatLab\MatLab.csproj" />
-    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
+    <ProjectReference Include="..\..\MatLab\MatLab.csproj" />
+    <ProjectReference Include="..\..\SsbhLib\SsbhLib.csproj" />
   </ItemGroup>
 
 </Project>

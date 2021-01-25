@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CrossMod\CrossMod.csproj" />
-    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
+    <ProjectReference Include="..\..\SsbhLib\SsbhLib.csproj" />
   </ItemGroup>
 
 </Project>

@@ -281,7 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CrossMod\CrossMod.csproj" />
-    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
+    <ProjectReference Include="..\..\SsbhLib\SsbhLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ico_animation.png" />

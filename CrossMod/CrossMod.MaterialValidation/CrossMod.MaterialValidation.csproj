@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SsbhLib\SsbhLib.csproj" />
+    <ProjectReference Include="..\..\SsbhLib\SsbhLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
