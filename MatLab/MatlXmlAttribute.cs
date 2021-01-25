@@ -11,14 +11,14 @@ namespace MatLab
         [XmlAttribute]
         public MatlEnums.ParamId name;
 
-        [XmlElement("blend_state", typeof(MatlAttribute.MatlBlendState))]
-        [XmlElement("rasterizer_state", typeof(MatlAttribute.MatlRasterizerState))]
-        [XmlElement("vector4", typeof(MatlAttribute.MatlVector4))]
-        [XmlElement("sampler", typeof(MatlAttribute.MatlSampler))]
-        [XmlElement("string", typeof(MatlAttribute.MatlString))]
+        [XmlElement("BlendState", typeof(MatlAttribute.MatlBlendState))]
+        [XmlElement("RasterizerState", typeof(MatlAttribute.MatlRasterizerState))]
+        [XmlElement("Vector4", typeof(MatlAttribute.MatlVector4))]
+        [XmlElement("Sampler", typeof(MatlAttribute.MatlSampler))]
+        [XmlElement("String", typeof(MatlAttribute.MatlString))]
         [XmlElement("UVtransform", typeof(MatlAttribute.MatlUvTransform))]
-        [XmlElement("float", typeof(float))]
-        [XmlElement("bool", typeof(bool))]
+        [XmlElement("Float", typeof(float))]
+        [XmlElement("Bool", typeof(bool))]
         public object value;
     }
 }

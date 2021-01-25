@@ -5,12 +5,12 @@ namespace MatLab
     public class Material
     {
         [XmlAttribute]
-        public string name;
+        public string shaderLabel;
 
         [XmlAttribute]
-        public string label;
+        public string materialLabel;
 
-        [XmlElement]
-        public MatlXmlAttribute[] param;
+        [XmlElement(ElementName = "Parameter")]
+        public MatlXmlAttribute[] parameter;
     }
 }

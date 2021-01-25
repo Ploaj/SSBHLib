@@ -4,7 +4,7 @@ namespace MatLab
 {
     public class MaterialLibrary
     {
-        [XmlElement]
-        public Material[] material;
+        [XmlElement(ElementName = "Material")]
+        public Material[] materials;
     }
 }

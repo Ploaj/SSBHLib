@@ -88,25 +88,25 @@ namespace MatLab
         {
             Matl matl = new Matl
             {
-                Entries = new MatlEntry[library.material.Length]
+                Entries = new MatlEntry[library.materials.Length]
             };
 
-            for (int i = 0; i < library.material.Length; i++)
+            for (int i = 0; i < library.materials.Length; i++)
             {
                 MatlEntry entry = new MatlEntry
                 {
-                    MaterialLabel = library.material[i].label,
-                    ShaderLabel = library.material[i].name,
-                    Attributes = new MatlAttribute[library.material[i].param.Length]
+                    MaterialLabel = library.materials[i].materialLabel,
+                    ShaderLabel = library.materials[i].shaderLabel,
+                    Attributes = new MatlAttribute[library.materials[i].parameter.Length]
                 };
 
-                for (int j = 0; j < library.material[i].param.Length; j++)
+                for (int j = 0; j < library.materials[i].parameter.Length; j++)
                 {
                     entry.Attributes[j] = new MatlAttribute
                     {
-                        ParamId = library.material[i].param[j].name,
+                        ParamId = library.materials[i].parameter[j].name,
 
-                        DataObject = library.material[i].param[j].value
+                        DataObject = library.materials[i].parameter[j].value
                     };
                 }
 
@@ -120,17 +120,17 @@ namespace MatLab
         {
             MaterialLibrary library = new MaterialLibrary
             {
-                material = new Material[matlFile.Entries.Length]
+                materials = new Material[matlFile.Entries.Length]
             };
 
             int entryIndex = 0;
             foreach (var entry in matlFile.Entries)
             {
                 Material mat = new Material();
-                mat.name = entry.ShaderLabel;
-                mat.label = entry.MaterialLabel;
+                mat.shaderLabel = entry.ShaderLabel;
+                mat.materialLabel = entry.MaterialLabel;
 
-                mat.param = new MatlXmlAttribute[entry.Attributes.Length];
+                mat.parameter = new MatlXmlAttribute[entry.Attributes.Length];
 
                 int attribIndex = 0;
                 foreach (var attr in entry.Attributes)
@@ -138,10 +138,10 @@ namespace MatLab
                     MatlXmlAttribute attrib = new MatlXmlAttribute();
                     attrib.name = attr.ParamId;
                     attrib.value = attr.DataObject;
-                    mat.param[attribIndex++] = attrib;
+                    mat.parameter[attribIndex++] = attrib;
                 }
 
-                library.material[entryIndex] = mat;
+                library.materials[entryIndex] = mat;
                 entryIndex++;
             }
 
