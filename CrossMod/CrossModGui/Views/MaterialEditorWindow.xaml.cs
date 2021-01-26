@@ -1,5 +1,6 @@
 ﻿using CrossMod.Rendering;
 using CrossModGui.Tools;
+using CrossModGui.ViewModels;
 using CrossModGui.ViewModels.MaterialEditor;
 using System.Diagnostics;
 using System.Windows;
@@ -49,6 +50,19 @@ namespace CrossModGui.Views
         {
             // Restore the original shading mode after making a selection.
             RenderSettings.Instance.ShadingMode = previousRenderMode;
+        }
+
+        private void SelectPreset_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: Load the presets from a file.
+            var vm = new MaterialPresetWindowViewModel();
+            for (int i = 0; i < 30; i++)
+            {
+                vm.Presets.Add(new MaterialPreset { Name = $"Preset{i}" });
+            }
+
+            var window = new MaterialPresetWindow() { DataContext = vm };
+            window.Show();
         }
     }
 }
