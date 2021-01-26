@@ -3,6 +3,7 @@ using static SSBHLib.Formats.Materials.MatlEnums;
 
 namespace CrossMod.Rendering
 {
+    // TODO: This should be part of SSBHLib.
     public static class ParamIdExtensions
     {
         public static ParamId GetSampler(ParamId texture)
