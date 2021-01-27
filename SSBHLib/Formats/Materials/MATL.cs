@@ -9,6 +9,6 @@
 
         public short MinorVersion { get; set; } = 6;
 
-        public MatlEntry[] Entries { get; set; }
+        public MatlEntry[] Entries { get; set; } = new MatlEntry[0];
     }
 }

@@ -50,7 +50,7 @@ namespace MatLab
             Console.WriteLine($"Converting {Path.GetFileName(inputPath)} to {outputPath}.numatb...");
             using (var reader = new StringReader(File.ReadAllText(inputPath)))
             {
-                var matl = MatlToXml.DeserializeMatl(reader);
+                var matl = MatlSerialization.DeserializeMatl(reader);
                 Ssbh.TrySaveSsbhFile(outputPath, matl);
             }
         }
@@ -62,7 +62,7 @@ namespace MatLab
             {
                 using (var writer = new StringWriter())
                 {
-                    MatlToXml.SerializeMatl(writer, matlFile);
+                    MatlSerialization.SerializeMatl(writer, matlFile);
                     File.WriteAllText(outputPath, writer.ToString());
                 }
             }

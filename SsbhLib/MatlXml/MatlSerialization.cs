@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace SsbhLib.MatlXml
 {
-    public static class MatlToXml
+    public static class MatlSerialization
     {
         private static readonly XmlSerializer serializer = new XmlSerializer(typeof(MaterialLibrary));
 
@@ -24,10 +24,11 @@ namespace SsbhLib.MatlXml
 
         private static Matl LibraryToMATL(MaterialLibrary library)
         {
-            var matl = new Matl
+            var matl = new Matl();
+            if (library.materials != null)
             {
-                Entries = library.materials.Select(m => CreateEntry(m)).ToArray()
-            };
+                matl.Entries = library.materials.Select(m => CreateEntry(m)).ToArray();
+            }
 
             return matl;
         }
