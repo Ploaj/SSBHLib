@@ -54,14 +54,7 @@ namespace CrossModGui.Views
 
         private void SelectPreset_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Load the presets from a file.
-            var vm = new MaterialPresetWindowViewModel();
-            for (int i = 0; i < 30; i++)
-            {
-                vm.Presets.Add(new MaterialPreset { Name = $"Preset{i}" });
-            }
-
-            var window = new MaterialPresetWindow() { DataContext = vm };
+            var window = new MaterialPresetWindow() { DataContext = new MaterialPresetWindowViewModel() };
             window.Show();
         }
     }
