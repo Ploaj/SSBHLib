@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace SsbhLib.Tools
 {
+    // TODO: Make this part of MatlEntry?
     public static class MatlTools
     {
         public static MatlEntry FromShaderAndAttributes(MatlEntry currentEntry, MatlEntry newEntry, bool preserveTextureNames)

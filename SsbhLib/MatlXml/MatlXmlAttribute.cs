@@ -1,7 +1,7 @@
 ﻿using SSBHLib.Formats.Materials;
 using System.Xml.Serialization;
 
-namespace MatLab
+namespace SsbhLib.MatlXml
 {
     [XmlInclude(typeof(MatlAttribute.MatlBlendState)), XmlInclude(typeof(MatlAttribute.MatlRasterizerState)),
         XmlInclude(typeof(MatlAttribute.MatlVector4)), XmlInclude(typeof(MatlAttribute.MatlSampler)),

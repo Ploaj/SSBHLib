@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace MatLab
+namespace SsbhLib.MatlXml
 {
     public class MaterialLibrary
     {

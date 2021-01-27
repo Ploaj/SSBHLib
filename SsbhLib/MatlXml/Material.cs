@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace MatLab
+namespace SsbhLib.MatlXml
 {
     public class Material
     {
@@ -11,6 +11,6 @@ namespace MatLab
         public string materialLabel;
 
         [XmlElement(ElementName = "Parameter")]
-        public MatlXmlAttribute[] parameter;
+        public MatlXmlAttribute[] parameters;
     }
 }
