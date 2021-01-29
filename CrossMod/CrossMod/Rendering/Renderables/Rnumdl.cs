@@ -48,7 +48,7 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void UpdateMaterials(Matl? matl)
+        public void UpdateMaterials(Matl? matl)
         {
             InitializeMaterials(matl);
             AssignMaterials();
@@ -82,6 +82,7 @@ namespace CrossMod.Rendering
             if (matl == null)
                 return;
 
+            MaterialByName.Clear();
             for (int i = 0; i < matl.Entries.Length; i++)
             {
                 var entry = matl.Entries[i];

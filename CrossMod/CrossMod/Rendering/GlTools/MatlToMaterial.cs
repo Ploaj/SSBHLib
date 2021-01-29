@@ -51,7 +51,7 @@ namespace CrossMod.Rendering.GlTools
 
             return meshMaterial;
         }
-
+        
         private static void SetRasterizerState(RMaterial meshMaterial, MatlAttribute.MatlRasterizerState rasterizerState)
         {
             meshMaterial.DepthBias = rasterizerState.DepthBias;

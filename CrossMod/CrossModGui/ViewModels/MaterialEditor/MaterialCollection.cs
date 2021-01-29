@@ -11,12 +11,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public string Name { get; }
         public ObservableCollection<Material> Materials { get; } = new ObservableCollection<Material>();
 
-        public Matl Matl { get; }
-
-        public MaterialCollection(string name, Matl matl)
+        public MaterialCollection(string name)
         {
             Name = name;
-            Matl = matl;
         }
     }
 }

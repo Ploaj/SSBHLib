@@ -102,8 +102,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
-        public MaterialEditorWindowViewModel(IEnumerable<System.Tuple<string, RNumdl>> rnumdls)
+        private readonly IEnumerable<Tuple<string, RNumdl>> rnumdls;
+
+        public MaterialEditorWindowViewModel(IEnumerable<Tuple<string, RNumdl>> rnumdls)
         {
+            this.rnumdls = rnumdls;
+
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
@@ -149,21 +153,35 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (CurrentMaterial == null || CurrentMaterialCollection == null)
                 return;
 
-            var currentEntryIndex = Array.FindIndex(CurrentMaterialCollection.Matl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
+            var currentRnumdl = rnumdls.Where(r => r.Item1 == CurrentMaterialCollection.Name).FirstOrDefault()?.Item2;
+            if (currentRnumdl == null)
+                return;
+
+            var currentMatl = currentRnumdl.Matl;
+            if (currentMatl == null)
+                return;
+
+            var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
             if (currentEntryIndex == -1)
                 return;
 
             // Apply the preset and update the matl entry.
-            var newEntry = MatlTools.FromShaderAndAttributes(CurrentMaterialCollection.Matl.Entries[currentEntryIndex], presetMaterial, true);
-            CurrentMaterialCollection.Matl.Entries[currentEntryIndex] = newEntry;
+            var newEntry = MatlTools.FromShaderAndAttributes(currentMatl.Entries[currentEntryIndex], presetMaterial, true);
+            currentMatl.Entries[currentEntryIndex] = newEntry;
 
             // store the result of applying the preset's entry to the current material's entry
             var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
             if (currentMaterialIndex == -1)
                 return;
 
-            // TODO: Update the view model and sync to the model?
-            // TODO: This needs a reference to the RMaterial.
+            // Update the view model.
+            var newMaterial = CreateMaterial(newEntry, currentEntryIndex);
+            CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;         
+            CurrentMaterial = newMaterial;
+
+            // Recreate and reassign materials to refresh rendering.
+            // TODO: This requires a context to be current.
+            //currentRnumdl.UpdateMaterials(currentMatl);
         }
 
         private void UpdateAndSaveMatl(Matl matl, string outputPath)
@@ -173,7 +191,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
         {
-            var collection = new MaterialCollection(name, matl);
+            var collection = new MaterialCollection(name);
             for (int i = 0; i < matl.Entries.Length; i++)
             {
                 // Pass a reference to the render material to enable real time updates.
@@ -193,7 +211,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Enable real time viewport updates.
             if (rMaterial != null)
             {
-                SyncViewModelToModel(rMaterial, material, entry);
+                SyncViewModelToRMaterial(rMaterial, material);
             }
 
             return material;
@@ -218,8 +236,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static void SyncViewModelToModel(RMaterial rMaterial, Material material, MatlEntry entry)
+        private static void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
         {
+            // TODO: Each of these should force a frame to render.
             SyncBooleans(rMaterial, material);
             SyncFloats(rMaterial, material);
             SyncTexturesSamplers(rMaterial, material);
@@ -257,7 +276,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             foreach (var param in material.BooleanParams)
             {
-                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
+                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateBoolean(paramId, param.Value);
@@ -268,7 +287,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             foreach (var param in material.FloatParams)
             {
-                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
+                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateFloat(paramId, param.Value);
@@ -279,10 +298,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             foreach (var param in material.TextureParams)
             {
-                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
+                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
-                if (!System.Enum.TryParse(param.SamplerParamId, out MatlEnums.ParamId samplerParamId))
+                if (!Enum.TryParse(param.SamplerParamId, out MatlEnums.ParamId samplerParamId))
                     continue;
 
                 param.PropertyChanged += (s, e) => 
@@ -297,7 +316,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             foreach (var param in material.Vec4Params)
             {
-                if (!System.Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
+                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
                 param.PropertyChanged += (s, e) => rMaterial.UpdateVec4(paramId, new OpenTK.Vector4(param.Value1, param.Value2, param.Value3, param.Value4));

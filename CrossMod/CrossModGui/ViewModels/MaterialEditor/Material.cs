@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using CrossMod.Rendering.GlTools;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace CrossModGui.ViewModels.MaterialEditor

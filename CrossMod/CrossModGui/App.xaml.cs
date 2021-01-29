@@ -20,11 +20,5 @@ namespace CrossModGui
             MainWindow = new MainWindow();
             MainWindow.Show();
         }
-
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            // TODO: Log errors.
-            e.Handled = true;
-        }
     }
 }
