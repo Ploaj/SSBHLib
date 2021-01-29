@@ -19,7 +19,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" HorizontalAlignment="Right" Margin="5" IsEnabled="{Binding SelectedPreset, Converter={StaticResource isNotNullBoolConverter}}">Apply Preset</Button>
+            <Button Grid.Column="0" HorizontalAlignment="Right" Margin="5" IsEnabled="{Binding SelectedPreset, Converter={StaticResource isNotNullBoolConverter}}" Click="ApplyPreset_Click">Apply Preset</Button>
         </Grid>
         <ListBox DockPanel.Dock="Top" ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}">
             <ListBox.ItemTemplate>

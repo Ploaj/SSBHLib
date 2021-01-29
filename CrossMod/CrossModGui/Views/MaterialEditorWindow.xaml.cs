@@ -54,7 +54,10 @@ namespace CrossModGui.Views
 
         private void SelectPreset_Click(object sender, RoutedEventArgs e)
         {
-            var window = new MaterialPresetWindow() { DataContext = new MaterialPresetWindowViewModel() };
+            var vm = new MaterialPresetWindowViewModel();
+            vm.PresetApplying += (s, e) => (DataContext as MaterialEditorWindowViewModel)?.ApplyPreset(e);
+
+            var window = new MaterialPresetWindow() { DataContext = vm };
             window.Show();
         }
     }

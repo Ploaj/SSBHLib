@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrossModGui.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -20,6 +21,12 @@ namespace CrossModGui.Views
         public MaterialPresetWindow()
         {
             InitializeComponent();
+        }
+
+        private void ApplyPreset_Click(object sender, RoutedEventArgs e)
+        {
+            (DataContext as MaterialPresetWindowViewModel)?.OnPresetApply();
+            Close();
         }
     }
 }

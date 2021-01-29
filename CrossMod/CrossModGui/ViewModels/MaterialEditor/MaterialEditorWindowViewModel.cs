@@ -3,7 +3,9 @@ using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.Tools;
+using SsbhLib.Tools;
 using SSBHLib.Formats.Materials;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -131,6 +133,39 @@ namespace CrossModGui.ViewModels.MaterialEditor
             };
         }
 
+        public void ApplyPreset(MaterialPreset? selectedPreset)
+        {
+            if (selectedPreset == null)
+                return;
+
+            // Find the entry for the selected preset.
+            var presetMaterial = MaterialPresets.MaterialPresets.Presets.Value.Entries
+                .Where(e => e.MaterialLabel == selectedPreset.Name)
+                .FirstOrDefault();
+
+            if (presetMaterial == null)
+                return;
+
+            if (CurrentMaterial == null || CurrentMaterialCollection == null)
+                return;
+
+            var currentEntryIndex = Array.FindIndex(CurrentMaterialCollection.Matl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
+            if (currentEntryIndex == -1)
+                return;
+
+            // Apply the preset and update the matl entry.
+            var newEntry = MatlTools.FromShaderAndAttributes(CurrentMaterialCollection.Matl.Entries[currentEntryIndex], presetMaterial, true);
+            CurrentMaterialCollection.Matl.Entries[currentEntryIndex] = newEntry;
+
+            // store the result of applying the preset's entry to the current material's entry
+            var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
+            if (currentMaterialIndex == -1)
+                return;
+
+            // TODO: Update the view model and sync to the model?
+            // TODO: This needs a reference to the RMaterial.
+        }
+
         private void UpdateAndSaveMatl(Matl matl, string outputPath)
         {
             SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
@@ -138,7 +173,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
         {
-            var collection = new MaterialCollection { Name = name };
+            var collection = new MaterialCollection(name, matl);
             for (int i = 0; i < matl.Entries.Length; i++)
             {
                 // Pass a reference to the render material to enable real time updates.
@@ -153,9 +188,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial)
         {
-            var idColor = UniqueColors.IndexToColor(index);
-
-            var material = CreateMaterial(entry, idColor);
+            var material = CreateMaterial(entry, index);
 
             // Enable real time viewport updates.
             if (rMaterial != null)
@@ -166,8 +199,10 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static Material CreateMaterial(MatlEntry entry, OpenTK.Vector3 idColor)
+        private static Material CreateMaterial(MatlEntry entry, int index)
         {
+            var idColor = UniqueColors.IndexToColor(index);
+
             var material = new Material
             {
                 Name = entry.MaterialLabel,
@@ -179,7 +214,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
             };
-            UpdateMaterialFromEntry(entry, material);
+            AddAttributesToMaterial(entry, material);
             return material;
         }
 
@@ -284,47 +319,47 @@ namespace CrossModGui.ViewModels.MaterialEditor
             };
         }
 
-        private static void UpdateMaterialFromEntry(MatlEntry entry, Material material)
+        private static void AddAttributesToMaterial(MatlEntry source, Material destination)
         {
             // There should only be a single rasterizer state in each material.
-            if (entry.GetRasterizerStates().TryGetValue(MatlEnums.ParamId.RasterizerState0, out MatlAttribute.MatlRasterizerState? rasterizerState))
+            if (source.GetRasterizerStates().TryGetValue(MatlEnums.ParamId.RasterizerState0, out MatlAttribute.MatlRasterizerState? rasterizerState))
             {
-                material.RasterizerState0 = new RasterizerStateParam(rasterizerState);
+                destination.RasterizerState0 = new RasterizerStateParam(rasterizerState);
             }
 
             // There should only be a single blend state in each material.
-            if (entry.GetBlendStates().TryGetValue(MatlEnums.ParamId.BlendState0, out MatlAttribute.MatlBlendState? blendState))
+            if (source.GetBlendStates().TryGetValue(MatlEnums.ParamId.BlendState0, out MatlAttribute.MatlBlendState? blendState))
             {
-                material.BlendState0 = new BlendStateParam(blendState);
+                destination.BlendState0 = new BlendStateParam(blendState);
             }
 
-            material.FloatParams.AddRange(entry.Attributes
+            destination.FloatParams.AddRange(source.Attributes
                 .Where(a => a.DataType == MatlEnums.ParamDataType.Float)
                 .Select(a => new FloatParam(a)));
 
-            material.BooleanParams.AddRange(entry.Attributes
+            destination.BooleanParams.AddRange(source.Attributes
                 .Where(a => a.DataType == MatlEnums.ParamDataType.Boolean)
                 .Select(a => new BooleanParam(a)));
 
-            material.Vec4Params.AddRange(entry.Attributes
+            destination.Vec4Params.AddRange(source.Attributes
                 .Where(a => a.DataType == MatlEnums.ParamDataType.Vector4)
                 .Select(a => new Vec4Param(a)));
 
             // Set descriptions and GUI info.
-            foreach (var param in material.Vec4Params)
+            foreach (var param in destination.Vec4Params)
             {
                 TryAssignValuesFromDescription(param);
             }
 
             // TODO: Are texture names case sensitive?
-            foreach (var texture in entry.Attributes.Where(a => a.DataType == MatlEnums.ParamDataType.String))
+            foreach (var texture in source.Attributes.Where(a => a.DataType == MatlEnums.ParamDataType.String))
             {
                 // TODO: Handle the case where samplers are missing?
-                var sampler = entry.Attributes.SingleOrDefault(a => a.ParamId == ParamIdExtensions.GetSampler(texture.ParamId));
+                var sampler = source.Attributes.SingleOrDefault(a => a.ParamId == ParamIdExtensions.GetSampler(texture.ParamId));
                 if (sampler == null)
                     continue;
 
-                material.TextureParams.Add(new TextureSamplerParam(texture, sampler));
+                destination.TextureParams.Add(new TextureSamplerParam(texture, sampler));
             }
         }
 
