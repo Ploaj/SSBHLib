@@ -67,9 +67,14 @@ namespace CrossModGui.Views
         private void RenderSettings_Click(object sender, RoutedEventArgs e)
         {
             var windowViewModel = new RenderSettingsWindowViewModel(RenderSettings.Instance);
-            windowViewModel.PropertyChanged += (s, e) => windowViewModel.SetValues(RenderSettings.Instance);
+            windowViewModel.PropertyChanged += (s, e) =>
+            {
+                windowViewModel.SetValues(RenderSettings.Instance);
+                RenderFrameIfNeeded();
+            };
 
-            DisplayWindowWithRealTimeViewportUpdates(new RenderSettingsWindow(windowViewModel));
+            var window = new RenderSettingsWindow(windowViewModel);
+            window.Show();
         }
 
         private void Camera_Click(object sender, RoutedEventArgs e)
@@ -80,9 +85,11 @@ namespace CrossModGui.Views
             {
                 windowViewModel.SetValues(viewModel.Renderer.Camera);
                 viewModel.Renderer.UpdateCameraFromMouse();
+                RenderFrameIfNeeded();
             };
 
-            DisplayWindowWithRealTimeViewportUpdates(new CameraSettingsWindow(windowViewModel));
+            var window = new CameraSettingsWindow(windowViewModel);
+            window.Show();
         }
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
@@ -97,22 +104,6 @@ namespace CrossModGui.Views
 
             var window = new MaterialEditorWindow(vm);
             window.Show();
-        }
-
-        private void DisplayWindowWithRealTimeViewportUpdates(Window window)
-        {
-            // Start automatic frame updates instead of making the window have to refresh the viewport.
-            var wasRendering = glViewport.IsRendering;
-            glViewport.RestartRendering();
-
-            window.Show();
-
-            window.Closed += (s, e2) =>
-            {
-                // The main window may close first, so make sure the viewport still exists.
-                if (!glViewport.IsDisposed && !wasRendering)
-                    glViewport.PauseRendering();
-            };
         }
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
