@@ -87,8 +87,16 @@ namespace CrossModGui.Views
 
         private void MaterialEditor_Click(object sender, RoutedEventArgs e)
         {
-            var materials = viewModel.Rnumdls;
-            DisplayWindowWithRealTimeViewportUpdates(new MaterialEditorWindow(new MaterialEditorWindowViewModel(materials)));
+            // Trigger frame updates manually to avoid accessing the graphics context from multiple threads.
+            // This also improves UI responsiveness.
+            viewModel.IsPlayingAnimation = false;
+            glViewport.PauseRendering();
+
+            var vm = new MaterialEditorWindowViewModel(viewModel.Rnumdls);
+            vm.RenderFrameNeeded += (s, e) => RenderFrameIfNeeded();
+
+            var window = new MaterialEditorWindow(vm);
+            window.Show();
         }
 
         private void DisplayWindowWithRealTimeViewportUpdates(Window window)

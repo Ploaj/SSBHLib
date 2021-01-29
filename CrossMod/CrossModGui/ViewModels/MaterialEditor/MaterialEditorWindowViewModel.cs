@@ -20,7 +20,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public MaterialCollection? CurrentMaterialCollection { get; set; }
         public Material? CurrentMaterial { get; set; }
 
-        public class MaterialSaveEventArgs : System.EventArgs
+        public event EventHandler RenderFrameNeeded;
+
+        public class MaterialSaveEventArgs : EventArgs
         {
             public MaterialCollection MaterialCollection { get; }
             public string FilePath { get; }
@@ -32,7 +34,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
         }
 
-        public event System.EventHandler<MaterialSaveEventArgs>? MatlSaving;
+        public event EventHandler<MaterialSaveEventArgs>? MatlSaving;
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
@@ -174,14 +176,19 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (currentMaterialIndex == -1)
                 return;
 
+            // Recreate and reassign materials to refresh rendering.
+            // Do this first to ensure the RMaterials are recreated.
+            currentRnumdl.UpdateMaterials(currentMatl);
+
             // Update the view model.
-            var newMaterial = CreateMaterial(newEntry, currentEntryIndex);
+            currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
+
+            // Create the new viewmodel material and sync it with the newly created render material.
+            var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial);
             CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;         
             CurrentMaterial = newMaterial;
 
-            // Recreate and reassign materials to refresh rendering.
-            // TODO: This requires a context to be current.
-            //currentRnumdl.UpdateMaterials(currentMatl);
+            OnRenderFrameNeeded();
         }
 
         private void UpdateAndSaveMatl(Matl matl, string outputPath)
@@ -236,9 +243,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
+        public void OnRenderFrameNeeded()
         {
-            // TODO: Each of these should force a frame to render.
+            RenderFrameNeeded?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
+        {
             SyncBooleans(rMaterial, material);
             SyncFloats(rMaterial, material);
             SyncTexturesSamplers(rMaterial, material);
@@ -247,7 +258,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             SyncRasterizerState(rMaterial, material);
         }
 
-        private static void SyncRasterizerState(RMaterial rMaterial, Material material)
+        private void SyncRasterizerState(RMaterial rMaterial, Material material)
         {
             if (material.RasterizerState0 != null)
             {
@@ -255,11 +266,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 {
                     rMaterial.CullMode = material.RasterizerState0.CullMode.ToOpenTk();
                     rMaterial.FillMode = material.RasterizerState0.FillMode.ToOpenTk();
+                    OnRenderFrameNeeded();
                 };
             }
         }
 
-        private static void SyncBlendState(RMaterial rMaterial, Material material)
+        private void SyncBlendState(RMaterial rMaterial, Material material)
         {
             if (material.BlendState0 != null)
             {
@@ -268,33 +280,42 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     rMaterial.SourceColor = material.BlendState0.SourceColor.ToOpenTk();
                     rMaterial.DestinationColor = material.BlendState0.DestinationColor.ToOpenTk();
                     rMaterial.EnableAlphaSampleCoverage = material.BlendState0.EnableAlphaSampleToCoverage;
+                    OnRenderFrameNeeded();
                 };
             }
         }
 
-        private static void SyncBooleans(RMaterial rMaterial, Material material)
+        private void SyncBooleans(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.BooleanParams)
             {
                 if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
-                param.PropertyChanged += (s, e) => rMaterial.UpdateBoolean(paramId, param.Value);
+                param.PropertyChanged += (s, e) =>
+                {
+                    rMaterial.UpdateBoolean(paramId, param.Value);
+                    OnRenderFrameNeeded();
+                };
             }
         }
 
-        private static void SyncFloats(RMaterial rMaterial, Material material)
+        private void SyncFloats(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.FloatParams)
             {
                 if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
-                param.PropertyChanged += (s, e) => rMaterial.UpdateFloat(paramId, param.Value);
+                param.PropertyChanged += (s, e) =>
+                {
+                    rMaterial.UpdateFloat(paramId, param.Value);
+                    OnRenderFrameNeeded();
+                };
             }
         }
 
-        private static void SyncTexturesSamplers(RMaterial rMaterial, Material material)
+        private void SyncTexturesSamplers(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.TextureParams)
             {
@@ -308,18 +329,23 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 { 
                     rMaterial.UpdateTexture(paramId, param.Value);
                     rMaterial.UpdateSampler(samplerParamId, GetSamplerData(param));
+                    OnRenderFrameNeeded();
                 };
             }
         }
 
-        private static void SyncVectors(RMaterial rMaterial, Material material)
+        private void SyncVectors(RMaterial rMaterial, Material material)
         {
             foreach (var param in material.Vec4Params)
             {
                 if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
                     continue;
 
-                param.PropertyChanged += (s, e) => rMaterial.UpdateVec4(paramId, new OpenTK.Vector4(param.Value1, param.Value2, param.Value3, param.Value4));
+                param.PropertyChanged += (s, e) =>
+                {
+                    rMaterial.UpdateVec4(paramId, new OpenTK.Vector4(param.Value1, param.Value2, param.Value3, param.Value4));
+                    OnRenderFrameNeeded();
+                };
             }
         }
 

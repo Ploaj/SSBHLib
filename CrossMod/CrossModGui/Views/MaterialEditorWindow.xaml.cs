@@ -44,12 +44,14 @@ namespace CrossModGui.Views
             // Display material ID while selecting a material.
             previousRenderMode = RenderSettings.Instance.ShadingMode;
             RenderSettings.Instance.ShadingMode = RenderSettings.RenderMode.MaterialID;
+            viewModel.OnRenderFrameNeeded();
         }
 
         private void ComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             // Restore the original shading mode after making a selection.
             RenderSettings.Instance.ShadingMode = previousRenderMode;
+            viewModel.OnRenderFrameNeeded();
         }
 
         private void SelectPreset_Click(object sender, RoutedEventArgs e)
