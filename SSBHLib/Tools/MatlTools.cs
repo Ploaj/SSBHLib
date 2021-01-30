@@ -22,6 +22,32 @@ namespace SsbhLib.Tools
             return entry;
         }
 
+        private static string GetDefaultTexture(MatlEnums.ParamId texture)
+        {
+            switch (texture)
+            {
+                case MatlEnums.ParamId.Texture0:
+                case MatlEnums.ParamId.Texture1:
+                case MatlEnums.ParamId.Texture10:
+                case MatlEnums.ParamId.Texture11:
+                case MatlEnums.ParamId.Texture12:
+                    return "/common/shader/sfxPBS/default_Gray";
+                case MatlEnums.ParamId.Texture2:
+                case MatlEnums.ParamId.Texture7:
+                case MatlEnums.ParamId.Texture8:
+                    return "#replace_cubemap";
+                case MatlEnums.ParamId.Texture4:
+                case MatlEnums.ParamId.Texture16:
+                    return "/common/shader/sfxPBS/default_Normal";
+                case MatlEnums.ParamId.Texture6:
+                    return "/common/shader/sfxPBS/default_Params";
+                case MatlEnums.ParamId.Texture3:
+                    return "/common/shader/sfxPBS/default_White";
+                default:
+                    return "/common/shader/sfxPBS/default_Black";
+            }
+        }
+
         private static List<MatlAttribute> GetAttributeList(MatlEntry currentEntry, MatlEntry newEntry, bool preserveTextureNames)
         {
             var attributes = new List<MatlAttribute>();
@@ -34,8 +60,9 @@ namespace SsbhLib.Tools
                     {
                         var currentValue = currentEntry.Attributes.FirstOrDefault(a => a.ParamId == newAttribute.ParamId)?.DataObject as MatlAttribute.MatlString;
 
-                        // TODO: use an appropriate default texture if not found.
-                        var textureName = currentValue?.Text ?? newTexture.Text ?? "";
+                        // Use an appropriate default texture if not found.
+                        // This preserves the current appearance when applying a preset (ex: black for an emissive map).
+                        var textureName = currentValue?.Text ?? GetDefaultTexture(newAttribute.ParamId);
 
                         attributes.Add(new MatlAttribute
                         {
