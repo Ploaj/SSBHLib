@@ -35,6 +35,13 @@
 #*.sqlproj   merge=binary
 #*.wwaproj   merge=binary
 
+# Serialisation
+*.json     text
+*.toml     text
+*.xml      text
+*.yaml     text
+*.yml      text
+
 ###############################################################################
 # behavior for image files
 #
