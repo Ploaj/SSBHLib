@@ -3,11 +3,13 @@ using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.Tools;
+using SsbhLib.MatlXml;
 using SsbhLib.Tools;
 using SSBHLib.Formats.Materials;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Media;
 
@@ -20,7 +22,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public MaterialCollection? CurrentMaterialCollection { get; set; }
         public Material? CurrentMaterial { get; set; }
 
-        public event EventHandler RenderFrameNeeded;
+        public event EventHandler? RenderFrameNeeded;
 
         public class MaterialSaveEventArgs : EventArgs
         {
@@ -33,8 +35,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 FilePath = filePath;
             }
         }
-
-        public event EventHandler<MaterialSaveEventArgs>? MatlSaving;
 
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
@@ -129,14 +129,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl);
                 MaterialCollections.Add(collection);
             }
-
-            // Find the correct matl to update when saving.
-            MatlSaving += (s, e) =>
-            {
-                var matl = rnumdls.SingleOrDefault(r => r.Item1 == e.MaterialCollection.Name).Item2.Matl;
-                if (matl != null)
-                    UpdateAndSaveMatl(matl, e.FilePath);
-            };
         }
 
         public void ApplyPreset(MaterialPreset? selectedPreset)
@@ -189,11 +181,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
             CurrentMaterial = newMaterial;
 
             OnRenderFrameNeeded();
-        }
-
-        private void UpdateAndSaveMatl(Matl matl, string outputPath)
-        {
-            SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
         }
 
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
@@ -411,7 +398,27 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public void SaveMatl(string outputPath)
         {
             if (CurrentMaterialCollection != null)
-                MatlSaving?.Invoke(this, new MaterialSaveEventArgs(CurrentMaterialCollection, outputPath));    
+            {
+                var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
+                if (matl != null)
+                {
+                    SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
+                }
+            }
+        }
+
+        internal void ExportMatlToXml(string outputPath)
+        {
+            if (CurrentMaterialCollection != null)
+            {
+                var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
+                if (matl != null)
+                {
+                    using var writer = new StringWriter();
+                    MatlSerialization.SerializeMatl(writer, matl);
+                    File.WriteAllText(outputPath, writer.ToString());
+                }
+            }
         }
 
         private static bool TryAssignValuesFromDescription(Vec4Param vec4Param)

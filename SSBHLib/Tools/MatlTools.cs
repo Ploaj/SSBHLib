@@ -1,7 +1,5 @@
 ﻿using SSBHLib.Formats.Materials;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace SsbhLib.Tools

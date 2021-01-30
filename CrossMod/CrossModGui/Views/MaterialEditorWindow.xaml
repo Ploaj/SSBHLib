@@ -13,7 +13,6 @@
     </Window.Style>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="booleanVisibilityConverter" />
-        <!--<Style TargetType="CheckBox" BasedOn="{StaticResource {x:Static adonisUi:Styles.ToggleSwitch}}"></Style>-->
     </Window.Resources>
     <DockPanel Margin="10" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
@@ -22,6 +21,9 @@
             </MenuItem>
             <MenuItem Header="Material">
                 <MenuItem Header="Select Preset" Click="SelectPreset_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="XML">
+                <MenuItem Header="Export Matl to XML" Click="ExportMatlXml_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Material Reference (Github)" Click="MaterialReference_Click">
