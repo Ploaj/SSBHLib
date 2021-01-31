@@ -88,15 +88,9 @@
                     <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150"></ColumnDefinition>
-                                        <ColumnDefinition Width="*"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding Value}" Margin="5,2">
+                                <CheckBox IsChecked="{Binding Value}" Margin="5,2">
                                         <TextBlock Text="{Binding ParamId}"></TextBlock>
-                                    </CheckBox>
-                                </Grid>
+                                </CheckBox>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -139,7 +133,7 @@
                                         <Expander.Header>
                                             <Grid HorizontalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="120"></ColumnDefinition>
+                                                    <ColumnDefinition Width="160"></ColumnDefinition>
                                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding TextureSamplerText}"></TextBlock>

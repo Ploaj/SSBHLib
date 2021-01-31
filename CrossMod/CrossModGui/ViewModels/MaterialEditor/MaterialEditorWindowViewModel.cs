@@ -377,12 +377,11 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 .Where(a => a.DataType == MatlEnums.ParamDataType.Vector4)
                 .Select(a => new Vec4Param(a)));
 
-            // Set descriptions and GUI info.
-            foreach (var param in destination.Vec4Params)
-            {
-                TryAssignValuesFromDescription(param);
-            }
+            AddTextures(source, destination);
+        }
 
+        private static void AddTextures(MatlEntry source, Material destination)
+        {
             // TODO: Are texture names case sensitive?
             foreach (var texture in source.Attributes.Where(a => a.DataType == MatlEnums.ParamDataType.String))
             {
@@ -419,32 +418,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     File.WriteAllText(outputPath, writer.ToString());
                 }
             }
-        }
-
-        private static bool TryAssignValuesFromDescription(Vec4Param vec4Param)
-        {
-            if (MaterialParamDescriptions.Instance.ParamDescriptionsByName.TryGetValue(vec4Param.ParamId,
-                out MaterialParamDescriptions.ParamDescription? description))
-            {
-                vec4Param.Label1 = description.Label1 ?? "Unused";
-                vec4Param.Min1 = description.Min1.GetValueOrDefault(0);
-                vec4Param.Max1 = description.Max1.GetValueOrDefault(1);
-
-                vec4Param.Label2 = description.Label2 ?? "Unused";
-                vec4Param.Min2 = description.Min2.GetValueOrDefault(0);
-                vec4Param.Max2 = description.Max2.GetValueOrDefault(1);
-
-                vec4Param.Label3 = description.Label3 ?? "Unused";
-                vec4Param.Min3 = description.Min3.GetValueOrDefault(0);
-                vec4Param.Max3 = description.Max3.GetValueOrDefault(1);
-
-                vec4Param.Label4 = description.Label4 ?? "Unused";
-                vec4Param.Min4 = description.Min4.GetValueOrDefault(0);
-                vec4Param.Max4 = description.Max4.GetValueOrDefault(1);
-                return true;
-            }
-
-            return false;
         }
     }
 }

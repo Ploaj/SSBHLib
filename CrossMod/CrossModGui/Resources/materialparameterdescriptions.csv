@@ -1,0 +1,27 @@
+ParamName,Description
+CustomVector3,Emission Color Scale
+CustomVector8,Final Color Scale
+CustomVector11,Subsurface Color
+CustomVector13,Diffuse Color Scale
+CustomVector14,Rim Color
+CustomVector18,Spritesheet Params 
+CustomVector30,Subsurface Params
+CustomVector47,PRM Color
+Texture0,Col Layer 1
+Texture1,Col Layer 2
+Texture2,Irradiance Cube
+Texture3,Ambient Occlusion
+Texture4,NOR
+Texture5,Emissive Layer 1
+Texture6,PRM
+Texture7,Specular Cube
+Texture8,Diffuse Cube
+Texture9,Baked Lighting
+Texture10,Diffuse Layer 1
+Texture11,Diffuse Layer 2
+Texture12,Diffuse Layer 3
+Texture14,Emissive Layer 2
+CustomFloat10,Anisotropy
+CustomBoolean1,Use PRM Alpha
+CustomBoolean3,Direct Specular
+CustomBoolean4,Indirect Specular

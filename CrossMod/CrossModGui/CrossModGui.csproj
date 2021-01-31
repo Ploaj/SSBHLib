@@ -15,6 +15,9 @@
     <ApplicationIcon>cross.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\materialparameterdescriptions.csv" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="AnimatedGif">
       <HintPath>..\CrossMod\Lib\AnimatedGif.dll</HintPath>
       <Private>true</Private>
@@ -211,6 +214,7 @@
     <None Update="DefaultTextures\spec z- 6.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Resource Include="Resources\materialparameterdescriptions.csv" />
     <Resource Include="Resources\materialparams.csv" />
     <None Update="MaterialPresets\MaterialPresets.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

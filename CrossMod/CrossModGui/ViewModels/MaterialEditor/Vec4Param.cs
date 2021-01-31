@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Materials;
+﻿using CrossModGui.Tools;
+using SSBHLib.Formats.Materials;
 using System;
 using System.Windows.Media;
 
@@ -71,8 +72,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public Vec4Param(MatlAttribute attribute)
         {
             this.attribute = attribute;
-            ParamId = attribute.ParamId.ToString();
+
+            var paramIdText = attribute.ParamId.ToString();
+            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(paramIdText);
+
             UpdateColor();
+            TryAssignValuesFromDescription(paramIdText);
         }
 
         private void UpdateColor()
@@ -84,6 +89,32 @@ namespace CrossModGui.ViewModels.MaterialEditor
             var blue = (float)Math.Pow(Value3, gamma);
             var Color = SFGraphics.Utils.ColorUtils.GetColor(red, green, blue);
             ColorBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, Color.R, Color.G, Color.B));
+        }
+
+        private bool TryAssignValuesFromDescription(string paramId)
+        {
+            if (CustomVectorDescriptions.Instance.ParamDescriptionsByName.TryGetValue(paramId,
+                out CustomVectorDescriptions.CustomVectorParamDescription? description))
+            {
+                Label1 = description.Label1 ?? "Unused";
+                Min1 = description.Min1.GetValueOrDefault(0);
+                Max1 = description.Max1.GetValueOrDefault(1);
+
+                Label2 = description.Label2 ?? "Unused";
+                Min2 = description.Min2.GetValueOrDefault(0);
+                Max2 = description.Max2.GetValueOrDefault(1);
+
+                Label3 = description.Label3 ?? "Unused";
+                Min3 = description.Min3.GetValueOrDefault(0);
+                Max3 = description.Max3.GetValueOrDefault(1);
+
+                Label4 = description.Label4 ?? "Unused";
+                Min4 = description.Min4.GetValueOrDefault(0);
+                Max4 = description.Max4.GetValueOrDefault(1);
+                return true;
+            }
+
+            return false;
         }
     }
 }

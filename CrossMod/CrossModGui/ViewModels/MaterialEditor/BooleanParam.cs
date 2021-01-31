@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Materials;
+﻿using CrossModGui.Tools;
+using SSBHLib.Formats.Materials;
 
 namespace CrossModGui.ViewModels.MaterialEditor
 {
@@ -20,7 +21,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public BooleanParam(MatlAttribute attribute)
         {
             this.attribute = attribute;
-            ParamId = attribute.ParamId.ToString() ?? "";
+            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(attribute.ParamId.ToString());
             Value = (bool)attribute.DataObject;
         }
     }

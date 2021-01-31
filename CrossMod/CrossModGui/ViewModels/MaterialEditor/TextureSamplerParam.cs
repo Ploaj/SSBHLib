@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Materials;
+﻿using CrossModGui.Tools;
+using SSBHLib.Formats.Materials;
 using static SSBHLib.Formats.Materials.MatlAttribute;
 
 namespace CrossModGui.ViewModels.MaterialEditor
@@ -80,7 +81,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
         }
 
-        public string TextureSamplerText => $"{ParamId} / {SamplerParamId}";
+        public string TextureSamplerText => $"{ParamId}";
 
         public float LodBias
         {
@@ -110,7 +111,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             this.textureAttribute = textureAttribute;
             this.samplerAttribute = samplerAttribute;
 
-            ParamId = textureAttribute.ParamId.ToString();
+            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(textureAttribute.ParamId.ToString());
             SamplerParamId = samplerAttribute.ParamId.ToString();
             Value = (textureAttribute.DataObject as MatlString)?.Text ?? "";
         }
