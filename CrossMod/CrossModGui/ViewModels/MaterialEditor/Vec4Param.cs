@@ -9,6 +9,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
     {
 
         public string ParamId { get; }
+        public string ParamIdDescription { get; }
         public Brush? ColorBrush { get; set; }
 
         public string Label1 { get; set; } = "X";
@@ -73,11 +74,11 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             this.attribute = attribute;
 
-            var paramIdText = attribute.ParamId.ToString();
-            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(paramIdText);
+            ParamId = attribute.ParamId.ToString();
+            ParamIdDescription = MaterialParamDescriptions.Instance.GetDescriptionText(ParamId);
 
             UpdateColor();
-            TryAssignValuesFromDescription(paramIdText);
+            TryAssignValuesFromDescription(ParamId);
         }
 
         private void UpdateColor()

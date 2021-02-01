@@ -7,6 +7,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class TextureSamplerParam : ViewModelBase
     {
         public string ParamId { get; }
+        public string ParamIdDescription { get; }
         public string SamplerParamId { get; }
 
         public string Value 
@@ -111,7 +112,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
             this.textureAttribute = textureAttribute;
             this.samplerAttribute = samplerAttribute;
 
-            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(textureAttribute.ParamId.ToString());
+            ParamId = textureAttribute.ParamId.ToString();
+            ParamIdDescription = MaterialParamDescriptions.Instance.GetDescriptionText(ParamId);
             SamplerParamId = samplerAttribute.ParamId.ToString();
             Value = (textureAttribute.DataObject as MatlString)?.Text ?? "";
         }

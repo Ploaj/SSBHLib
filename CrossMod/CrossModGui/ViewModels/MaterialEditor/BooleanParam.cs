@@ -6,6 +6,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class BooleanParam : ViewModelBase
     {
         public string ParamId { get; }
+
+        public string ParamIdDescription { get; }
+
         public bool Value
         {
             get => (bool)attribute.DataObject;
@@ -21,7 +24,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public BooleanParam(MatlAttribute attribute)
         {
             this.attribute = attribute;
-            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(attribute.ParamId.ToString());
+            ParamId = attribute.ParamId.ToString();
+            ParamIdDescription = MaterialParamDescriptions.Instance.GetDescriptionText(ParamId);
             Value = (bool)attribute.DataObject;
         }
     }

@@ -6,6 +6,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
     public class FloatParam : ViewModelBase
     {
         public string ParamId { get; }
+        public string ParamIdDescription { get; }
+
         public float Min { get; } = 0.0f;
         public float Max { get; } = 1.0f;
 
@@ -24,7 +26,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public FloatParam(MatlAttribute attribute)
         {
             this.attribute = attribute;
-            ParamId = MaterialParamDescriptions.Instance.GetDescriptionText(attribute.ParamId.ToString());
+            ParamId = attribute.ParamId.ToString();
+            ParamIdDescription = MaterialParamDescriptions.Instance.GetDescriptionText(ParamId);
         }
     }
 }
