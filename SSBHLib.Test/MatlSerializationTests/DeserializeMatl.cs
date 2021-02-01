@@ -1,22 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SsbhLib.MatlXml;
 using System.IO;
-using System.Reflection;
 
 namespace SsbhLib.Test.MatlSerializationTests
 {
     [TestClass]
     public class DeserializeMatl
     {
-        private static string ReadResourceTextFile(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            using var stream = assembly.GetManifestResourceStream(resourceName);
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
-        }
-
         [TestMethod]
         public void EmptyMatl()
         {
@@ -32,7 +22,7 @@ namespace SsbhLib.Test.MatlSerializationTests
         [TestMethod]
         public void DeserializeMarioC00()
         {
-            var source = ReadResourceTextFile("SsbhLib.Test.MatlSerializationTests.marioc00.xml");
+            var source = TestResources.ReadResourceTextFile("SsbhLib.Test.MatlSerializationTests.marioc00.xml");
 
             var reader = new StringReader(source);
             var matl = MatlSerialization.DeserializeMatl(reader);
