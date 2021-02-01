@@ -137,6 +137,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 return;
 
             // Find the entry for the selected preset.
+            if (MaterialPresets.MaterialPresets.Presets.Value == null)
+                return;
+
             var presetMaterial = MaterialPresets.MaterialPresets.Presets.Value.Entries
                 .Where(e => e.MaterialLabel == selectedPreset.Name)
                 .FirstOrDefault();

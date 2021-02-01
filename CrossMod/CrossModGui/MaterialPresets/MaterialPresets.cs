@@ -7,13 +7,21 @@ namespace CrossModGui.MaterialPresets
 {
     public static class MaterialPresets
     {
-        public static Lazy<Matl> Presets = new Lazy<Matl>(() => LoadPresets());
+        public static Lazy<Matl?> Presets = new Lazy<Matl?>(() => LoadPresets());
 
-        private static Matl LoadPresets()
+        private static Matl? LoadPresets()
         {
             // TODO: This may fail to read the file successfully.
-            using var reader = new StringReader(File.ReadAllText("MaterialPresets/MaterialPresets.xml"));
-            return MatlSerialization.DeserializeMatl(reader);
+            try
+            {
+                using var reader = new StringReader(File.ReadAllText("MaterialPresets/MaterialPresets.xml"));
+                return MatlSerialization.DeserializeMatl(reader);
+            }
+            catch (Exception)
+            {
+                // TODO: Log the error
+                return null;
+            }
         }
     }
 }
