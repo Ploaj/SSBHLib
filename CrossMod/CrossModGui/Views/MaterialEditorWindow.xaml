@@ -81,8 +81,10 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Shader Label</TextBlock>
                         <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Vertex Attributes</TextBlock>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Render Pass</TextBlock>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="5,2" ItemsSource="{Binding CurrentMaterial.RenderPasses}" SelectedItem="{Binding CurrentMaterial.SelectedRenderPass}"></ComboBox>
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Vertex Attributes</TextBlock>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
                     </Grid>
                     <Label Margin="0,10,0,0">Material Parameters</Label>
                     <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">

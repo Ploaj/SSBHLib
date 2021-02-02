@@ -218,16 +218,15 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             var idColor = UniqueColors.IndexToColor(index);
 
-            var material = new Material
+            var material = new Material(entry)
             {
-                Name = entry.MaterialLabel,
-                ShaderLabel = entry.ShaderLabel,
                 MaterialIdColor = new SolidColorBrush(Color.FromArgb(255,
                     (byte)idColor.X,
                     (byte)idColor.Y,
                     (byte)idColor.Z)),
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
+                RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel)
             };
             AddAttributesToMaterial(entry, material);
             return material;

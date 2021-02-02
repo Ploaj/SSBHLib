@@ -1,4 +1,6 @@
-﻿using CrossMod.Rendering.GlTools;
+﻿using SSBHLib.Formats.Materials;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
@@ -6,9 +8,38 @@ namespace CrossModGui.ViewModels.MaterialEditor
 {
     public class Material : ViewModelBase
     {
-        public string Name { get; set; } = "";
+        public string Name
+        {
+            get => entry.MaterialLabel;
+            set
+            {
+                entry.MaterialLabel = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string ShaderLabel { get; set; } = "";
+        public string ShaderLabel 
+        { 
+            get => entry.ShaderLabel; 
+            set
+            {
+                entry.ShaderLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // TODO: Selected render pass should be based on shader label.
+        public string SelectedRenderPass
+        {
+            get => entry.ShaderLabel.Substring(Math.Min(25, entry.ShaderLabel.Length));
+            set
+            {
+                entry.ShaderLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<string> RenderPasses { get; set; } = new List<string>();
 
         public SolidColorBrush? MaterialIdColor { get; set; }
 
@@ -25,5 +56,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public ObservableCollection<Vec4Param> Vec4Params { get; } = new ObservableCollection<Vec4Param>();
 
         public ObservableCollection<TextureSamplerParam> TextureParams { get; } = new ObservableCollection<TextureSamplerParam>();
+
+        private readonly MatlEntry entry;
+
+        public Material(MatlEntry entry)
+        {
+            this.entry = entry;
+        }
     }
 }
