@@ -9,6 +9,19 @@ namespace CrossMod.MaterialValidation
     {
         const string connectionString = "Data Source=Nufxb.db";
 
+        private static List<string> ReadStrings(SqliteCommand command)
+        {
+            var records = new List<string>();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    records.Add(reader.GetString(0));
+                }
+            }
+            return records;
+        }
+
         /// <summary>
         /// Gets the names of the vertex attributes used by <paramref name="shaderLabel"/>.
         /// This does not include Position0, Normal0, or Tangent0.
@@ -36,16 +49,28 @@ namespace CrossMod.MaterialValidation
                 ";
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
 
-            var attributes = new List<string>();
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    attributes.Add(reader.GetString(0));
-                }
-            }
+            var result = ReadStrings(command);
+            return result;
+        }
 
-            return attributes;
+        public static List<string> GetRenderPasses(string shaderLabel)
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                    SELECT DISTINCT SUBSTR(Name, 26) as Name 
+                    FROM ShaderProgram
+                    WHERE 
+	                    SUBSTR(Name, 0, 25) = SUBSTR($shaderLabel, 0, 25) AND 
+                        LENGTH(Name) >= 25
+                ";
+            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+
+            var result = ReadStrings(command);
+            return result;
         }
 
         /// <summary>
@@ -218,14 +243,7 @@ namespace CrossMod.MaterialValidation
                 ";
             command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
 
-            var actualAttributes = new List<string>();
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    actualAttributes.Add(reader.GetString(0));
-                }
-            }
+            var actualAttributes = ReadStrings(command);
 
             // TODO: Don't assume that shaders have position, normals, and tangents.
             // Only color sets and texture coordinates are in the current database.
