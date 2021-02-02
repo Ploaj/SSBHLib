@@ -53,6 +53,14 @@ namespace CrossMod.MaterialValidation
             return result;
         }
 
+        /// <summary>
+        /// Gets the valid render pass tags for <paramref name="shaderLabel"/>.
+        /// <paramref name="shaderLabel"/> can be of the form "SFX_PBS_010002000800824f_opaque" 
+        /// or "SFX_PBS_010002000800824f" (no tag). 
+        /// Most shaders will return "opaque", "sort", "far", "near".
+        /// </summary>
+        /// <param name="shaderLabel">The name of the shader with or without the tag</param>
+        /// <returns>The render pass tags for <paramref name="shaderLabel"/></returns>
         public static List<string> GetRenderPasses(string shaderLabel)
         {
             using var connection = new SqliteConnection(connectionString);
