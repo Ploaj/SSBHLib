@@ -220,18 +220,41 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sss
     return result;
 }
 
-float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness)
+// Create a rotation matrix to rotate around an arbitrary axis.
+//http://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/
+mat4 rotationMatrix(vec3 axis, float angle)
 {
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
+float SpecularBrdf(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 normal, float roughness, float anisotropicRotation)
+{
+    float angle = anisotropicRotation * 3.14159;
+    mat4 tangentMatrix = rotationMatrix(normal, angle);
+    vec3 rotatedTangent = mat3(tangentMatrix) * tangent.xyz; 
+    // TODO: How is this calculated?
+    vec3 rotatedBitangent = GetBitangent(normal, rotatedTangent, tangent.w);
     // The two BRDFs look very different so don't just use anisotropic for everything.
     if (hasCustomFloat10 == 1)
-        return GgxAnisotropic(nDotH, halfAngle, tangent.xyz, bitangent, roughness, CustomFloat[10].x);
+        return GgxAnisotropic(nDotH, halfAngle, rotatedTangent, rotatedBitangent, roughness, CustomFloat[10].x);
     else
         return Ggx(nDotH, nDotL, nDotV, roughness);
 }
 
-vec3 SpecularTerm(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 bitangent, float roughness, vec3 specularIbl, float metalness)
+vec3 SpecularTerm(float nDotH, float nDotL, float nDotV, vec3 halfAngle, vec3 normal, 
+    float roughness, vec3 specularIbl, float metalness, float anisotropicRotation)
 {
-    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0 * SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, bitangent, roughness) * directLightIntensity;
+    vec3 directSpecular = LightCustomVector0.xyz * LightCustomFloat0;
+    directSpecular *= SpecularBrdf(nDotH, nDotL, nDotV, halfAngle, normal, roughness, anisotropicRotation);
+    directSpecular *= directLightIntensity;
     vec3 indirectSpecular = specularIbl;
     // TODO: Why is the indirect specular off by a factor of 0.5?
     vec3 specularTerm = (directSpecular * CustomBoolean[3].x) + (indirectSpecular * CustomBoolean[4].x * 0.5);
@@ -455,7 +478,7 @@ void main()
 
     vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, vertexAmbient, ambientOcclusion, sssBlend);
 
-    vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, bitangent, roughness, specularIbl, metalness);
+    vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, normalize(vertexNormal), roughness, specularIbl, metalness, prmColor.a);
 
     vec3 kSpecular = GetSpecularWeight(specularF0, albedoColorFinal.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1.0) - kSpecular) * (1.0 - metalness), 0.0);
