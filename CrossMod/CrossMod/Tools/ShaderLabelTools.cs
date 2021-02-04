@@ -1,19 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CrossMod.Tools
 {
     public static class ShaderLabelTools
     {
-        public static string GetRenderPass(string shaderLabel)
+        public static string GetRenderPass(string? shaderLabel)
         {
-            return "";
+            if (string.IsNullOrEmpty(shaderLabel))
+                return "";
+
+            return shaderLabel[Math.Min(25, shaderLabel.Length)..];
         }
 
-        public static string WithRenderPass(string shaderLabel)
+        public static string WithRenderPass(string? shaderLabel, string renderPass)
         {
-            return shaderLabel;
+            if (string.IsNullOrEmpty(shaderLabel))
+                return $"_{renderPass}";
+
+            return $"{shaderLabel[..24]}_{renderPass}";
         }
     }
 }

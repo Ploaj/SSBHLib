@@ -118,42 +118,31 @@ namespace CrossMod.Rendering.Models
             currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
         }
 
+        private static int GetOrder(string shaderLabel)
+        {
+            // Shader labels with _sort or _far get rendered in a second pass for proper alpha blending.
+            // Shader labels with _near get rendered last after post processing is done.
+
+            if (shaderLabel.EndsWith("_opaque"))
+                return 0;
+            else if (shaderLabel.EndsWith("_far"))
+                return 1;
+            else if (shaderLabel.EndsWith("_sort"))
+                return 2;
+            else if (shaderLabel.EndsWith("_near"))
+                return 3;
+            else
+                return 0;
+        }
+
         public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer)
         {
-            GroupSubMeshesByPass(subMeshes,
-                out List<Tuple<RMesh, RSkeleton?>> opaqueMeshes,
-                out List<Tuple<RMesh, RSkeleton?>> sortMeshes,
-                out List<Tuple<RMesh, RSkeleton?>> nearMeshes,
-                out List<Tuple<RMesh, RSkeleton?>> farMeshes);
-
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
             RSkeleton? previousSkeleton = null;
 
-            foreach (var m in opaqueMeshes)
-            {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
-                previousMaterial = m.Item1.Material;
-                previousSkeleton = m.Item2;
-            }
-
-            // Shader labels with _sort or _far get rendered in a second pass for proper alpha blending.
-            foreach (var m in farMeshes)
-            {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
-                previousMaterial = m.Item1.Material;
-                previousSkeleton = m.Item2;
-            }
-
-            foreach (var m in sortMeshes)
-            {
-                DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
-                previousMaterial = m.Item1.Material;
-                previousSkeleton = m.Item2;
-            }
-
-            // Shader labels with _near get rendered last after post processing is done.
-            foreach (var m in nearMeshes)
+            // Just put meshes without a shader label or proper render pass tag with opaque for now.
+            foreach (var m in subMeshes.OrderBy(m => GetOrder(m?.Item1?.Material?.ShaderLabel ?? "")))
             {
                 DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;

@@ -1,4 +1,5 @@
-﻿using SSBHLib.Formats.Materials;
+﻿using CrossMod.Tools;
+using SSBHLib.Formats.Materials;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,13 +29,12 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
         }
 
-        // TODO: Selected render pass should be based on shader label.
         public string SelectedRenderPass
         {
-            get => entry.ShaderLabel.Substring(Math.Min(25, entry.ShaderLabel.Length));
+            get => ShaderLabelTools.GetRenderPass(entry.ShaderLabel);
             set
             {
-                entry.ShaderLabel = value;
+                ShaderLabel = ShaderLabelTools.WithRenderPass(entry.ShaderLabel, value);
                 OnPropertyChanged();
             }
         }

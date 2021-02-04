@@ -239,6 +239,18 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         private void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
         {
+            material.PropertyChanged += (s, e) =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(Material.ShaderLabel):
+                        rMaterial.ShaderLabel = material.ShaderLabel;
+                        OnRenderFrameNeeded();
+                        break;
+                    default:
+                        break;
+                }
+            };
             SyncBooleans(rMaterial, material);
             SyncFloats(rMaterial, material);
             SyncTexturesSamplers(rMaterial, material);

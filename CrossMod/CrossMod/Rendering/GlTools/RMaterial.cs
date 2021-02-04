@@ -17,8 +17,8 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public class RMaterial
     {
-        public string MaterialLabel { get; }
-        public string ShaderLabel { get; }
+        public string MaterialLabel { get; set; }
+        public string ShaderLabel { get; set; }
         public int Index { get; }
 
         public bool HasColorSet1 { get; }
