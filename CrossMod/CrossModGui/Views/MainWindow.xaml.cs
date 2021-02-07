@@ -194,6 +194,17 @@ namespace CrossModGui.Views
             viewModel.Renderer.ReloadShaders();
         }
 
+        private void SaveScreenshot_Click(object sender, RoutedEventArgs e)
+        {
+            RenderFrameIfNeeded();
+            using var bmp = viewModel.Renderer.GetScreenshot();
+            if (FileTools.TryOpenSaveFileDialog(out string fileName, "PNG (*.png)|*.png*", "screenshot.png"))
+            {
+                bmp.Save(fileName);
+            }
+        }
+
+
         private void BatchRenderModels_Click(object sender, RoutedEventArgs e)
         {
             if (!FileTools.TryOpenFolderDialog(out string folderPath, "Select Source Directory"))

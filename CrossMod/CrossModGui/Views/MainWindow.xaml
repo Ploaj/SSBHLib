@@ -48,6 +48,7 @@
             <MenuItem Header="Viewport">
                 <MenuItem Header="Frame Model" Click="FrameModel_Click"/>
                 <MenuItem Header="Clear Viewport" Click="ClearViewport_Click"/>
+                <MenuItem Header="Save Screenshot" Click="SaveScreenshot_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Window">
                 <MenuItem IsCheckable="True" Header="File Tree" IsChecked="True" Click="FileTreeMenu_Click"></MenuItem>
