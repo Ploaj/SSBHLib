@@ -1,4 +1,5 @@
-﻿using CrossMod.Rendering.Models;
+﻿using CrossMod.MaterialValidation;
+using CrossMod.Rendering.Models;
 using CrossMod.Rendering.Resources;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -88,15 +89,17 @@ namespace CrossMod.Rendering.GlTools
             MaterialLabel = materialLabel;
             ShaderLabel = shaderLabel;
             Index = index;
-            IsValidShaderLabel = MaterialValidation.ShaderValidation.IsValidShaderLabel(ShaderLabel);
-            HasColorSet1 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet1");
-            HasColorSet2 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet2");
-            HasColorSet3 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet3");
-            HasColorSet4 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet4");
-            HasColorSet5 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet5");
-            HasColorSet6 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet6");
-            HasColorSet7 = MaterialValidation.ShaderValidation.HasAttribute(shaderLabel, "colorSet7");
+            IsValidShaderLabel = ShaderValidation.IsValidShaderLabel(ShaderLabel);
 
+            // This is faster than accessing the database multiple times.
+            var attributes = ShaderValidation.GetAttributes(ShaderLabel);
+            HasColorSet1 = attributes.Contains("colorSet1");
+            HasColorSet2 = attributes.Contains("colorSet2");
+            HasColorSet3 = attributes.Contains("colorSet3");
+            HasColorSet4 = attributes.Contains("colorSet4");
+            HasColorSet5 = attributes.Contains("colorSet5");
+            HasColorSet6 = attributes.Contains("colorSet6");
+            HasColorSet7 = attributes.Contains("colorSet7");
         }
 
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
