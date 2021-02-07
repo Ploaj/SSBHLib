@@ -67,7 +67,13 @@ namespace CrossMod.Rendering
         public void FrameRenderableModels()
         {
             if (itemToRender is IRenderableModel model && model.RenderModel != null)
+            {
                 Camera.FrameBoundingSphere(model.RenderModel.BoundingSphere, 0);
+            }
+            else if (itemToRender is ModelCollection collection)
+            {
+                Camera.FrameBoundingSphere(collection.BoundingSphere);
+            }
         }
 
         public void UpdateCameraFromMouse()
