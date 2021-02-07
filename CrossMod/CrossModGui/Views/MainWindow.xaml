@@ -18,6 +18,7 @@
     <Window.Resources>
         <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Open Folder" />
+        <RoutedUICommand x:Key="ReloadShadersCommand" Text="Reload Shaders" />
         <RoutedUICommand x:Key="OpenFolderRecursiveCommand" Text="Open Folder and all Subfolders" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
     </Window.Resources>
@@ -25,9 +26,11 @@
         <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolder_Click" />
         <CommandBinding Command="{StaticResource OpenFolderRecursiveCommand}" Executed="OpenFolderRecursive_Click" />
         <CommandBinding Command="{StaticResource ClearWorkspaceCommand}" Executed="ClearWorkspace_Click" />
+        <CommandBinding Command="{StaticResource ReloadShadersCommand}" Executed="ReloadShaders_Click" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Command="{StaticResource OpenFolderCommand}" Key="O" Modifiers="Ctrl"/>
+        <KeyBinding Command="{StaticResource ReloadShadersCommand}" Key="F5"/>
     </Window.InputBindings>
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
@@ -35,8 +38,6 @@
                 <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Open Folder and all Subfolders" Command="{StaticResource OpenFolderRecursiveCommand}"/>
                 <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
-                <Separator></Separator>
-                <MenuItem Header="Reload Shaders" Click="ReloadShaders_Click"/>
             </MenuItem>
             <MenuItem Header="Menu">
                 <MenuItem Header="Render Settings" Click="RenderSettings_Click"/>
@@ -54,6 +55,7 @@
             </MenuItem>
             <MenuItem Header="Experimental">
                 <MenuItem Header="Batch Render Models" Click="BatchRenderModels_Click"/>
+                <MenuItem Header="Reload Shaders" Command="{StaticResource ReloadShadersCommand}" InputGestureText="F5"/>
             </MenuItem>
         </Menu>
         <DockPanel LastChildFill="True">
