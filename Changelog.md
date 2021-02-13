@@ -1,4 +1,11 @@
 # Cross Mod
+**v0.15**
+* Added material presets. In the material editor, click Material > Select Preset, select a preset from the list, and click Apply Preset. This applies to the currently selected material in the dropdown.
+* Improved anisotropic specular shading for hair
+* Improved CPU usage while using the material editor or editing render settings
+* Added descriptions for some material parameters in the material editor
+* Added an option to save a screenshot of the viewport by clicking Viewport > Save Screenshot
+
 **v0.14**
 * Improvements to ambient diffuse lighting
 * Improved skin shading and CustomVector11/CustomVector30 rendering
