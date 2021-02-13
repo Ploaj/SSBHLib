@@ -5,6 +5,7 @@
 * Improved CPU usage while using the material editor or editing render settings
 * Added descriptions for some material parameters in the material editor
 * Added an option to save a screenshot of the viewport by clicking Viewport > Save Screenshot
+* Added the ability to edit the render pass for the selected shader in the material editor.
 
 **v0.14**
 * Improvements to ambient diffuse lighting
