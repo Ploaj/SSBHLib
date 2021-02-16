@@ -395,6 +395,7 @@ namespace SSBHLib.Tools
             w.Write(0);
             w.Write(0);
             w.Write(0);
+            w.Write((byte)0);
 
             BitWriter bitWriter = new BitWriter();
             foreach (bool b in values)
