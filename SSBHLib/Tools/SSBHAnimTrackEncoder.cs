@@ -429,7 +429,7 @@ namespace SSBHLib.Tools
 
             bitsPerEntry = (short)(v1.GetBitCount(epsilon) + v2.GetBitCount(epsilon) + v3.GetBitCount(epsilon) + v4.GetBitCount(epsilon));
 
-            //TODO: this is bugged
+
             // Write Compressed Header
             w.Write((short)0x04);
             w.Write(flags);
@@ -439,10 +439,10 @@ namespace SSBHLib.Tools
             w.Write(values.Count); // frame count
 
             // table
-            w.Write(v1.Min); w.Write(v1.Max); w.Write(v1.GetBitCount(epsilon));
-            w.Write(v2.Min); w.Write(v2.Max); w.Write(v2.GetBitCount(epsilon));
-            w.Write(v3.Min); w.Write(v3.Max); w.Write(v3.GetBitCount(epsilon));
-            w.Write(v4.Min); w.Write(v4.Max); w.Write(v4.GetBitCount(epsilon));
+            w.Write(v1.Min); w.Write(v1.Max); w.Write(v1.GetBitCount(epsilon)); w.Write(0);
+            w.Write(v2.Min); w.Write(v2.Max); w.Write(v2.GetBitCount(epsilon)); w.Write(0);
+            w.Write(v3.Min); w.Write(v3.Max); w.Write(v3.GetBitCount(epsilon)); w.Write(0);
+            w.Write(v4.Min); w.Write(v4.Max); w.Write(v4.GetBitCount(epsilon)); w.Write(0);
 
             // default values
             w.Write(((AnimTrackCustomVector4)values[0]).X);
