@@ -94,7 +94,7 @@ namespace SSBHLib.Tools
         /// <returns>An empty array if <paramref name="attributeName"/> does not exist</returns>
         public SsbhVertexAttribute[] ReadAttribute(string attributeName, MeshObject meshObject)
         {
-            return ReadAttribute(attributeName, 0, meshObject.VertexCount, meshObject);
+            return ReadAttribute(attributeName, meshObject.VertexCount, meshObject);
         }
 
         /// <summary>
@@ -105,25 +105,24 @@ namespace SSBHLib.Tools
         /// <returns>An empty array if <paramref name="attribute"/> does not exist</returns>
         public SsbhVertexAttribute[] ReadAttribute(MeshAttribute attribute, MeshObject meshObject)
         {
-            return ReadAttribute(attribute, 0, meshObject.VertexCount, meshObject);
+            return ReadAttribute(attribute, meshObject.VertexCount, meshObject);
         }
 
         /// <summary>
         /// Reads the attribute data from the mesh object with the given name
         /// </summary>
         /// <param name="attributeName">The name of the vertex attribute</param>
-        /// <param name="position"></param>
         /// <param name="count">The number of elements to read</param>
         /// <param name="meshObject">The mesh containing the attribute data</param>
         /// <returns>An empty array if <paramref name="attributeName"/> does not exist</returns>
-        public SsbhVertexAttribute[] ReadAttribute(string attributeName, int position, int count, MeshObject meshObject)
+        public SsbhVertexAttribute[] ReadAttribute(string attributeName, int count, MeshObject meshObject)
         {
             MeshAttribute attr = GetAttribute(attributeName, meshObject);
 
-            return ReadAttribute(attr, position, count, meshObject);
+            return ReadAttribute(attr, count, meshObject);
         }
 
-        private SsbhVertexAttribute[] ReadAttribute(MeshAttribute attr, int position, int count, MeshObject meshObject)
+        private SsbhVertexAttribute[] ReadAttribute(MeshAttribute attr, int count, MeshObject meshObject)
         {
             if (attr == null)
             {
@@ -147,140 +146,49 @@ namespace SSBHLib.Tools
 
             using (BinaryReader attributeBuffer = new BinaryReader(new MemoryStream(meshFile.VertexBuffers[attr.BufferIndex].Buffer)))
             {
-                switch (attributeLength)
-                {
-                    case 1:
-                        attributes = ReadAttributeScalar(attr, position, count, attributeBuffer, offset, stride);
-                        break;
-                    case 2:
-                        attributes = ReadAttributeVec2(attr, position, count, attributeBuffer, offset, stride);
-                        break;
-                    case 3:
-                        attributes = ReadAttributeVec3(attr, position, count, attributeBuffer, offset, stride);
-                        break;
-                    case 4:
-                        attributes = ReadAttributeVec4(attr, position, count, attributeBuffer, offset, stride);
-                        break;
-                }
+                attributes = ReadAttribute(attr, count, attributeBuffer, offset, stride, attributeLength);
             }
 
             return attributes;
         }
 
-        // TODO: It may be better to convert bytes to floating point by dividing by 255.0f.
-        private SsbhVertexAttribute[] ReadAttributeScalar(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
+        private SsbhVertexAttribute[] ReadAttribute(MeshAttribute attr, int count, BinaryReader buffer, int offset, int stride, int attributeLength)
         {
             var format = attr.DataType;
             var attributes = new SsbhVertexAttribute[count];
 
             for (int i = 0; i < count; i++)
             {
-                buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
+                buffer.BaseStream.Position = offset + attr.BufferOffset + stride * i;
+
+                attributes[i] = new SsbhVertexAttribute();
 
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
                     case MeshAttribute.AttributeDataType.Byte:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), 0, 0, 0);
+                        for (int j = 0; j < attributeLength; j++)
+                        {
+                            attributes[i][j] = buffer.ReadByte();
+                        }
                         break;
                     case MeshAttribute.AttributeDataType.Float:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), 0, 0, 0);
+                        for (int j = 0; j < attributeLength; j++)
+                        {
+                            attributes[i][j] = buffer.ReadSingle();
+                        }
                         break;
                     case MeshAttribute.AttributeDataType.HalfFloat:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), 0, 0, 0);
+                        for (int j = 0; j < attributeLength; j++)
+                        {
+                            attributes[i][j] = ReadHalfFloat(buffer);
+                        }
                         break;
                     case MeshAttribute.AttributeDataType.HalfFloat2:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), 0, 0, 0);
-                        break;
-                }
-            }
-
-            return attributes;
-        }
-
-        private SsbhVertexAttribute[] ReadAttributeVec2(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
-        {
-            var format = attr.DataType;
-            var attributes = new SsbhVertexAttribute[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
-
-                switch (format)
-                {
-                    // TODO: Add option to not convert smaller types to larger types.
-                    case MeshAttribute.AttributeDataType.Byte:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), 0, 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.Float:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), 0, 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0, 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat2:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0, 0);
-                        break;
-                }
-            }
-
-            return attributes;
-        }
-
-        private SsbhVertexAttribute[] ReadAttributeVec3(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
-        {
-            var format = attr.DataType;
-            var attributes = new SsbhVertexAttribute[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
-
-                switch (format)
-                {
-                    // TODO: Add option to not convert smaller types to larger types.
-                    case MeshAttribute.AttributeDataType.Byte:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.Float:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle(), 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0);
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat2:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), 0);
-                        break;
-                }
-            }
-
-            return attributes;
-        }
-
-        private SsbhVertexAttribute[] ReadAttributeVec4(MeshAttribute attr, int position, int count, BinaryReader buffer, int offset, int stride)
-        {
-            var format = attr.DataType;
-            var attributes = new SsbhVertexAttribute[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                buffer.BaseStream.Position = offset + attr.BufferOffset + stride * (position + i);
-
-                switch (format)
-                {
-                    // TODO: Add option to not convert smaller types to larger types.
-                    case MeshAttribute.AttributeDataType.Byte:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte(), buffer.ReadByte());
-                        break;
-                    case MeshAttribute.AttributeDataType.Float:
-                        attributes[i] = new SsbhVertexAttribute(buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle(), buffer.ReadSingle());
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer));
-                        break;
-                    case MeshAttribute.AttributeDataType.HalfFloat2:
-                        attributes[i] = new SsbhVertexAttribute(ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer), ReadHalfFloat(buffer));
+                        for (int j = 0; j < attributeLength; j++)
+                        {
+                            attributes[i][j] = ReadHalfFloat(buffer);
+                        }
                         break;
                 }
             }

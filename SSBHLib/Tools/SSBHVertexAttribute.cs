@@ -26,6 +26,46 @@
             W = w;
         }
 
+        public float this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    case 2:
+                        return Z;
+                    case 3:
+                        return W;
+                    default:
+                        throw new System.IndexOutOfRangeException($"Index {index} must be greater or equal to 0 and less than 4.");
+                }
+            }
+            set 
+            {
+                switch (index)
+                {
+                    case 0:
+                        X = value;
+                        break;
+                    case 1:
+                        Y = value;
+                        break;
+                    case 2:
+                        Z = value;
+                        break;
+                    case 3:
+                        W = value;
+                        break;
+                    default:
+                        throw new System.IndexOutOfRangeException($"Index {index} must be greater or equal to 0 and less than 4.");
+                }
+            }
+        }
+
         public override string ToString()
         {
             return $"{X},{Y},{Z},{W}";
