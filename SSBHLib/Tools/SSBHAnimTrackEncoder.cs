@@ -602,7 +602,7 @@ namespace SSBHLib.Tools
                         ry.DecompressedValue(transform.Ry) * ry.DecompressedValue(transform.Ry) +
                         rz.DecompressedValue(transform.Rz) * rz.DecompressedValue(transform.Rz))));
 
-                    writer.WriteBits(Math.Sign((int)transform.Rw) != Math.Sign((int)calculateW) ? 1 : 0, 1);
+                    writer.WriteBits(Math.Sign(transform.Rw) != Math.Sign(calculateW) ? 1 : 0, 1);
                 }
             }
 
