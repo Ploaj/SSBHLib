@@ -286,26 +286,29 @@ vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV,
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float occlusion)
+vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float occlusion, vec3 vertexAmbient)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
+
+    // TODO: How is the overall intensity controlled?
+    // Hardcoded shader constant.
+    float rimIntensity = 0.2125999927520752; 
+    // rimColor *= rimIntensity;
+
+    // TODO: There some sort of directional lighting that controls the intensity of this effect.
+    // This appears to be lighting done in the vertex shader.
+    rimColor *= vertexAmbient;
 
     // TODO: Black edges for large blend values?
     // Edge tint.
     rimColor *= clamp(mix(vec3(1.0), diffusePass, CustomFloat[8].x), 0.0, 1.0);
 
-    // TODO: There some sort of directional lighting that controls the intensity of this effect.
-    // This appears to be lighting done in the vertex shader.
-
-    // TODO: How is the overall intensity controlled?
-    // Hardcoded shader constant.
-    float rimIntensity = 0.2125999927520752; 
-
     float fresnel = pow(1 - nDotV, 5.0);
     float rimBlend = fresnel * LightCustomVector8.w * CustomVector[14].w * 0.6;
     rimBlend *= occlusion;
 
-    return mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
+    vec3 result = mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
+    return result;
 }
 
 float RoughnessToLod(float roughness)
@@ -494,7 +497,7 @@ void main()
         fragColor0.rgb += EmissionTerm(emissionColor);
 
     if (renderRimLighting == 1)
-        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, norColor.a * prmColor.b);
+        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, norColor.a * prmColor.b, vertexAmbient);
 
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
