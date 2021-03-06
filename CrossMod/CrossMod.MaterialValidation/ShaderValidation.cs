@@ -7,7 +7,7 @@ namespace CrossMod.MaterialValidation
 {
     public static class ShaderValidation
     {
-        const string connectionString = "Data Source=Nufxb.db";
+        const string connectionString = "Data Source=Nufx.db";
 
         private static List<string> ReadStrings(SqliteCommand command)
         {
@@ -27,7 +27,6 @@ namespace CrossMod.MaterialValidation
         /// This does not include Position0, Normal0, or Tangent0.
         /// </summary>
         /// <param name="shaderLabel">The name of the shader, including the render pass tag</param>
-        /// 
         /// <returns>The vertex attribute names for <paramref name="shaderLabel"/></returns>
         public static List<string> GetAttributes(string shaderLabel)
         {
@@ -47,7 +46,7 @@ namespace CrossMod.MaterialValidation
 		                    Name = $shaderLabel
                     )
                 ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             var result = ReadStrings(command);
             return result;
@@ -63,22 +62,12 @@ namespace CrossMod.MaterialValidation
         /// <returns>The render pass tags for <paramref name="shaderLabel"/></returns>
         public static List<string> GetRenderPasses(string shaderLabel)
         {
-            using var connection = new SqliteConnection(connectionString);
-            connection.Open();
+            // Assume any valid shader can use all the render passes.
+            // The nuc2effectlibrary.nufxlb isn't set up this way, but this saves a lot of space on disk.
+            if (IsValidShaderLabel(shaderLabel))
+                return new List<string> { "opaque", "sort", "far", "near" };
 
-            var command = connection.CreateCommand();
-            command.CommandText =
-                @"
-                    SELECT DISTINCT SUBSTR(Name, 26) as Name 
-                    FROM ShaderProgram
-                    WHERE 
-	                    SUBSTR(Name, 0, 25) = SUBSTR($shaderLabel, 0, 25) AND 
-                        LENGTH(Name) >= 25
-                ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
-
-            var result = ReadStrings(command);
-            return result;
+            return new List<string>();
         }
 
         /// <summary>
@@ -105,7 +94,7 @@ namespace CrossMod.MaterialValidation
 		                    Name = $shaderLabel
                     )
                 ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             var parameters = new List<MatlEnums.ParamId>();
             using (var reader = command.ExecuteReader())
@@ -127,7 +116,7 @@ namespace CrossMod.MaterialValidation
         /// <returns><c>true</c> if the attribute is associated with the shader</returns>
         public static bool HasAttribute(string shaderLabel, string attributeName)
         {
-            using var connection = new SqliteConnection("Data Source=Nufxb.db");
+            using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
             // TODO: Use the decompiled shader attribute table.
@@ -147,7 +136,7 @@ namespace CrossMod.MaterialValidation
                     )
                 ";
             command.Parameters.AddWithValue("$attribute", attributeName);
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             // Read() returns true if there are any results.
             using var reader = command.ExecuteReader();
@@ -175,7 +164,7 @@ namespace CrossMod.MaterialValidation
                     WHERE 
                         Name = $shaderLabel
                 ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             // Read() returns true if there are any results.
             using var reader = command.ExecuteReader();
@@ -207,7 +196,7 @@ namespace CrossMod.MaterialValidation
 		                    Name = $shaderLabel
                     )
                 ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             var actualParameters = new List<MatlEnums.ParamId>();
             using (var reader = command.ExecuteReader())
@@ -249,7 +238,7 @@ namespace CrossMod.MaterialValidation
 		                    Name = $shaderLabel
                     )
                 ";
-            command.Parameters.AddWithValue("$shaderLabel", shaderLabel);
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
             var actualAttributes = ReadStrings(command);
 
@@ -262,6 +251,17 @@ namespace CrossMod.MaterialValidation
             // Check that the two lists have the same elements, regardless of order.
             return (actualAttributes.Count == expectedAttributes.Count)
                 && !actualAttributes.Except(expectedAttributes).Any();
+        }
+
+        private static string GetShader(string shaderLabel)
+        {
+            // Assume all the shaders can use any of the render passes (opaque, near, far, sort).
+            // This is a hack to reduce the file size for the database.
+            return shaderLabel
+                .Replace("_opaque", "")
+                .Replace("_near", "")
+                .Replace("_sort", "")
+                .Replace("_far", "");
         }
     }
 }
