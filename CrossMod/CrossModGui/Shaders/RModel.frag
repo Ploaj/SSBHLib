@@ -90,6 +90,7 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
+    int hasRequiredAttributes;
 };
 
 // TODO: Add lighting vectors to a uniform block.
@@ -321,7 +322,7 @@ float RoughnessToLod(float roughness)
     return log2((1.0 / a) * 2.0 - 2.0) * -0.4545 + 4.0;
 }
 
-vec3 GetInvalidShaderLabelColor()
+float GetInvalidCheckerBoard() 
 {
     // TODO: Account for screen resolution and use the values from in game for scaling.
     // TODO: Add proper bloom.
@@ -329,7 +330,17 @@ vec3 GetInvalidShaderLabelColor()
     float checkSize = 0.15;
     float checkerBoard = mod(floor(screenPosition.x * checkSize) + floor(screenPosition.y * checkSize), 2.0);
     float checkerBoardFinal = max(sign(checkerBoard), 0.0);
-    return vec3(mix(0.8,1.0,checkerBoardFinal), 0.0, 0.0);
+    return mix(0.8,1.0,checkerBoardFinal);
+}
+
+vec3 GetInvalidShaderLabelColor()
+{
+    return vec3(GetInvalidCheckerBoard(), 0.0, 0.0);
+}
+
+vec3 GetMissingRequiredAttributeColor()
+{
+    return vec3(GetInvalidCheckerBoard(), GetInvalidCheckerBoard(), 0.0);
 }
 
 float GetAngleFade(float nDotV, float ior, float specularf0) 
@@ -381,8 +392,16 @@ void main()
 {
     // TODO: Organize this code.
     fragColor0 = vec4(0.0, 0.0, 0.0, 1.0);
+
+    // Check the shader label first since required attributes are based on the selected shader.
+    // If the shader label is invalid, we can't determine the invalid attributes anyway.
     if (isValidShaderLabel != 1) {
         fragColor0.rgb = GetInvalidShaderLabelColor();
+        return;
+    }
+
+    if (hasRequiredAttributes != 1) {
+        fragColor0.rgb = GetMissingRequiredAttributeColor();
         return;
     }
 
@@ -498,7 +517,7 @@ void main()
 
     if (renderRimLighting == 1)
         fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, norColor.a * prmColor.b, vertexAmbient);
-
+    
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
 

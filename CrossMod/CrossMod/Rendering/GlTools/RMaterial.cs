@@ -31,6 +31,7 @@ namespace CrossMod.Rendering.GlTools
         public bool HasColorSet7 { get; }
 
         public bool IsValidShaderLabel { get; }
+        public bool HasRequiredAttributes { get; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
 
@@ -90,6 +91,8 @@ namespace CrossMod.Rendering.GlTools
             ShaderLabel = shaderLabel;
             Index = index;
             IsValidShaderLabel = ShaderValidation.IsValidShaderLabel(ShaderLabel);
+            // TODO: This requires knowing the current mesh.
+            HasRequiredAttributes = true;
 
             // This is faster than accessing the database multiple times.
             var attributes = ShaderValidation.GetAttributes(ShaderLabel);
@@ -247,6 +250,7 @@ namespace CrossMod.Rendering.GlTools
 
             // Validate shaders, materials, and attributes.
             uniformBlock.SetValue("isValidShaderLabel", IsValidShaderLabel);
+            uniformBlock.SetValue("hasRequiredAttributes", HasRequiredAttributes);
             uniformBlock.SetValue("hasColorSet1", HasColorSet1);
             uniformBlock.SetValue("hasColorSet2", HasColorSet2);
             uniformBlock.SetValue("hasColorSet3", HasColorSet3);
