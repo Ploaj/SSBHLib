@@ -48,7 +48,9 @@ namespace CrossMod.MaterialValidation
                 ";
             command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
 
-            var result = ReadStrings(command);
+            // These aren't listed in the NUFX but are always required by the shader.
+            var result = new List<string> { "Position0", "Normal0", "Tangent0", };
+            result.AddRange(ReadStrings(command));
             return result;
         }
 
