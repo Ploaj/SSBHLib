@@ -24,7 +24,7 @@ namespace CrossMod.MaterialValidation
 
         /// <summary>
         /// Gets the names of the vertex attributes used by <paramref name="shaderLabel"/>.
-        /// This does not include Position0, Normal0, or Tangent0.
+        /// Position0, Normal0, and Tangent0 are included by default.
         /// </summary>
         /// <param name="shaderLabel">The name of the shader, including the render pass tag</param>
         /// <returns>The vertex attribute names for <paramref name="shaderLabel"/></returns>

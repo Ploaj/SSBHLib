@@ -9,14 +9,24 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void InvalidShaderLabel()
         {
-            CollectionAssert.AreEqual(new List<string>(), ShaderValidation.GetAttributes("SFX_PBS_0000000000000000"));
+            CollectionAssert.AreEqual(new List<string> 
+            {                    
+                "Position0",
+                "Normal0",
+                "Tangent0", 
+            }, 
+            ShaderValidation.GetAttributes("SFX_PBS_0000000000000000"));
         }
 
         [TestMethod]
         public void ValidShaderLabel()
         {
             CollectionAssert.AreEqual(
-                new List<string> {
+                new List<string> 
+                {
+                    "Position0",
+                    "Normal0",
+                    "Tangent0",
                     "colorSet2",
                     "map1",
                 }, 
