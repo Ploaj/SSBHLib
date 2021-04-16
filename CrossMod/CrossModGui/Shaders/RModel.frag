@@ -90,8 +90,9 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
-    int hasRequiredAttributes;
 };
+
+uniform int hasRequiredAttributes;
 
 // TODO: Add lighting vectors to a uniform block.
 // Values taken from the training stage light.nuanmb.

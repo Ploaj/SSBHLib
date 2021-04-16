@@ -9,6 +9,7 @@ using SSBHLib;
 using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CrossMod.Nodes.Conversion
 {
@@ -39,7 +40,9 @@ namespace CrossMod.Nodes.Conversion
                     singleBindIndex,
                     new Vector4(meshObject.BoundingSphereCenter.ToOpenTK(),
                     meshObject.BoundingSphereRadius),
-                    CreateRenderMesh(mesh, skeleton, meshObject, vertexBuffer0, vertexBuffer1)
+                    CreateRenderMesh(mesh, skeleton, meshObject, vertexBuffer0, vertexBuffer1),
+                    // TODO: The actual in game check is more complicated, and involves checking names, subindex, and usage.
+                    meshObject.Attributes.Select(m => m.AttributeStrings[0].Text).ToList()
                 );
 
                 model.SubMeshes.Add(rMesh);

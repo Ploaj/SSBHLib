@@ -8,7 +8,7 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void InvalidShaderLabel()
         {
-            Assert.IsFalse(ShaderValidation.IsValidAttributeList("SFX_PBS_1b01000008008a68",
+            Assert.IsFalse(ShaderValidation.IsValidAttributeList("SFX_PBS_0000000000000000",
                 new string[] {
                     "Position0",
                     "Normal0",
@@ -49,7 +49,7 @@ namespace CrossMod.MaterialValidation.Test
         [TestMethod]
         public void AdditionalAttribute()
         {
-            Assert.IsFalse(ShaderValidation.IsValidAttributeList("SFX_PBS_1b01000008008a68_opaque",
+            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_1b01000008008a68_opaque",
                 new string[] {
                     "Position0",
                     "Normal0",

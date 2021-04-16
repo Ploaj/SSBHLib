@@ -153,9 +153,9 @@ namespace CrossMod.Rendering.Models
         public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
             // Check if the uniform values have already been set for this shader.
-            if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
+            //if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
-                m.Material?.SetMaterialUniforms(currentShader, previousMaterial);
+                m.Material?.SetMaterialUniforms(currentShader, previousMaterial, m.AttributeNames);
                 m.Material?.SetRenderState(previousMaterial);
             }
 
@@ -166,41 +166,6 @@ namespace CrossMod.Rendering.Models
             }
 
             m.Draw(currentShader, skeleton);
-        }
-
-        private static void GroupSubMeshesByPass(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes,
-            out List<Tuple<RMesh, RSkeleton?>> opaqueMeshes,
-            out List<Tuple<RMesh, RSkeleton?>> sortMeshes,
-            out List<Tuple<RMesh, RSkeleton?>> nearMeshes,
-            out List<Tuple<RMesh, RSkeleton?>> farMeshes)
-        {
-            opaqueMeshes = new List<Tuple<RMesh, RSkeleton?>>();
-            sortMeshes = new List<Tuple<RMesh, RSkeleton?>>();
-            nearMeshes = new List<Tuple<RMesh, RSkeleton?>>();
-            farMeshes = new List<Tuple<RMesh, RSkeleton?>>();
-
-            // Meshes are split into render passes based on the shader label.
-            foreach (var m in subMeshes)
-            {
-                if (m.Item1.Material == null)
-                {
-                    opaqueMeshes.Add(m);
-                    continue;
-                }
-
-                // Unrecognized meshes will just be placed in the first pass.
-                // TODO: Does the game use a red checkerboard for missing labels?
-                if (m.Item1.Material.ShaderLabel.EndsWith("_far"))
-                    farMeshes.Add(m);
-                else if (m.Item1.Material.ShaderLabel.EndsWith("_sort"))
-                    sortMeshes.Add(m);
-                else if (m.Item1.Material.ShaderLabel.EndsWith("_near"))
-                    nearMeshes.Add(m);
-                else if (m.Item1.Material.ShaderLabel.EndsWith("_opaque"))
-                    opaqueMeshes.Add(m);
-                else
-                    opaqueMeshes.Add(m);
-            }
         }
     }
 }

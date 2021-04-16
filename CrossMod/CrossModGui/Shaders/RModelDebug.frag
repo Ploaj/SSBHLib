@@ -80,8 +80,9 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
-    int hasRequiredAttributes;
 };
+
+uniform int hasRequiredAttributes;
 
 uniform mat4 mvp;
 uniform mat4 modelView;

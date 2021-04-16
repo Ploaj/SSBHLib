@@ -216,14 +216,18 @@ namespace CrossMod.MaterialValidation
         }
 
         /// <summary>
-        /// Checks if <paramref name="expectedAttributes"/> has exactly the same set of attributes
-        /// as <paramref name="shaderLabel"/>, ignoring the order of elements.
+        /// Checks if <paramref name="expectedAttributes"/> has at least all the attributes
+        /// as <paramref name="shaderLabel"/>, ignoring the order of elements. Invalid <paramref name="shaderLabel"/> 
+        /// values always return <c>false</c>.
         /// </summary>
         /// <param name="shaderLabel">The name of the shader, including the render pass tag</param>
         /// <param name="expectedAttributes">The attribute list to check for the shader</param>
         /// <returns><c>true</c> if the attribute lists match</returns>
         public static bool IsValidAttributeList(string shaderLabel, ICollection<string> expectedAttributes)
         {
+            if (!IsValidShaderLabel(shaderLabel))
+                return false;
+
             using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
@@ -250,9 +254,8 @@ namespace CrossMod.MaterialValidation
             actualAttributes.Add("Normal0");
             actualAttributes.Add("Tangent0");
 
-            // Check that the two lists have the same elements, regardless of order.
-            return (actualAttributes.Count == expectedAttributes.Count)
-                && !actualAttributes.Except(expectedAttributes).Any();
+            // Check that the given attributes contain all the required attributes.
+            return actualAttributes.All(a => expectedAttributes.Contains(a));
         }
 
         private static string GetShader(string shaderLabel)

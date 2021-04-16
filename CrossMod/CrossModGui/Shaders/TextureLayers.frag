@@ -53,8 +53,8 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
-    int hasRequiredAttributes;
 };
+uniform int hasRequiredAttributes;
 
 uniform float floatTestParam;
 

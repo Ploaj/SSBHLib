@@ -31,7 +31,6 @@ namespace CrossMod.Rendering.GlTools
         public bool HasColorSet7 { get; }
 
         public bool IsValidShaderLabel { get; }
-        public bool HasRequiredAttributes { get; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
 
@@ -91,8 +90,6 @@ namespace CrossMod.Rendering.GlTools
             ShaderLabel = shaderLabel;
             Index = index;
             IsValidShaderLabel = ShaderValidation.IsValidShaderLabel(ShaderLabel);
-            // TODO: This requires knowing the current mesh.
-            HasRequiredAttributes = true;
 
             // This is faster than accessing the database multiple times.
             var attributes = ShaderValidation.GetAttributes(ShaderLabel);
@@ -137,12 +134,17 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public void SetMaterialUniforms(Shader shader, RMaterial? previousMaterial)
+        public void SetMaterialUniforms(Shader shader, RMaterial? previousMaterial, List<string> attributeNames)
         {
             // TODO: This code could be moved to the constructor.
             if (genericMaterial == null || shouldUpdateTexturesAndSamplers)
             {
-                genericMaterial = CreateGenericMaterial();
+                // Don't update this every frame since accessing the database is slow.
+                // TODO: This may need to be updated more frequently if materials are eventually reassignable to new mesh objects.
+                // TODO: The actual in game check is more complicated, and involves checking names, subindex, and usage.
+                var hasRequiredAttributes = ShaderValidation.IsValidAttributeList(ShaderLabel, attributeNames);
+                genericMaterial = CreateGenericMaterial(hasRequiredAttributes);
+
                 shouldUpdateTexturesAndSamplers = false;
             }
 
@@ -188,13 +190,14 @@ namespace CrossMod.Rendering.GlTools
                 SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
         }
 
-        private GenericMaterial CreateGenericMaterial()
+        private GenericMaterial CreateGenericMaterial(bool hasRequiredAttributes)
         {
             // Don't use the default texture unit.
             var genericMaterial = new GenericMaterial(1);
 
             AddTextures(genericMaterial);
 
+            genericMaterial.AddBoolToInt("hasRequiredAttributes", hasRequiredAttributes);
             genericMaterial.AddFloat("depthBias", DepthBias);
             genericMaterial.AddVector3("materialId", MaterialIdColorRgb255 / 255f);
 
@@ -250,7 +253,6 @@ namespace CrossMod.Rendering.GlTools
 
             // Validate shaders, materials, and attributes.
             uniformBlock.SetValue("isValidShaderLabel", IsValidShaderLabel);
-            uniformBlock.SetValue("hasRequiredAttributes", HasRequiredAttributes);
             uniformBlock.SetValue("hasColorSet1", HasColorSet1);
             uniformBlock.SetValue("hasColorSet2", HasColorSet2);
             uniformBlock.SetValue("hasColorSet3", HasColorSet3);

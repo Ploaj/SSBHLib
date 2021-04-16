@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Shaders;
 using System;
+using System.Collections.Generic;
 
 namespace CrossMod.Rendering.Models
 {
@@ -35,7 +36,9 @@ namespace CrossMod.Rendering.Models
 
         public event EventHandler<bool>? VisibilityChanged;
 
-        public RMesh(string name, long subIndex, string singleBindName, int singleBindIndex, Vector4 boundingSphere, UltimateMesh renderMesh)
+        public List<string> AttributeNames { get; } = new List<string>();
+
+        public RMesh(string name, long subIndex, string singleBindName, int singleBindIndex, Vector4 boundingSphere, UltimateMesh renderMesh, List<string> attributeNames)
         {
             Name = name;
             SubIndex = subIndex;
@@ -43,6 +46,7 @@ namespace CrossMod.Rendering.Models
             SingleBindIndex = singleBindIndex;
             BoundingSphere = boundingSphere;
             RenderMesh = renderMesh;
+            AttributeNames = attributeNames;
         }
 
         public void Draw(Shader shader, RSkeleton? skeleton)
