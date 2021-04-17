@@ -66,7 +66,7 @@
             </ComboBox>
         </Grid>
         <Grid DockPanel.Dock="Bottom">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <Label>Shader Program</Label>
                     <Grid>
@@ -78,6 +78,7 @@
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Shader Label</TextBlock>
                         <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" IsReadOnly="True" Text="{Binding CurrentMaterial.ShaderLabel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
@@ -86,6 +87,45 @@
                         <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Vertex Attributes</TextBlock>
                         <TextBlock Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
                     </Grid>
+                    <Label Visibility="Visible">Material Errors</Label>
+                    <Expander x:Name="missingAttributesExpander" Visibility="Visible">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="16" Height="16" Margin="5,2" VerticalAlignment="Center">
+                                    <Rectangle.Fill>
+                                        <DrawingBrush TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute">
+                                            <DrawingBrush.Drawing>
+                                                <DrawingGroup>
+                                                    <GeometryDrawing Geometry="M0,0 H2 V1 H2 V2 H1 V2 H0Z" Brush="Yellow"></GeometryDrawing>
+                                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0Z" Brush="Black"/>
+                                                </DrawingGroup>
+                                            </DrawingBrush.Drawing>
+                                        </DrawingBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <TextBlock>Missing Required Attributes</TextBlock>
+                            </StackPanel>
+                        </Expander.Header>
+                        <DockPanel LastChildFill="True" Width="{Binding ActualWidth, ElementName=missingAttributesExpander}">
+                            <TextBlock Margin="5,2,5,10" DockPanel.Dock="Top" TextWrapping="Wrap">
+                                The meshes below are missing the listed attributes required by the shader. Export the meshes with all the required attributes enabled or use a different material to prevent rendering errors in game.
+                            </TextBlock>
+                            <ItemsControl ItemsSource="{Binding CurrentMaterial.RenderPasses}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="*" MinWidth="230"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Margin="5,2" Text="GameModelShape0" HorizontalAlignment="Right"></TextBlock>
+                                            <TextBlock Grid.Column="1" Margin="5,2" Text="Position0, colorSet6, bake1" HorizontalAlignment="Left"></TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DockPanel>
+                    </Expander>
                     <Label Margin="0,10,0,0">Material Parameters</Label>
                     <ItemsControl ItemsSource="{Binding CurrentMaterial.BooleanParams}">
                         <ItemsControl.ItemTemplate>
