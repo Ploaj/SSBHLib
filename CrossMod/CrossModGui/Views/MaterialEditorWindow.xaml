@@ -110,7 +110,7 @@
                             <TextBlock Margin="5,2,5,10" DockPanel.Dock="Top" TextWrapping="Wrap">
                                 The meshes below are missing the listed attributes required by the shader. Export the meshes with all the required attributes enabled or use a different material to prevent rendering errors in game.
                             </TextBlock>
-                            <ItemsControl ItemsSource="{Binding CurrentMaterial.RenderPasses}">
+                            <ItemsControl ItemsSource="{Binding CurrentMaterial.AttributeErrors}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -118,8 +118,8 @@
                                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                                 <ColumnDefinition Width="*" MinWidth="230"></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Margin="5,2" Text="GameModelShape0" HorizontalAlignment="Right"></TextBlock>
-                                            <TextBlock Grid.Column="1" Margin="5,2" Text="Position0, colorSet6, bake1" HorizontalAlignment="Left"></TextBlock>
+                                            <TextBlock Grid.Column="0" Margin="5,2" Text="{Binding MeshName}" HorizontalAlignment="Right"></TextBlock>
+                                            <TextBlock Grid.Column="1" Margin="5,2" Text="{Binding MissingAttributes}" HorizontalAlignment="Left"></TextBlock>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

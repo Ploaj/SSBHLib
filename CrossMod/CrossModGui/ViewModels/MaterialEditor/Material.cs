@@ -41,6 +41,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public List<string> RenderPasses { get; set; } = new List<string>();
 
+        // This will need to be updated if the shader label changes.
+        public List<AttributeError> AttributeErrors { get; set; } = new List<AttributeError>();
+
         public SolidColorBrush? MaterialIdColor { get; set; }
 
         public RasterizerStateParam? RasterizerState0 { get; set; }

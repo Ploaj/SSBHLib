@@ -5,6 +5,7 @@ using CrossMod.Rendering.Models;
 using SFGraphics.Cameras;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
+using SSBHLib.Formats.Meshes;
 using System.Collections.Generic;
 using System.Linq;
 using XMBLib;
@@ -26,6 +27,8 @@ namespace CrossMod.Rendering
         public Xmb? ModelXmb { get; }
         public Xmb? LodXmb { get; }
 
+        public Mesh Mesh { get; }
+
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
         public RNumdl(Modl modl, RSkeleton skeleton, Matl matl, NumshbNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
@@ -36,6 +39,7 @@ namespace CrossMod.Rendering
             Matl = matl;
             ModelXmb = modelXmb?.Xmb;
             LodXmb = lodXmb?.Xmb;
+            Mesh = meshNode.mesh;
             TextureByName = textureByName;
 
             if (meshNode != null)

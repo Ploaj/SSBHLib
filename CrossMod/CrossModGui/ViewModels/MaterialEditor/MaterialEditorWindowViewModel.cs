@@ -6,6 +6,7 @@ using CrossModGui.Tools;
 using SsbhLib.MatlXml;
 using SsbhLib.Tools;
 using SSBHLib.Formats.Materials;
+using SSBHLib.Formats.Meshes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -126,7 +127,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 // TODO: Each material should have a different set of available texture names.
                 PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
 
-                var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl);
+                var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
                 MaterialCollections.Add(collection);
             }
         }
@@ -179,14 +180,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
             currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
 
             // Create the new viewmodel material and sync it with the newly created render material.
-            var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial);
+            var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial, currentRnumdl);
             CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;         
             CurrentMaterial = newMaterial;
 
             OnRenderFrameNeeded();
         }
 
-        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl)
+        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl, RNumdl rnumdl)
         {
             var collection = new MaterialCollection(name);
             for (int i = 0; i < matl.Entries.Length; i++)
@@ -194,16 +195,16 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 // Pass a reference to the render material to enable real time updates.
                 materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
 
-                var material = CreateMaterial(matl.Entries[i], i, rMaterial);
+                var material = CreateMaterial(matl.Entries[i], i, rMaterial, rnumdl);
                 collection.Materials.Add(material);
             }
 
             return collection;
         }
 
-        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial)
+        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial, RNumdl rnumdl)
         {
-            var material = CreateMaterial(entry, index);
+            var material = CreateMaterial(entry, index, rnumdl);
 
             // Enable real time viewport updates.
             if (rMaterial != null)
@@ -214,7 +215,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static Material CreateMaterial(MatlEntry entry, int index)
+        private static Material CreateMaterial(MatlEntry entry, int index, RNumdl rnumdl)
         {
             var idColor = UniqueColors.IndexToColor(index);
 
@@ -226,10 +227,36 @@ namespace CrossModGui.ViewModels.MaterialEditor
                     (byte)idColor.Z)),
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
-                RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel)
+                RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel),
+                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel, rnumdl)
             };
             AddAttributesToMaterial(entry, material);
             return material;
+        }
+
+        private static List<AttributeError> GetAttributeErrors(string shaderLabel, string materialLabel, RNumdl rnumdl)
+        {
+            // Create a list of missing required attributes for each mesh object.
+            var required = ShaderValidation.GetAttributes(shaderLabel);
+            var errors = new List<AttributeError>();
+            foreach (var meshObject in rnumdl.Mesh.Objects)
+            {
+                // Only include errors for meshes with this material assigned.
+                var modlEntry = rnumdl.Modl.ModelEntries.FirstOrDefault(e => e.MeshName == meshObject.Name && e.SubIndex == meshObject.SubIndex);
+                if (modlEntry == null)
+                    continue;
+
+                if (modlEntry.MaterialLabel != materialLabel)
+                    continue;
+
+                var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
+                var missingAttributes = string.Join(", ", required.Except(current).ToList());
+                if (string.IsNullOrEmpty(missingAttributes))
+                    continue;
+
+                errors.Add(new AttributeError { MeshName = meshObject.Name, MissingAttributes = missingAttributes });
+            }
+            return errors;
         }
 
         public void OnRenderFrameNeeded()
