@@ -83,6 +83,7 @@ namespace CrossModGui.ViewModels
         public bool EnablePrmAo { get; set; }
         public bool EnablePrmSpecular { get; set; }
 
+        public bool EnableMaterialValidationRendering { get; set; }
 
         public bool EnableVertexColor { get; set; }
 
@@ -127,6 +128,7 @@ namespace CrossModGui.ViewModels
             EnableBloom = renderSettings.EnableBloom;
             BloomIntensity = renderSettings.BloomIntensity;
             EnableWireframe = renderSettings.EnableWireframe;
+            EnableMaterialValidationRendering = renderSettings.EnableMaterialValidationRendering;
 
             RenderModes.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
         }
@@ -150,6 +152,7 @@ namespace CrossModGui.ViewModels
             settings.RenderPrmSpecular = EnablePrmSpecular;
             settings.EnableWireframe = EnableWireframe;
             settings.UseUvPattern = UseUvPattern;
+            settings.EnableMaterialValidationRendering = EnableMaterialValidationRendering;
 
             settings.DirectLightIntensity = DirectLightIntensity;
             settings.IblIntensity = IndirectLightIntensity;

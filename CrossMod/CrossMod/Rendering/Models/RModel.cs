@@ -112,6 +112,8 @@ namespace CrossMod.Rendering.Models
 
             currentShader.SetBoolToInt("renderVertexColor", RenderSettings.Instance.RenderVertexColor);
 
+            currentShader.SetBoolToInt("renderMaterialErrors", RenderSettings.Instance.EnableMaterialValidationRendering);
+
             currentShader.SetBoolToInt("renderWireframe", RenderSettings.Instance.EnableWireframe);
 
             currentShader.SetBoolToInt("enableBloom", RenderSettings.Instance.EnableBloom);

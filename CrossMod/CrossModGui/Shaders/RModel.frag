@@ -93,6 +93,7 @@ uniform MaterialParams
 };
 
 uniform int hasRequiredAttributes;
+uniform int renderMaterialErrors;
 
 // TODO: Add lighting vectors to a uniform block.
 // Values taken from the training stage light.nuanmb.
@@ -396,12 +397,12 @@ void main()
 
     // Check the shader label first since required attributes are based on the selected shader.
     // If the shader label is invalid, we can't determine the invalid attributes anyway.
-    if (isValidShaderLabel != 1) {
+    if (isValidShaderLabel != 1 && renderMaterialErrors == 1) {
         fragColor0.rgb = GetInvalidShaderLabelColor();
         return;
     }
 
-    if (hasRequiredAttributes != 1) {
+    if (hasRequiredAttributes != 1 && renderMaterialErrors == 1) {
         fragColor0.rgb = GetMissingRequiredAttributeColor();
         return;
     }

@@ -40,6 +40,7 @@
             <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmAo}">Enable Prm AO</CheckBox>
             <CheckBox Margin="10,2" IsChecked="{Binding EnablePrmSpecular}">Enable Prm Specular</CheckBox>
             <CheckBox Margin="10,2" IsChecked="{Binding EnableVertexColor}">Enable Vertex Color</CheckBox>
+            <CheckBox Margin="10,2" IsChecked="{Binding EnableMaterialValidationRendering}">Enable Material Errors (Red/Yellow Checkerboard)</CheckBox>
         </StackPanel>
         <Label>Debug Shading</Label>
         <StackPanel>

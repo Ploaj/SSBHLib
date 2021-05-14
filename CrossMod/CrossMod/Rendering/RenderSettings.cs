@@ -68,6 +68,8 @@ namespace CrossMod.Rendering
 
         public bool RenderBones { get; set; } = false;
 
+        public bool EnableMaterialValidationRendering { get; set; } = true;
+
         public bool RenderHitCollisions { get; set; } = false;
 
         public float RenderSpeed { get; set; } = 1;
