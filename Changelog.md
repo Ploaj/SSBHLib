@@ -1,4 +1,10 @@
 # Cross Mod
+**v0.16**
+* Minor improvements to rim lighting
+* Added rendering for yellow checkerboard in viewport (missing mesh attributes)
+* Added toggle for rendering errors in render settings
+* Added descriptions for missing attributes in material editor
+
 **v0.15**
 * Added material presets. In the material editor, click Material > Select Preset, select a preset from the list, and click Apply Preset. This applies to the currently selected material in the dropdown.
 * Improved anisotropic specular shading for hair
