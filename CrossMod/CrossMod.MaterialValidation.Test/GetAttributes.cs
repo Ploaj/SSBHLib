@@ -33,5 +33,22 @@ namespace CrossMod.MaterialValidation.Test
                 ShaderValidation.GetAttributes("SFX_PBS_1b01000008008a68_opaque")
             );
         }
+
+        [TestMethod]
+        public void ValidShaderLabelInkMesh()
+        {
+            CollectionAssert.AreEqual(
+                new List<string>
+                {
+                    "Position0",
+                    "Normal0",
+                    "Tangent0",
+                    "colorSet2",
+                    "colorSet4",
+                    "map1",
+                },
+                ShaderValidation.GetAttributes("SFX_PBS_3500000008900280_opaque")
+            );
+        }
     }
 }

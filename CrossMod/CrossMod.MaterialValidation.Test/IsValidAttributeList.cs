@@ -34,6 +34,21 @@ namespace CrossMod.MaterialValidation.Test
         }
 
         [TestMethod]
+        public void ValidLabelAndAttributeListInkMesh()
+        {
+            Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_3500000008900280_opaque",
+                new string[] {
+                    "Position0",
+                    "Normal0",
+                    "Tangent0",
+                    "colorSet2",
+                    "colorSet4",
+                    "map1",
+                })
+            );
+        }
+
+        [TestMethod]
         public void ValidLabelAndAttributeListDifferentOrder()
         {
             Assert.IsTrue(ShaderValidation.IsValidAttributeList("SFX_PBS_0100000008008269_opaque",

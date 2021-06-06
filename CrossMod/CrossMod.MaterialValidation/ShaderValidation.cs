@@ -51,6 +51,10 @@ namespace CrossMod.MaterialValidation
             // These aren't listed in the NUFX but are always required by the shader.
             var result = new List<string> { "Position0", "Normal0", "Tangent0", };
             result.AddRange(ReadStrings(command));
+
+            // This is listed in the NUFX but isn't a mesh attribute.
+            result.Remove("ink_color_set");
+
             return result;
         }
 
@@ -228,27 +232,9 @@ namespace CrossMod.MaterialValidation
             if (!IsValidShaderLabel(shaderLabel))
                 return false;
 
-            using var connection = new SqliteConnection(connectionString);
-            connection.Open();
+            var actualAttributes = GetAttributes(shaderLabel);
 
-            var command = connection.CreateCommand();
-            command.CommandText =
-                @"
-                    SELECT AttributeName FROM 
-                    VertexAttribute
-                    WHERE ShaderProgramID IN 
-                    (
-	                    SELECT ID
-	                    FROM ShaderProgram
-	                    WHERE 
-		                    Name = $shaderLabel
-                    )
-                ";
-            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
-
-            var actualAttributes = ReadStrings(command);
-
-            // TODO: Don't assume that shaders have position, normals, and tangents.
+            // All shaders require position, normals, and tangents.
             // Only color sets and texture coordinates are in the current database.
             actualAttributes.Add("Position0");
             actualAttributes.Add("Normal0");
