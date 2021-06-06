@@ -59,11 +59,37 @@
                 <MenuItem Header="Reload Shaders" Command="{StaticResource ReloadShadersCommand}" InputGestureText="F5"/>
             </MenuItem>
         </Menu>
-        <DockPanel LastChildFill="True">
-            <usercontrols:FileTreeView x:Name="fileTreeView" DockPanel.Dock="Left" Width="300" 
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="400"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <usercontrols:FileTreeView x:Name="fileTreeView" Grid.Column="0"
                                        Items="{Binding FileTreeItems}" 
                                        SelectedItemChanged="FileTreeView_SelectedItemChanged"></usercontrols:FileTreeView>
-            <TabControl Name="meshBoneTabControl" DockPanel.Dock="Right" Width="300">
+            <GridSplitter Grid.Column="1" ShowsPreview="True"></GridSplitter>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <WindowsFormsHost Grid.Row="0">
+                    <sfcontrol:GLViewport x:Name="glViewport" 
+                                          Resize="glViewport_Resize" 
+                                          MouseMove="glViewport_MouseInteract" 
+                                          MouseWheel="glViewport_MouseInteract"
+                                          MouseEnter="glViewport_MouseEnter"/>
+                </WindowsFormsHost>
+                <usercontrols:AnimationBar Grid.Row="1" Margin="5"
+                                           CurrentFrame="{Binding CurrentFrame}"
+                                           TotalFrames="{Binding TotalFrames}"
+                                           IsPlaying="{Binding IsPlayingAnimation}"></usercontrols:AnimationBar>
+            </Grid>
+            <GridSplitter Grid.Column="3" ShowsPreview="True"></GridSplitter>
+            <TabControl Name="meshBoneTabControl" DockPanel.Dock="Right" Width="auto" Grid.Column="4">
                 <TabItem Header="Meshes">
                     <TreeView ItemsSource="{Binding MeshListItems}" BorderBrush="Transparent">
                         <TreeView.ItemTemplate>
@@ -89,26 +115,14 @@
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
+                                <Setter Property="IsExpanded" Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
                     </TreeView>
                 </TabItem>
             </TabControl>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                </Grid.RowDefinitions>
-                <WindowsFormsHost Grid.Row="0">
-                    <sfcontrol:GLViewport x:Name="glViewport" 
-                                          Resize="glViewport_Resize" 
-                                          MouseMove="glViewport_MouseInteract" 
-                                          MouseWheel="glViewport_MouseInteract"
-                                          MouseEnter="glViewport_MouseEnter"/>
-                </WindowsFormsHost>
-                <usercontrols:AnimationBar Grid.Row="1" Margin="5"
-                                           CurrentFrame="{Binding CurrentFrame}"
-                                           TotalFrames="{Binding TotalFrames}"
-                                           IsPlaying="{Binding IsPlayingAnimation}"></usercontrols:AnimationBar>
-            </Grid>
-        </DockPanel>
+        </Grid>
     </DockPanel>
 </Window>
