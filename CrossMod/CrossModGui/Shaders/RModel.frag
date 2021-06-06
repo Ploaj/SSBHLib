@@ -42,6 +42,7 @@ uniform samplerCube specularPbrCube;
 uniform int renderDiffuse;
 uniform int renderSpecular;
 uniform int renderEmission;
+uniform int renderBakedLighting;
 uniform int renderRimLighting;
 uniform int renderExperimental;
 
@@ -211,7 +212,9 @@ vec3 DiffuseTerm(vec3 albedo, float nDotL, vec3 ambientLight, vec3 ao, float sss
     vec3 directLight = LightCustomVector0.xyz * directShading * LightCustomFloat0 * bakedLitColor.a;
 
     // Baked lighting maps are not affected by ambient occlusion.
-    vec3 ambientTerm = (ambientLight * ao) + (bakedLitColor.rgb * 8.0);
+    vec3 ambientTerm = (ambientLight * ao);
+    if (renderBakedLighting == 1)
+        ambientTerm += (bakedLitColor.rgb * 8.0);
     ambientTerm *= mix(albedo, CustomVector[11].rgb, sssBlend);
 
     vec3 result = directLight * directLightIntensity + ambientTerm * iblIntensity;

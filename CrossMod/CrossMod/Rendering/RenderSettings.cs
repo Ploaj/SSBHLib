@@ -61,6 +61,7 @@ namespace CrossMod.Rendering
         public bool RenderPrmRoughness { get; set; } = true;
         public bool RenderPrmAo { get; set; } = true;
         public bool RenderPrmSpecular { get; set; } = true;
+        public bool RenderBakedLighting { get; set; } = true;
 
         public bool RenderVertexColor { get; set; } = true;
 
