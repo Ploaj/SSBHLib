@@ -1,17 +1,18 @@
 ﻿using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.Models;
-using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System;
 
 namespace CrossModGui.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
         public bool ShouldLoopAnimation { get; set; } = true;
+
+        public string ApplicationTitle { get; } = "Cross Mod v0.16";
 
         public float CurrentFrame
         {
