@@ -10,8 +10,8 @@ namespace CrossModGui.ViewModels
 
         private const string path = "Preferences.json";
 
-        public bool EnableDarkTheme 
-        { 
+        public bool EnableDarkTheme
+        {
             get => enableDarkTheme;
             set
             {
@@ -21,6 +21,10 @@ namespace CrossModGui.ViewModels
             }
         }
         private bool enableDarkTheme = true;
+
+        public string ReleaseTag { get; set; } = "v0.17";
+
+        public DateTime LastUpdateCheckTime = DateTime.UnixEpoch;
 
         public void UpdateTheme()
         {

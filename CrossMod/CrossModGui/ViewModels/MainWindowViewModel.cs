@@ -12,7 +12,7 @@ namespace CrossModGui.ViewModels
     {
         public bool ShouldLoopAnimation { get; set; } = true;
 
-        public string ApplicationTitle { get; } = "Cross Mod v0.16";
+        public string ApplicationTitle { get; } = $"Cross Mod {PreferencesWindowViewModel.Instance.ReleaseTag}";
 
         public float CurrentFrame
         {
