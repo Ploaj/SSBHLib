@@ -2,7 +2,7 @@
 {
     public interface IRenderableModel : IRenderable
     {
-        Models.RModel RenderModel { get; }
-        RSkeleton Skeleton { get; }
+        Models.RModel? RenderModel { get; }
+        RSkeleton? Skeleton { get; }
     }
 }

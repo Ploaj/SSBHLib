@@ -42,10 +42,11 @@ namespace CrossMod.Nodes
             var textureByName = new Dictionary<string, RTexture>();
             GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, ref modelXmb, ref lodXmb, textureByName);
 
+            // TODO: Handle nulls.
             return new RNumdl(model, skeleton, material, meshNode, hlpbNode, modelXmb, lodXmb, textureByName);
         }
 
-        private void GetNodesForRendering(ref NumshbNode meshNode, ref NuhlpbNode hlpbNode, ref RSkeleton skeleton, ref Matl material, ref XmbNode modelXmb, ref XmbNode lodXmb,
+        private void GetNodesForRendering(ref NumshbNode? meshNode, ref NuhlpbNode? hlpbNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             // TODO: There's probably a cleaner way of doing this.

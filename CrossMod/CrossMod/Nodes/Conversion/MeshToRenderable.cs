@@ -15,7 +15,7 @@ namespace CrossMod.Nodes.Conversion
 {
     public static class MeshToRenderable
     {
-        public static RModel GetRenderModel(Mesh mesh, RSkeleton skeleton)
+        public static RModel GetRenderModel(Mesh mesh, RSkeleton? skeleton)
         {
             var model = new RModel
             {
@@ -32,7 +32,7 @@ namespace CrossMod.Nodes.Conversion
 
             foreach (MeshObject meshObject in mesh.Objects)
             {
-                var singleBindIndex = skeleton.GetBoneIndex(meshObject.ParentBoneName);
+                var singleBindIndex = skeleton?.GetBoneIndex(meshObject.ParentBoneName) ?? -1;
 
                 var rMesh = new RMesh(meshObject.Name,
                     meshObject.SubIndex,
@@ -51,7 +51,7 @@ namespace CrossMod.Nodes.Conversion
             return model;
         }
 
-        private static UltimateMesh CreateRenderMesh(Mesh mesh, RSkeleton skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
+        private static UltimateMesh CreateRenderMesh(Mesh mesh, RSkeleton? skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
         {
             var vertexAccessor = new SsbhVertexAccessor(mesh);
             var vertexIndices = vertexAccessor.ReadIndices(meshObject);
@@ -62,7 +62,7 @@ namespace CrossMod.Nodes.Conversion
             return renderMesh;
         }
 
-        private static void ConfigureVertexAttributes(Mesh mesh, UltimateMesh renderMesh, RSkeleton skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
+        private static void ConfigureVertexAttributes(Mesh mesh, UltimateMesh renderMesh, RSkeleton? skeleton, MeshObject meshObject, BufferObject vertexBuffer0, BufferObject vertexBuffer1)
         {
             var riggingAccessor = new SsbhRiggingAccessor(mesh);
             var influences = riggingAccessor.ReadRiggingBuffer(meshObject.Name, (int)meshObject.SubIndex);
@@ -158,7 +158,7 @@ namespace CrossMod.Nodes.Conversion
             return name;
         }
 
-        private static Dictionary<string, int> GetIndexByBoneName(RSkeleton skeleton)
+        private static Dictionary<string, int> GetIndexByBoneName(RSkeleton? skeleton)
         {
             if (skeleton == null)
                 return new Dictionary<string, int>();

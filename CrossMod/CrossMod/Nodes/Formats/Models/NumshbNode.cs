@@ -17,7 +17,7 @@ namespace CrossMod.Nodes
             Open();
         }
 
-        public RModel GetRenderModel(RSkeleton skeleton) => MeshToRenderable.GetRenderModel(mesh, skeleton);
+        public RModel GetRenderModel(RSkeleton? skeleton) => MeshToRenderable.GetRenderModel(mesh, skeleton);
 
         private void Open()
         {

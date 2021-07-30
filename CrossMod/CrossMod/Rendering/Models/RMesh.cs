@@ -54,14 +54,8 @@ namespace CrossMod.Rendering.Models
             if (!IsVisible)
                 return;
 
-            if (skeleton != null)
-            {
-                shader.SetMatrix4x4("transform", skeleton.GetAnimationSingleBindsTransform(SingleBindIndex));
-            }
-
-            // TODO: When is primitive restart used?
-            GL.Enable(EnableCap.PrimitiveRestart);
-            GL.PrimitiveRestartIndex(0xFFFFFFFF);
+            // Meshes without a skeleton should still render, so default to an identity matrix.
+            shader.SetMatrix4x4("transform", skeleton?.GetAnimationSingleBindsTransform(SingleBindIndex) ?? Matrix4.Identity);
 
             RenderMesh?.Draw(shader);
         }

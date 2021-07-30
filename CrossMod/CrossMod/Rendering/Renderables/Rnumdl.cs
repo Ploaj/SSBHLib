@@ -14,7 +14,7 @@ namespace CrossMod.Rendering
 {
     public class RNumdl : IRenderableModel
     {
-        public Modl Modl { get; }
+        public Modl? Modl { get; }
 
         public Dictionary<string, RTexture> TextureByName { get; }
 
@@ -27,11 +27,11 @@ namespace CrossMod.Rendering
         public Xmb? ModelXmb { get; }
         public Xmb? LodXmb { get; }
 
-        public Mesh Mesh { get; }
+        public Mesh? Mesh { get; }
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl modl, RSkeleton skeleton, Matl matl, NumshbNode meshNode, NuhlpbNode hlpbNode, XmbNode modelXmb, XmbNode lodXmb,
+        public RNumdl(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, NuhlpbNode? hlpbNode, XmbNode? modelXmb, XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;
@@ -39,7 +39,7 @@ namespace CrossMod.Rendering
             Matl = matl;
             ModelXmb = modelXmb?.Xmb;
             LodXmb = lodXmb?.Xmb;
-            Mesh = meshNode.mesh;
+            Mesh = meshNode?.mesh;
             TextureByName = textureByName;
 
             if (meshNode != null)
