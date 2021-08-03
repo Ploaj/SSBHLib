@@ -39,6 +39,8 @@
 
             public int Unk10 { get; set; }
 
+            public ulong Padding { get; }
+
             public override string ToString()
             {
                 return GetPropertyValues(GetType(), this);
