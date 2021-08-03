@@ -4,12 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrossModGui.Views"
+        xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
         mc:Ignorable="d"
-        Title="Cross Mod Update Available" Height="278" Width="492">
+        Title="Update Available" Height="278" Width="492">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
-    <Grid>
-        <TextBlock>Cross Mod version TODO is available to download here:. The current version is TODO.</TextBlock>
-    </Grid>
+    <DockPanel LastChildFill="True" Margin="10">
+        <!--<Label DockPanel.Dock="Top">A new version of Cross Mod is available!</Label>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding VersionText}"></TextBlock>
+        <Label DockPanel.Dock="Top">Release Notes:</Label>-->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <markdig:MarkdownViewer x:Name="releaseNotesViewer" Markdown="{Binding ReleaseNotesMarkdown}" FontSize="12"/>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

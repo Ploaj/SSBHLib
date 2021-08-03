@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrossModGui.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -17,9 +18,14 @@ namespace CrossModGui.Views
     /// </summary>
     public partial class NewReleaseWindow : Window
     {
-        public NewReleaseWindow()
+        private readonly NewReleaseWindowViewModel viewModel;
+
+        public NewReleaseWindow(NewReleaseWindowViewModel viewModel)
         {
             InitializeComponent();
+
+            this.viewModel = viewModel;
+            DataContext = this.viewModel;
         }
     }
 }

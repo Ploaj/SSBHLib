@@ -1,6 +1,7 @@
 ﻿using CrossModGui.ViewModels;
 using CrossModGui.Views;
 using System;
+using System.Net;
 using System.Windows;
 
 namespace CrossModGui
@@ -31,11 +32,17 @@ namespace CrossModGui
             MainWindow = new MainWindow();
             MainWindow.Show();
 
-            // TODO: Display the release info and download link.
-            //if (latestRelease != null)
+            if (latestRelease != null)
             {
-                var updateWindow = new NewReleaseWindow();
-                updateWindow.ShowDialog();
+                // TODO: Try catch for potential errors.
+                using (var client = new WebClient())
+                {
+                    var changeLogText = await client.DownloadStringTaskAsync("https://raw.githubusercontent.com/Ploaj/SSBHLib/master/Changelog.md");
+
+                    var vm = new NewReleaseWindowViewModel(PreferencesWindowViewModel.Instance.ReleaseTag, latestRelease.TagName, changeLogText);
+                    var updateWindow = new NewReleaseWindow(vm);
+                    updateWindow.ShowDialog();
+                }
             }
         }
     }
