@@ -6,16 +6,22 @@
         xmlns:local="clr-namespace:CrossModGui.Views"
         xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
         mc:Ignorable="d"
-        Title="Update Available" Height="278" Width="492">
+        WindowStartupLocation="CenterScreen"
+        Title="Update Available" Height="850" Width="500">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
     <DockPanel LastChildFill="True" Margin="10">
-        <!--<Label DockPanel.Dock="Top">A new version of Cross Mod is available!</Label>
-        <TextBlock DockPanel.Dock="Top" Text="{Binding VersionText}"></TextBlock>
-        <Label DockPanel.Dock="Top">Release Notes:</Label>-->
+        <Label DockPanel.Dock="Top" FontSize="14">A new version of Cross Mod is available!</Label>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding VersionText}" FontSize="14" TextWrapping="Wrap"></TextBlock>
+        <TextBlock DockPanel.Dock="Top">           
+            <Hyperlink NavigateUri="{Binding LinkText}" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="{Binding LinkText}" FontSize="14" TextWrapping="Wrap"></TextBlock>
+            </Hyperlink>
+        </TextBlock>
+        <Label DockPanel.Dock="Top" FontSize="14">Release Notes:</Label>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <markdig:MarkdownViewer x:Name="releaseNotesViewer" Markdown="{Binding ReleaseNotesMarkdown}" FontSize="12"/>
+            <markdig:MarkdownViewer x:Name="releaseNotesViewer" Markdown="{Binding ReleaseNotesMarkdown}"/>
         </ScrollViewer>
     </DockPanel>
 </Window>

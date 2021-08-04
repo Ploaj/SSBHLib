@@ -2,6 +2,7 @@
 using CrossModGui.Views;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace CrossModGui
@@ -28,21 +29,31 @@ namespace CrossModGui
             // Force initialization and a theme refresh.
             PreferencesWindowViewModel.Instance.UpdateTheme();
 
-
             MainWindow = new MainWindow();
             MainWindow.Show();
 
             if (latestRelease != null)
             {
-                // TODO: Try catch for potential errors.
+                await ShowNewReleaseWindowAsync(latestRelease);
+            }
+        }
+
+        private static async Task ShowNewReleaseWindowAsync(Octokit.Release latestRelease)
+        {
+            try
+            {
                 using (var client = new WebClient())
                 {
                     var changeLogText = await client.DownloadStringTaskAsync("https://raw.githubusercontent.com/Ploaj/SSBHLib/master/Changelog.md");
 
-                    var vm = new NewReleaseWindowViewModel(PreferencesWindowViewModel.Instance.ReleaseTag, latestRelease.TagName, changeLogText);
+                    var vm = new NewReleaseWindowViewModel(PreferencesWindowViewModel.Instance.ReleaseTag, latestRelease.TagName, changeLogText, latestRelease.HtmlUrl);
                     var updateWindow = new NewReleaseWindow(vm);
                     updateWindow.ShowDialog();
                 }
+            }
+            catch (Exception)
+            {
+                // TODO: Add some form of logging?
             }
         }
     }

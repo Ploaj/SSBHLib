@@ -1,6 +1,7 @@
 ﻿using CrossModGui.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +27,17 @@ namespace CrossModGui.Views
 
             this.viewModel = viewModel;
             DataContext = this.viewModel;
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            var info = new ProcessStartInfo
+            {
+                FileName = e.Uri.AbsoluteUri,
+                UseShellExecute = true
+            };
+            Process.Start(info);
+            e.Handled = true;
         }
     }
 }
