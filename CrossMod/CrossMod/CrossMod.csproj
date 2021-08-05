@@ -58,11 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="OpenTK" Version="3.3.2" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\AnimatedGif.dll" />
-    <Content Include="Lib\OpenTK.dll" />
-    <Content Include="Lib\OpenTK.GLControl.dll" />
     <Content Include="Lib\paracobNET.dll" />
     <Content Include="Lib\SELib.dll" />
     <Content Include="Lib\SFGenericModel.dll" />
