@@ -234,7 +234,7 @@ namespace SSBHLib.Tools
                     MeshAttribute attr = new MeshAttribute
                     {
                         Name = attributeName,
-                        Index = keypair.Key.Index,
+                        Usage = keypair.Key.Index,
                         BufferIndex = keypair.Key.BufferIndex,
                         DataType = keypair.Key.DataType,
                         BufferOffset = keypair.Key.BufferIndex == 0 ? stride1 : stride2,
@@ -320,13 +320,13 @@ namespace SSBHLib.Tools
         {
             switch (type)
             {
-                case MeshAttribute.AttributeDataType.Float:
+                case MeshAttribute.AttributeDataType.Float3:
                     writer.Write(value);
                     break;
-                case MeshAttribute.AttributeDataType.Byte:
+                case MeshAttribute.AttributeDataType.Byte4:
                     writer.Write((byte)value);
                     break;
-                case MeshAttribute.AttributeDataType.HalfFloat:
+                case MeshAttribute.AttributeDataType.HalfFloat4:
                     writer.Write((ushort)FloatToHalfFloatBits(value));
                     break;
                 case MeshAttribute.AttributeDataType.HalfFloat2:

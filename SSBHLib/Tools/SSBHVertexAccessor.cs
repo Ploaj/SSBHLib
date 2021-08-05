@@ -166,19 +166,19 @@ namespace SSBHLib.Tools
                 switch (format)
                 {
                     // TODO: Add option to not convert smaller types to larger types.
-                    case MeshAttribute.AttributeDataType.Byte:
+                    case MeshAttribute.AttributeDataType.Byte4:
                         for (int j = 0; j < attributeLength; j++)
                         {
                             attributes[i][j] = buffer.ReadByte();
                         }
                         break;
-                    case MeshAttribute.AttributeDataType.Float:
+                    case MeshAttribute.AttributeDataType.Float3:
                         for (int j = 0; j < attributeLength; j++)
                         {
                             attributes[i][j] = buffer.ReadSingle();
                         }
                         break;
-                    case MeshAttribute.AttributeDataType.HalfFloat:
+                    case MeshAttribute.AttributeDataType.HalfFloat4:
                         for (int j = 0; j < attributeLength; j++)
                         {
                             attributes[i][j] = ReadHalfFloat(buffer);

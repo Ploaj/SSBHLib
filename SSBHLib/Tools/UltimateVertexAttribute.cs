@@ -11,92 +11,92 @@ namespace SSBHLib
         /// <summary>
         /// The default configuration for the Position0 attribute.
         /// </summary>
-        public static UltimateVertexAttribute Position0 { get; } = new UltimateVertexAttribute("Position0", 3, MeshAttribute.AttributeDataType.Float, 0, 0);
+        public static UltimateVertexAttribute Position0 { get; } = new UltimateVertexAttribute("Position0", MeshAttribute.AttributeDataType.Float3, 0, 0);
 
         /// <summary>
         /// The default configuration for the Normal0 attribute.
         /// </summary>
-        public static UltimateVertexAttribute Normal0 { get; } = new UltimateVertexAttribute("Normal0", 4, MeshAttribute.AttributeDataType.HalfFloat, 1, 0);
+        public static UltimateVertexAttribute Normal0 { get; } = new UltimateVertexAttribute("Normal0", MeshAttribute.AttributeDataType.HalfFloat4, 1, 0);
 
         /// <summary>
         /// The default configuration for the Tangent0 attribute.
         /// </summary>
-        public static UltimateVertexAttribute Tangent0 { get; } = new UltimateVertexAttribute("Tangent0", 4, MeshAttribute.AttributeDataType.HalfFloat, 3, 0);
+        public static UltimateVertexAttribute Tangent0 { get; } = new UltimateVertexAttribute("Tangent0", MeshAttribute.AttributeDataType.HalfFloat4, 3, 0);
 
         /// <summary>
         /// The default configuration for the map1 attribute.
         /// </summary>
-        public static UltimateVertexAttribute Map1 { get; } = new UltimateVertexAttribute("map1", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
+        public static UltimateVertexAttribute Map1 { get; } = new UltimateVertexAttribute("map1", MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
         /// The default configuration for the uvSet attribute.
         /// </summary>
-        public static UltimateVertexAttribute UvSet { get; } = new UltimateVertexAttribute("uvSet", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
+        public static UltimateVertexAttribute UvSet { get; } = new UltimateVertexAttribute("uvSet", MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
         /// The default configuration for the uvSet1 attribute.
         /// </summary>
-        public static UltimateVertexAttribute UvSet1 { get; } = new UltimateVertexAttribute("uvSet1", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
+        public static UltimateVertexAttribute UvSet1 { get; } = new UltimateVertexAttribute("uvSet1", MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
         /// The default configuration for the uvSet2 attribute.
         /// </summary>
-        public static UltimateVertexAttribute UvSet2 { get; } = new UltimateVertexAttribute("uvSet2", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
+        public static UltimateVertexAttribute UvSet2 { get; } = new UltimateVertexAttribute("uvSet2", MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
         /// The default configuration for the colorSet1 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet1 { get; } = new UltimateVertexAttribute("colorSet1", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet1 { get; } = new UltimateVertexAttribute("colorSet1", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet2 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet2 { get; } = new UltimateVertexAttribute("colorSet2", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet2 { get; } = new UltimateVertexAttribute("colorSet2", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet2_1 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet21 { get; } = new UltimateVertexAttribute("colorSet2_1", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet21 { get; } = new UltimateVertexAttribute("colorSet2_1", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet22 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet22 { get; } = new UltimateVertexAttribute("colorSet2_2", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet22 { get; } = new UltimateVertexAttribute("colorSet2_2", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet23 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet23 { get; } = new UltimateVertexAttribute("colorSet2_3", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet23 { get; } = new UltimateVertexAttribute("colorSet2_3", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet3 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet3 { get; } = new UltimateVertexAttribute("colorSet3", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet3 { get; } = new UltimateVertexAttribute("colorSet3", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet4 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet4 { get; } = new UltimateVertexAttribute("colorSet4", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet4 { get; } = new UltimateVertexAttribute("colorSet4", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet5 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet5 { get; } = new UltimateVertexAttribute("colorSet5", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet5 { get; } = new UltimateVertexAttribute("colorSet5", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet6 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet6 { get; } = new UltimateVertexAttribute("colorSet6", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet6 { get; } = new UltimateVertexAttribute("colorSet6", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the colorSet7 attribute.
         /// </summary>
-        public static UltimateVertexAttribute ColorSet7 { get; } = new UltimateVertexAttribute("colorSet7", 4, MeshAttribute.AttributeDataType.Byte, 5, 1);
+        public static UltimateVertexAttribute ColorSet7 { get; } = new UltimateVertexAttribute("colorSet7", MeshAttribute.AttributeDataType.Byte4, 5, 1);
 
         /// <summary>
         /// The default configuration for the bake1 attribute.
         /// </summary>
-        public static UltimateVertexAttribute Bake1 { get; } = new UltimateVertexAttribute("bake1", 2, MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
+        public static UltimateVertexAttribute Bake1 { get; } = new UltimateVertexAttribute("bake1", MeshAttribute.AttributeDataType.HalfFloat2, 4, 1);
 
         /// <summary>
         /// The name used for the <see cref="MeshAttributeString"/> and shader attributes.
@@ -104,9 +104,9 @@ namespace SSBHLib
         public string Name { get; }
 
         /// <summary>
-        /// The number of vector components. Color sets have 4 components, for example.
+        /// The number of vector components. Color sets usually have 4 components, for example.
         /// </summary>
-        public int ComponentCount { get; }
+        public int ComponentCount => GetComponentCount(DataType);
 
         /// <summary>
         /// The data type of each attribute component.
@@ -123,14 +123,35 @@ namespace SSBHLib
         /// </summary>
         public int BufferIndex { get; }
 
-        private UltimateVertexAttribute(string name, int componentCount, MeshAttribute.AttributeDataType dataType, int index, int bufferIndex)
+        private UltimateVertexAttribute(string name, MeshAttribute.AttributeDataType dataType, int index, int bufferIndex)
         {
             Name = name;
-            ComponentCount = componentCount;
             DataType = dataType;
             Index = index;
             BufferIndex = bufferIndex;
         }
+
+        private int GetComponentCount(MeshAttribute.AttributeDataType dataType)
+        {
+            switch (dataType)
+            {
+                case MeshAttribute.AttributeDataType.Float3:
+                    return 3;
+                case MeshAttribute.AttributeDataType.Byte4:
+                    return 4;
+                case MeshAttribute.AttributeDataType.Float4:
+                    return 4;
+                case MeshAttribute.AttributeDataType.HalfFloat4:
+                    return 4;
+                case MeshAttribute.AttributeDataType.Float2:
+                    return 2;
+                case MeshAttribute.AttributeDataType.HalfFloat2:
+                    return 2;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
 
         /// <summary>
         /// Finds a default attribute with in game name <paramref name="name"/>.
@@ -138,7 +159,7 @@ namespace SSBHLib
         /// <param name="name">The name used for the <see cref="MeshAttributeString"/>.</param>
         /// <returns>The default attribute with the given name</returns>
         /// <exception cref="NotImplementedException"><paramref name="name"/> is not the name of a default attribute</exception>
-        public static UltimateVertexAttribute GetAttributeFromName(string name)
+        public static UltimateVertexAttribute GetAttributeDefaultsFromName(string name)
         {
             switch (name)
             {

@@ -564,12 +564,11 @@
         public static Formats.Meshes.MeshAttribute ParseMeshAttribute(this SsbhParser parser)
         {
             var result = new Formats.Meshes.MeshAttribute();
-            result.Index = parser.ReadInt32();
+            result.Usage = parser.ReadInt32();
             result.DataType = (Formats.Meshes.MeshAttribute.AttributeDataType)parser.ReadUInt32();
             result.BufferIndex = parser.ReadInt32();
             result.BufferOffset = parser.ReadInt32();
-            result.Unk4 = parser.ReadInt32();
-            result.Unk5 = parser.ReadInt32();
+            result.SubIndex = parser.ReadUInt64();
             result.Name = parser.ReadOffsetReadString();
             {
                 // TODO: Extract this code to a method?

@@ -14,11 +14,11 @@ namespace SSBHLib
         {
             switch (dataType)
             {
-                case MeshAttribute.AttributeDataType.Float:
+                case MeshAttribute.AttributeDataType.Float3:
                     return sizeof(float);
-                case MeshAttribute.AttributeDataType.Byte:
+                case MeshAttribute.AttributeDataType.Byte4:
                     return sizeof(byte);
-                case MeshAttribute.AttributeDataType.HalfFloat:
+                case MeshAttribute.AttributeDataType.HalfFloat4:
                     return 2;
                 case MeshAttribute.AttributeDataType.HalfFloat2:
                     return 2;

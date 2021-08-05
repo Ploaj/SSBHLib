@@ -10,6 +10,7 @@ using SSBHLib.Formats.Meshes;
 using SSBHLib.Tools;
 using System.Collections.Generic;
 using System.Linq;
+using static SSBHLib.Formats.Meshes.MeshAttribute;
 
 namespace CrossMod.Nodes.Conversion
 {
@@ -145,17 +146,31 @@ namespace CrossMod.Nodes.Conversion
         private static string ConfigureAttribute(UltimateMesh renderMesh, MeshObject meshObject, MeshAttribute attribute)
         {
             var name = attribute.AttributeStrings[0].Text;
-            var valueCount = (ValueCount)UltimateVertexAttribute.GetAttributeFromName(name).ComponentCount;
-            var type = GetGlAttributeType(attribute);
+            var valueCount = GetComponentCount(attribute.DataType);
+            var type = GetGlAttributeType(attribute.DataType);
             var bufferName = $"vertexBuffer{attribute.BufferIndex}";
             var offset = (attribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + attribute.BufferOffset;
             var stride = attribute.BufferIndex == 0 ? meshObject.Stride : meshObject.Stride2;
 
             // Convert colors to floating point.
-            var normalized = attribute.DataType == MeshAttribute.AttributeDataType.Byte;
+            var normalized = attribute.DataType == MeshAttribute.AttributeDataType.Byte4;
 
             renderMesh.ConfigureAttribute(new VertexFloatAttribute(name, valueCount, type, normalized), bufferName, offset, stride);
             return name;
+        }
+
+        private static ValueCount GetComponentCount(AttributeDataType dataType)
+        {
+            return dataType switch
+            {
+                AttributeDataType.Float3 => ValueCount.Three,
+                AttributeDataType.Byte4 => ValueCount.Four,
+                AttributeDataType.Float4 => ValueCount.Four,
+                AttributeDataType.HalfFloat4 => ValueCount.Four,
+                AttributeDataType.Float2 => ValueCount.Two,
+                AttributeDataType.HalfFloat2 => ValueCount.Two,
+                _ => ValueCount.Four,
+            };
         }
 
         private static Dictionary<string, int> GetIndexByBoneName(RSkeleton? skeleton)
@@ -208,16 +223,18 @@ namespace CrossMod.Nodes.Conversion
             }
         }
 
-        private static VertexAttribPointerType GetGlAttributeType(MeshAttribute meshAttribute)
+        private static VertexAttribPointerType GetGlAttributeType(AttributeDataType dataType)
         {
             // Render bytes as unsigned because of attribute normalization.
-            return meshAttribute.DataType switch
+            return dataType switch
             {
-                MeshAttribute.AttributeDataType.Float => VertexAttribPointerType.Float,
-                MeshAttribute.AttributeDataType.Byte => VertexAttribPointerType.UnsignedByte,
-                MeshAttribute.AttributeDataType.HalfFloat => VertexAttribPointerType.HalfFloat,
-                MeshAttribute.AttributeDataType.HalfFloat2 => VertexAttribPointerType.HalfFloat,
-                _ => VertexAttribPointerType.Float,
+                AttributeDataType.Float3 => VertexAttribPointerType.Float,
+                AttributeDataType.Byte4 => VertexAttribPointerType.UnsignedByte,
+                AttributeDataType.HalfFloat4 => VertexAttribPointerType.HalfFloat,
+                AttributeDataType.HalfFloat2 => VertexAttribPointerType.HalfFloat,
+                AttributeDataType.Float4 => VertexAttribPointerType.Float,
+                AttributeDataType.Float2 => VertexAttribPointerType.Float,
+                _ => throw new System.NotImplementedException(),
             };
         }
     }
