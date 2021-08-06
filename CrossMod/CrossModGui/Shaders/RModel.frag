@@ -45,6 +45,7 @@ uniform int renderEmission;
 uniform int renderBakedLighting;
 uniform int renderRimLighting;
 uniform int renderExperimental;
+uniform int enablePostProcessing;
 
 uniform int renderWireframe;
 uniform int renderVertexColor;
@@ -551,7 +552,9 @@ void main()
         fragColor0.rgb += GetBloomBrightColor(fragColor0.rgb) * bloomIntensity;
 
     // Post Processing.
-    vec3 result = GetPostProcessingResult(fragColor0.rgb);
+    vec3 result = fragColor0.rgb;
+    if (enablePostProcessing == 1)
+        result = GetPostProcessingResult(fragColor0.rgb);
 
     // Gamma correction to simulate an SRGB framebuffer.
     fragColor0.rgb = GetSrgb(result);

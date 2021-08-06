@@ -120,6 +120,7 @@ namespace CrossMod.Rendering.Models
 
             currentShader.SetBoolToInt("enableBloom", RenderSettings.Instance.EnableBloom);
             currentShader.SetFloat("bloomIntensity", RenderSettings.Instance.BloomIntensity);
+            currentShader.SetBoolToInt("enablePostProcessing", RenderSettings.Instance.EnablePostProcessing);
         }
 
         private static int GetOrder(string shaderLabel)
