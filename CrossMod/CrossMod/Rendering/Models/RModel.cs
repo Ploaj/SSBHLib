@@ -157,6 +157,7 @@ namespace CrossMod.Rendering.Models
 
         public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
+            // TODO: Double check why this is commented out.
             // Check if the uniform values have already been set for this shader.
             //if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
