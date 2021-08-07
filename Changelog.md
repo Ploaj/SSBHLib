@@ -1,4 +1,13 @@
 # Cross Mod
+**v0.17**
+* Changed the window title to display the current release version.
+* Added an automatic check to display details for new releases when launching the program.
+* Added the ability to resize the side panels
+* Fixed an issue where a mesh attribute error (yellow checkerboard) would be incorrectly displayed for stage ink meshes.
+* Added a toggle to render settings for post processing. Disabling post processing may improve rendering accuracy for some stage models.
+* Fixed a crash when rendering a model if the model.nusktb file is missing.
+* Fixed an issue where the wrap mode and texture filtering was set incorrectly for materials referencing the same texture.
+
 **v0.16**
 * Minor improvements to rim lighting
 * Added rendering for yellow checkerboard in viewport (missing mesh attributes)
