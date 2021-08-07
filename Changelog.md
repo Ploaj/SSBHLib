@@ -7,6 +7,7 @@
 * Added a toggle to render settings for post processing. Disabling post processing may improve rendering accuracy for some stage models.
 * Fixed a crash when rendering a model if the model.nusktb file is missing.
 * Fixed an issue where the wrap mode and texture filtering was set incorrectly for materials referencing the same texture.
+* Fixed missing padding when exporting materials.
 
 **v0.16**
 * Minor improvements to rim lighting
