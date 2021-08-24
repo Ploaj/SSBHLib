@@ -1,4 +1,5 @@
-﻿using CrossMod.Rendering.GlTools;
+﻿using CrossMod.MaterialValidation;
+using CrossMod.Rendering.GlTools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Shaders;
@@ -20,7 +21,27 @@ namespace CrossMod.Rendering.Models
         public string SingleBindName { get; }
         public int SingleBindIndex { get; }
 
-        public RMaterial? Material { get; set; } = null;
+        public RMaterial? Material {
+            get => material;
+            set
+            {
+                material = value;
+                if (value != null)
+                {
+                    // Cache this database lookup to avoid doing it every frame.
+                    // TODO: The actual in game check is more complicated and involves checking names, subindex, and usage.
+                    HasRequiredAttributes = ShaderValidation.IsValidAttributeList(value.ShaderLabel, AttributeNames);
+                }
+                else
+                {
+                    // Avoid having both an invalid shader label and missing attribute error if no material.
+                    HasRequiredAttributes = true;
+                }
+            }
+        }
+        private RMaterial? material = null;
+
+        public bool HasRequiredAttributes { get; private set; }
 
         public bool IsVisible
         {

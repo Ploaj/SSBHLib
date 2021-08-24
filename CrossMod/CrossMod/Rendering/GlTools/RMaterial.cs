@@ -134,16 +134,12 @@ namespace CrossMod.Rendering.GlTools
 
         public Dictionary<MatlEnums.ParamId, Vector4> Vec4ParamsMaterialAnimation { get; } = new Dictionary<MatlEnums.ParamId, Vector4>();
 
-        public void SetMaterialUniforms(Shader shader, RMaterial? previousMaterial, List<string> attributeNames)
+        public void SetMaterialUniforms(Shader shader, RMaterial? previousMaterial, bool hasRequiredAttributes)
         {
             // TODO: This code could be moved to the constructor.
             if (genericMaterial == null || shouldUpdateTexturesAndSamplers)
             {
-                // Don't update this every frame since accessing the database is slow.
-                // TODO: This may need to be updated more frequently if materials are eventually reassignable to new mesh objects.
-                // TODO: The actual in game check is more complicated, and involves checking names, subindex, and usage.
-                var hasRequiredAttributes = ShaderValidation.IsValidAttributeList(ShaderLabel, attributeNames);
-                genericMaterial = CreateGenericMaterial(hasRequiredAttributes);
+                genericMaterial = CreateGenericMaterial();
 
                 shouldUpdateTexturesAndSamplers = false;
             }
@@ -159,6 +155,9 @@ namespace CrossMod.Rendering.GlTools
                 SetMaterialParams(uniformBlock);
                 shouldUpdateUniformBlock = false;
             }
+
+            // TODO: This class should probably be rewritten due to uniform caching being buggy.
+            shader.SetBoolToInt("hasRequiredAttributes", hasRequiredAttributes);
 
             // Update the uniform values.
             genericMaterial.SetShaderUniforms(shader, previousMaterial?.genericMaterial);
@@ -190,14 +189,13 @@ namespace CrossMod.Rendering.GlTools
                 SFGenericModel.RenderState.GLRenderSettings.SetPolygonModeSettings(new SFGenericModel.RenderState.PolygonModeSettings(MaterialFace.FrontAndBack, FillMode));
         }
 
-        private GenericMaterial CreateGenericMaterial(bool hasRequiredAttributes)
+        private GenericMaterial CreateGenericMaterial()
         {
             // Don't use the default texture unit.
             var genericMaterial = new GenericMaterial(1);
 
             AddTextures(genericMaterial);
 
-            genericMaterial.AddBoolToInt("hasRequiredAttributes", hasRequiredAttributes);
             genericMaterial.AddFloat("depthBias", DepthBias);
             genericMaterial.AddVector3("materialId", MaterialIdColorRgb255 / 255f);
 

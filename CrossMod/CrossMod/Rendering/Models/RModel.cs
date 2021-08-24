@@ -161,7 +161,7 @@ namespace CrossMod.Rendering.Models
             // Check if the uniform values have already been set for this shader.
             //if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
-                m.Material?.SetMaterialUniforms(currentShader, previousMaterial, m.AttributeNames);
+                m.Material?.SetMaterialUniforms(currentShader, previousMaterial, m.HasRequiredAttributes);
                 m.Material?.SetRenderState(previousMaterial);
             }
 
