@@ -177,6 +177,22 @@ namespace CrossModGui.ViewModels
         {
             ResetAnimation();
 
+            // TODO: The script node should probably be stored with the model somehow.            
+            // TODO: ScriptNode.MotionRate?
+            // Having to find the node each time seems redundant.
+            var scriptNode = FindSiblingOfType<ScriptNode>(item);
+            if (scriptNode != null)
+            {
+                // Load hitboxes.
+                var skelNode = FindSiblingOfType<NusktbNode>(item);
+                if (skelNode != null)
+                {
+                    scriptNode.SkelNode = skelNode;
+                    Renderer.ScriptNode = scriptNode;
+                    ParamNodeContainer.SkelNode = skelNode;
+                }
+            }
+
             // Preserve the existing model collection when drawing individual items.
             // Textures and bones will override the model collection.
             // Updating the animation shouldn't clear the current renderable.
@@ -196,22 +212,7 @@ namespace CrossModGui.ViewModels
                 Renderer.ItemToRenderOverride = null;
             }
 
-            // TODO: ScriptNode.MotionRate?
 
-            // TODO: The script node should probably be stored with the model somehow.
-            // Having to find the node each time seems redundant.
-            var scriptNode = FindSiblingOfType<ScriptNode>(item);
-            if (scriptNode != null)
-            {
-                // Load hitboxes.
-                var skelNode = FindSiblingOfType<NusktbNode>(item);
-                if (skelNode != null)
-                {
-                    scriptNode.SkelNode = skelNode;
-                    Renderer.ScriptNode = scriptNode;
-                    ParamNodeContainer.SkelNode = skelNode;
-                }
-            }
         }
 
         private static T? FindSiblingOfType<T>(FileNode item) where T : FileNode
@@ -339,7 +340,9 @@ namespace CrossModGui.ViewModels
                 // TODO: The redundant string parsing in the script node makes this slow.
                 // Most of the parsing could be cached.
                 Renderer.ScriptNode.Start();
-                for (int i = 0; i < CurrentFrame; i++)
+                // TODO: Using currentValue like this is a bit of a hack.
+                // We don't update CurrentFrame to avoid stutters due to marshaling with the UI thread.
+                for (int i = 0; i < currentValue; i++)
                 {
                     Renderer.ScriptNode.Update(i);
                 }
