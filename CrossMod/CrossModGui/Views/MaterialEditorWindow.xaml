@@ -90,7 +90,32 @@
                         <TextBlock Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
                     </Grid>
                     <Label Visibility="Visible">Material Errors</Label>
-                    <Expander x:Name="missingAttributesExpander" Visibility="{Binding CurrentMaterial.AttributeErrors, Converter={StaticResource isEmptyVisibilityConverter}}" IsExpanded="True">
+                    <Expander Name="invalidShaderExpander" Visibility="{Binding CurrentMaterial.IsNotValidShaderLabel, Converter={StaticResource booleanVisibilityConverter}}" IsExpanded="True">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="16" Height="16" Margin="5,2" VerticalAlignment="Center">
+                                    <Rectangle.Fill>
+                                        <DrawingBrush TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute">
+                                            <DrawingBrush.Drawing>
+                                                <DrawingGroup>
+                                                    <GeometryDrawing Geometry="M0,0 H2 V1 H2 V2 H1 V2 H0Z" Brush="Red"></GeometryDrawing>
+                                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0Z" Brush="Black"/>
+                                                </DrawingGroup>
+                                            </DrawingBrush.Drawing>
+                                        </DrawingBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <TextBlock>Invalid Shader Label</TextBlock>
+                            </StackPanel>
+                        </Expander.Header>
+                        <DockPanel LastChildFill="True" Width="{Binding ActualWidth, ElementName=invalidShaderExpander}">
+                            <TextBlock Margin="5,2,5,10" DockPanel.Dock="Top" TextWrapping="Wrap">
+                                The shader label for this material is not a recognized in game shader. Make sure that Cross Mod is up to date and the shader label matches 
+                                a shader label from an existing material used in game.
+                            </TextBlock>
+                        </DockPanel>
+                    </Expander>
+                    <Expander Name="missingAttributesExpander" Visibility="{Binding CurrentMaterial.AttributeErrors, Converter={StaticResource isEmptyVisibilityConverter}}" IsExpanded="True">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Width="16" Height="16" Margin="5,2" VerticalAlignment="Center">

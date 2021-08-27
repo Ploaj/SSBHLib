@@ -44,6 +44,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
         // This will need to be updated if the shader label changes.
         public List<AttributeError> AttributeErrors { get; set; } = new List<AttributeError>();
 
+        // This will need to be updated if the shader label changes.
+        public bool IsNotValidShaderLabel { get; set; }
+
         public SolidColorBrush? MaterialIdColor { get; set; }
 
         public RasterizerStateParam? RasterizerState0 { get; set; }

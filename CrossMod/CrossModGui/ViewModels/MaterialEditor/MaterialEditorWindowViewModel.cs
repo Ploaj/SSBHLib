@@ -228,7 +228,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
                 RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel),
-                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel, rnumdl)
+                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel, rnumdl),
+                IsNotValidShaderLabel = !ShaderValidation.IsValidShaderLabel(entry.ShaderLabel)
             };
             AddAttributesToMaterial(entry, material);
             return material;
