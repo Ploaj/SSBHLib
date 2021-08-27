@@ -59,6 +59,7 @@ namespace CrossMod.Rendering
                 ItemToRender = null;
                 ItemToRenderOverride = null;
                 RenderableAnimation = null;
+                ScriptNode = null;
                 GC.WaitForPendingFinalizers();
                 GLObjectManager.DeleteUnusedGLObjects();
             });
