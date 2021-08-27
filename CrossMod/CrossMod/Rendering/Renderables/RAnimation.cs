@@ -46,6 +46,9 @@ namespace CrossMod.Rendering
                 {
                     if (m.Material != null && m.Material.MaterialLabel.Equals(a.MaterialName))
                     {
+                        // Ensure the properties actually update.
+                        m.Material.StartMaterialAnimation();
+
                         if (System.Enum.TryParse(a.AttributeName, out SSBHLib.Formats.Materials.MatlEnums.ParamId paramId))
                         {
                             m.Material.Vec4ParamsMaterialAnimation[paramId] = a.Keys.GetValue(frame);

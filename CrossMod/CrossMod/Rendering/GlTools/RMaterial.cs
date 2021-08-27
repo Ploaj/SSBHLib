@@ -102,6 +102,14 @@ namespace CrossMod.Rendering.GlTools
             HasColorSet7 = attributes.Contains("colorSet7");
         }
 
+        public void StartMaterialAnimation()
+        {
+            // TODO: This is too slow without optimizations but buggy with them enabled.
+            // It makes the most sense to make RMaterial immutable and avoid tracking state changes.
+            shouldUpdateTexturesAndSamplers = true;
+            shouldUpdateUniformBlock = true;
+        }
+
         public void UpdateVec4(MatlEnums.ParamId paramId, Vector4 value)
         {
             vec4ByParamId[paramId] = value;
