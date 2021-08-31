@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using SFGraphics.Cameras;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering
@@ -10,6 +11,7 @@ namespace CrossMod.Rendering
         public List<RTransformAnimation> TransformNodes = new List<RTransformAnimation>();
         public List<RVisibilityAnimation> VisibilityNodes = new List<RVisibilityAnimation>();
         public List<RMaterialAnimation> MaterialNodes = new List<RMaterialAnimation>();
+        public List<RCameraAnimation> CameraNodes = new List<RCameraAnimation>();
 
         public int GetFrameCount()
         {
@@ -91,6 +93,28 @@ namespace CrossMod.Rendering
                     b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
+
+        public void SetFrameCamera(Camera camera, float frame)
+        {
+            foreach (var a in CameraNodes)
+            {
+                var key = a.FieldOfView.GetKey(frame);
+                camera.FovRadians = key.Value;
+            }
+
+            foreach (var a in TransformNodes)
+            {
+                // TODO: Should this be case sensitive and use equality?
+                if (a.Name.ToLower().Contains("gya_camera"))
+                {
+                    var key = a.Transform.GetKey(frame);
+                    // TODO: Store the translation, rotation, etc instead of decomposing the matrix again?
+                    // Another option is to allow overriding the MVP matrix.
+                    //camera.TranslationZ = key.Value.ExtractTranslation().Z;
+                }
+            }
+
+        }
     }
 
     public class RMaterialAnimation
@@ -112,6 +136,12 @@ namespace CrossMod.Rendering
     {
         public string Name { get; set; }
         public RKeyGroup<Matrix4> Transform { get; } = new RKeyGroup<Matrix4>();
+    }
+
+    public class RCameraAnimation
+    {
+        public RKeyGroup<float> FieldOfView { get; } = new RKeyGroup<float>();
+        // TODO: Add near clip and other missing attributes.
     }
 
     public class RKeyGroup<T>

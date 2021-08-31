@@ -124,11 +124,13 @@ namespace CrossMod.Rendering
             // Animate the override item instead of the regular renderable item.
             // This allows animating single models by clicking the model and then the animation.
             // TODO: How to support animating model collections?
-            if (ItemToRenderOverride is IRenderableModel model)
+            if (ItemToRenderOverride is IRenderableModel model && model.RenderModel != null && model.Skeleton != null)
             {
                 RenderableAnimation?.SetFrameModel(model.RenderModel.SubMeshes, currentFrame);
                 RenderableAnimation?.SetFrameSkeleton(model.Skeleton.Bones, currentFrame);
             }
+
+            RenderableAnimation?.SetFrameCamera(Camera, currentFrame);
 
             if (ItemToRenderOverride != null)
             {

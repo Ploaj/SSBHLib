@@ -21,21 +21,52 @@ namespace CrossMod.Nodes.Conversion
 
             foreach (AnimGroup animGroup in animation.Animations)
             {
-                if (animGroup.Type == AnimType.Material)
+                switch (animGroup.Type)
                 {
-                    ReadMaterialAnimations(renderAnimation, decoder, animGroup);
-                }
-                else if (animGroup.Type == AnimType.Visibility)
-                {
-                    ReadVisAnimations(renderAnimation, decoder, animGroup);
-                }
-                else if (animGroup.Type == AnimType.Transform)
-                {
-                    ReadBoneAnimations(renderAnimation, decoder, animGroup);
+                    case AnimType.Transform:
+                        ReadBoneAnimations(renderAnimation, decoder, animGroup);
+                        break;
+                    case AnimType.Visibility:
+                        ReadVisAnimations(renderAnimation, decoder, animGroup);
+                        break;
+                    case AnimType.Material:
+                        ReadMaterialAnimations(renderAnimation, decoder, animGroup);
+                        break;
+                    case AnimType.Camera:
+                        ReadCameraAnimations(renderAnimation, decoder, animGroup);
+                        break;
+                    default:
+                        break;
                 }
             }
 
             return renderAnimation;
+        }
+
+        private static void ReadCameraAnimations(RAnimation renderAnimation, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
+        {
+            foreach (AnimNode animNode in animGroup.Nodes)
+            {
+                foreach (AnimTrack track in animNode.Tracks)
+                {
+                    object[] values = decoder.ReadTrack(track);
+
+                    if (track.Name.Equals("FieldOfView"))
+                    {
+                        var cameraAnim = new RCameraAnimation();
+                        renderAnimation.CameraNodes.Add(cameraAnim);
+
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            cameraAnim.FieldOfView.Keys.Add(new RKey<float>()
+                            {
+                                Frame = i,
+                                Value = (float)values[i]
+                            });
+                        }
+                    }
+                }
+            }
         }
 
         private static void ReadMaterialAnimations(RAnimation renderAnimation, SsbhAnimTrackDecoder decoder, AnimGroup animGroup)
@@ -44,7 +75,7 @@ namespace CrossMod.Nodes.Conversion
             {
                 foreach (AnimTrack track in animNode.Tracks)
                 {
-                    RMaterialAnimation matAnim = new RMaterialAnimation()
+                    var matAnim = new RMaterialAnimation()
                     {
                         MaterialName = animNode.Name,
                         AttributeName = track.Name
@@ -74,7 +105,7 @@ namespace CrossMod.Nodes.Conversion
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
-                RTransformAnimation tfrmAnim = new RTransformAnimation()
+                var tfrmAnim = new RTransformAnimation()
                 {
                     Name = animNode.Name
                 };
@@ -104,7 +135,7 @@ namespace CrossMod.Nodes.Conversion
         {
             foreach (AnimNode animNode in animGroup.Nodes)
             {
-                RVisibilityAnimation visAnim = new RVisibilityAnimation()
+                var visAnim = new RVisibilityAnimation()
                 {
                     MeshName = animNode.Name
                 };
