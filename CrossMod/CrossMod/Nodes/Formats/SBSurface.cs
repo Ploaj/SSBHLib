@@ -3,7 +3,6 @@ using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Textures;
 using SFGraphics.GLObjects.Textures.TextureFormats;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -22,35 +21,23 @@ namespace CrossMod.Nodes
     /// </summary>
     public class SBSurface
     {
-        [ReadOnly(true), Category("Properties")]
         public string Name { get; set; }
 
-        [ReadOnly(true), Category("Properties")]
         public List<MipArray> Arrays = new List<MipArray>();
 
-        [ReadOnly(true), Category("Dimensions")]
         public int Width { get; set; }
-        [ReadOnly(true), Category("Dimensions")]
         public int Height { get; set; }
-        [ReadOnly(true), Category("Dimensions")]
         public int Depth { get; set; }
 
-        [ReadOnly(true), Category("Format")]
         public TextureTarget TextureTarget { get; set; }
-        [ReadOnly(true), Category("Format")]
         public PixelFormat PixelFormat { get; set; }
-        [ReadOnly(true), Category("Format")]
         public PixelType PixelType { get; set; }
-        [ReadOnly(true), Category("Format")]
         public InternalFormat InternalFormat { get; set; }
 
-        [ReadOnly(true), Category("Format")]
         public int ArrayCount { get; set; } = 1;
 
-        [ReadOnly(true), Category("Format")]
         public bool IsCubeMap { get { return Arrays.Count == 6; } }
 
-        [ReadOnly(true), Category("Format")]
         public bool IsSRGB
         {
             get
@@ -119,16 +106,7 @@ namespace CrossMod.Nodes
 
                 try
                 {
-                    for (int array = 0; array < surface.ArrayCount; array++)
-                    {
-                        MipArray arr = new MipArray();
-                        for (int i = 0; i < MipCount; i++)
-                        {
-                            byte[] deswiz = SwitchSwizzler.GetImageData(surface, ImageData, array, i, MipCount);
-                            arr.Mipmaps.Add(deswiz);
-                        }
-                        surface.Arrays.Add(arr);
-                    }
+                    surface.Arrays = SwitchSwizzler.GetImageData(surface, ImageData, MipCount);
                 }
                 catch (System.Exception)
                 {
@@ -305,7 +283,6 @@ namespace CrossMod.Nodes
         R8G8B8A8_SRGB = 0x05,
         R32G32B32A32_FLOAT = 0x34,
         B8G8R8A8_UNORM = 0x50,
-        //53
         B8G8R8A8_SRGB = 0x55,
         BC1_UNORM = 0x80,
         BC1_SRGB = 0x85,
@@ -321,6 +298,4 @@ namespace CrossMod.Nodes
         BC7_UNORM = 0xe0,
         BC7_SRGB = 0xe5
     }
-
-
 }

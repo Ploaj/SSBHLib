@@ -11,6 +11,12 @@
     <StartupObject />
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AnimatedGif, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -82,5 +88,10 @@
     <ProjectReference Include="..\CrossMod.MaterialValidation\CrossMod.MaterialValidation.csproj" />
     <ProjectReference Include="..\..\SsbhLib\SsbhLib.csproj" />
     <ProjectReference Include="..\..\XMBLib\XmbLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="nutexb_swizzle.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

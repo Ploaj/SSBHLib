@@ -2,39 +2,37 @@
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
-// Classes ported from StudioSB
-// https://github.com/Ploaj/StudioSB/blob/master/LICENSE
 namespace CrossMod.Tools
 {
-    public class SwitchSwizzler
+    public static class SwitchSwizzler
     {
-        /**
-         * Ported from https://github.com/KillzXGaming/Switch-Toolbox
-         */
-        public static byte[] GetImageData(SBSurface surface, byte[] ImageData, int ArrayLevel, int MipLevel, int MipCount, int target = 1)
+        [DllImport("nutexb_swizzle", EntryPoint = "deswizzle_block_linear")]
+        private static unsafe extern void DeswizzleBlockLinear(ulong width, ulong height, byte* source, ulong sourceLength, byte[] destination, ulong destinationLength, ulong blockHeight, ulong bytesPerPixel);
+
+        [DllImport("nutexb_swizzle", EntryPoint = "get_block_height")]
+        private static extern ulong GetBlockHeight(ulong height);
+
+        [DllImport("nutexb_swizzle", EntryPoint = "get_surface_size")]
+        private static extern ulong GetSurfaceSize(ulong width, ulong height, ulong bytesPerPixel);
+
+        public static List<MipArray> GetImageData(SBSurface surface, byte[] imageData, int MipCount)
         {
             uint bpp = TextureFormatInfo.GetBPP(surface.InternalFormat);
-            uint blkWidth = TextureFormatInfo.GetBlockWidth(surface.InternalFormat);
-            uint blkHeight = TextureFormatInfo.GetBlockHeight(surface.InternalFormat);
+            uint tileWidth = TextureFormatInfo.GetBlockWidth(surface.InternalFormat);
+            uint tileHeight = TextureFormatInfo.GetBlockHeight(surface.InternalFormat);
             uint blkDepth = TextureFormatInfo.GetBlockDepth(surface.InternalFormat);
 
-            uint blockHeight = GetBlockHeight(DivRoundUp((uint)surface.Height, blkHeight));
-            int BlockHeightLog2 = Convert.ToString(blockHeight, 2).Length - 1;
+            int arrayOffset = 0;
 
-            uint Pitch = 0;
-            uint DataAlignment = 512;
-            uint TileMode = 0;
+            var arrays = new List<MipArray>();
 
-            int linesPerBlockHeight = (1 << BlockHeightLog2) * 8;
-
-            uint ArrayOffset = 0;
+            // TODO: Can this entire function be handled by Rust?
             for (int arrayLevel = 0; arrayLevel < surface.ArrayCount; arrayLevel++)
             {
-                uint SurfaceSize = 0;
-                int blockHeightShift = 0;
-
-                List<uint> MipOffsets = new List<uint>();
+                var mipmaps = new List<byte[]>();
+                int surfaceSize = 0;
 
                 for (int mipLevel = 0; mipLevel < MipCount; mipLevel++)
                 {
@@ -42,144 +40,35 @@ namespace CrossMod.Tools
                     uint height = (uint)Math.Max(1, surface.Height >> mipLevel);
                     uint depth = (uint)Math.Max(1, surface.Depth >> mipLevel);
 
-                    uint size = DivRoundUp(width, blkWidth) * DivRoundUp(height, blkHeight) * bpp;
+                    uint widthInTiles = DivRoundUp(width, tileWidth);
+                    uint heightInTiles = DivRoundUp(height, tileHeight);
 
-                    if (Pow2RoundUp(DivRoundUp(height, blkWidth)) < linesPerBlockHeight)
-                        blockHeightShift += 1;
+                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, bpp);
 
-                    //SBConsole.WriteLine(height + " " + blkWidth + " " + Pow2RoundUp(DivRoundUp(height, blkWidth)) + " " + blockHeight + " " + blockHeightShift + " " + linesPerBlockHeight + " " + BlockHeightLog2 + " " + (int)Math.Max(0, BlockHeightLog2 - blockHeightShift));
+                    // Use a span to avoid copying the memory each time.
+                    var mipData = imageData.AsSpan()[(arrayOffset + surfaceSize)..];
 
-                    uint width__ = DivRoundUp(width, blkWidth);
-                    uint height__ = DivRoundUp(height, blkHeight);
+                    // 10x10 BC7 needs 12x12 pixels worth of data?
+                    // TODO: Handle errors?
+                    var roundedWidth = RoundUp(width, tileWidth);
+                    var roundedHeight = RoundUp(height, tileHeight);
 
-                    //Calculate the mip size instead
-                    byte[] AlignedData = new byte[(RoundUp(SurfaceSize, DataAlignment) - SurfaceSize)];
-                    SurfaceSize += (uint)AlignedData.Length;
-                    MipOffsets.Add(SurfaceSize);
+                    var mipDataDeswizzled = Deswizzle(roundedWidth, roundedHeight, depth, tileWidth, tileHeight, blkDepth, bpp, mipData);
+                    mipmaps.Add(mipDataDeswizzled);
 
-                    //Get the first mip offset and current one and the total image size
-                    int msize = (int)((MipOffsets[0] + ImageData.Length - MipOffsets[mipLevel]) / surface.ArrayCount);
-
-                    if (msize > ImageData.Length - (ArrayOffset + MipOffsets[mipLevel]))
-                        msize = (int)(ImageData.Length - (ArrayOffset + MipOffsets[mipLevel]));
-
-                    byte[] data_ = new byte[msize];
-                    if (ArrayLevel == arrayLevel && MipLevel == mipLevel)
-                        Array.Copy(ImageData, ArrayOffset + MipOffsets[mipLevel], data_, 0, msize);
-                    try
-                    {
-                        Pitch = RoundUp(width__ * bpp, 64);
-                        SurfaceSize += Pitch * RoundUp(height__, Math.Max(1, blockHeight >> blockHeightShift) * 8);
-
-                        if (ArrayLevel == arrayLevel && MipLevel == mipLevel)
-                        {
-                            //SBConsole.WriteLine($"{width} {height} {blkWidth} {blkHeight} {target} {bpp} {TileMode} {(int)Math.Max(0, BlockHeightLog2 - blockHeightShift)} {data_.Length}");
-                            byte[] result = Deswizzle(width, height, depth, blkWidth, blkHeight, blkDepth, target, bpp, TileMode, Math.Max(0, BlockHeightLog2 - blockHeightShift), data_);
-                            //Create a copy and use that to remove uneeded data
-                            byte[] result_ = new byte[size];
-                            Array.Copy(result, 0, result_, 0, size);
-                            result = null;
-
-                            return result_;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-
-                        return new byte[0];
-                    }
+                    surfaceSize += (int)mipSize;
                 }
 
-                ArrayOffset += (uint)(ImageData.Length / surface.ArrayCount);
+                var arr = new MipArray { Mipmaps = mipmaps };
+                arrays.Add(arr);
+
+                arrayOffset += imageData.Length / surface.ArrayCount;
             }
-            return new byte[0];
+
+            return arrays;
         }
 
-        public static byte[] CreateBuffer(SBSurface surface, int target = 1)
-        {
-            List<byte> ImageData = new List<byte>();
-
-            if (surface.Arrays.Count == 0)
-                return ImageData.ToArray();
-
-            var MipCount = surface.Arrays[0].Mipmaps.Count;
-            uint bpp = TextureFormatInfo.GetBPP(surface.InternalFormat);
-            uint blkWidth = TextureFormatInfo.GetBlockWidth(surface.InternalFormat);
-            uint blkHeight = TextureFormatInfo.GetBlockHeight(surface.InternalFormat);
-            uint blkDepth = TextureFormatInfo.GetBlockDepth(surface.InternalFormat);
-
-            uint blockHeight = GetBlockHeight(DivRoundUp((uint)surface.Height, blkHeight));
-            uint BlockHeightLog2 = (uint)Convert.ToString(blockHeight, 2).Length - 1;
-
-            uint Pitch = 0;
-            uint DataAlignment = 512;
-            uint TileMode = 0;
-
-            int linesPerBlockHeight = (1 << (int)BlockHeightLog2) * 8;
-
-            //uint ArrayOffset = 0;
-            for (int arrayLevel = 0; arrayLevel < surface.Arrays.Count; arrayLevel++)
-            {
-                uint SurfaceSize = 0;
-                int blockHeightShift = 0;
-
-                List<uint> MipOffsets = new List<uint>();
-
-                for (int mipLevel = 0; mipLevel < MipCount; mipLevel++)
-                {
-                    uint width = (uint)Math.Max(1, surface.Width >> mipLevel);
-                    uint height = (uint)Math.Max(1, surface.Height >> mipLevel);
-                    uint depth = (uint)Math.Max(1, surface.Depth >> mipLevel);
-
-                    uint size = DivRoundUp(width, blkWidth) * DivRoundUp(height, blkHeight) * bpp;
-
-                    if (Pow2RoundUp(DivRoundUp(height, blkWidth)) < linesPerBlockHeight)
-                        blockHeightShift += 1;
-
-
-                    uint width__ = DivRoundUp(width, blkWidth);
-                    uint height__ = DivRoundUp(height, blkHeight);
-
-                    //Calculate the mip size instead
-                    byte[] AlignedData = new byte[(RoundUp(SurfaceSize, DataAlignment) - SurfaceSize)];
-                    SurfaceSize += (uint)AlignedData.Length;
-                    MipOffsets.Add(SurfaceSize);
-
-                    //Get the first mip offset and current one and the total image size
-                    int msize = (int)((MipOffsets[0] + surface.Arrays[arrayLevel].Mipmaps[mipLevel].Length - MipOffsets[mipLevel]) / surface.ArrayCount);
-
-                    //try
-                    {
-                        Pitch = RoundUp(width__ * bpp, 64);
-                        SurfaceSize += Pitch * RoundUp(height__, Math.Max(1, blockHeight >> blockHeightShift) * 8);
-
-                        //Console.WriteLine($"{width} {height} {blkWidth} {blkHeight} {target} {bpp} {TileMode} {(int)Math.Max(0, BlockHeightLog2 - blockHeightShift)}");
-                        var mipData = surface.Arrays[arrayLevel].Mipmaps[mipLevel];
-                        /*byte[] padded = new byte[mipData.Length * 2];
-                        Array.Copy(mipData, 0, padded, 0, mipData.Length);
-                        mipData = padded;*/
-                        byte[] result = Swizzle(width, height, depth, blkWidth, blkHeight, blkDepth, target, bpp, TileMode, (int)Math.Max(0, BlockHeightLog2 - blockHeightShift), mipData);
-                        //Console.WriteLine(result.Length + " " + surface.Mipmaps[mipLevel].Length);
-                        ImageData.AddRange(result);
-                    }
-                    /*catch (Exception e)
-                    {
-                        System.Windows.Forms.MessageBox.Show($"Failed to swizzle texture {surface.Name}!");
-                        Console.WriteLine(e);
-
-                        return new byte[0];
-                    }*/
-                }
-
-                // alignment
-                if (arrayLevel != surface.Arrays.Count - 1)
-                    ImageData.AddRange(new byte[0x1000 - (ImageData.Count % 0x1000)]);
-            }
-            return ImageData.ToArray();
-        }
-
-        public static readonly Dictionary<NUTEX_FORMAT, Vector2> BlockDiminsions = new Dictionary<NUTEX_FORMAT, Vector2>()
+        public static readonly Dictionary<NUTEX_FORMAT, Vector2> TileDiminsions = new Dictionary<NUTEX_FORMAT, Vector2>()
         {
             { NUTEX_FORMAT.B8G8R8A8_UNORM, new Vector2(1, 1) },
             { NUTEX_FORMAT.B8G8R8A8_SRGB, new Vector2(1, 1) },
@@ -201,7 +90,7 @@ namespace CrossMod.Tools
             { NUTEX_FORMAT.BC7_UNORM, new Vector2(4, 4) },
         };
 
-        public static uint GetBpps(NUTEX_FORMAT format)
+        public static uint GetBytesPerPixel(NUTEX_FORMAT format)
         {
             switch (format)
             {
@@ -237,21 +126,6 @@ namespace CrossMod.Tools
             }
         }
 
-        /*---------------------------------------
-         * 
-         * Code ported from AboodXD's BNTX Extractor https://github.com/aboood40091/BNTX-Extractor/blob/master/swizzle.py
-         * 
-         *---------------------------------------*/
-
-        public static uint GetBlockHeight(uint height)
-        {
-            uint blockHeight = Pow2RoundUp(height / 8);
-            if (blockHeight > 16)
-                blockHeight = 16;
-
-            return blockHeight;
-        }
-
         public static uint DivRoundUp(uint n, uint d)
         {
             return (n + d - 1) / d;
@@ -262,100 +136,18 @@ namespace CrossMod.Tools
             return ((x - 1) | (y - 1)) + 1;
         }
 
-        public static uint Pow2RoundUp(uint x)
+        public static unsafe byte[] Deswizzle(uint width, uint height, uint depth, uint blkWidth, uint blkHeight, uint blkDepth, uint bpp, Span<byte> data)
         {
-            x -= 1;
-            x |= x >> 1;
-            x |= x >> 2;
-            x |= x >> 4;
-            x |= x >> 8;
-            x |= x >> 16;
-            return x + 1;
-        }
+            var output = new byte[width / blkWidth * height / blkHeight * bpp];
 
-        public static byte[] Swizzle(uint width, uint height, uint depth, uint blkWidth, uint blkHeight, uint blkDepth, int roundPitch, uint bpp, uint tileMode, int blockHeightLog2, byte[] data, int toSwizzle)
-        {
-            uint block_height = (uint)(1 << blockHeightLog2);
+            var blockHeight = GetBlockHeight(height / blkHeight);
 
-            width = DivRoundUp(width, blkWidth);
-            height = DivRoundUp(height, blkHeight);
-
-            uint pitch;
-            uint surfSize;
-            if (tileMode == 1)
+            fixed (byte* dataPtr = data)
             {
-                pitch = width * bpp;
-
-                if (roundPitch == 1)
-                    pitch = RoundUp(pitch, 32);
-
-                surfSize = pitch * height;
-            }
-            else
-            {
-                pitch = RoundUp(width * bpp, 64);
-                surfSize = pitch * RoundUp(height, block_height * 8);
+                DeswizzleBlockLinear(width / blkWidth, height / blkHeight, dataPtr, (ulong)data.Length, output, (ulong)output.Length, blockHeight, bpp);
             }
 
-            byte[] result = new byte[surfSize];
-
-            for (uint y = 0; y < height; y++)
-            {
-                for (uint x = 0; x < width; x++)
-                {
-                    uint pos;
-                    uint pos_;
-
-                    if (tileMode == 1)
-                        pos = y * pitch + x * bpp;
-                    else
-                        pos = GetAddrBlockLinear(x, y, width, bpp, 0, block_height);
-
-                    pos_ = (y * width + x) * bpp;
-
-                    if (pos + bpp <= surfSize)
-                    {
-                        if (toSwizzle == 0)
-                            Array.Copy(data, pos, result, pos_, bpp);
-                        else
-                        {
-                            if (pos_ < data.Length)
-                                Array.Copy(data, pos_, result, pos, bpp);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
-        public static byte[] Deswizzle(uint width, uint height, uint depth, uint blkWidth, uint blkHeight, uint blkDepth, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
-        {
-            return Swizzle(width, height, depth, blkWidth, blkHeight, blkDepth, roundPitch, bpp, tileMode, size_range, data, 0);
-        }
-
-        public static byte[] Swizzle(uint width, uint height, uint depth, uint blkWidth, uint blkHeight, uint blkDepth, int roundPitch, uint bpp, uint tileMode, int size_range, byte[] data)
-        {
-            return Swizzle(width, height, depth, blkWidth, blkHeight, blkDepth, roundPitch, bpp, tileMode, size_range, data, 1);
-        }
-
-        static uint GetAddrBlockLinear(uint x, uint y, uint width, uint bytes_per_pixel, uint base_address, uint block_height)
-        {
-            /*
-              From Tega X1 TRM 
-                               */
-            uint image_width_in_gobs = DivRoundUp(width * bytes_per_pixel, 64);
-
-
-            uint GOB_address = (base_address
-                                + (y / (8 * block_height)) * 512 * block_height * image_width_in_gobs
-                                + (x * bytes_per_pixel / 64) * 512 * block_height
-                                + (y % (8 * block_height) / 8) * 512);
-
-            x *= bytes_per_pixel;
-
-            uint Address = (GOB_address + ((x % 64) / 32) * 256 + ((y % 8) / 2) * 64
-                            + ((x % 32) / 16) * 32 + (y % 2) * 16 + (x % 16));
-            return Address;
+            return output;
         }
     }
 }
