@@ -18,6 +18,7 @@ namespace CrossMod.Rendering.GlTools
     /// </summary>
     public class RMaterial
     {
+        // TODO: This entire class should be readonly to avoid bugs with state caching?
         public string MaterialLabel { get; set; }
         public string ShaderLabel { get; set; }
         public int Index { get; }
@@ -276,14 +277,19 @@ namespace CrossMod.Rendering.GlTools
         private void SetVectors(UniformBlock uniformBlock)
         {
             // Use a 16 byte type to avoid alignment issues.
+            var requiredParameters = ShaderValidation.GetParameters(ShaderLabel);
+
+            // Custom vectors default to (0.0, 0.0, 0.0, 0.0).
+            // If the parameter isn't required by the shader, use a more meaningful default.
+            // This avoids rendering issues since the GLSL shader doesn't contain these checks.
             var customVectors = new Vector4[64];
-            customVectors[3] = Vector4.One;
-            customVectors[6] = new Vector4(1, 1, 0, 0);
-            customVectors[8] = Vector4.One;
-            customVectors[13] = Vector4.One;
-            customVectors[18] = Vector4.One;
-            customVectors[31] = new Vector4(1, 1, 0, 0);
-            customVectors[32] = new Vector4(1, 1, 0, 0);
+            customVectors[3] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector3) ? Vector4.Zero : Vector4.One;
+            customVectors[6] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector6) ? Vector4.Zero : new Vector4(1, 1, 0, 0);
+            customVectors[8] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector8) ? Vector4.Zero : Vector4.One;
+            customVectors[13] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector13) ? Vector4.Zero : Vector4.One;
+            customVectors[18] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector18) ? Vector4.Zero : Vector4.One;
+            customVectors[31] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector31) ? Vector4.Zero : new Vector4(1, 1, 0, 0);
+            customVectors[32] = requiredParameters.Contains(MatlEnums.ParamId.CustomVector32) ? Vector4.Zero : new Vector4(1, 1, 0, 0);
 
             // Set values from the material.
             foreach (var param in vec4ByParamId)
