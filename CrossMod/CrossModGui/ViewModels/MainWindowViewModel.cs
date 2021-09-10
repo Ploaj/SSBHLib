@@ -79,6 +79,14 @@ namespace CrossModGui.ViewModels
             Rnumdls.Clear();
         }
 
+        public void ClearViewport()
+        {
+            Renderer.Clear();
+            BoneTreeItems.Clear();
+            MeshListItems.Clear();
+            Rnumdls.Clear();
+        }
+
         public void PopulateFileTree(string folderPath, bool isRecursive, Action onLoadModel)
         {
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
@@ -97,32 +105,37 @@ namespace CrossModGui.ViewModels
         private void AddModelsToCollection(FileNode node, ModelCollection collection, bool isRecursive, Action onLoadModel)
         {
             // TODO: There's probably a better way to avoid adding a numdlb twice.
-            if (node is NumdlbNode numdlb && !numdlb.HasBeenAddedToCollection)
+            if (node is NumdlbNode numdlb)
             {
                 var rnumdl = numdlb.GetRenderableNode();
-
-                if (rnumdl.RenderModel != null)
-                {
-                    collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
-                    collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
-                    Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
-
-                    // Make sure the camera isn't so far away that models aren't visible.
-                    if (Renderer.Camera.Translation.LengthSquared > 200000f)
-                        Renderer.Camera.Translation = Renderer.Camera.Translation.Normalized() * 200000f;
-
-                    onLoadModel();
-                }
 
                 // The parent will be a folder and should have a more descriptive name.
                 // Use model.numdlb as a fallback if there is no parent.
                 var parentText = numdlb.Parent?.Text ?? numdlb.Text;
-                AddMeshesToGui(parentText, rnumdl.RenderModel);
-                AddSkeletonToGui(rnumdl.Skeleton);
 
-                Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
+                // HACK: Prevent adding the same model twice.
+                if (!collection.ModelNames.Contains(parentText))
+                {
+                    AddMeshesToGui(parentText, rnumdl.RenderModel);
+                    AddSkeletonToGui(rnumdl.Skeleton);
 
-                numdlb.HasBeenAddedToCollection = true;
+                    Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
+
+                    if (rnumdl.RenderModel != null)
+                    {
+                        collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
+                        collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
+                        Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
+
+                        // HACK: Make sure the camera isn't so far away that models aren't visible.
+                        if (Renderer.Camera.Translation.LengthSquared > 200000f)
+                            Renderer.Camera.Translation = Renderer.Camera.Translation.Normalized() * 200000f;
+
+                        onLoadModel();
+                    }
+
+                    collection.ModelNames.Add(parentText);
+                }
             }
             else if (isRecursive && node is DirectoryNode directory)
             {
@@ -161,8 +174,20 @@ namespace CrossModGui.ViewModels
             var wasPlaying = IsPlayingAnimation;
             IsPlayingAnimation = false;
 
-            if (item is NumdlbNode numdlb && Renderer.ItemToRender is ModelCollection collection)
-                AddModelsToCollection(numdlb, collection, false, () => { });
+            if (item is NumdlbNode numdlb)
+            {
+                // TODO: Is this logic repeated somewhere?
+                if (Renderer.ItemToRender is ModelCollection collection)
+                {
+                    AddModelsToCollection(numdlb, collection, false, () => { });
+                }
+                else
+                {
+                    var newCollection = new ModelCollection();
+                    Renderer.ItemToRender = newCollection;
+                    AddModelsToCollection(numdlb, newCollection, false, () => { });
+                }
+            }
 
             UpdateRendererItems(item);
 

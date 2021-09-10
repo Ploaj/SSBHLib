@@ -172,7 +172,8 @@ namespace CrossModGui.Views
 
         private void ClearViewport_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.Renderer.Clear();
+            viewModel.ClearViewport();
+            
             RenderFrameIfNeeded();
         }
 

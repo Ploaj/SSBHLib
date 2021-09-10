@@ -16,6 +16,10 @@ namespace CrossMod.Rendering.Models
 
         private UniformBlock? boneUniformBuffer;
 
+        // HACK: Keep track of what numdlb nodes have already been added.
+        // This needs to be rewritten at some point.
+        public List<string> ModelNames { get; } = new List<string>();
+
         /// <summary>
         /// The bounding sphere containing all spheres added by <see cref="AddBoundingSphere(Vector4)"/>.
         /// </summary>
