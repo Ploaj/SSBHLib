@@ -488,7 +488,7 @@ void main()
     // Reduce light leakage when the reflection vector points into the surface.
     // TODO: Find the shader code and constant in the in game shaders.
     // TODO: Use the vertex or fragment normal?
-    float lightLeakIntensity = bloomIntensity;
+    float lightLeakIntensity = 1.0;
     // HACK: Fix to make this look correct based on the reflection flip above.
     float lightLeakFix = clamp(1.0 + lightLeakIntensity * dot(reflectionVector * vec3(-1.0, 1.0, -1.0), normalize(vertexNormal)), 0.0, 1.0);
     specularOcclusion *= lightLeakFix;
