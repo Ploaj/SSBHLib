@@ -143,6 +143,7 @@ void main()
 
     vec3 viewVector = normalize(cameraPos - position);
 
+    // TODO: Double check that this orientation is correct for reflections.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
 

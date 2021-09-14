@@ -293,7 +293,9 @@ vec3 GetSpecularWeight(float f0, vec3 diffusePass, float metalness, float nDotV,
     return FresnelSchlick(nDotV, f0Final);
 }
 
-vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float occlusion, vec3 vertexAmbient)
+// TODO: Is this just a regular lighting term?
+// TODO: Does this depend on the light direction and intensity?
+vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float nDotL, float occlusion, vec3 vertexAmbient)
 {
     vec3 rimColor = CustomVector[14].rgb * LightCustomVector8.rgb;
 
@@ -313,6 +315,10 @@ vec3 GetRimBlend(vec3 baseColor, vec3 diffusePass, float nDotV, float occlusion,
     float fresnel = pow(1 - nDotV, 5.0);
     float rimBlend = fresnel * LightCustomVector8.w * CustomVector[14].w * 0.6;
     rimBlend *= occlusion;
+
+    // TODO: Rim lighting is directional?
+    // TODO: What direction vector is this based on?
+    rimBlend *= nDotL;
 
     vec3 result = mix(baseColor, rimColor, clamp(rimBlend, 0.0, 1.0));
     return result;
@@ -429,6 +435,7 @@ void main()
         fragmentNormal *= -1.0;
 
     // Shading vectors.
+    // TODO: Double check that this orientation is correct for reflections.
     vec3 reflectionVector = reflect(viewVector, fragmentNormal);
     reflectionVector.y *= -1;
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
@@ -478,6 +485,14 @@ void main()
     if (hasCustomBoolean1 == 0)
         specularOcclusion *= prmColor.a;
 
+    // Reduce light leakage when the reflection vector points into the surface.
+    // TODO: Find the shader code and constant in the in game shaders.
+    // TODO: Use the vertex or fragment normal?
+    float lightLeakIntensity = bloomIntensity;
+    // HACK: Fix to make this look correct based on the reflection flip above.
+    float lightLeakFix = clamp(1.0 + lightLeakIntensity * dot(reflectionVector * vec3(-1.0, 1.0, -1.0), normalize(vertexNormal)), 0.0, 1.0);
+    specularOcclusion *= lightLeakFix;
+
     vec3 ambientOcclusion = vec3(prmColor.b);
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat[1] + 1.0));
 
@@ -487,7 +502,7 @@ void main()
     // TODO: Use an existing cube map.
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * 0.5;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
     
     // TODO: This should be an irradiance map and may override the vertex attribute.
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
@@ -522,7 +537,7 @@ void main()
         fragColor0.rgb += EmissionTerm(emissionColor);
 
     if (renderRimLighting == 1)
-        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, norColor.a * prmColor.b, vertexAmbient);
+        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, max(nDotL, 0.0), norColor.a * prmColor.b * lightLeakFix, vertexAmbient);
     
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;
