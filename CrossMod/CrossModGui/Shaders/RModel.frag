@@ -391,6 +391,7 @@ vec3 GetPostProcessingResult(vec3 linear)
 
     // Color Grading.
     // TODO: workaround for color fringing when swapping shaders.
+    // TODO: There's probably a missing clamp somewhere?
     result = texture(colorLut, clamp(result, 0.0001, 0.9)).rgb;
 
     // Post Processing.
@@ -431,16 +432,17 @@ void main()
 
     // A hack to ensure backfaces render the same as front faces.
     // TODO: Does the game actually do this?
-    if (dot(viewVector, fragmentNormal) < 0.0)
-        fragmentNormal *= -1.0;
+    // This is disabled since it causes black shading artifacts.
+    // if (dot(viewVector, fragmentNormal) < 0.0)
+    //     fragmentNormal *= -1.0;
 
     // Shading vectors.
     // TODO: Double check that this orientation is correct for reflections.
-    vec3 reflectionVector = reflect(viewVector, fragmentNormal);
+    vec3 reflectionVector = reflect(viewVector, vertexNormal);
     reflectionVector.y *= -1;
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
-    float nDotV = max(dot(fragmentNormal, viewVector), 0.0);
-    float nDotH = max(dot(fragmentNormal, halfAngle), 0.0);
+    float nDotV = clamp(dot(fragmentNormal, viewVector), 0.0, 1.0);
+    float nDotH = clamp(dot(fragmentNormal, halfAngle), 0.0, 1.0);
     // Don't clamp to allow remapping the range of values later.
     float nDotL = dot(fragmentNormal, chrLightDir.xyz);
 
@@ -490,7 +492,7 @@ void main()
     // TODO: Use the vertex or fragment normal?
     float lightLeakIntensity = 1.0;
     // HACK: Fix to make this look correct based on the reflection flip above.
-    float lightLeakFix = clamp(1.0 + lightLeakIntensity * dot(reflectionVector * vec3(-1.0, 1.0, -1.0), normalize(vertexNormal)), 0.0, 1.0);
+    float lightLeakFix = clamp(1.0 + lightLeakIntensity * dot(reflectionVector * vec3(-1.0, 1.0, -1.0), normalize(fragmentNormal)), 0.0, 1.0);
     specularOcclusion *= lightLeakFix;
 
     vec3 ambientOcclusion = vec3(prmColor.b);
@@ -508,6 +510,7 @@ void main()
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
 
     // TODO: This should be done in the vertex shader.
+    // TODO: Spherical harmonics from shpcanim files?
     // TODO: Where do the cbuf11[19], cbuf11[20], and cbuf11[21] vectors come from?
     // TODO: Matrix multiplication?
     float ambientR = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14186, 0.04903, -0.082, 1.11054));
@@ -521,7 +524,7 @@ void main()
 
     vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, vertexAmbient, ambientOcclusion, sssBlend);
 
-    vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, normalize(vertexNormal), roughness, specularIbl, metalness, prmColor.a);
+    vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, fragmentNormal, roughness, specularIbl, metalness, prmColor.a);
 
     vec3 kSpecular = GetSpecularWeight(specularF0, albedoColorFinal.rgb, metalness, nDotV, roughness);
     vec3 kDiffuse = max((vec3(1.0) - kSpecular) * (1.0 - metalness), 0.0);
@@ -567,6 +570,7 @@ void main()
         fragColor0.rgb += GetBloomBrightColor(fragColor0.rgb) * bloomIntensity;
 
     // Post Processing.
+    // TODO: The game uses a 10 bit buffer to represent intensities in the range [0.0, 2.0]?
     vec3 result = fragColor0.rgb;
     if (enablePostProcessing == 1)
         result = GetPostProcessingResult(fragColor0.rgb);
