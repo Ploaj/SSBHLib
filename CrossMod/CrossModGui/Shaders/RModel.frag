@@ -450,7 +450,6 @@ void main()
     // Get texture color.
     vec4 albedoColor = GetAlbedoColor(map1, uvSet, uvSet, reflectionVector, CustomVector[6], CustomVector[31], CustomVector[32], colorSet5);
     vec4 emissionColor = GetEmissionColor(map1, uvSet, CustomVector[6], CustomVector[31]);
-    // TODO: Mega man's eyes?.
 
     vec4 prmColor = texture(prmMap, map1).xyzw;
 
@@ -489,6 +488,7 @@ void main()
         specularOcclusion *= prmColor.a;
 
     // Reduce light leakage when the reflection vector points into the surface.
+    // This is referenced in the CEDEC presentation for Ridley.
     // TODO: Find the shader code and constant in the in game shaders.
     // TODO: Use the vertex or fragment normal?
     float lightLeakIntensity = 1.0;
@@ -529,13 +529,14 @@ void main()
 
     // Color Passes.
     if (renderDiffuse == 1)
-        fragColor0.rgb += diffusePass * kDiffuse / 3.14159;
+        fragColor0.rgb += (diffusePass * kDiffuse) / 3.14159;
 
     if (renderSpecular == 1)
         fragColor0.rgb += specularPass * kSpecular * ambientOcclusion * specularOcclusion;
 
+    // TODO: Emission is weakened somehow?
     if (renderEmission == 1)
-        fragColor0.rgb += EmissionTerm(emissionColor);
+        fragColor0.rgb += EmissionTerm(emissionColor) * 0.5;
 
     if (renderRimLighting == 1)
         fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, max(nDotL, 0.0), norColor.a * prmColor.b * lightLeakFix, vertexAmbient);

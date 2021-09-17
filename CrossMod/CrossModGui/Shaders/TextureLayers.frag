@@ -62,7 +62,11 @@ uniform int renderExperimental;
 
 vec3 Blend(vec4 a, vec4 b)
 {
-    return mix(a.rgb, b.rgb, b.a);
+    // CustomBoolean11 toggles additive vs alpha blending.
+    if (CustomBoolean[11].x != 0.0)
+        return a.rgb + b.rgb * b.a;
+    else
+        return mix(a.rgb, b.rgb, b.a);
 }
 
 vec2 TransformUv(vec2 uv, vec4 transform)
@@ -95,10 +99,8 @@ vec4 GetEmissionColor(vec2 uv1, vec2 uv2, vec4 transform1, vec4 transform2)
     vec2 uvLayer2 = TransformUv(uv2, transform2);
     vec4 emission2Color = texture(emi2Map, uvLayer2).rgba;
 
-    // TODO: Blending?
-    vec4 result = emissionColor;
-    result.rgb += emission2Color.rgb;
-    return result;
+    emissionColor.rgb = Blend(emissionColor, emission2Color);
+    return emissionColor;
 }
 
 vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 transform2, vec4 transform3, vec4 colorSet5)
