@@ -20,7 +20,18 @@ namespace CrossModGui.ViewModels.MaterialEditor
     {
         public ObservableCollection<MaterialCollection> MaterialCollections { get; } = new ObservableCollection<MaterialCollection>();
 
-        public MaterialCollection? CurrentMaterialCollection { get; set; }
+        public MaterialCollection? CurrentMaterialCollection
+        {
+            get => currentMaterialCollection;
+            set 
+            { 
+                currentMaterialCollection = value;
+                // Reset the selected material since the containing collection is no longer selected.
+                CurrentMaterial = currentMaterialCollection?.Materials.FirstOrDefault();
+            }
+        }
+        private MaterialCollection? currentMaterialCollection;
+
         public Material? CurrentMaterial { get; set; }
 
         public event EventHandler? RenderFrameNeeded;
@@ -181,13 +192,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
             // Create the new viewmodel material and sync it with the newly created render material.
             var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial, currentRnumdl);
-            CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;         
+            CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;
             CurrentMaterial = newMaterial;
 
             OnRenderFrameNeeded();
         }
 
-        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string,RMaterial> materialByName, Matl matl, RNumdl rnumdl)
+        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName, Matl matl, RNumdl rnumdl)
         {
             var collection = new MaterialCollection(name);
             for (int i = 0; i < matl.Entries.Length; i++)
@@ -354,8 +365,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 if (!Enum.TryParse(param.SamplerParamId, out MatlEnums.ParamId samplerParamId))
                     continue;
 
-                param.PropertyChanged += (s, e) => 
-                { 
+                param.PropertyChanged += (s, e) =>
+                {
                     rMaterial.UpdateTexture(paramId, param.Value);
                     rMaterial.UpdateSampler(samplerParamId, GetSamplerData(param));
                     OnRenderFrameNeeded();
@@ -389,7 +400,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 WrapR = param.WrapR.ToOpenTk(),
                 LodBias = param.LodBias,
                 // Disable anisotropic filtering if it's disabled in the material.
-                MaxAnisotropy = param.TextureFilteringType == FilteringType.AnisotropicFiltering ? param.MaxAnisotropy : 1,       
+                MaxAnisotropy = param.TextureFilteringType == FilteringType.AnisotropicFiltering ? param.MaxAnisotropy : 1,
             };
         }
 
