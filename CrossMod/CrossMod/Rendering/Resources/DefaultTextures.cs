@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using CrossMod.Nodes;
+using OpenTK.Graphics.OpenGL;
 using SFGraphics.GLObjects.Textures;
 using SFGraphics.GLObjects.Textures.TextureFormats;
 using System;
@@ -63,7 +64,9 @@ namespace CrossMod.Rendering.Resources
                 BlackCube.LoadImageData(bmp, 8);
 
             LoadDiffusePbr();
-            LoadSpecularPbr();
+
+            var cube = SBSurface.FromNutexb("DefaultTextures/reflection_cubemap.nutexb");
+            SpecularPbr = (TextureCubeMap)cube.GetRenderTexture();
         }
 
         private void Load3dCube()
@@ -102,34 +105,8 @@ namespace CrossMod.Rendering.Resources
 
         private static void AddIrrFace(List<List<byte[]>> surfaceData, string surface)
         {
-            var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/irr {surface}.bin");
+            var mipData = File.ReadAllBytes($"DefaultTextures/irr {surface}.bin");
             surfaceData.Add(new List<byte[]>() { mipData });
-        }
-
-        private void LoadSpecularPbr()
-        {
-            var surfaceData = new List<List<byte[]>>();
-
-            AddCubeMipmaps(surfaceData, "x+");
-            AddCubeMipmaps(surfaceData, "x-");
-            AddCubeMipmaps(surfaceData, "y+");
-            AddCubeMipmaps(surfaceData, "y-");
-            AddCubeMipmaps(surfaceData, "z+");
-            AddCubeMipmaps(surfaceData, "z-");
-
-            var format = new TextureFormatUncompressed(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float);
-            SpecularPbr.LoadImageData(64, format, surfaceData[0], surfaceData[1], surfaceData[2], surfaceData[3], surfaceData[4], surfaceData[5]);
-        }
-
-        private static void AddCubeMipmaps(List<List<byte[]>> surfaceData, string surface)
-        {
-            var mipmaps = new List<byte[]>();
-            for (int mip = 0; mip < 7; mip++)
-            {
-                var mipData = System.IO.File.ReadAllBytes($"DefaultTextures/spec {surface} {mip}.bin");
-                mipmaps.Add(mipData);
-            }
-            surfaceData.Add(mipmaps);
         }
     }
 }

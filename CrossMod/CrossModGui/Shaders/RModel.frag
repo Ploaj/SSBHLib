@@ -440,6 +440,7 @@ void main()
     // TODO: Double check that this orientation is correct for reflections.
     vec3 reflectionVector = reflect(viewVector, vertexNormal);
     reflectionVector.y *= -1;
+
     vec3 halfAngle = normalize(chrLightDir.xyz + viewVector);
     float nDotV = clamp(dot(fragmentNormal, viewVector), 0.0, 1.0);
     float nDotH = clamp(dot(fragmentNormal, halfAngle), 0.0, 1.0);
@@ -499,12 +500,9 @@ void main()
     ambientOcclusion *= pow(texture(gaoMap, bake1).rgb, vec3(CustomFloat[1] + 1.0));
 
     // Image based lighting.
-    // The texture is currently using exported values, 
-    // so multiply by 0.5 to fix the intensity.
-    // TODO: Use an existing cube map.
     int maxLod = 6;
     float specularLod = RoughnessToLod(roughness);
-    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity * 0.5;
+    vec3 specularIbl = textureLod(specularPbrCube, reflectionVector, specularLod).rgb * iblIntensity;
     
     // TODO: This should be an irradiance map and may override the vertex attribute.
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
