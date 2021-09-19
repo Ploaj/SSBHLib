@@ -40,7 +40,7 @@ uniform mat4 transform;
 
 uniform Bones
 {
-    mat4 transforms[300];
+    mat4 transforms[512];
 };
 
 uniform MaterialParams
