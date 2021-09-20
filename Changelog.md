@@ -1,4 +1,13 @@
 # Cross Mod
+**v0.18**
+* Fixed an issue where a mesh attribute error (yellow checkerboard) would not be displayed for a shared material.
+* Fixed material animations not rendering in the viewport.
+* Fixed hitboxes not rendering in the viewport.
+* Added information for invalid shader labels to the material editor.
+* Fixed an issue where some texture sizes wouldn't deswizzle properly, resulting in black artifacts. This applies to Pyra, Mythra, and a few other in game models.
+* Improved the accuracy of rim lighting and reduced black artifacts in specular shading.
+* Increased the shader bone limit to 512 to fix crashes when rendering some models.
+
 **v0.17**
 * Changed the window title to display the current release version.
 * Added an automatic check to display details for new releases when launching the program.
