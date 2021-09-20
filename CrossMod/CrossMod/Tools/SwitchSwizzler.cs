@@ -9,13 +9,13 @@ namespace CrossMod.Tools
     public static class SwitchSwizzler
     {
         [DllImport("nutexb_swizzle", EntryPoint = "deswizzle_block_linear")]
-        private static unsafe extern void DeswizzleBlockLinear(ulong width, ulong height, byte* source, ulong sourceLength, byte[] destination, ulong destinationLength, ulong blockHeight, ulong bytesPerPixel);
+        private static unsafe extern void DeswizzleBlockLinear(ulong width, ulong height, ulong depth, byte* source, ulong sourceLength, byte[] destination, ulong destinationLength, ulong blockHeight, ulong bytesPerPixel);
 
-        [DllImport("nutexb_swizzle", EntryPoint = "get_block_height")]
+        [DllImport("nutexb_swizzle", EntryPoint = "block_height")]
         private static extern ulong GetBlockHeight(ulong height);
 
-        [DllImport("nutexb_swizzle", EntryPoint = "get_surface_size")]
-        private static extern ulong GetSurfaceSize(ulong width, ulong height, ulong bytesPerPixel);
+        [DllImport("nutexb_swizzle", EntryPoint = "swizzled_surface_size")]
+        private static extern ulong GetSurfaceSize(ulong width, ulong height, ulong depth, ulong blockHeight, ulong bytesPerPixel);
 
         public static List<MipArray> GetImageData(SBSurface surface, byte[] imageData, int MipCount)
         {
@@ -27,6 +27,7 @@ namespace CrossMod.Tools
             int arrayOffset = 0;
 
             var arrays = new List<MipArray>();
+
 
             // TODO: Can this entire function be handled by Rust?
             for (int arrayLevel = 0; arrayLevel < surface.ArrayCount; arrayLevel++)
@@ -43,17 +44,23 @@ namespace CrossMod.Tools
                     uint widthInTiles = DivRoundUp(width, tileWidth);
                     uint heightInTiles = DivRoundUp(height, tileHeight);
 
-                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, bpp);
+                    var blockHeight = GetBlockHeight(heightInTiles);
+                    // TODO: Why do Pyra/Mythra have a strange block height for the first mip level?
+                    if (mipLevel == 0 && height == 320 && bpp == 16)
+                        blockHeight = 8;
+
+                    // TODO: Poke Kalos Kamex (blastoise) also has a non standard block height?
+                    if (mipLevel == 0 && height == 300 && bpp == 8)
+                        blockHeight = 8;
+
+                    // TODO: Swizzle 3d textures.
+                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, 1, blockHeight, bpp);
 
                     // Use a span to avoid copying the memory each time.
                     var mipData = imageData.AsSpan()[(arrayOffset + surfaceSize)..];
 
-                    // 10x10 BC7 needs 12x12 pixels worth of data?
                     // TODO: Handle errors?
-                    var roundedWidth = RoundUp(width, tileWidth);
-                    var roundedHeight = RoundUp(height, tileHeight);
-
-                    var mipDataDeswizzled = Deswizzle(roundedWidth, roundedHeight, depth, tileWidth, tileHeight, blkDepth, bpp, mipData);
+                    var mipDataDeswizzled = Deswizzle(widthInTiles, heightInTiles, depth, bpp, blockHeight, mipData);
                     mipmaps.Add(mipDataDeswizzled);
 
                     surfaceSize += (int)mipSize;
@@ -136,15 +143,14 @@ namespace CrossMod.Tools
             return ((x - 1) | (y - 1)) + 1;
         }
 
-        public static unsafe byte[] Deswizzle(uint width, uint height, uint depth, uint blkWidth, uint blkHeight, uint blkDepth, uint bpp, Span<byte> data)
+        public static unsafe byte[] Deswizzle(uint width, uint height, uint depth, uint bpp, ulong blockHeight, Span<byte> data)
         {
-            var output = new byte[width / blkWidth * height / blkHeight * bpp];
-
-            var blockHeight = GetBlockHeight(height / blkHeight);
+            var output = new byte[width * height * bpp];
 
             fixed (byte* dataPtr = data)
             {
-                DeswizzleBlockLinear(width / blkWidth, height / blkHeight, dataPtr, (ulong)data.Length, output, (ulong)output.Length, blockHeight, bpp);
+                // TODO: Deswizzle 3d textures.
+                DeswizzleBlockLinear(width, height, 1, dataPtr, (ulong)data.Length, output, (ulong)output.Length, blockHeight, bpp);
             }
 
             return output;
