@@ -6,6 +6,7 @@
 * Added information for invalid shader labels to the material editor.
 * Fixed an issue where some texture sizes wouldn't deswizzle properly, resulting in black artifacts. This applies to Pyra, Mythra, and a few other in game models.
 * Improved the accuracy of rim lighting and reduced black artifacts in specular shading.
+* Improved texture blending and added CustomBoolean11 rendering. This fixes the washed out eyes on some fighter models.
 * Increased the shader bone limit to 512 to fix crashes when rendering some models.
 
 **v0.17**
