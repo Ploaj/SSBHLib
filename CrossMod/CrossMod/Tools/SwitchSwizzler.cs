@@ -53,8 +53,7 @@ namespace CrossMod.Tools
                     if (mipLevel == 0 && height == 300 && bpp == 8)
                         blockHeight = 8;
 
-                    // TODO: Swizzle 3d textures.
-                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, 1, blockHeight, bpp);
+                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, depth, blockHeight, bpp);
 
                     // Use a span to avoid copying the memory each time.
                     var mipData = imageData.AsSpan()[(arrayOffset + surfaceSize)..];
@@ -149,8 +148,7 @@ namespace CrossMod.Tools
 
             fixed (byte* dataPtr = data)
             {
-                // TODO: Deswizzle 3d textures.
-                DeswizzleBlockLinear(width, height, 1, dataPtr, (ulong)data.Length, output, (ulong)output.Length, blockHeight, bpp);
+                DeswizzleBlockLinear(width, height, depth, dataPtr, (ulong)data.Length, output, (ulong)output.Length, blockHeight, bpp);
             }
 
             return output;
