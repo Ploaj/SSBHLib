@@ -8,13 +8,10 @@ namespace CrossMod.Tools
 {
     public static class SwitchSwizzler
     {
-        [DllImport("nutexb_swizzle", EntryPoint = "deswizzle_block_linear")]
+        [DllImport("tegra_swizzle", EntryPoint = "deswizzle_block_linear")]
         private static unsafe extern void DeswizzleBlockLinear(ulong width, ulong height, ulong depth, byte* source, ulong sourceLength, byte[] destination, ulong destinationLength, ulong blockHeight, ulong bytesPerPixel);
 
-        [DllImport("nutexb_swizzle", EntryPoint = "block_height")]
-        private static extern ulong GetBlockHeight(ulong height);
-
-        [DllImport("nutexb_swizzle", EntryPoint = "swizzled_surface_size")]
+        [DllImport("tegra_swizzle", EntryPoint = "swizzled_surface_size")]
         private static extern ulong GetSurfaceSize(ulong width, ulong height, ulong depth, ulong blockHeight, ulong bytesPerPixel);
 
         public static List<MipArray> GetImageData(SBSurface surface, byte[] imageData, int MipCount)
@@ -22,7 +19,6 @@ namespace CrossMod.Tools
             uint bpp = TextureFormatInfo.GetBPP(surface.InternalFormat);
             uint tileWidth = TextureFormatInfo.GetBlockWidth(surface.InternalFormat);
             uint tileHeight = TextureFormatInfo.GetBlockHeight(surface.InternalFormat);
-            uint blkDepth = TextureFormatInfo.GetBlockDepth(surface.InternalFormat);
 
             int arrayOffset = 0;
 
@@ -44,14 +40,7 @@ namespace CrossMod.Tools
                     uint widthInTiles = DivRoundUp(width, tileWidth);
                     uint heightInTiles = DivRoundUp(height, tileHeight);
 
-                    var blockHeight = GetBlockHeight(heightInTiles);
-                    // TODO: Why do Pyra/Mythra have a strange block height for the first mip level?
-                    if (mipLevel == 0 && height == 320 && bpp == 16)
-                        blockHeight = 8;
-
-                    // TODO: Poke Kalos Kamex (blastoise) also has a non standard block height?
-                    if (mipLevel == 0 && height == 300 && bpp == 8)
-                        blockHeight = 8;
+                    var blockHeight = GetBlockHeight(heightInTiles, mipLevel, bpp);
 
                     var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, depth, blockHeight, bpp);
 
@@ -152,6 +141,40 @@ namespace CrossMod.Tools
             }
 
             return output;
+        }
+
+        // TODO: This isn't accurate for all textures.
+        // This might not even be a function of height.
+        private static ulong GetBlockHeight(ulong height, int mipLevel, ulong bpp)
+        {
+            // TODO: Why do Pyra/Mythra have a strange block height for the first mip level?
+            if (mipLevel == 0 && height == 80 && bpp == 16)
+                return 8;
+
+            // TODO: Poke Kalos Kamex (blastoise) also has a non standard block height?
+            if (mipLevel == 0 && height == 75 && bpp == 8 || (mipLevel == 1 && height == 38 && bpp == 8))
+                return 8;
+
+            // TODO: dolly_stadium ch_dolly_tung?
+            if (mipLevel == 0 && height == 40)
+                return 4;
+
+            var blockHeight = (double)height / 8;
+
+            // TODO: Is it correct to find the closest power of two?
+            if (blockHeight >= 0 && blockHeight <= 1)
+                return 1;
+
+            if (blockHeight > 1 && blockHeight <= 2)
+                return 2;
+
+            if (blockHeight > 2 && blockHeight < 5)
+                return 4;
+
+            if (blockHeight >= 5 && blockHeight < 11)
+                return 8;
+
+            return 16;
         }
     }
 }
