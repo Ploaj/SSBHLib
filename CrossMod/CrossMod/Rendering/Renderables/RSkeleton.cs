@@ -104,38 +104,15 @@ namespace CrossMod.Rendering
             // TODO: How do the scaling types work?
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
-                var useScale = true;
-                if (b.ParentId == -1)
-                {
-                    return GetMatrix(transform, useScale);
-                }
-
-                var currentTransform = GetMatrix(transform, useScale);
-
-                // TODO: Does 1 overwrite the scale?
-                // TODO: Investigate types 2 and 3.
-                // Specify if the parent's scaling should be inherited.
                 var inheritScale = transform.ScaleType != 1;
-                var parentTransform = AccumulateTransforms(Bones[b.ParentId], inheritScale);
-
-                return currentTransform * parentTransform;
+                return AccumulateTransforms(b, inheritScale);
             }
             else
             {
-                // If the animation is reset, just accumulate the skeletal transforms instead.
-                // TODO: Find a less convoluted way of resetting an animation.
-                if (b.ParentId == -1)
-                {
-                    return b.Transform;
-                }
-                else
-                {
-                    return b.Transform * GetAnimationTransform(Bones[b.ParentId]);
-                }
+                return AccumulateTransforms(b, true);
             }
         }
 
-        // TODO: This probably doesn't need to be two methods.
         private Matrix4 AccumulateTransforms(RBone b, bool includeScale)
         {
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
@@ -173,17 +150,14 @@ namespace CrossMod.Rendering
 
         private static Matrix4 GetMatrix(AnimTrackTransform transform, bool includeScale)
         {
+            var matrix = Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
+                    Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
+
             if (includeScale)
-            {
-                return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) *
-                    Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
-                    Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
-            }
-            else
-            {
-                return Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
-                    Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
-            }
+                return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) * matrix;
+
+            return matrix;
+
         }
     }
 
