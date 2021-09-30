@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using SFGraphics.Cameras;
 using SFGraphics.GLObjects.Shaders;
+using SSBHLib.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,54 +19,15 @@ namespace CrossMod.Rendering
         // Rendering
         private PrimBonePrism bonePrism;
         public static Shader boneShader = null;
-        private static Matrix4 prismRotation = Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), 1.5708f);
+        private static Matrix4 prismRotation = Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), (float)Math.PI / 2f);
 
         public void Reset()
         {
             foreach (var bone in Bones)
             {
-                bone.AnimationTransform = bone.Transform;
+                // TODO: Find a better way to reset the animation.
+                bone.AnimationTrackTransform = null;
             }
-        }
-
-        public Matrix4[] GetTransforms()
-        {
-            Matrix4[] transforms = new Matrix4[Bones.Count];
-            for (int i = 0; i < Bones.Count; i++)
-            {
-                transforms[i] = Bones[i].Transform;
-            }
-            return transforms;
-        }
-
-        public Matrix4[] GetWorldTransforms()
-        {
-            Matrix4[] transforms = new Matrix4[Bones.Count];
-            for (int i = 0; i < Bones.Count; i++)
-            {
-                transforms[i] = Bones[i].WorldTransform;
-            }
-            return transforms;
-        }
-
-        public Matrix4[] GetInvTransforms()
-        {
-            Matrix4[] transforms = new Matrix4[Bones.Count];
-            for (int i = 0; i < Bones.Count; i++)
-            {
-                transforms[i] = Bones[i].InvTransform;
-            }
-            return transforms;
-        }
-
-        public Matrix4[] GetInvWorldTransforms()
-        {
-            Matrix4[] transforms = new Matrix4[Bones.Count];
-            for (int i = 0; i < Bones.Count; i++)
-            {
-                transforms[i] = Bones[i].InvWorldTransform;
-            }
-            return transforms;
         }
 
         public Matrix4[] GetAnimationTransforms()
@@ -73,34 +35,16 @@ namespace CrossMod.Rendering
             Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                transforms[i] = Bones[i].InvWorldTransform * Bones[i].GetAnimationTransform(this);
+                transforms[i] = Bones[i].InvWorldTransform * GetAnimationTransform(Bones[i]);
             }
 
             return transforms;
         }
 
-        public static float Angle(Quaternion a, Quaternion b)
-        {
-            float dot = Dot(a, b);
-            return IsEqualUsingDot(dot) ? 0.0f : (float)Math.Acos(Math.Min(Math.Abs(dot), 1.0f)) * 2.0f;
-        }
-
-        public static float Dot(Quaternion a, Quaternion b)
-        {
-            return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
-        }
-        public const float KEpsilon = 0.000001F;
-
-        private static bool IsEqualUsingDot(float dot)
-        {
-            // Returns false in the presence of NaN values.
-            return dot > 1.0f - KEpsilon;
-        }
-
         public Matrix4 GetAnimationSingleBindsTransform(int index)
         {
             if (index != -1 && Bones.Count > 0)
-                return Bones[index].GetAnimationTransform(this);
+                return GetAnimationTransform(Bones[index]);
 
             return Matrix4.Identity;
         }
@@ -139,13 +83,13 @@ namespace CrossMod.Rendering
 
             foreach (RBone b in Bones)
             {
-                Matrix4 transform = b.GetAnimationTransform(this);
+                Matrix4 transform = GetAnimationTransform(b);
                 boneShader.SetMatrix4x4("bone", ref transform);
                 boneShader.SetInt("hasParent", b.ParentId != -1 ? 1 : 0);
                 if (b.ParentId != -1)
                 {
-                    Matrix4 parenttransform = Bones[b.ParentId].GetAnimationTransform(this);
-                    boneShader.SetMatrix4x4("parent", ref parenttransform);
+                    Matrix4 parentTransform = GetAnimationTransform(Bones[b.ParentId]);
+                    boneShader.SetMatrix4x4("parent", ref parentTransform);
                 }
                 bonePrism.Draw(boneShader);
 
@@ -153,7 +97,93 @@ namespace CrossMod.Rendering
                 boneShader.SetInt("hasParent", 0);
                 bonePrism.Draw(boneShader);
             }
+        }
 
+        private Matrix4 GetAnimationTransform(RBone b)
+        {
+            // TODO: How do the scaling types work?
+            if (b.AnimationTrackTransform is AnimTrackTransform transform)
+            {
+                var useScale = true;
+                if (b.ParentId == -1)
+                {
+                    return GetMatrix(transform, useScale);
+                }
+
+                var currentTransform = GetMatrix(transform, useScale);
+
+                // TODO: Does 1 overwrite the scale?
+                // TODO: Investigate types 2 and 3.
+                // Specify if the parent's scaling should be inherited.
+                var inheritScale = transform.ScaleType != 1;
+                var parentTransform = AccumulateTransforms(Bones[b.ParentId], inheritScale);
+
+                return currentTransform * parentTransform;
+            }
+            else
+            {
+                // If the animation is reset, just accumulate the skeletal transforms instead.
+                // TODO: Find a less convoluted way of resetting an animation.
+                if (b.ParentId == -1)
+                {
+                    return b.Transform;
+                }
+                else
+                {
+                    return b.Transform * GetAnimationTransform(Bones[b.ParentId]);
+                }
+            }
+        }
+
+        // TODO: This probably doesn't need to be two methods.
+        private Matrix4 AccumulateTransforms(RBone b, bool includeScale)
+        {
+            if (b.AnimationTrackTransform is AnimTrackTransform transform)
+            {
+                // Recursively accumulate the parent transform.
+                if (b.ParentId == -1)
+                {
+                    return GetMatrix(transform, includeScale);
+                }
+
+                var currentTransform = GetMatrix(transform, includeScale);
+
+                // If any bone in the chain doesn't inherit scale,
+                // the scale of all all the subsequent ancestors should be ignored.
+                // This is accomplished through an and condition.
+                var inheritScale = transform.ScaleType != 1;
+                var parentTransform = AccumulateTransforms(Bones[b.ParentId], includeScale && inheritScale);
+
+                return currentTransform * parentTransform;
+            }
+            else
+            {
+                // If the animation is reset, just accumulate the skeletal transforms instead.
+                // TODO: Find a less convoluted way of resetting an animation.
+                if (b.ParentId == -1)
+                {
+                    return b.Transform;
+                }
+                else
+                {
+                    return b.Transform * GetAnimationTransform(Bones[b.ParentId]);
+                }
+            }
+        }
+
+        private static Matrix4 GetMatrix(AnimTrackTransform transform, bool includeScale)
+        {
+            if (includeScale)
+            {
+                return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) *
+                    Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
+                    Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
+            }
+            else
+            {
+                return Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
+                    Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
+            }
         }
     }
 
@@ -181,18 +211,10 @@ namespace CrossMod.Rendering
         public Matrix4 WorldTransform { get; set; }
         public Matrix4 InvWorldTransform { get; set; }
 
-        // for rendering animation
-        public Matrix4 AnimationTransform;
-
-        public Matrix4 GetAnimationTransform(RSkeleton skeleton)
-        {
-            if (ParentId != -1)
-            {
-                return AnimationTransform * skeleton.Bones[ParentId].GetAnimationTransform(skeleton);
-            }
-            return AnimationTransform;
-        }
-
+        // TODO: Rebuild this using the anim values (translate, scale, etc) instead of matrices?
+        // This should make it easier to apply scale compensation without affecting rotations.
+        public Matrix4 AnimationTransform { get; set; }
+        public AnimTrackTransform? AnimationTrackTransform { get; set; }
     }
 
     public class RHelperBone

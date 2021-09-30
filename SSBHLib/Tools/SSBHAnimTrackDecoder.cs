@@ -296,6 +296,7 @@ namespace SSBHLib.Tools
 
                     // the Transform type relies a lot on flags
 
+                    transform.ScaleType = (ushort)(header.Flags & 0x3);
                     if ((header.Flags & 0x3) == 0x3)
                     {
                         //Scale Compensate
@@ -304,7 +305,11 @@ namespace SSBHLib.Tools
                             transform.CompensateScale = frameValue;
                         }
                     }
-                    if ((header.Flags & 0x3) == 0x1)
+                    else if ((header.Flags & 0x3) == 0x2)
+                    {
+                        // Unk2 scaling.
+                    }
+                    else if ((header.Flags & 0x3) == 0x1)
                     {
                         //Scale normal
                         switch (itemIndex)

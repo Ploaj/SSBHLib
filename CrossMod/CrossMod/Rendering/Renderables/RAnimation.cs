@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using SFGraphics.Cameras;
+using SSBHLib.Tools;
 using System.Collections.Generic;
 
 namespace CrossMod.Rendering
@@ -62,7 +63,7 @@ namespace CrossMod.Rendering
 
         public void SetFrameSkeleton(IEnumerable<RBone> bones, float frame)
         {
-            // Model scale
+            // TODO: Model scale?
             float scale = RenderSettings.Instance.ModelScale;
             // BoneTransform
             foreach (RBone b in bones)
@@ -72,25 +73,10 @@ namespace CrossMod.Rendering
                     if (b.Name.Equals(a.Name))
                     {
                         var key = a.Transform.GetKey(frame);
-                        b.AnimationTransform = key.Value;
-                        // work around
-                        /*if (key.AbsoluteScale != 1)
-                        {
-                            if (b.ParentID != -1)
-                            {
-                                b.AnimationTransform = b.AnimationTransform.ClearScale();
-                                if(b.Name.Equals("HandL"))
-                                System.Console.WriteLine(key.AbsoluteScale + " " + (Skeleton.Bones[b.ParentID].GetAnimationTransform(Skeleton).ExtractScale() / key.AbsoluteScale).ToString());
-                                Vector3 ParentScale = Skeleton.Bones[b.ParentID].GetAnimationTransform(Skeleton).ExtractScale();
-                                b.AnimationTransform *= Matrix4.CreateScale(ParentScale.X - key.AbsoluteScale);
-                            }
-                        }*/
+                        b.AnimationTrackTransform = key.Value;
                         break;
                     }
                 }
-                //It's probably OK to do this
-                if (b.ParentId == -1)
-                    b.AnimationTransform *= Matrix4.CreateScale(scale);
             }
         }
 
@@ -135,7 +121,7 @@ namespace CrossMod.Rendering
     public class RTransformAnimation
     {
         public string Name { get; set; }
-        public RKeyGroup<Matrix4> Transform { get; } = new RKeyGroup<Matrix4>();
+        public RKeyGroup<AnimTrackTransform> Transform { get; } = new RKeyGroup<AnimTrackTransform>();
     }
 
     public class RCameraAnimation
@@ -170,6 +156,7 @@ namespace CrossMod.Rendering
     {
         public float Frame;
         public T Value;
-        public float AbsoluteScale = 1; // workaround for strange scaling type
+        public float CompensateScale; // workaround for strange scaling type
+        public bool HasCompensateScale;
     }
 }

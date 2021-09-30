@@ -117,12 +117,10 @@ namespace CrossMod.Nodes.Conversion
                     {
                         for (int i = 0; i < transform.Length; i++)
                         {
-                            AnimTrackTransform t = (AnimTrackTransform)transform[i];
-                            tfrmAnim.Transform.Keys.Add(new RKey<Matrix4>()
+                            tfrmAnim.Transform.Keys.Add(new RKey<AnimTrackTransform>()
                             {
                                 Frame = i,
-                                Value = GetMatrix((AnimTrackTransform)transform[i]),
-                                AbsoluteScale = t.CompensateScale
+                                Value = (AnimTrackTransform)transform[i],
                             });
                         }
                     }
@@ -157,13 +155,6 @@ namespace CrossMod.Nodes.Conversion
                 }
                 renderAnimation.VisibilityNodes.Add(visAnim);
             }
-        }
-
-        private static Matrix4 GetMatrix(AnimTrackTransform transform)
-        {
-            return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) *
-                Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
-                Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
         }
     }
 }

@@ -19,6 +19,7 @@
         public float Sz;
 
         public float CompensateScale;
+        public ushort ScaleType;
 
         public override string ToString()
         {
