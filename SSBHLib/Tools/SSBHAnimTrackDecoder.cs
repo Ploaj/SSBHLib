@@ -264,7 +264,8 @@ namespace SSBHLib.Tools
                     Sx = xsca,
                     Sy = ysca,
                     Sz = zsca,
-                    CompensateScale = csca
+                    CompensateScale = csca,
+                    Unk1 = 0 // TODO: What should the default be?
                 };
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
@@ -389,7 +390,8 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    CompensateScale = reader.ReadInt32()
+                    CompensateScale = 0.0f,
+                    Unk1 = reader.ReadInt32()
                 };
 
                 return transform;

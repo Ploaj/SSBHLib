@@ -20,6 +20,7 @@
 
         public float CompensateScale;
         public ushort ScaleType;
+        public int Unk1;
 
         public override string ToString()
         {

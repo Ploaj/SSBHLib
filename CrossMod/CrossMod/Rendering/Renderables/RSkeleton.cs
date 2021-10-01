@@ -36,6 +36,7 @@ namespace CrossMod.Rendering
             for (int i = 0; i < Bones.Count; i++)
             {
                 transforms[i] = Bones[i].InvWorldTransform * GetAnimationTransform(Bones[i]);
+                //System.Diagnostics.Debug.WriteLine($"{Bones[i].Name} {transforms[i]}");
             }
 
             return transforms;
@@ -104,8 +105,16 @@ namespace CrossMod.Rendering
             // TODO: How do the scaling types work?
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
+                // TODO: Always include the current bones scale?
+                var currentTransform = GetMatrix(transform, true);
+
+                if (b.ParentId == -1)
+                {
+                    return currentTransform;
+                }
+
                 var inheritScale = ShouldInheritScale(transform);
-                return AccumulateTransforms(b, inheritScale);
+                return currentTransform * AccumulateTransforms(Bones[b.ParentId], inheritScale);
             }
             else
             {
@@ -123,16 +132,19 @@ namespace CrossMod.Rendering
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
                 // Recursively accumulate the parent transform.
+
+                // TODO: Don't use scale from Unk1 == 1?
+                // TODO: Is this scale compensation like in Maya?
+                // TODO: This isn't completely accurate?
+                var currentTransform = GetMatrix(transform, includeScale && transform.Unk1 == 0);
+
                 if (b.ParentId == -1)
                 {
-                    return GetMatrix(transform, includeScale);
+                    return currentTransform;
                 }
-
-                var currentTransform = GetMatrix(transform, includeScale);
 
                 // If any bone in the chain doesn't inherit scale,
                 // the scale of all all the subsequent ancestors should be ignored.
-                // This is accomplished through an and condition.
                 var inheritScale = ShouldInheritScale(transform);
                 var parentTransform = AccumulateTransforms(Bones[b.ParentId], includeScale && inheritScale);
 
