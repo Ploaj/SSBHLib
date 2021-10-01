@@ -104,13 +104,18 @@ namespace CrossMod.Rendering
             // TODO: How do the scaling types work?
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
-                var inheritScale = transform.ScaleType != 1;
+                var inheritScale = ShouldInheritScale(transform);
                 return AccumulateTransforms(b, inheritScale);
             }
             else
             {
                 return AccumulateTransforms(b, true);
             }
+        }
+
+        private static bool ShouldInheritScale(AnimTrackTransform transform)
+        {
+            return transform.ScaleType != 1;
         }
 
         private Matrix4 AccumulateTransforms(RBone b, bool includeScale)
@@ -128,7 +133,7 @@ namespace CrossMod.Rendering
                 // If any bone in the chain doesn't inherit scale,
                 // the scale of all all the subsequent ancestors should be ignored.
                 // This is accomplished through an and condition.
-                var inheritScale = transform.ScaleType != 1;
+                var inheritScale = ShouldInheritScale(transform);
                 var parentTransform = AccumulateTransforms(Bones[b.ParentId], includeScale && inheritScale);
 
                 return currentTransform * parentTransform;
@@ -153,8 +158,13 @@ namespace CrossMod.Rendering
             var matrix = Matrix4.CreateFromQuaternion(new Quaternion(transform.Rx, transform.Ry, transform.Rz, transform.Rw)) *
                     Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
 
+            var scale = new Vector3(transform.Sx, transform.Sy, transform.Sz);
+            if (transform.ScaleType == 3)
+                scale = new Vector3(transform.CompensateScale);
+
             if (includeScale)
-                return Matrix4.CreateScale(transform.Sx, transform.Sy, transform.Sz) * matrix;
+                return Matrix4.CreateScale(scale) * matrix;
+
 
             return matrix;
 
