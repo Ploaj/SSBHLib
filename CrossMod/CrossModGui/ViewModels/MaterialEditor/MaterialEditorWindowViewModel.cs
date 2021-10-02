@@ -305,6 +305,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 material.RasterizerState0.PropertyChanged += (s, e) =>
                 {
                     rMaterial.CullMode = material.RasterizerState0.CullMode.ToOpenTk();
+                    rMaterial.EnableFaceCulling = material.RasterizerState0.CullMode != MatlCullMode.None;
                     rMaterial.FillMode = material.RasterizerState0.FillMode.ToOpenTk();
                     OnRenderFrameNeeded();
                 };
