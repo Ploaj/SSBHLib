@@ -43,7 +43,6 @@ namespace CrossModGui.UserControls
                 return;
 
             item.IsExpanded = !item.IsExpanded;
-            item.IsSelected = false;
             e.Handled = true;
         }
     }
