@@ -227,7 +227,8 @@ namespace CrossModGui.Views
         {
             if (sender is MenuItem item)
             {
-                fileTreeView.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+                
+                mainWindowGrid.ColumnDefinitions[0].Width = item.IsChecked ? new GridLength(400) : new GridLength(0);
                 RenderFrameIfNeeded();
             }
         }
@@ -236,7 +237,7 @@ namespace CrossModGui.Views
         {
             if (sender is MenuItem item)
             {
-                meshBoneTabControl.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+                mainWindowGrid.ColumnDefinitions[4].Width = item.IsChecked ? new GridLength(400) : new GridLength(0);
                 RenderFrameIfNeeded();
             }
         }
