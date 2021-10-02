@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Name="fileTreeView">
     <Grid DataContext="{Binding ElementName=fileTreeView}">
-        <TreeView ItemsSource="{Binding Items}" SelectedItemChanged="TreeView_SelectedItemChanged">
+        <TreeView ItemsSource="{Binding Items}" SelectedItemChanged="TreeView_SelectedItemChanged" TreeViewItem.Selected="TreeView_Selected">
             <TreeView.Resources>
                 <converters:ImageKeyImageConverter x:Key="imageKeyImageConverter" />
             </TreeView.Resources>

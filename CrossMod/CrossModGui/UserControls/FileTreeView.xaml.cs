@@ -32,5 +32,19 @@ namespace CrossModGui.UserControls
         {
             SelectedItemChanged?.Invoke(this, new RoutedPropertyChangedEventArgs<object>(e.OldValue, e.NewValue));
         }
+
+        private void TreeView_Selected(object sender, RoutedEventArgs e)
+        {
+            // Make the items easier to expand:
+            // https://stackoverflow.com/questions/2921972/how-to-expand-wpf-treeview-on-single-click-of-item
+            var item = e.OriginalSource as TreeViewItem;
+
+            if (item == null || e.Handled) 
+                return;
+
+            item.IsExpanded = !item.IsExpanded;
+            item.IsSelected = false;
+            e.Handled = true;
+        }
     }
 }
