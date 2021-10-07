@@ -525,7 +525,10 @@ void main()
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, fragmentNormal, roughness, specularIbl, metalness, prmColor.a);
 
     vec3 kSpecular = GetSpecularWeight(specularF0, albedoColorFinal.rgb, metalness, nDotV, roughness);
+
+    // TODO: Double check the shader code since this causes black artifacts on some models.
     vec3 kDiffuse = max((vec3(1.0) - kSpecular) * (1.0 - metalness), 0.0);
+    kDiffuse = max(vec3(1.0 - metalness), 0.0);
 
     // Color Passes.
     if (renderDiffuse == 1)
