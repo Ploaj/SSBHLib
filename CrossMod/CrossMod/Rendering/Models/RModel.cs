@@ -147,7 +147,7 @@ namespace CrossMod.Rendering.Models
             RSkeleton? previousSkeleton = null;
 
             // Just put meshes without a shader label or proper render pass tag with opaque for now.
-            foreach (var m in subMeshes.OrderBy(m => GetOrder(m?.Item1?.Material?.ShaderLabel ?? "")))
+            foreach (var m in subMeshes.OrderBy(m => GetOrder(m?.Item1?.Material?.ShaderLabel ?? "") + m?.Item1?.SortBias ?? 0))
             {
                 DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
@@ -157,13 +157,21 @@ namespace CrossMod.Rendering.Models
 
         public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
-            // TODO: Double check why this is commented out.
+            // TODO: This optimization is buggy.
             // Check if the uniform values have already been set for this shader.
             //if (previousMaterial == null || (m.Material != null && m.Material.MaterialLabel != previousMaterial.MaterialLabel))
             {
                 m.Material?.SetMaterialUniforms(currentShader, previousMaterial, m.HasRequiredAttributes);
                 m.Material?.SetRenderState(previousMaterial);
+
+                var depthFunction = OpenTK.Graphics.OpenGL.DepthFunction.Lequal;
+                if (!m.EnableDepthTest)
+                    depthFunction = OpenTK.Graphics.OpenGL.DepthFunction.Always;
+
+                var depthSettings = new SFGenericModel.RenderState.DepthTestSettings(m.EnableDepthTest, m.EnableDepthWrites, depthFunction);
+                SFGenericModel.RenderState.GLRenderSettings.SetDepthTesting(depthSettings);
             }
+
 
             if (skeleton != null && skeleton != previousSkeleton)
             {

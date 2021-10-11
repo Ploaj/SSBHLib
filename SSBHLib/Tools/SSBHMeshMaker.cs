@@ -278,7 +278,7 @@ namespace SSBHLib.Tools
                 finalBufferOffset += (4 + stride1) * tempmesh.VertexCount;
                 mo.VertexCount = tempmesh.VertexCount;
                 mo.IndexCount = tempmesh.Indices.Count;
-                mo.Stride = stride1;
+                mo.Stride0 = stride1;
                 mo.Stride2 = stride2;
 
                 // write index buffer

@@ -113,7 +113,7 @@ vec4 GetAlbedoColor(vec2 uv1, vec2 uv2, vec2 uv3, vec3 R, vec4 transform1, vec4 
     vec2 uvLayer2 = TransformUv(uv2, transform2);
     vec2 uvLayer3 = TransformUv(uv3, transform3);
 
-    vec4 albedoColor = texture(colMap, uvLayer1).rgba;
+    vec4 albedoColor = textureLod(colMap, uvLayer1, 0).rgba;
     vec4 albedoColor2 = texture(col2Map, uvLayer2).rgba;
 
     vec4 diffuseColor = texture(difMap, uvLayer1).rgba;

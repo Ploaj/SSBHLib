@@ -43,7 +43,10 @@ namespace CrossMod.Nodes.Conversion
                     meshObject.BoundingSphereRadius),
                     CreateRenderMesh(mesh, skeleton, meshObject, vertexBuffer0, vertexBuffer1),
                     // TODO: The actual in game check is more complicated, and involves checking names, subindex, and usage.
-                    meshObject.Attributes.Select(m => m.AttributeStrings[0].Text).ToList()
+                    meshObject.Attributes.Select(m => m.AttributeStrings[0].Text).ToList(),
+                    meshObject.SortBias,
+                    (meshObject.DepthFlags & 0x1) == 0,
+                    (meshObject.DepthFlags & 0x10) == 0
                 );
 
                 model.SubMeshes.Add(rMesh);
@@ -150,7 +153,7 @@ namespace CrossMod.Nodes.Conversion
             var type = GetGlAttributeType(attribute.DataType);
             var bufferName = $"vertexBuffer{attribute.BufferIndex}";
             var offset = (attribute.BufferIndex == 0 ? meshObject.VertexOffset : meshObject.VertexOffset2) + attribute.BufferOffset;
-            var stride = attribute.BufferIndex == 0 ? meshObject.Stride : meshObject.Stride2;
+            var stride = attribute.BufferIndex == 0 ? meshObject.Stride0 : meshObject.Stride2;
 
             // Convert colors to floating point.
             var normalized = attribute.DataType == MeshAttribute.AttributeDataType.Byte4;

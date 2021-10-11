@@ -62,18 +62,16 @@
         /// <summary>
         /// The stride in bytes for each element in the first buffer for <see cref="Mesh.VertexBuffers"/>.
         /// </summary>
-        public int Stride { get; set; }
+        public int Stride0 { get; set; }
 
         /// <summary>
         /// The stride in bytes for each element in the second buffer for <see cref="Mesh.VertexBuffers"/>.
         /// </summary>
         public int Stride2 { get; set; }
 
-        // TODO: Unk6
-        public int Unk6 { get; set; } // usually 0
+        public int Stride3 { get; set; }
 
-        // TODO: Unk7
-        public int Unk7 { get; set; } // usually 0 long with above?
+        public int Stride4 { get; set; }
 
         /// <summary>
         /// The offset in bytes for the start of the data in <see cref="Mesh.PolygonBuffer"/>.
@@ -90,11 +88,9 @@
 
         public RiggingType RiggingType { get; set; }
 
-        // TODO: Unk11?
-        public int Unk11 { get; set; } // usually 0 long with above?
+        public int SortBias { get; set; }
 
-        // TODO: Some sort of flags. Values are 0, 1, 256, 257
-        public int Unk12 { get; set; }
+        public int DepthFlags { get; set; }
 
         public Vector3 BoundingSphereCenter { get; set; }
         public float BoundingSphereRadius { get; set; }

@@ -14,12 +14,17 @@ namespace CrossMod.Rendering.Models
 
         public string Name { get; }
 
+        public int SortBias { get; }
+
         public long SubIndex { get; }
 
         public Vector4 BoundingSphere { get; }
 
         public string SingleBindName { get; }
         public int SingleBindIndex { get; }
+        public bool EnableDepthWrites { get; }
+        public bool EnableDepthTest { get; }
+
 
         public RMaterial? Material {
             get => material;
@@ -59,7 +64,9 @@ namespace CrossMod.Rendering.Models
 
         public List<string> AttributeNames { get; } = new List<string>();
 
-        public RMesh(string name, long subIndex, string singleBindName, int singleBindIndex, Vector4 boundingSphere, UltimateMesh renderMesh, List<string> attributeNames)
+        public RMesh(string name, long subIndex, string singleBindName, int singleBindIndex, 
+            Vector4 boundingSphere, UltimateMesh renderMesh, List<string> attributeNames, int sortBias,
+            bool enableDepthWrites, bool enableDepthTest)
         {
             Name = name;
             SubIndex = subIndex;
@@ -68,6 +75,9 @@ namespace CrossMod.Rendering.Models
             BoundingSphere = boundingSphere;
             RenderMesh = renderMesh;
             AttributeNames = attributeNames;
+            SortBias = sortBias;
+            EnableDepthWrites = enableDepthWrites;
+            EnableDepthTest = enableDepthTest;
         }
 
         public void Draw(Shader shader, RSkeleton? skeleton)

@@ -193,6 +193,10 @@ namespace CrossMod.Rendering
             // TODO: Add background color to render settings.
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.ClearColor(System.Drawing.Color.FromArgb(255, 60, 60, 60));
+
+            // Some models disable the depth mask.
+            // It needs to be set to true before clearing the depth buffer.
+            GL.DepthMask(true);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 

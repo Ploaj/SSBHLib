@@ -134,7 +134,7 @@ namespace SSBHLib.Tools
             // TODO: There are optimizations possible for reading if the data is tighly packed.
             // The stride may not allow this.
             int offset = meshObject.VertexOffset;
-            int stride = meshObject.Stride;
+            int stride = meshObject.Stride0;
             if (attr.BufferIndex == 1)
             {
                 offset = meshObject.VertexOffset2;
