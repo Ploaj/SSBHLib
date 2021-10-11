@@ -159,6 +159,10 @@ namespace CrossMod.Tools
             if (mipLevel == 0 && height == 40)
                 return 4;
 
+            // TODO: xeno alst ch models?
+            if (mipLevel == 0 && height == 21 && (bpp == 8 || bpp == 16))
+                return 2;
+
             var blockHeight = (double)height / 8;
 
             // TODO: Is it correct to find the closest power of two?
