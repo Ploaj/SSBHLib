@@ -15,6 +15,7 @@ in vec4 geomColorSet2[];
 in vec4 geomColorSet3[];
 in vec4 geomColorSet5[];
 in vec2 geomBake1[];
+in vec3 geomShColor[];
 
 out vec3 vertexNormal;
 out vec4 tangent;
@@ -28,6 +29,7 @@ out vec4 colorSet3;
 out vec4 colorSet5;
 out vec2 bake1;
 out vec3 position;
+out vec3 shColor;
 
 noperspective out vec3 edgeDistance;
 
@@ -68,6 +70,7 @@ void main()
         colorSet5 = geomColorSet5[i];
         position = geomPosition[i];
         bake1 = geomBake1[i];
+        shColor = geomShColor[i];
 
         // The distance from a point to each of the edges.
         if (i == 0)
