@@ -31,7 +31,7 @@ namespace CrossMod.Rendering.Models
             BoundingSphere = SFGraphics.Utils.BoundingSphereGenerator.GenerateBoundingSphere(new Vector4[] { BoundingSphere, newMeshBoundingSphere });
         }
 
-        public void Render(Camera camera)
+        public void Render(Matrix4 modelView, Matrix4 projection)
         {
             var shader = ShaderContainer.GetCurrentRModelShader();
             if (!shader.LinkStatusIsOk)
@@ -45,7 +45,7 @@ namespace CrossMod.Rendering.Models
             boneUniformBuffer.BindBlock(shader);
 
             RModel.SetRenderSettingsUniforms(shader);
-            RModel.SetCameraUniforms(camera, shader);
+            RModel.SetCameraUniforms(modelView, projection, shader);
 
             RModel.DrawMeshes(Meshes, shader, boneUniformBuffer);
         }

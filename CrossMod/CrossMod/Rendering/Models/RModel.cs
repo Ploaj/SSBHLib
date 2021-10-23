@@ -52,7 +52,7 @@ namespace CrossMod.Rendering.Models
             }
         }
 
-        public void Render(Camera camera, RSkeleton? skeleton = null)
+        public void Render(Matrix4 modelView, Matrix4 projection, RSkeleton? skeleton = null)
         {
             Shader shader = ShaderContainer.GetCurrentRModelShader();
             if (!shader.LinkStatusIsOk)
@@ -61,7 +61,7 @@ namespace CrossMod.Rendering.Models
             shader.UseProgram();
 
             SetRenderSettingsUniforms(shader);
-            SetCameraUniforms(camera, shader);
+            SetCameraUniforms(modelView, projection, shader);
 
             // Bones
             if (boneUniformBuffer != null)
@@ -77,13 +77,11 @@ namespace CrossMod.Rendering.Models
             DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer);
         }
 
-        public static void SetCameraUniforms(Camera camera, Shader currentShader)
+        public static void SetCameraUniforms(Matrix4 modelView, Matrix4 projection, Shader currentShader)
         {
-            Matrix4 mvp = camera.MvpMatrix;
-            currentShader.SetMatrix4x4("mvp", ref mvp);
-
-            currentShader.SetMatrix4x4("modelView", camera.ModelViewMatrix);
-            currentShader.SetVector3("cameraPos", camera.PositionWorldSpace);
+            currentShader.SetMatrix4x4("mvp", modelView * projection);
+            currentShader.SetMatrix4x4("modelView", modelView);
+            currentShader.SetVector3("cameraPos", modelView.Inverted().ExtractTranslation());
         }
 
         public static void SetRenderSettingsUniforms(Shader currentShader)

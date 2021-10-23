@@ -60,7 +60,7 @@ namespace CrossMod.Rendering
             return -1;
         }
 
-        public void Render(Camera camera)
+        public void Render(Matrix4 modelView, Matrix4 projection)
         {
             // Render skeleton on top.
             GL.Disable(EnableCap.DepthTest);
@@ -78,7 +78,7 @@ namespace CrossMod.Rendering
 
             boneShader.SetVector4("boneColor", RenderSettings.Instance.BoneColor);
 
-            Matrix4 mvp = camera.MvpMatrix;
+            Matrix4 mvp = modelView * projection;
             boneShader.SetMatrix4x4("mvp", ref mvp);
             boneShader.SetMatrix4x4("rotation", ref prismRotation);
 

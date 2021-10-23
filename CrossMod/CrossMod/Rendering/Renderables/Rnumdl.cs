@@ -2,6 +2,7 @@
 using CrossMod.Nodes.Formats.Models;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.Models;
+using OpenTK;
 using SFGraphics.Cameras;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
@@ -107,13 +108,13 @@ namespace CrossMod.Rendering
             }
         }
 
-        public void Render(Camera camera)
+        public void Render(Matrix4 modelView, Matrix4 projection)
         {
-            RenderModel?.Render(camera, Skeleton);
+            RenderModel?.Render(modelView, projection, Skeleton);
 
             // Render skeleton on top.
             if (RenderSettings.Instance.RenderBones)
-                Skeleton?.Render(camera);
+                Skeleton?.Render(modelView, projection);
         }
     }
 }

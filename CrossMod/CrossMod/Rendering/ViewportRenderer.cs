@@ -130,11 +130,15 @@ namespace CrossMod.Rendering
                 RenderableAnimation?.SetFrameSkeleton(model.Skeleton.Bones, currentFrame);
             }
 
-            RenderableAnimation?.SetFrameCamera(Camera, currentFrame);
+            // Some animations override the camera.
+            // TODO: Allow multiple animations.
+            var modelView = Camera.ModelViewMatrix;
+            var projection = Camera.PerspectiveMatrix;
+            RenderableAnimation?.SetCameraTransforms(currentFrame, ref modelView, ref projection, Camera.AspectRatio);
 
             if (ItemToRenderOverride != null)
             {
-                ItemToRenderOverride.Render(Camera);
+                ItemToRenderOverride.Render(modelView, projection);
                 return;
             }
 
@@ -154,7 +158,7 @@ namespace CrossMod.Rendering
                 RenderableAnimation?.SetFrameSkeleton(bones, currentFrame);
             }
 
-            ItemToRender?.Render(Camera);
+            ItemToRender?.Render(modelView, projection);
         }
 
         public System.Drawing.Bitmap GetScreenshot()
