@@ -16,9 +16,9 @@ namespace CrossMod.Tools
 
         public static List<MipArray> GetImageData(SBSurface surface, byte[] imageData, int MipCount)
         {
-            uint bpp = TextureFormatInfo.GetBPP(surface.InternalFormat);
-            uint tileWidth = TextureFormatInfo.GetBlockWidth(surface.InternalFormat);
-            uint tileHeight = TextureFormatInfo.GetBlockHeight(surface.InternalFormat);
+            uint bpp = TextureFormatInfo.GetBPP(surface.NutexFormat);
+            uint tileWidth = TextureFormatInfo.GetBlockWidth(surface.NutexFormat);
+            uint tileHeight = TextureFormatInfo.GetBlockHeight(surface.NutexFormat);
 
             int arrayOffset = 0;
 

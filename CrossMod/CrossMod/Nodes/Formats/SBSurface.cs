@@ -29,22 +29,18 @@ namespace CrossMod.Nodes
         public int Height { get; set; }
         public int Depth { get; set; }
 
+        // TODO: Rework this to be based off of the nutexb format.
         public TextureTarget TextureTarget { get; set; }
         public PixelFormat PixelFormat { get; set; }
         public PixelType PixelType { get; set; }
         public InternalFormat InternalFormat { get; set; }
+        public NUTEX_FORMAT NutexFormat { get; set; }
 
         public int ArrayCount { get; set; } = 1;
 
         public bool IsCubeMap { get { return Arrays.Count == 6; } }
 
-        public bool IsSRGB
-        {
-            get
-            {
-                return (InternalFormat.ToString().ToLower().Contains("srgb"));
-            }
-        }
+        public bool IsSRGB => InternalFormat.ToString().ToLower().Contains("srgb");
 
         private Texture renderTexture = null;
 
@@ -91,12 +87,9 @@ namespace CrossMod.Nodes
                 int MajorVersion = reader.ReadInt16();
                 int MinorVersion = reader.ReadInt16();
 
-                if (pixelFormatByNuTexFormat.ContainsKey(format))
-                    surface.PixelFormat = pixelFormatByNuTexFormat[format];
-
-                if (internalFormatByNuTexFormat.ContainsKey(format))
-                    surface.InternalFormat = internalFormatByNuTexFormat[format];
-
+                surface.NutexFormat = format;
+                surface.PixelFormat = pixelFormatByNuTexFormat[format];
+                surface.InternalFormat = internalFormatByNuTexFormat[format];
                 surface.PixelType = GetPixelType(format);
 
                 reader.BaseStream.Position = 0;
@@ -135,6 +128,7 @@ namespace CrossMod.Nodes
             surface.InternalFormat = InternalFormat.Rgba;
             surface.PixelFormat = PixelFormat.Bgra;
             surface.PixelType = PixelType.UnsignedByte;
+            surface.NutexFormat = NUTEX_FORMAT.R8G8B8A8_UNORM;
 
             var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var length = bitmapData.Stride * bitmapData.Height;
@@ -234,6 +228,7 @@ namespace CrossMod.Nodes
 
         private static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
+            { NUTEX_FORMAT.R8_UNORM, InternalFormat.R8 },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Srgb8Alpha8 },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba8 },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba32f },
@@ -268,16 +263,31 @@ namespace CrossMod.Nodes
         /// </summary>
         private static readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
         {
-            { NUTEX_FORMAT.R32G32B32A32_FLOAT, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R8_UNORM, PixelFormat.Red },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, PixelFormat.Rgba },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R32G32B32A32_FLOAT, PixelFormat.Rgba },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, PixelFormat.Bgra },
             { NUTEX_FORMAT.B8G8R8A8_SRGB, PixelFormat.Bgra },
+            { NUTEX_FORMAT.BC1_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC1_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC2_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC2_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC3_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC3_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC4_UNORM, PixelFormat.Red },
+            { NUTEX_FORMAT.BC4_SNORM, PixelFormat.Red },
+            { NUTEX_FORMAT.BC5_UNORM, PixelFormat.Rg },
+            { NUTEX_FORMAT.BC5_SNORM, PixelFormat.Rg },
+            { NUTEX_FORMAT.BC6_UFLOAT, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC7_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC7_SRGB, PixelFormat.Rgba }
         };
     }
 
     public enum NUTEX_FORMAT
     {
+        R8_UNORM = 0x0100,
         R8G8B8A8_UNORM = 0x0400,
         R8G8B8A8_SRGB = 0x0405,
         R32G32B32A32_FLOAT = 0x0434,
