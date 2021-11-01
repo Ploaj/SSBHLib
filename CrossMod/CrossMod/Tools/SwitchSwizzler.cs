@@ -143,8 +143,9 @@ namespace CrossMod.Tools
             return output;
         }
 
-        // Cutoff values are determined experimentally.
-        // This may not work for all texture sizes.
+        // Block height is not a function of height when considering all mipmaps.
+        // HACK: Just fit two separate step functions with cutoffs based on this data:
+        // https://github.com/ScanMountGoat/nutexb_swizzle/blob/main/nutexb_block_heights.csv
         private static ulong GetBlockHeight(ulong heightInBytes, int mipLevel)
         {
             if (mipLevel == 0)
