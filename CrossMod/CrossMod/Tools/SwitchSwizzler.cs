@@ -179,7 +179,7 @@ namespace CrossMod.Tools
             if (heightInBytes > 32)
                 return 8;
 
-            if (heightInBytes > 17)
+            if (heightInBytes >= 17)
                 return 4;
 
             if (heightInBytes >= 9)
