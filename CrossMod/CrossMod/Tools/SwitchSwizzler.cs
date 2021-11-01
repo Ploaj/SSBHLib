@@ -172,7 +172,7 @@ namespace CrossMod.Tools
 
         private static ulong GetBlockHeightMip1(ulong heightInBytes)
         {
-            if (heightInBytes >= 80)
+            if (heightInBytes >= 68)
                 return 16;
 
             if (heightInBytes > 32)
