@@ -1,4 +1,19 @@
 # Cross Mod
+**v0.19**
+* Fixed texture swizzling for 2D textures.
+* Added support for rendering R8Unorm textures, which is used for the spycloak texture.
+* Fixed rendering of BC4 and BC5 textures.
+* Improved scale accuracy for rendering skeletal animations.
+* Fixed a bug where disabling face culling wouldn't update the viewport preview.
+* Added rendering for depth settings and sort bias. This fixes alpha rendering issues for some transparent meshes like the fairy bottle item.
+* Fixed black shading artifacts for some models. 
+* Added a flat shading preset (Zarek).
+* Added experimental support for playing camera animations in the viewport.
+* Updated shader database to version 13.0.0. This fixes incorrect missing shader warnings (red checkerboard) 
+for DLC fighters.
+* Fixed closing side panels.
+* Adjusted folder items to be easier to expand/collapse.
+
 **v0.18**
 * Fixed an issue where a mesh attribute error (yellow checkerboard) would not be displayed for a shared material.
 * Fixed material animations not rendering in the viewport.
