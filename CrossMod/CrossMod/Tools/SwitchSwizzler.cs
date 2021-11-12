@@ -14,6 +14,12 @@ namespace CrossMod.Tools
         [DllImport("tegra_swizzle", EntryPoint = "swizzled_surface_size")]
         private static extern ulong GetSurfaceSize(ulong width, ulong height, ulong depth, ulong blockHeight, ulong bytesPerPixel);
 
+        [DllImport("tegra_swizzle", EntryPoint = "block_height_mip0")]
+        private static extern ulong BlockHeightMip0(ulong height);
+
+        [DllImport("tegra_swizzle", EntryPoint = "mip_block_height")]
+        private static extern ulong MipBlockHeight(ulong mipHeight, ulong blockHeightMip0);
+
         public static List<MipArray> GetImageData(SBSurface surface, byte[] imageData, int MipCount)
         {
             uint bpp = TextureFormatInfo.GetBPP(surface.NutexFormat);
@@ -24,6 +30,7 @@ namespace CrossMod.Tools
 
             var arrays = new List<MipArray>();
 
+            var baseBlockHeight = BlockHeightMip0(DivRoundUp((uint)surface.Height, tileHeight));
 
             // TODO: Can this entire function be handled by Rust?
             for (int arrayLevel = 0; arrayLevel < surface.ArrayCount; arrayLevel++)
@@ -40,15 +47,15 @@ namespace CrossMod.Tools
                     uint widthInTiles = DivRoundUp(width, tileWidth);
                     uint heightInTiles = DivRoundUp(height, tileHeight);
 
-                    var blockHeight = GetBlockHeight(heightInTiles, mipLevel);
+                    var mipBlockHeight = MipBlockHeight(heightInTiles, baseBlockHeight);
 
-                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, depth, blockHeight, bpp);
+                    var mipSize = GetSurfaceSize(widthInTiles, heightInTiles, depth, (ulong)mipBlockHeight, bpp);
 
                     // Use a span to avoid copying the memory each time.
                     var mipData = imageData.AsSpan()[(arrayOffset + surfaceSize)..];
 
                     // TODO: Handle errors?
-                    var mipDataDeswizzled = Deswizzle(widthInTiles, heightInTiles, depth, bpp, blockHeight, mipData);
+                    var mipDataDeswizzled = Deswizzle(widthInTiles, heightInTiles, depth, bpp, (ulong)mipBlockHeight, mipData);
                     mipmaps.Add(mipDataDeswizzled);
 
                     surfaceSize += (int)mipSize;
@@ -141,51 +148,6 @@ namespace CrossMod.Tools
             }
 
             return output;
-        }
-
-        // Block height is not a function of height when considering all mipmaps.
-        // HACK: Just fit two separate step functions with cutoffs based on this data:
-        // https://github.com/ScanMountGoat/nutexb_swizzle/blob/main/nutexb_block_heights.csv
-        private static ulong GetBlockHeight(ulong heightInBytes, int mipLevel)
-        {
-            if (mipLevel == 0)
-                return GetBlockHeightMip0(heightInBytes);
-            else
-                return GetBlockHeightMip1(heightInBytes);
-        }
-
-        private static ulong GetBlockHeightMip0(ulong heightInBytes)
-        {
-            if (heightInBytes >= 90)
-                return 16;
-
-            if (heightInBytes >= 44)
-                return 8;
-
-            if (heightInBytes >= 24)
-                return 4;
-
-            if (heightInBytes >= 12)
-                return 2;
-
-            return 1;
-        }
-
-        private static ulong GetBlockHeightMip1(ulong heightInBytes)
-        {
-            if (heightInBytes >= 68)
-                return 16;
-
-            if (heightInBytes > 32)
-                return 8;
-
-            if (heightInBytes >= 17)
-                return 4;
-
-            if (heightInBytes >= 9)
-                return 2;
-
-            return 1;
         }
     }
 }
