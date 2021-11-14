@@ -114,13 +114,9 @@ namespace CrossMod.Rendering
 
         private Matrix4 AccumulateTransforms(RBone b, bool includeScale)
         {
+            // Recursively accumulate the parent transform.
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
-                // Recursively accumulate the parent transform.
-
-                // TODO: Don't use scale from Unk1 == 1?
-                // TODO: Is this scale compensation like in Maya?
-                // TODO: This isn't completely accurate?
                 var currentTransform = GetMatrix(transform, includeScale);
 
                 if (b.ParentId == -1)
@@ -128,11 +124,17 @@ namespace CrossMod.Rendering
                     return currentTransform;
                 }
 
-                // If any bone in the chain doesn't inherit scale,
-                // the scale of all all the subsequent ancestors should be ignored.
+                // Disabling scale inheritance propogates up the parent chain.
                 var inheritScale = ShouldInheritScale(transform);
                 var parentTransform = AccumulateTransforms(Bones[b.ParentId], includeScale && inheritScale);
 
+                // Compensate scale reverts the immediate parent's scale.
+                if (Bones[b.ParentId].AnimationTrackTransform is AnimTrackTransform parentTrackTransform && transform.CompensateScale == 1 && inheritScale)
+                {
+                    // The order of operations is important here to reduce scaling artifacts like shearing.
+                    var scaleCompensation = Matrix4.CreateScale(1f / parentTrackTransform.Sx, 1f / parentTrackTransform.Sy, 1f / parentTrackTransform.Sz);
+                    currentTransform = scaleCompensation * currentTransform;
+                }
                 return currentTransform * parentTransform;
             }
             else
