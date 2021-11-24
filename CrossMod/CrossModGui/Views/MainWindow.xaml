@@ -21,15 +21,19 @@
         <RoutedUICommand x:Key="ReloadShadersCommand" Text="Reload Shaders" />
         <RoutedUICommand x:Key="OpenFolderRecursiveCommand" Text="Open Folder and all Subfolders" />
         <RoutedUICommand x:Key="ClearWorkspaceCommand" Text="Clear Workspace" />
+        <RoutedUICommand x:Key="ReloadFilesCommand" Text="Reload Workspace" />
+
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolder_Click" />
         <CommandBinding Command="{StaticResource OpenFolderRecursiveCommand}" Executed="OpenFolderRecursive_Click" />
         <CommandBinding Command="{StaticResource ClearWorkspaceCommand}" Executed="ClearWorkspace_Click" />
         <CommandBinding Command="{StaticResource ReloadShadersCommand}" Executed="ReloadShaders_Click" />
+        <CommandBinding Command="{StaticResource ReloadFilesCommand}" Executed="ReloadFiles_Click" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Command="{StaticResource OpenFolderCommand}" Key="O" Modifiers="Ctrl"/>
+        <KeyBinding Command="{StaticResource ReloadFilesCommand}" Key="R" Modifiers="Ctrl"/>
         <KeyBinding Command="{StaticResource ReloadShadersCommand}" Key="F5"/>
     </Window.InputBindings>
     <DockPanel LastChildFill="True">
@@ -37,6 +41,7 @@
             <MenuItem Header="File">
                 <MenuItem Header="Open Folder" Command="{StaticResource OpenFolderCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Open Folder and all Subfolders" Command="{StaticResource OpenFolderRecursiveCommand}"/>
+                <MenuItem Header="Reload Workspace" Command="{StaticResource ReloadFilesCommand}" InputGestureText="Ctrl+R"/>
                 <MenuItem Header="Clear Workspace" Command="{StaticResource ClearWorkspaceCommand}"/>
             </MenuItem>
             <MenuItem Header="Menu">

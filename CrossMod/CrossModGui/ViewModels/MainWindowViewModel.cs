@@ -83,8 +83,27 @@ namespace CrossModGui.ViewModels
             MeshListItems.Clear();
         }
 
+        public void ReloadFiles()
+        {
+            var paths = FileTreeItems.Select(i => i.AbsolutePath).ToList();
+            Clear();
+            ClearViewport();
+
+            foreach (var path in paths)
+            {
+                // TODO: Should this be recursive?
+                PopulateFileTree(path, true, () => { });
+            }
+        }
+
         public void PopulateFileTree(string folderPath, bool isRecursive, Action onLoadModel)
         {
+            // TODO: Use a FileSystemWatcher to track the directory.
+            // When any files change, just reload the directory and update the model collection.
+            // This requires 3 step:
+            // 1. remove this folder node's items from the model collection.
+            // 2. refresh the folder node's children
+            // 3. add the new items to the model collection
             var rootNode = new DirectoryNode(folderPath) { IsExpanded = true };
             FileTreeItems.Add(rootNode);
 
@@ -103,6 +122,8 @@ namespace CrossModGui.ViewModels
             // TODO: There's probably a better way to avoid adding a numdlb twice.
             if (node is NumdlbNode numdlb)
             {
+                // TODO: Rework this to take a directory instead.
+                // We're just searching the directory to collect model related files.
                 var (rModel, rSkeleton) = numdlb.GetModelAndSkeleton();
 
                 // The parent will be a folder and should have a more descriptive name.

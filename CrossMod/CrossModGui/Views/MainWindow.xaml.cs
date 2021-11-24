@@ -124,6 +124,11 @@ namespace CrossModGui.Views
             }
         }
 
+        private void ReloadFiles_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.ReloadFiles();
+        }
+
         private void ClearWorkspace_Click(object sender, RoutedEventArgs e)
         {
             viewModel.Clear();

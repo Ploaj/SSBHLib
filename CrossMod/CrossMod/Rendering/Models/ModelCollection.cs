@@ -17,7 +17,7 @@ namespace CrossMod.Rendering.Models
         private UniformBlock? boneUniformBuffer;
 
         // HACK: Keep track of what numdlb nodes have already been added.
-        // This needs to be rewritten at some point.
+        // TODO: This needs to be rewritten at some point.
         public List<string> ModelNames { get; } = new List<string>();
 
         /// <summary>

@@ -35,14 +35,15 @@ namespace CrossMod.Nodes
             return GetModelAndSkeleton(modl, skeleton, matl, meshNode, modelXmb, lodXmb, textureByName);
         }
 
-        private static void GetNodesForRendering(Modl modl, FileNode? parent, ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
+        private static void GetNodesForRendering(Modl modl, FileNode? directory, ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             // TODO: There's probably a cleaner way of doing this.
-            if (parent == null)
+            if (directory == null)
                 return;
 
-            foreach (FileNode fileNode in parent.Nodes)
+            // Find rendering related files in the given directory.
+            foreach (FileNode fileNode in directory.Nodes)
             {
                 if (fileNode is NutexbNode nutexNode)
                 {
