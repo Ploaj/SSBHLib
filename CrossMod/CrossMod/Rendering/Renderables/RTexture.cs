@@ -52,7 +52,7 @@ namespace CrossMod.Rendering
 
             // Use nearest neighbor to preserve pixel boundaries.
             if (sampler == null)
-                sampler = new SamplerObject { MagFilter = TextureMagFilter.Nearest, MinFilter = TextureMinFilter.Nearest };
+                sampler = new SamplerObject { MagFilter = TextureMagFilter.Nearest, MinFilter = TextureMinFilter.NearestMipmapNearest };
 
             // Texture unit 0 should be reserved for image preview.
             sampler.Bind(0);

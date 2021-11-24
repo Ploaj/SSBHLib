@@ -218,6 +218,8 @@ namespace CrossModGui.ViewModels
                 }
             }
 
+            // TODO: Special handling of swing.prc?
+
             // Preserve the existing model collection when drawing individual items.
             // Textures and bones will override the model collection.
             // Updating the animation shouldn't clear the current renderable.

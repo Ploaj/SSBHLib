@@ -74,7 +74,7 @@ namespace CrossMod.Rendering.Models
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer);
+            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer, modelView, projection);
         }
 
         public static void SetCameraUniforms(Matrix4 modelView, Matrix4 projection, Shader currentShader)
@@ -138,7 +138,8 @@ namespace CrossMod.Rendering.Models
                 return 0;
         }
 
-        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer)
+        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer,
+            Matrix4 modelView, Matrix4 projection)
         {
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
@@ -150,10 +151,14 @@ namespace CrossMod.Rendering.Models
                 DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
                 previousSkeleton = m.Item2;
+
+                // Render skeleton on top.
+                if (RenderSettings.Instance.RenderBones)
+                    m.Item2?.Render(modelView, projection);
             }
         }
 
-        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
+        private static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
             // TODO: This optimization is buggy.
             // Check if the uniform values have already been set for this shader.

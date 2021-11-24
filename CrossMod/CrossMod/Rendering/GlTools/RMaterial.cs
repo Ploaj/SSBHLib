@@ -277,6 +277,7 @@ namespace CrossMod.Rendering.GlTools
         private void SetVectors(UniformBlock uniformBlock)
         {
             // Use a 16 byte type to avoid alignment issues.
+            // TODO: Cache this?
             var requiredParameters = ShaderValidation.GetParameters(ShaderLabel);
 
             // Custom vectors default to (0.0, 0.0, 0.0, 0.0).

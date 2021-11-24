@@ -47,7 +47,7 @@ namespace CrossMod.Rendering.Models
             RModel.SetRenderSettingsUniforms(shader);
             RModel.SetCameraUniforms(modelView, projection, shader);
 
-            RModel.DrawMeshes(Meshes, shader, boneUniformBuffer);
+            RModel.DrawMeshes(Meshes, shader, boneUniformBuffer, modelView, projection);
         }
     }
 }
