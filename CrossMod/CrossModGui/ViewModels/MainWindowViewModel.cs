@@ -107,7 +107,7 @@ namespace CrossModGui.ViewModels
             // TODO: There's probably a better way to avoid adding a numdlb twice.
             if (node is NumdlbNode numdlb)
             {
-                var rnumdl = numdlb.GetRenderableNode();
+                var (rModel, rSkeleton) = numdlb.GetModelAndSkeleton();
 
                 // The parent will be a folder and should have a more descriptive name.
                 // Use model.numdlb as a fallback if there is no parent.
@@ -116,15 +116,16 @@ namespace CrossModGui.ViewModels
                 // HACK: Prevent adding the same model twice.
                 if (!collection.ModelNames.Contains(parentText))
                 {
-                    AddMeshesToGui(parentText, rnumdl.RenderModel);
-                    AddSkeletonToGui(rnumdl.Skeleton);
+                    AddMeshesToGui(parentText, rModel);
+                    AddSkeletonToGui(rSkeleton);
 
-                    Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
+                    // TODO: Find another way to initialize materials.
+                    //Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
 
-                    if (rnumdl.RenderModel != null)
+                    if (rModel != null)
                     {
-                        collection.Meshes.AddRange(rnumdl.RenderModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rnumdl.Skeleton)));
-                        collection.AddBoundingSphere(rnumdl.RenderModel.BoundingSphere);
+                        collection.Meshes.AddRange(rModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rSkeleton)));
+                        collection.AddBoundingSphere(rModel.BoundingSphere);
                         Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
 
                         // HACK: Make sure the camera isn't so far away that models aren't visible.

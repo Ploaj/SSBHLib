@@ -97,11 +97,12 @@ namespace CrossMod.Tools
             {
                 if (node is NumdlbNode renderable)
                 {
-                    var model = renderable.GetRenderableNode();
-                    if (model != null)
+                    // TODO: This will need to be updated and can hopefully share code with MainWindowViewModel.
+                    var (rModel, rSkeleton) = renderable.GetModelAndSkeleton();
+                    if (rModel != null)
                     {
-                        model.RenderModel?.HideExpressionMeshes();
-                        return new List<IRenderableNode>() { renderable };
+                        rModel?.HideExpressionMeshes();
+                        //return new List<IRenderableNode>() { rModel };
                     }
 
                 }

@@ -1,56 +1,45 @@
 ﻿using CrossMod.Nodes.Formats.Models;
 using CrossMod.Rendering;
+using CrossMod.Rendering.Models;
 using SSBHLib;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
-using System;
 using System.Collections.Generic;
 
 namespace CrossMod.Nodes
 {
-    public class NumdlbNode : FileNode, IRenderableNode
+    // TODO: Rework this class to just handle Modl files?
+    public class NumdlbNode : FileNode
     {
-        public Lazy<IRenderable> Renderable { get; }
-
-        private readonly Modl model;
+        private readonly Modl modl;
 
         public NumdlbNode(string path) : base(path, "model", true)
         {
-            Ssbh.TryParseSsbhFile(AbsolutePath, out model);
-            Renderable = new Lazy<IRenderable>(() => GetRenderableNode());
+            Ssbh.TryParseSsbhFile(AbsolutePath, out modl);
         }
 
-        public RNumdl GetRenderableNode()
-        {
-            var rnumdl = CreateRnumdl();
-            rnumdl.Skeleton?.Reset();
-
-            return rnumdl;
-        }
-
-        private RNumdl CreateRnumdl()
+        public (RModel?, RSkeleton?) GetModelAndSkeleton()
         {
             NumshbNode? meshNode = null;
             RSkeleton? skeleton = null;
-            Matl? material = null;
+            Matl? matl = null;
             XmbNode? modelXmb = null;
             XmbNode? lodXmb = null;
 
             var textureByName = new Dictionary<string, RTexture>();
-            GetNodesForRendering(ref meshNode, ref skeleton, ref material, ref modelXmb, ref lodXmb, textureByName);
+            GetNodesForRendering(modl, Parent, ref meshNode, ref skeleton, ref matl, ref modelXmb, ref lodXmb, textureByName);
 
-            // TODO: Handle nulls.
-            return new RNumdl(model, skeleton, material, meshNode, modelXmb, lodXmb, textureByName);
+            return RNumdl.GetModelAndSkeleton(modl, skeleton, matl, meshNode, modelXmb, lodXmb, textureByName);
         }
 
-        private void GetNodesForRendering(ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
+        private static void GetNodesForRendering(Modl modl, FileNode? parent, ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             // TODO: There's probably a cleaner way of doing this.
-            if (Parent == null)
+            if (parent == null)
                 return;
 
-            foreach (FileNode fileNode in Parent.Nodes)
+            foreach (FileNode fileNode in parent.Nodes)
             {
                 if (fileNode is NutexbNode nutexNode)
                 {
@@ -61,15 +50,15 @@ namespace CrossMod.Nodes
                     var textureName = System.IO.Path.GetFileNameWithoutExtension(fileNode.Text).ToLower();
                     textureByName[textureName] = texture;
                 }
-                else if (fileNode.Text.Equals(model.MeshString))
+                else if (fileNode.Text.Equals(modl.MeshString))
                 {
                     meshNode = (NumshbNode)fileNode;
                 }
-                else if (fileNode.Text.Equals(model.SkeletonFileName))
+                else if (fileNode.Text.Equals(modl.SkeletonFileName))
                 {
                     skeleton = (RSkeleton)((NusktbNode)fileNode).Renderable.Value;
                 }
-                else if (fileNode.Text.Equals(model.MaterialFileNames[0].MaterialFileName))
+                else if (fileNode.Text.Equals(modl.MaterialFileNames[0].MaterialFileName))
                 {
                     material = ((NumatbNode)fileNode).Material;
                 }

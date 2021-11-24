@@ -18,7 +18,7 @@ namespace CrossMod.Rendering
     {
         public Modl? Modl { get; }
 
-        public Dictionary<string, RTexture> TextureByName { get; }
+        public Dictionary<string, RTexture> TextureByName { get; } = new Dictionary<string, RTexture>();
 
         public RSkeleton? Skeleton { get; }
 
@@ -33,28 +33,23 @@ namespace CrossMod.Rendering
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
+        public static (RModel?, RSkeleton?) GetModelAndSkeleton(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
-            Modl = modl;
-            Skeleton = skeleton;
-            Matl = matl;
-            ModelXmb = modelXmb?.Xmb;
-            LodXmb = lodXmb?.Xmb;
-            Mesh = meshNode?.mesh;
-            TextureByName = textureByName;
+            var renderModel = meshNode?.GetRenderModel(skeleton);
 
-            if (meshNode != null)
-                RenderModel = meshNode.GetRenderModel(Skeleton);
+            InitializeAndAssignMaterials(renderModel, matl, textureByName, modl);
 
-            UpdateMaterials(matl, this);
+            return (renderModel, skeleton);
         }
 
-        public static void UpdateMaterials(Matl? matl, RNumdl rNumdl)
+        public static Dictionary<string, RMaterial> InitializeAndAssignMaterials(RModel? renderModel, Matl? matl, Dictionary<string, RTexture> textureByName, Modl? modl)
         {
-            rNumdl.MaterialByName = InitializeMaterials(matl, rNumdl.TextureByName);
-            if (rNumdl.Modl != null)
-                AssignMaterials(rNumdl.RenderModel, rNumdl.Modl, rNumdl.MaterialByName);
+            var materialByName = InitializeMaterials(matl, textureByName);
+            if (modl != null)
+                AssignMaterials(renderModel, modl, materialByName);
+
+            return materialByName;
         }
 
         private static void AssignMaterials(RModel? renderModel, Modl modl, Dictionary<string, RMaterial> materialByName)
