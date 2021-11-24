@@ -33,7 +33,7 @@ namespace CrossMod.Rendering
 
         public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
 
-        public RNumdl(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, NuhlpbNode? hlpbNode, XmbNode? modelXmb, XmbNode? lodXmb,
+        public RNumdl(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             Modl = modl;
@@ -48,10 +48,6 @@ namespace CrossMod.Rendering
                 RenderModel = meshNode.GetRenderModel(Skeleton);
 
             UpdateMaterials(matl, this);
-            if (Skeleton != null)
-            {
-                hlpbNode?.AddToRenderSkeleton(Skeleton);
-            }
         }
 
         public static void UpdateMaterials(Matl? matl, RNumdl rNumdl)

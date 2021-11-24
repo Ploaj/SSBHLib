@@ -31,30 +31,28 @@ namespace CrossMod.Nodes
         private RNumdl CreateRnumdl()
         {
             NumshbNode? meshNode = null;
-            NuhlpbNode? hlpbNode = null;
             RSkeleton? skeleton = null;
             Matl? material = null;
             XmbNode? modelXmb = null;
             XmbNode? lodXmb = null;
 
             var textureByName = new Dictionary<string, RTexture>();
-            GetNodesForRendering(ref meshNode, ref hlpbNode, ref skeleton, ref material, ref modelXmb, ref lodXmb, textureByName);
+            GetNodesForRendering(ref meshNode, ref skeleton, ref material, ref modelXmb, ref lodXmb, textureByName);
 
             // TODO: Handle nulls.
-            return new RNumdl(model, skeleton, material, meshNode, hlpbNode, modelXmb, lodXmb, textureByName);
+            return new RNumdl(model, skeleton, material, meshNode, modelXmb, lodXmb, textureByName);
         }
 
-        private void GetNodesForRendering(ref NumshbNode? meshNode, ref NuhlpbNode? hlpbNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
+        private void GetNodesForRendering(ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             // TODO: There's probably a cleaner way of doing this.
+            if (Parent == null)
+                return;
+
             foreach (FileNode fileNode in Parent.Nodes)
             {
-                if (fileNode is NuhlpbNode node)
-                {
-                    hlpbNode = node;
-                }
-                else if (fileNode is NutexbNode nutexNode)
+                if (fileNode is NutexbNode nutexNode)
                 {
                     var texture = (RTexture)nutexNode.Renderable.Value;
 

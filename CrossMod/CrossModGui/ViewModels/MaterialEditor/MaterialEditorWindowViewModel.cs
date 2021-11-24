@@ -185,7 +185,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
             // Recreate and reassign materials to refresh rendering.
             // Do this first to ensure the RMaterials are recreated.
-            currentRnumdl.UpdateMaterials(currentMatl);
+            RNumdl.UpdateMaterials(currentMatl, currentRnumdl);
 
             // Update the view model.
             currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
