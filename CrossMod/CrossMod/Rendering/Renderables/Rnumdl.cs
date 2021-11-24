@@ -67,7 +67,8 @@ namespace CrossMod.Rendering
             {
                 var entry = matl.Entries[i];
                 var rMaterial = MatlToMaterial.CreateMaterial(entry, i, textureByName);
-                materialByName.Add(rMaterial.MaterialLabel, rMaterial);
+                // There may be duplicate keys, so just keep the most recent material.
+                materialByName[rMaterial.MaterialLabel] = rMaterial;
             }
 
             return materialByName;
