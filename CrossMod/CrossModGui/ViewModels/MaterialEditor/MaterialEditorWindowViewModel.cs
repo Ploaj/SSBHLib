@@ -116,21 +116,17 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
-        private readonly IEnumerable<Tuple<string, RNumdl>> rnumdls;
-
-        public MaterialEditorWindowViewModel(IEnumerable<Tuple<string, RNumdl>> rnumdls)
+        public MaterialEditorWindowViewModel()
         {
-            this.rnumdls = rnumdls;
-
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
             // Group materials by matl.
-            foreach (var pair in rnumdls)
-            {
-                var name = pair.Item1;
-                var rnumdl = pair.Item2;
+            //foreach (var pair in rnumdls)
+            //{
+            //    var name = pair.Item1;
+            //    var rnumdl = pair.Item2;
 
                 //if (rnumdl.Matl == null)
                 //    continue;
@@ -140,7 +136,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
                 //var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
                 //MaterialCollections.Add(collection);
-            }
+            //}
         }
 
         public void ApplyPreset(MaterialPreset? selectedPreset)
@@ -162,9 +158,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (CurrentMaterial == null || CurrentMaterialCollection == null)
                 return;
 
-            var currentRnumdl = rnumdls.Where(r => r.Item1 == CurrentMaterialCollection.Name).FirstOrDefault()?.Item2;
-            if (currentRnumdl == null)
-                return;
+            //var currentRnumdl = rnumdls.Where(r => r.Item1 == CurrentMaterialCollection.Name).FirstOrDefault()?.Item2;
+            //if (currentRnumdl == null)
+            //    return;
 
             //var currentMatl = currentRnumdl.Matl;
             //if (currentMatl == null)
@@ -198,24 +194,24 @@ namespace CrossModGui.ViewModels.MaterialEditor
             OnRenderFrameNeeded();
         }
 
-        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName, Matl matl, RNumdl rnumdl)
+        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName, Matl matl)
         {
             var collection = new MaterialCollection(name);
-            for (int i = 0; i < matl.Entries.Length; i++)
-            {
-                // Pass a reference to the render material to enable real time updates.
-                materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
+            //for (int i = 0; i < matl.Entries.Length; i++)
+            //{
+            //    // Pass a reference to the render material to enable real time updates.
+            //    materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
 
-                var material = CreateMaterial(matl.Entries[i], i, rMaterial, rnumdl);
-                collection.Materials.Add(material);
-            }
+            //    var material = CreateMaterial(matl.Entries[i], i, rMaterial, rnumdl);
+            //    collection.Materials.Add(material);
+            //}
 
             return collection;
         }
 
-        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial, RNumdl rnumdl)
+        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial)
         {
-            var material = CreateMaterial(entry, index, rnumdl);
+            var material = CreateMaterial(entry, index);
 
             // Enable real time viewport updates.
             if (rMaterial != null)
@@ -226,7 +222,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static Material CreateMaterial(MatlEntry entry, int index, RNumdl rnumdl)
+        private static Material CreateMaterial(MatlEntry entry, int index)
         {
             var idColor = UniqueColors.IndexToColor(index);
 
@@ -239,14 +235,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
                 RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel),
-                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel, rnumdl),
+                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel),
                 IsNotValidShaderLabel = !ShaderValidation.IsValidShaderLabel(entry.ShaderLabel)
             };
             AddAttributesToMaterial(entry, material);
             return material;
         }
 
-        private static List<AttributeError> GetAttributeErrors(string shaderLabel, string materialLabel, RNumdl rnumdl)
+        private static List<AttributeError> GetAttributeErrors(string shaderLabel, string materialLabel)
         {
             // Create a list of missing required attributes for each mesh object.
             var required = ShaderValidation.GetAttributes(shaderLabel);

@@ -168,7 +168,5 @@ namespace CrossMod.Rendering
     {
         public float Frame;
         public T Value;
-        public float CompensateScale; // workaround for strange scaling type
-        public bool HasCompensateScale;
     }
 }
