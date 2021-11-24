@@ -40,8 +40,6 @@ namespace CrossModGui.ViewModels
 
         public ObservableCollection<MeshListItem> MeshListItems { get; } = new ObservableCollection<MeshListItem>();
 
-        public ObservableCollection<Tuple<string, RNumdl>> Rnumdls { get; } = new ObservableCollection<Tuple<string, RNumdl>>();
-
         public bool IsPlayingAnimation
         {
             get => isPlayingAnimation;
@@ -76,7 +74,6 @@ namespace CrossModGui.ViewModels
             FileTreeItems.Clear();
             BoneTreeItems.Clear();
             MeshListItems.Clear();
-            Rnumdls.Clear();
         }
 
         public void ClearViewport()
@@ -84,7 +81,6 @@ namespace CrossModGui.ViewModels
             Renderer.Clear();
             BoneTreeItems.Clear();
             MeshListItems.Clear();
-            Rnumdls.Clear();
         }
 
         public void PopulateFileTree(string folderPath, bool isRecursive, Action onLoadModel)
@@ -119,9 +115,6 @@ namespace CrossModGui.ViewModels
                     AddMeshesToGui(parentText, rModel);
                     AddSkeletonToGui(rSkeleton);
 
-                    // TODO: Find another way to initialize materials.
-                    //Rnumdls.Add(new Tuple<string, RNumdl>(parentText, rnumdl));
-
                     if (rModel != null)
                     {
                         collection.Meshes.AddRange(rModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rSkeleton)));
@@ -144,24 +137,6 @@ namespace CrossModGui.ViewModels
                 {
                     AddModelsToCollection(child, collection, isRecursive, onLoadModel);
                 }
-            }
-        }
-
-        public void UpdateBones(IRenderable newNode)
-        {
-            BoneTreeItems.Clear();
-
-            if (newNode == null)
-                return;
-
-            // Duplicate nodes should still update the mesh list.
-            if (newNode is RSkeleton skeleton)
-            {
-                AddSkeletonToGui(skeleton);
-            }
-            else if (newNode is RNumdl rnumdl)
-            {
-                AddSkeletonToGui(rnumdl.Skeleton);
             }
         }
 

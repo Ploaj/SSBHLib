@@ -132,14 +132,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 var name = pair.Item1;
                 var rnumdl = pair.Item2;
 
-                if (rnumdl.Matl == null)
-                    continue;
+                //if (rnumdl.Matl == null)
+                //    continue;
 
-                // TODO: Each material should have a different set of available texture names.
-                PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
+                //// TODO: Each material should have a different set of available texture names.
+                //PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
 
-                var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
-                MaterialCollections.Add(collection);
+                //var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
+                //MaterialCollections.Add(collection);
             }
         }
 
@@ -166,34 +166,34 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (currentRnumdl == null)
                 return;
 
-            var currentMatl = currentRnumdl.Matl;
-            if (currentMatl == null)
-                return;
+            //var currentMatl = currentRnumdl.Matl;
+            //if (currentMatl == null)
+            //    return;
 
-            var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
-            if (currentEntryIndex == -1)
-                return;
+            //var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
+            //if (currentEntryIndex == -1)
+            //    return;
 
-            // Apply the preset and update the matl entry.
-            var newEntry = MatlTools.FromShaderAndAttributes(currentMatl.Entries[currentEntryIndex], presetMaterial, true);
-            currentMatl.Entries[currentEntryIndex] = newEntry;
+            //// Apply the preset and update the matl entry.
+            //var newEntry = MatlTools.FromShaderAndAttributes(currentMatl.Entries[currentEntryIndex], presetMaterial, true);
+            //currentMatl.Entries[currentEntryIndex] = newEntry;
 
-            // store the result of applying the preset's entry to the current material's entry
-            var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
-            if (currentMaterialIndex == -1)
-                return;
+            //// store the result of applying the preset's entry to the current material's entry
+            //var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
+            //if (currentMaterialIndex == -1)
+            //    return;
 
-            // Recreate and reassign materials to refresh rendering.
-            // Do this first to ensure the RMaterials are recreated.
-            RNumdl.InitializeAndAssignMaterials(currentRnumdl.RenderModel, currentMatl, currentRnumdl.TextureByName, currentRnumdl.Modl);
+            //// Recreate and reassign materials to refresh rendering.
+            //// Do this first to ensure the RMaterials are recreated.
+            //RNumdl.InitializeAndAssignMaterials(currentRnumdl.RenderModel, currentMatl, currentRnumdl.TextureByName, currentRnumdl.Modl);
 
-            // Update the view model.
-            currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
+            //// Update the view model.
+            //currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
 
-            // Create the new viewmodel material and sync it with the newly created render material.
-            var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial, currentRnumdl);
-            CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;
-            CurrentMaterial = newMaterial;
+            //// Create the new viewmodel material and sync it with the newly created render material.
+            //var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial, currentRnumdl);
+            //CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;
+            //CurrentMaterial = newMaterial;
 
             OnRenderFrameNeeded();
         }
@@ -251,23 +251,23 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Create a list of missing required attributes for each mesh object.
             var required = ShaderValidation.GetAttributes(shaderLabel);
             var errors = new List<AttributeError>();
-            foreach (var meshObject in rnumdl.Mesh.Objects)
-            {
-                // Only include errors for meshes with this material assigned.
-                var modlEntry = rnumdl.Modl.ModelEntries.FirstOrDefault(e => e.MeshName == meshObject.Name && e.SubIndex == meshObject.SubIndex);
-                if (modlEntry == null)
-                    continue;
+            //foreach (var meshObject in rnumdl.Mesh.Objects)
+            //{
+            //    // Only include errors for meshes with this material assigned.
+            //    var modlEntry = rnumdl.Modl.ModelEntries.FirstOrDefault(e => e.MeshName == meshObject.Name && e.SubIndex == meshObject.SubIndex);
+            //    if (modlEntry == null)
+            //        continue;
 
-                if (modlEntry.MaterialLabel != materialLabel)
-                    continue;
+            //    if (modlEntry.MaterialLabel != materialLabel)
+            //        continue;
 
-                var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
-                var missingAttributes = string.Join(", ", required.Except(current).ToList());
-                if (string.IsNullOrEmpty(missingAttributes))
-                    continue;
+            //    var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
+            //    var missingAttributes = string.Join(", ", required.Except(current).ToList());
+            //    if (string.IsNullOrEmpty(missingAttributes))
+            //        continue;
 
-                errors.Add(new AttributeError { MeshName = meshObject.Name, MissingAttributes = missingAttributes });
-            }
+            //    errors.Add(new AttributeError { MeshName = meshObject.Name, MissingAttributes = missingAttributes });
+            //}
             return errors;
         }
 
@@ -452,11 +452,11 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             if (CurrentMaterialCollection != null)
             {
-                var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
-                if (matl != null)
-                {
-                    SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
-                }
+                //var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
+                //if (matl != null)
+                //{
+                //    SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
+                //}
             }
         }
 
@@ -464,13 +464,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             if (CurrentMaterialCollection != null)
             {
-                var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
-                if (matl != null)
-                {
-                    using var writer = new StringWriter();
-                    MatlSerialization.SerializeMatl(writer, matl);
-                    File.WriteAllText(outputPath, writer.ToString());
-                }
+                //var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
+                //if (matl != null)
+                //{
+                //    using var writer = new StringWriter();
+                //    MatlSerialization.SerializeMatl(writer, matl);
+                //    File.WriteAllText(outputPath, writer.ToString());
+                //}
             }
         }
     }

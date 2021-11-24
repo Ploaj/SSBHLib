@@ -12,27 +12,9 @@ using XMBLib;
 
 namespace CrossMod.Rendering
 {
-    // TODO: Find a way to remove this class by converting to static methods.
-    // This is replaced by ModelCollection.
-    public class RNumdl : IRenderableModel
+    // TODO: This class can be static once the material editor is reworked.
+    public class RNumdl
     {
-        public Modl? Modl { get; }
-
-        public Dictionary<string, RTexture> TextureByName { get; } = new Dictionary<string, RTexture>();
-
-        public RSkeleton? Skeleton { get; }
-
-        public RModel? RenderModel { get; }
-
-        // TODO: Why are these saved as is?
-        public Matl? Matl { get; }
-        public Xmb? ModelXmb { get; }
-        public Xmb? LodXmb { get; }
-
-        public Mesh? Mesh { get; }
-
-        public Dictionary<string, RMaterial> MaterialByName { get; set; } = new Dictionary<string, RMaterial>();
-
         public static (RModel?, RSkeleton?) GetModelAndSkeleton(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
@@ -101,15 +83,6 @@ namespace CrossMod.Rendering
             {
                 mesh.Material = meshMaterial;
             }
-        }
-
-        public void Render(Matrix4 modelView, Matrix4 projection)
-        {
-            RenderModel?.Render(modelView, projection, Skeleton);
-
-            // Render skeleton on top.
-            if (RenderSettings.Instance.RenderBones)
-                Skeleton?.Render(modelView, projection);
         }
     }
 }

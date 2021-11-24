@@ -79,9 +79,9 @@ namespace CrossMod.Tools
             if (nodes.Count == 0)
                 return;
 
-            var rnumdl = nodes[0] as RNumdl;
-            if (rnumdl?.RenderModel != null)
-                renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
+            //var rnumdl = nodes[0] as RNumdl;
+            //if (rnumdl?.RenderModel != null)
+            //    renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
 
             renderer.ItemToRender = nodes[0].Renderable.Value;
             renderer.RenderNodes();
