@@ -3,7 +3,6 @@ using CrossMod.Nodes.Formats.Models;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Rendering.Models;
 using OpenTK;
-using SFGraphics.Cameras;
 using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
@@ -13,6 +12,8 @@ using XMBLib;
 
 namespace CrossMod.Rendering
 {
+    // TODO: Find a way to remove this class by converting to static methods.
+    // This is replaced by ModelCollection.
     public class RNumdl : IRenderableModel
     {
         public Modl? Modl { get; }
@@ -46,35 +47,36 @@ namespace CrossMod.Rendering
             if (meshNode != null)
                 RenderModel = meshNode.GetRenderModel(Skeleton);
 
-            UpdateMaterials(matl);
+            UpdateMaterials(matl, this);
             if (Skeleton != null)
             {
                 hlpbNode?.AddToRenderSkeleton(Skeleton);
             }
         }
 
-        public void UpdateMaterials(Matl? matl)
+        public static void UpdateMaterials(Matl? matl, RNumdl rNumdl)
         {
-            InitializeMaterials(matl);
-            AssignMaterials();
+            rNumdl.MaterialByName = InitializeMaterials(matl, rNumdl.TextureByName);
+            if (rNumdl.Modl != null)
+                AssignMaterials(rNumdl.RenderModel, rNumdl.Modl, rNumdl.MaterialByName);
         }
 
-        private void AssignMaterials()
+        private static void AssignMaterials(RModel? renderModel, Modl modl, Dictionary<string, RMaterial> materialByName)
         {
             // Match materials based on the Modl.
-            foreach (ModlEntry modlEntry in Modl.ModelEntries)
+            foreach (ModlEntry modlEntry in modl.ModelEntries)
             {
-                if (!MaterialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial? meshMaterial))
+                if (!materialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial? meshMaterial))
                     continue;
 
-                AssignMaterialToMeshes(modlEntry, meshMaterial);
+                AssignMaterialToMeshes(renderModel, modlEntry, meshMaterial);
             }
 
             // Fix any potentially unassigned materials.
             // TODO: Display some sort of error color in the viewport?
-            if (RenderModel != null)
+            if (renderModel != null)
             {
-                foreach (var mesh in RenderModel.SubMeshes)
+                foreach (var mesh in renderModel.SubMeshes)
                 {
                     if (mesh.Material == null)
                         mesh.Material = new RMaterial("", "", 0);
@@ -82,26 +84,28 @@ namespace CrossMod.Rendering
             }
         }
 
-        private void InitializeMaterials(Matl? matl)
+        private static Dictionary<string, RMaterial> InitializeMaterials(Matl? matl, Dictionary<string, RTexture> textureByName)
         {
             if (matl == null)
-                return;
+                return new Dictionary<string, RMaterial>();
 
-            MaterialByName.Clear();
+            var materialByName = new Dictionary<string, RMaterial>();
             for (int i = 0; i < matl.Entries.Length; i++)
             {
                 var entry = matl.Entries[i];
-                var rMaterial = MatlToMaterial.CreateMaterial(entry, i, TextureByName);
-                MaterialByName.Add(rMaterial.MaterialLabel, rMaterial);
+                var rMaterial = MatlToMaterial.CreateMaterial(entry, i, textureByName);
+                materialByName.Add(rMaterial.MaterialLabel, rMaterial);
             }
+
+            return materialByName;
         }
 
-        private void AssignMaterialToMeshes(ModlEntry modlEntry, RMaterial meshMaterial)
+        private static void AssignMaterialToMeshes(RModel? renderModel, ModlEntry modlEntry, RMaterial meshMaterial)
         {
-            if (RenderModel == null)
+            if (renderModel == null)
                 return;
 
-            var meshes = RenderModel.SubMeshes.Where(m => m.Name == modlEntry.MeshName && m.SubIndex == modlEntry.SubIndex);
+            var meshes = renderModel.SubMeshes.Where(m => m.Name == modlEntry.MeshName && m.SubIndex == modlEntry.SubIndex);
             foreach (var mesh in meshes)
             {
                 mesh.Material = meshMaterial;
