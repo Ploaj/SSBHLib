@@ -382,34 +382,5 @@ namespace CrossMod.Rendering.GlTools
             genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.Value.DiffusePbr);
             genericMaterial.AddTexture("specularPbrCube", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture7));
         }
-
-        private void SetParamAsVec4Debug(UniformBlock uniformBlock, MatlEnums.ParamId paramId)
-        {
-            // Convert parameters into colors for easier visualization.
-            var name = "vec4Param";
-
-            if (vec4ByParamId.ContainsKey(paramId))
-            {
-                var value = vec4ByParamId[paramId];
-                uniformBlock.SetValue(name, value);
-            }
-            else if (boolByParamId.ContainsKey(paramId))
-            {
-                var value = boolByParamId[paramId];
-                if (value)
-                    uniformBlock.SetValue(name, new Vector4(1, 0, 1, 0));
-                else
-                    uniformBlock.SetValue(name, new Vector4(0, 0, 1, 0));
-            }
-            else if (floatByParamId.ContainsKey(paramId))
-            {
-                var value = floatByParamId[paramId];
-                uniformBlock.SetValue(name, new Vector4(value, value, value, 0));
-            }
-            else
-            {
-                uniformBlock.SetValue(name, Vector4.Zero);
-            }
-        }
     }
 }
