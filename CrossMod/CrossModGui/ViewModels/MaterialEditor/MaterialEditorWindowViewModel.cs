@@ -38,6 +38,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public event EventHandler? RenderFrameNeeded;
 
+        private List<(string, Matl, Mesh?, Modl?)> models = new List<(string, Matl, Mesh?, Modl?)>();
+
         public class MaterialSaveEventArgs : EventArgs
         {
             public MaterialCollection MaterialCollection { get; }
@@ -122,14 +124,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
         public MaterialEditorWindowViewModel(IEnumerable<FileNode> nodes)
         {
-
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
-            // TODO: Store the models for later?
             // Group materials by matl.
-            var models = FindModels(nodes);
+            models = FindModels(nodes);
+
             foreach (var model in models)
             {
                 // TODO: Add texture names?
@@ -375,11 +376,11 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             if (CurrentMaterialCollection != null)
             {
-                //var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
-                //if (matl != null)
-                //{
-                //    SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
-                //}
+                var matl = models.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2;
+                if (matl != null)
+                {
+                    SSBHLib.Ssbh.TrySaveSsbhFile(outputPath, matl);
+                }
             }
         }
 
@@ -387,13 +388,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
         {
             if (CurrentMaterialCollection != null)
             {
-                //var matl = rnumdls.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2.Matl;
-                //if (matl != null)
-                //{
-                //    using var writer = new StringWriter();
-                //    MatlSerialization.SerializeMatl(writer, matl);
-                //    File.WriteAllText(outputPath, writer.ToString());
-                //}
+                var matl = models.SingleOrDefault(r => r.Item1 == CurrentMaterialCollection.Name).Item2;
+                if (matl != null)
+                {
+                    using var writer = new StringWriter();
+                    MatlSerialization.SerializeMatl(writer, matl);
+                    File.WriteAllText(outputPath, writer.ToString());
+                }
             }
         }
     }
