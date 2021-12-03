@@ -50,6 +50,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
             }
         }
 
+        // TODO: This could contain additional metadata like IsSrgb or IsCubeMap.
+        // This would allow providing more detailed feedback about potential model issues.
         public ObservableCollection<string> PossibleTextureNames { get; } = new ObservableCollection<string>();
 
         public Dictionary<MatlCullMode, string> DescriptionByCullMode { get; } = new Dictionary<MatlCullMode, string>
@@ -125,65 +127,71 @@ namespace CrossModGui.ViewModels.MaterialEditor
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
-            // TODO: Pass in a collection of (Matl, Mesh)?
+            // TODO: Store the models for later?
             // Group materials by matl.
             var models = FindModels(nodes);
             foreach (var model in models)
             {
                 // TODO: Add texture names?
-                var collection = CreateMaterialCollection("TODO", new Dictionary<string, RMaterial>(), model.Item1);
+                var collection = CreateMaterialCollection(model.Item1, new Dictionary<string, RMaterial>(), model.Item2);
                 MaterialCollections.Add(collection);
             }
-            //foreach (var pair in rnumdls)
-            //{
-            //    var name = pair.Item1;
-            //    var rnumdl = pair.Item2;
-
-            //    if (rnumdl.Matl == null)
-            //        continue;
-
-            //    // TODO: Each material should have a different set of available texture names.
-            //    PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
-
-            //    var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
-            //    MaterialCollections.Add(collection);
-            //}
         }
 
-        private static List<(Matl, Mesh?, Modl?)> FindModels(IEnumerable<FileNode> nodes)
+        private static List<(string, Matl, Mesh?, Modl?)> FindModels(IEnumerable<FileNode> nodes)
         {
-            var models = new List<(Matl, Mesh?, Modl?)>();
+            var models = new List<(string, Matl, Mesh?, Modl?)>();
 
-            // TODO: The code to find nodes by types is duplicated somewhere.
+            // TODO: The code to find nodes by types is duplicated somewhere?
             foreach (var node in nodes)
             {
-                Matl? matl = null;
-                Modl? modl = null;
-                Mesh? mesh = null;
-
                 if (node is DirectoryNode directory)
                 {
-                    models.AddRange(FindModels(node.Nodes));
-                }
-                else if (node is NumatbNode numatb)
-                {
-                    matl = numatb.Material;
-                }
-                else if (node is NumshbNode numshb)
-                {
-                    mesh = numshb.mesh;
-                } else if (node is NumdlbNode numdlb)
-                {
-                    modl = numdlb.modl;
-                }
-
-                if (matl != null)
-                {
-                    models.Add((matl, mesh, modl));
+                    FindModels(models, directory);
                 }
             }
 
             return models;
+        }
+
+        private static void FindModels(List<(string, Matl, Mesh?, Modl?)> models, DirectoryNode directory)
+        {
+            Matl? matl = null;
+            Modl? modl = null;
+            Mesh? mesh = null;
+
+            // Use the folder name for the associated files.
+            string name = directory.Text;
+
+            // Find material related files in this directory.
+            foreach (var child in directory.Nodes)
+            {
+                if (child is NumatbNode numatb)
+                {
+                    matl = numatb.Material;
+                }
+                else if (child is NumshbNode numshb)
+                {
+                    mesh = numshb.mesh;
+                }
+                else if (child is NumdlbNode numdlb)
+                {
+                    modl = numdlb.modl;
+                }
+            }
+
+            // Skip folders that don't contain a numatb.
+            if (matl != null)
+            {
+                models.Add((name, matl, mesh, modl));
+            }
+
+            // Recurse on any subfolders.
+            foreach (var child in directory.Nodes)
+            {
+                if (child is DirectoryNode childDirectory)
+                    FindModels(models, childDirectory);
+            }
         }
 
         public void ApplyPreset(MaterialPreset? selectedPreset)
@@ -205,10 +213,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (CurrentMaterial == null || CurrentMaterialCollection == null)
                 return;
 
-            //var currentRnumdl = rnumdls.Where(r => r.Item1 == CurrentMaterialCollection.Name).FirstOrDefault()?.Item2;
-            //if (currentRnumdl == null)
-            //    return;
-
             Matl? currentMatl = null;
             if (currentMatl == null)
                 return;
@@ -225,6 +229,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
             var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
             if (currentMaterialIndex == -1)
                 return;
+
+            // TODO: How to sync the viewmodels with the viewport?
 
             // Recreate and reassign materials to refresh rendering.
             // Do this first to ensure the RMaterials are recreated.
@@ -322,6 +328,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             RenderFrameNeeded?.Invoke(this, EventArgs.Empty);
         }
 
+        // TODO: Move this logic to the respective ViewModel classes?
         private void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
         {
             material.PropertyChanged += (s, e) =>
