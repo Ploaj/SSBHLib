@@ -100,11 +100,11 @@ namespace CrossModGui.Views
             glViewport.PauseRendering();
 
             // TODO: Just search the file tree for matls?
-            //var vm = new MaterialEditorWindowViewModel(viewModel.Rnumdls);
-            //vm.RenderFrameNeeded += (s, e) => RenderFrameIfNeeded();
+            var vm = new MaterialEditorWindowViewModel(viewModel.FileTreeItems);
+            vm.RenderFrameNeeded += (s, e) => RenderFrameIfNeeded();
 
-            //var window = new MaterialEditorWindow(vm);
-            //window.Show();
+            var window = new MaterialEditorWindow(vm);
+            window.Show();
         }
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)

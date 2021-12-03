@@ -13,7 +13,7 @@ namespace CrossMod.Nodes
     // TODO: Rework this class to just handle Modl files?
     public class NumdlbNode : FileNode
     {
-        private readonly Modl modl;
+        public readonly Modl modl;
 
         public NumdlbNode(string path) : base(path, "model", true)
         {

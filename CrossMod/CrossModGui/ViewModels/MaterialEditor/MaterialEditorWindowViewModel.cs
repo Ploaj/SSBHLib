@@ -1,10 +1,12 @@
 ﻿using CrossMod.MaterialValidation;
+using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
 using CrossMod.Tools;
 using CrossModGui.Tools;
 using SsbhLib.MatlXml;
 using SsbhLib.Tools;
+using SSBHLib.Formats;
 using SSBHLib.Formats.Materials;
 using SSBHLib.Formats.Meshes;
 using System;
@@ -116,27 +118,72 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
-        public MaterialEditorWindowViewModel()
+        public MaterialEditorWindowViewModel(IEnumerable<FileNode> nodes)
         {
+
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
                 PossibleTextureNames.Add(name);
 
+            // TODO: Pass in a collection of (Matl, Mesh)?
             // Group materials by matl.
+            var models = FindModels(nodes);
+            foreach (var model in models)
+            {
+                // TODO: Add texture names?
+                var collection = CreateMaterialCollection("TODO", new Dictionary<string, RMaterial>(), model.Item1);
+                MaterialCollections.Add(collection);
+            }
             //foreach (var pair in rnumdls)
             //{
             //    var name = pair.Item1;
             //    var rnumdl = pair.Item2;
 
-                //if (rnumdl.Matl == null)
-                //    continue;
+            //    if (rnumdl.Matl == null)
+            //        continue;
 
-                //// TODO: Each material should have a different set of available texture names.
-                //PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
+            //    // TODO: Each material should have a different set of available texture names.
+            //    PossibleTextureNames.AddRange(rnumdl.TextureByName.Keys);
 
-                //var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
-                //MaterialCollections.Add(collection);
+            //    var collection = CreateMaterialCollection(name, rnumdl.MaterialByName, rnumdl.Matl, rnumdl);
+            //    MaterialCollections.Add(collection);
             //}
+        }
+
+        private static List<(Matl, Mesh?, Modl?)> FindModels(IEnumerable<FileNode> nodes)
+        {
+            var models = new List<(Matl, Mesh?, Modl?)>();
+
+            // TODO: The code to find nodes by types is duplicated somewhere.
+            foreach (var node in nodes)
+            {
+                Matl? matl = null;
+                Modl? modl = null;
+                Mesh? mesh = null;
+
+                if (node is DirectoryNode directory)
+                {
+                    models.AddRange(FindModels(node.Nodes));
+                }
+                else if (node is NumatbNode numatb)
+                {
+                    matl = numatb.Material;
+                }
+                else if (node is NumshbNode numshb)
+                {
+                    mesh = numshb.mesh;
+                } else if (node is NumdlbNode numdlb)
+                {
+                    modl = numdlb.modl;
+                }
+
+                if (matl != null)
+                {
+                    models.Add((matl, mesh, modl));
+                }
+            }
+
+            return models;
         }
 
         public void ApplyPreset(MaterialPreset? selectedPreset)
@@ -162,32 +209,32 @@ namespace CrossModGui.ViewModels.MaterialEditor
             //if (currentRnumdl == null)
             //    return;
 
-            //var currentMatl = currentRnumdl.Matl;
-            //if (currentMatl == null)
-            //    return;
+            Matl? currentMatl = null;
+            if (currentMatl == null)
+                return;
 
-            //var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
-            //if (currentEntryIndex == -1)
-            //    return;
+            var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
+            if (currentEntryIndex == -1)
+                return;
 
-            //// Apply the preset and update the matl entry.
-            //var newEntry = MatlTools.FromShaderAndAttributes(currentMatl.Entries[currentEntryIndex], presetMaterial, true);
-            //currentMatl.Entries[currentEntryIndex] = newEntry;
+            // Apply the preset and update the matl entry.
+            var newEntry = MatlTools.FromShaderAndAttributes(currentMatl.Entries[currentEntryIndex], presetMaterial, true);
+            currentMatl.Entries[currentEntryIndex] = newEntry;
 
-            //// store the result of applying the preset's entry to the current material's entry
-            //var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
-            //if (currentMaterialIndex == -1)
-            //    return;
+            // store the result of applying the preset's entry to the current material's entry
+            var currentMaterialIndex = CurrentMaterialCollection.Materials.IndexOf(CurrentMaterial);
+            if (currentMaterialIndex == -1)
+                return;
 
-            //// Recreate and reassign materials to refresh rendering.
-            //// Do this first to ensure the RMaterials are recreated.
-            //RNumdl.InitializeAndAssignMaterials(currentRnumdl.RenderModel, currentMatl, currentRnumdl.TextureByName, currentRnumdl.Modl);
+            // Recreate and reassign materials to refresh rendering.
+            // Do this first to ensure the RMaterials are recreated.
+            //NumdlbNode.InitializeAndAssignMaterials(currentRnumdl.RenderModel, currentMatl, currentRnumdl.TextureByName, currentRnumdl.Modl);
 
-            //// Update the view model.
+            // Update the view model.
             //currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
 
-            //// Create the new viewmodel material and sync it with the newly created render material.
-            //var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial, currentRnumdl);
+            // Create the new viewmodel material and sync it with the newly created render material.
+            //var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial);
             //CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;
             //CurrentMaterial = newMaterial;
 
@@ -197,14 +244,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
         private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName, Matl matl)
         {
             var collection = new MaterialCollection(name);
-            //for (int i = 0; i < matl.Entries.Length; i++)
-            //{
-            //    // Pass a reference to the render material to enable real time updates.
-            //    materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
+            for (int i = 0; i < matl.Entries.Length; i++)
+            {
+                // Pass a reference to the render material to enable real time updates.
+                materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
 
-            //    var material = CreateMaterial(matl.Entries[i], i, rMaterial, rnumdl);
-            //    collection.Materials.Add(material);
-            //}
+                var material = CreateMaterial(matl.Entries[i], i, rMaterial);
+                collection.Materials.Add(material);
+            }
 
             return collection;
         }
@@ -222,7 +269,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             return material;
         }
 
-        private static Material CreateMaterial(MatlEntry entry, int index)
+        private static Material CreateMaterial(MatlEntry entry, int index, Modl? modl = null, Mesh? mesh = null)
         {
             var idColor = UniqueColors.IndexToColor(index);
 
@@ -235,35 +282,38 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 ShaderAttributeNames = string.Join(", ", ShaderValidation.GetAttributes(entry.ShaderLabel)),
                 ShaderParameterNames = string.Join(", ", ShaderValidation.GetParameters(entry.ShaderLabel).Select(p => p.ToString()).ToList()),
                 RenderPasses = ShaderValidation.GetRenderPasses(entry.ShaderLabel),
-                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel),
+                AttributeErrors = GetAttributeErrors(entry.ShaderLabel, entry.MaterialLabel, modl, mesh),
                 IsNotValidShaderLabel = !ShaderValidation.IsValidShaderLabel(entry.ShaderLabel)
             };
             AddAttributesToMaterial(entry, material);
             return material;
         }
 
-        private static List<AttributeError> GetAttributeErrors(string shaderLabel, string materialLabel)
+        private static List<AttributeError> GetAttributeErrors(string shaderLabel, string materialLabel, Modl? modl, Mesh? mesh)
         {
             // Create a list of missing required attributes for each mesh object.
+            if (mesh == null || modl == null)
+                return new List<AttributeError>();
+
             var required = ShaderValidation.GetAttributes(shaderLabel);
             var errors = new List<AttributeError>();
-            //foreach (var meshObject in rnumdl.Mesh.Objects)
-            //{
-            //    // Only include errors for meshes with this material assigned.
-            //    var modlEntry = rnumdl.Modl.ModelEntries.FirstOrDefault(e => e.MeshName == meshObject.Name && e.SubIndex == meshObject.SubIndex);
-            //    if (modlEntry == null)
-            //        continue;
+            foreach (var meshObject in mesh.Objects)
+            {
+                // Only include errors for meshes with this material assigned.
+                var modlEntry = modl.ModelEntries.FirstOrDefault(e => e.MeshName == meshObject.Name && e.SubIndex == meshObject.SubIndex);
+                if (modlEntry == null)
+                    continue;
 
-            //    if (modlEntry.MaterialLabel != materialLabel)
-            //        continue;
+                if (modlEntry.MaterialLabel != materialLabel)
+                    continue;
 
-            //    var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
-            //    var missingAttributes = string.Join(", ", required.Except(current).ToList());
-            //    if (string.IsNullOrEmpty(missingAttributes))
-            //        continue;
+                var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
+                var missingAttributes = string.Join(", ", required.Except(current).ToList());
+                if (string.IsNullOrEmpty(missingAttributes))
+                    continue;
 
-            //    errors.Add(new AttributeError { MeshName = meshObject.Name, MissingAttributes = missingAttributes });
-            //}
+                errors.Add(new AttributeError { MeshName = meshObject.Name, MissingAttributes = missingAttributes });
+            }
             return errors;
         }
 
