@@ -269,7 +269,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Enable real time viewport updates.
             if (rMaterial != null)
             {
-                SyncViewModelToRMaterial(rMaterial, material);
+                material.SyncToRMaterial(rMaterial, OnRenderFrameNeeded);
             }
 
             return material;
@@ -326,136 +326,6 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public void OnRenderFrameNeeded()
         {
             RenderFrameNeeded?.Invoke(this, EventArgs.Empty);
-        }
-
-        // TODO: Move this logic to the respective ViewModel classes?
-        private void SyncViewModelToRMaterial(RMaterial rMaterial, Material material)
-        {
-            material.PropertyChanged += (s, e) =>
-            {
-                switch (e.PropertyName)
-                {
-                    case nameof(Material.ShaderLabel):
-                        rMaterial.ShaderLabel = material.ShaderLabel;
-                        OnRenderFrameNeeded();
-                        break;
-                    default:
-                        break;
-                }
-            };
-            SyncBooleans(rMaterial, material);
-            SyncFloats(rMaterial, material);
-            SyncTexturesSamplers(rMaterial, material);
-            SyncVectors(rMaterial, material);
-            SyncBlendState(rMaterial, material);
-            SyncRasterizerState(rMaterial, material);
-        }
-
-        private void SyncRasterizerState(RMaterial rMaterial, Material material)
-        {
-            if (material.RasterizerState0 != null)
-            {
-                material.RasterizerState0.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.CullMode = material.RasterizerState0.CullMode.ToOpenTk();
-                    rMaterial.EnableFaceCulling = material.RasterizerState0.CullMode != MatlCullMode.None;
-                    rMaterial.FillMode = material.RasterizerState0.FillMode.ToOpenTk();
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private void SyncBlendState(RMaterial rMaterial, Material material)
-        {
-            if (material.BlendState0 != null)
-            {
-                material.BlendState0.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.SourceColor = material.BlendState0.SourceColor.ToOpenTk();
-                    rMaterial.DestinationColor = material.BlendState0.DestinationColor.ToOpenTk();
-                    rMaterial.EnableAlphaSampleCoverage = material.BlendState0.EnableAlphaSampleToCoverage;
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private void SyncBooleans(RMaterial rMaterial, Material material)
-        {
-            foreach (var param in material.BooleanParams)
-            {
-                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
-                    continue;
-
-                param.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.UpdateBoolean(paramId, param.Value);
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private void SyncFloats(RMaterial rMaterial, Material material)
-        {
-            foreach (var param in material.FloatParams)
-            {
-                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
-                    continue;
-
-                param.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.UpdateFloat(paramId, param.Value);
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private void SyncTexturesSamplers(RMaterial rMaterial, Material material)
-        {
-            foreach (var param in material.TextureParams)
-            {
-                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
-                    continue;
-
-                if (!Enum.TryParse(param.SamplerParamId, out MatlEnums.ParamId samplerParamId))
-                    continue;
-
-                param.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.UpdateTexture(paramId, param.Value);
-                    rMaterial.UpdateSampler(samplerParamId, GetSamplerData(param));
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private void SyncVectors(RMaterial rMaterial, Material material)
-        {
-            foreach (var param in material.Vec4Params)
-            {
-                if (!Enum.TryParse(param.ParamId, out MatlEnums.ParamId paramId))
-                    continue;
-
-                param.PropertyChanged += (s, e) =>
-                {
-                    rMaterial.UpdateVec4(paramId, new OpenTK.Vector4(param.Value1, param.Value2, param.Value3, param.Value4));
-                    OnRenderFrameNeeded();
-                };
-            }
-        }
-
-        private static SamplerData GetSamplerData(TextureSamplerParam param)
-        {
-            return new SamplerData
-            {
-                MinFilter = param.MinFilter.ToOpenTk(),
-                MagFilter = param.MagFilter.ToOpenTk(),
-                WrapS = param.WrapS.ToOpenTk(),
-                WrapT = param.WrapT.ToOpenTk(),
-                WrapR = param.WrapR.ToOpenTk(),
-                LodBias = param.LodBias,
-                // Disable anisotropic filtering if it's disabled in the material.
-                MaxAnisotropy = param.TextureFilteringType == FilteringType.AnisotropicFiltering ? param.MaxAnisotropy : 1,
-            };
         }
 
         private static void AddAttributesToMaterial(MatlEntry source, Material destination)
