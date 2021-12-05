@@ -115,6 +115,8 @@ namespace CrossModGui.ViewModels
             {
                 AddModelsToCollection(child, collection, isRecursive, onLoadModel);
             }
+
+            Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
         }
 
         private void AddModelsToCollection(FileNode node, ModelCollection collection, bool isRecursive, Action onLoadModel)
@@ -131,6 +133,7 @@ namespace CrossModGui.ViewModels
                 var parentText = numdlb.Parent?.Text ?? numdlb.Text;
 
                 // HACK: Prevent adding the same model twice.
+                // TODO: multiple folders may contain the same text like "c00"?
                 if (!collection.ModelNames.Contains(parentText))
                 {
                     AddMeshesToGui(parentText, rModel);
@@ -141,10 +144,6 @@ namespace CrossModGui.ViewModels
                         collection.Meshes.AddRange(rModel.SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, rSkeleton)));
                         collection.AddBoundingSphere(rModel.BoundingSphere);
                         Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
-
-                        // HACK: Make sure the camera isn't so far away that models aren't visible.
-                        if (Renderer.Camera.Translation.LengthSquared > 200000f)
-                            Renderer.Camera.Translation = Renderer.Camera.Translation.Normalized() * 200000f;
 
                         onLoadModel();
                     }
