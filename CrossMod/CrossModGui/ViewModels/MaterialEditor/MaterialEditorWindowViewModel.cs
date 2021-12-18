@@ -132,6 +132,18 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Group materials by matl.
             models = FindModels(nodes);
 
+            var materialByName = CreateMaterialByName(modelCollection);
+            AddNutexbPaths(nodes);
+
+            foreach (var model in models)
+            {
+                var collection = CreateMaterialCollection(model.Item1, materialByName, model.Item2);
+                MaterialCollections.Add(collection);
+            }
+        }
+
+        private static Dictionary<string, RMaterial> CreateMaterialByName(ModelCollection? modelCollection)
+        {
             // TODO: Do we need to account for files in different folders with the same material label?
             var materialByName = new Dictionary<string, RMaterial>();
             if (modelCollection != null)
@@ -145,11 +157,23 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 }
             }
 
-            foreach (var model in models)
+            return materialByName;
+        }
+
+        private void AddNutexbPaths(IEnumerable<FileNode> nodes)
+        {
+            // TODO: Each matl should only be able to access file paths like "col.nutexb" from its own directory?
+            foreach (var node in nodes)
             {
-                // TODO: Add texture names?
-                var collection = CreateMaterialCollection(model.Item1, materialByName, model.Item2);
-                MaterialCollections.Add(collection);
+                if (node is NutexbNode)
+                {
+                    // TODO: Account for case sensitivity here?
+                    PossibleTextureNames.Add(Path.GetFileNameWithoutExtension(node.Text));
+                }
+                else if (node is DirectoryNode directory)
+                {
+                    AddNutexbPaths(directory.Nodes);
+                }
             }
         }
 
