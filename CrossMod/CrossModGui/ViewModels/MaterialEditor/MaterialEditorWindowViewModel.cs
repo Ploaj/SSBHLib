@@ -2,6 +2,7 @@
 using CrossMod.Nodes;
 using CrossMod.Rendering;
 using CrossMod.Rendering.GlTools;
+using CrossMod.Rendering.Models;
 using CrossMod.Tools;
 using CrossModGui.Tools;
 using SsbhLib.MatlXml;
@@ -122,7 +123,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
             { MatlWrapMode.ClampToBorder, "Clamp to Border" },
         };
 
-        public MaterialEditorWindowViewModel(IEnumerable<FileNode> nodes)
+        public MaterialEditorWindowViewModel(IEnumerable<FileNode> nodes, ModelCollection? modelCollection)
         {
             // TODO: Restrict the textures used for cube maps.
             foreach (var name in TextureAssignment.defaultTexturesByName.Keys)
@@ -131,10 +132,23 @@ namespace CrossModGui.ViewModels.MaterialEditor
             // Group materials by matl.
             models = FindModels(nodes);
 
+            // TODO: Do we need to account for files in different folders with the same material label?
+            var materialByName = new Dictionary<string, RMaterial>();
+            if (modelCollection != null)
+            {
+                foreach (var model in modelCollection.Meshes)
+                {
+                    if (model.Item1.Material is RMaterial material)
+                    {
+                        materialByName[material.MaterialLabel] = material;
+                    }
+                }
+            }
+
             foreach (var model in models)
             {
                 // TODO: Add texture names?
-                var collection = CreateMaterialCollection(model.Item1, new Dictionary<string, RMaterial>(), model.Item2);
+                var collection = CreateMaterialCollection(model.Item1, materialByName, model.Item2);
                 MaterialCollections.Add(collection);
             }
         }
