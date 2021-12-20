@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Linq;
 using SSBHLib.Formats.Materials;
+using CrossMod.Rendering.Models;
 
 namespace CrossModGui.Views
 {
@@ -100,7 +101,7 @@ namespace CrossModGui.Views
             glViewport.PauseRendering();
 
             // TODO: Just search the file tree for matls?
-            var vm = new MaterialEditorWindowViewModel(viewModel.FileTreeItems);
+            var vm = new MaterialEditorWindowViewModel(viewModel.FileTreeItems, viewModel.Renderer.ItemToRender as ModelCollection);
             vm.RenderFrameNeeded += (s, e) => RenderFrameIfNeeded();
 
             var window = new MaterialEditorWindow(vm);
