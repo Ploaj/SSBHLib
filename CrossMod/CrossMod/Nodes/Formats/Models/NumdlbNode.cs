@@ -21,7 +21,7 @@ namespace CrossMod.Nodes
         }
 
         // TODO: These functions should be part of a separate class.
-        public (RModel?, RSkeleton?) GetModelAndSkeleton()
+        public (RModel?, RSkeleton?, Dictionary<string, RTexture>) GetModelSkeletonTextures()
         {
             NumshbNode? meshNode = null;
             RSkeleton? skeleton = null;
@@ -32,7 +32,7 @@ namespace CrossMod.Nodes
             var textureByName = new Dictionary<string, RTexture>();
             GetNodesForRendering(modl, Parent, ref meshNode, ref skeleton, ref matl, ref modelXmb, ref lodXmb, textureByName);
 
-            return GetModelAndSkeleton(modl, skeleton, matl, meshNode, modelXmb, lodXmb, textureByName);
+            return GetModelSkeletonTextures(modl, skeleton, matl, meshNode, modelXmb, lodXmb, textureByName);
         }
 
         private static void GetNodesForRendering(Modl modl, FileNode? directory, ref NumshbNode? meshNode, ref RSkeleton? skeleton, ref Matl? material, ref XmbNode? modelXmb, ref XmbNode? lodXmb,
@@ -77,26 +77,26 @@ namespace CrossMod.Nodes
             }
         }
 
-        private static (RModel?, RSkeleton?) GetModelAndSkeleton(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
+        private static (RModel?, RSkeleton?, Dictionary<string, RTexture>) GetModelSkeletonTextures(Modl? modl, RSkeleton? skeleton, Matl? matl, NumshbNode? meshNode, XmbNode? modelXmb, XmbNode? lodXmb,
             Dictionary<string, RTexture> textureByName)
         {
             var renderModel = meshNode?.GetRenderModel(skeleton);
 
-            InitializeAndAssignMaterials(renderModel, matl, textureByName, modl);
+            InitializeAndAssignMaterials(renderModel?.SubMeshes ?? new List<RMesh>(), matl, textureByName, modl);
 
-            return (renderModel, skeleton);
+            return (renderModel, skeleton, textureByName);
         }
 
-        public static Dictionary<string, RMaterial> InitializeAndAssignMaterials(RModel? renderModel, Matl? matl, Dictionary<string, RTexture> textureByName, Modl? modl)
+        public static Dictionary<string, RMaterial> InitializeAndAssignMaterials(IEnumerable<RMesh> meshes, Matl? matl, Dictionary<string, RTexture> textureByName, Modl? modl)
         {
             var materialByName = InitializeMaterials(matl, textureByName);
             if (modl != null)
-                AssignMaterials(renderModel, modl, materialByName);
+                AssignMaterials(meshes, modl, materialByName);
 
             return materialByName;
         }
 
-        private static void AssignMaterials(RModel? renderModel, Modl modl, Dictionary<string, RMaterial> materialByName)
+        private static void AssignMaterials(IEnumerable<RMesh> meshes, Modl modl, Dictionary<string, RMaterial> materialByName)
         {
             // Match materials based on the Modl.
             foreach (ModlEntry modlEntry in modl.ModelEntries)
@@ -104,18 +104,15 @@ namespace CrossMod.Nodes
                 if (!materialByName.TryGetValue(modlEntry.MaterialLabel, out RMaterial? meshMaterial))
                     continue;
 
-                AssignMaterialToMeshes(renderModel, modlEntry, meshMaterial);
+                AssignMaterialToMeshes(meshes, modlEntry, meshMaterial);
             }
 
             // Fix any potentially unassigned materials.
             // TODO: Display some sort of error color in the viewport?
-            if (renderModel != null)
+            foreach (var mesh in meshes)
             {
-                foreach (var mesh in renderModel.SubMeshes)
-                {
-                    if (mesh.Material == null)
-                        mesh.Material = new RMaterial("", "", 0);
-                }
+                if (mesh.Material == null)
+                    mesh.Material = new RMaterial("", "", 0);
             }
         }
 
@@ -136,13 +133,9 @@ namespace CrossMod.Nodes
             return materialByName;
         }
 
-        private static void AssignMaterialToMeshes(RModel? renderModel, ModlEntry modlEntry, RMaterial meshMaterial)
+        private static void AssignMaterialToMeshes(IEnumerable<RMesh> meshes, ModlEntry modlEntry, RMaterial meshMaterial)
         {
-            if (renderModel == null)
-                return;
-
-            var meshes = renderModel.SubMeshes.Where(m => m.Name == modlEntry.MeshName && m.SubIndex == modlEntry.SubIndex);
-            foreach (var mesh in meshes)
+            foreach (var mesh in meshes.Where(m => m.Name == modlEntry.MeshName && m.SubIndex == modlEntry.SubIndex))
             {
                 mesh.Material = meshMaterial;
             }

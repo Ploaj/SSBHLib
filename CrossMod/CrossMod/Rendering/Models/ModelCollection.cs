@@ -25,6 +25,8 @@ namespace CrossMod.Rendering.Models
         /// </summary>
         public Vector4 BoundingSphere { get; private set; }
 
+        public Dictionary<string, RTexture> TextureByName { get; } = new Dictionary<string, RTexture>();
+
         public void AddBoundingSphere(Vector4 newMeshBoundingSphere)
         {
             // Keep extending the bounding sphere as needed.

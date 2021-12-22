@@ -26,8 +26,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public MaterialCollection? CurrentMaterialCollection
         {
             get => currentMaterialCollection;
-            set 
-            { 
+            set
+            {
                 currentMaterialCollection = value;
                 // Reset the selected material since the containing collection is no longer selected.
                 CurrentMaterial = currentMaterialCollection?.Materials.FirstOrDefault();
@@ -40,6 +40,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         public event EventHandler? RenderFrameNeeded;
 
         private List<(string, Matl, Mesh?, Modl?)> models = new List<(string, Matl, Mesh?, Modl?)>();
+
+        private ModelCollection? modelCollection;
 
         public class MaterialSaveEventArgs : EventArgs
         {
@@ -131,6 +133,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
             // Group materials by matl.
             models = FindModels(nodes);
+
+            this.modelCollection = modelCollection;
 
             var materialByName = CreateMaterialByName(modelCollection);
             AddNutexbPaths(nodes);
@@ -252,9 +256,9 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (CurrentMaterial == null || CurrentMaterialCollection == null)
                 return;
 
-            Matl? currentMatl = null;
-            if (currentMatl == null)
-                return;
+            // TODO: How will the default work here?
+            var currentModel = models.FirstOrDefault(m => m.Item1 == CurrentMaterialCollection.Name);
+            var currentMatl = currentModel.Item2;
 
             var currentEntryIndex = Array.FindIndex(currentMatl.Entries, 0, (e) => e.MaterialLabel == CurrentMaterial.Name);
             if (currentEntryIndex == -1)
@@ -269,19 +273,25 @@ namespace CrossModGui.ViewModels.MaterialEditor
             if (currentMaterialIndex == -1)
                 return;
 
-            // TODO: How to sync the viewmodels with the viewport?
+            var currentCollectionIndex = MaterialCollections.IndexOf(CurrentMaterialCollection);
+            if (currentCollectionIndex == -1)
+                return;
 
-            // Recreate and reassign materials to refresh rendering.
-            // Do this first to ensure the RMaterials are recreated.
-            //NumdlbNode.InitializeAndAssignMaterials(currentRnumdl.RenderModel, currentMatl, currentRnumdl.TextureByName, currentRnumdl.Modl);
+            if (modelCollection != null)
+            {
+                // TODO: Only select the meshes for the specified matl.
+                // Add some sort of identifier to the groupings?
+                // This is safe to do since we've already modified the matl above.
+                var materialByName = NumdlbNode.InitializeAndAssignMaterials(modelCollection.Meshes.Where(m => true).Select(m => m.Item1),
+                    currentMatl, modelCollection.TextureByName, currentModel.Item4);
 
-            // Update the view model.
-            //currentRnumdl.MaterialByName.TryGetValue(newEntry.MaterialLabel, out RMaterial? rMaterial);
+                var newCurrentMaterial = CreateMaterialCollection(CurrentMaterialCollection.Name, materialByName, currentMatl);
+                MaterialCollections[currentCollectionIndex] = newCurrentMaterial;
 
-            // Create the new viewmodel material and sync it with the newly created render material.
-            //var newMaterial = CreateMaterial(newEntry, currentEntryIndex, rMaterial);
-            //CurrentMaterialCollection.Materials[currentMaterialIndex] = newMaterial;
-            //CurrentMaterial = newMaterial;
+                // Update the selected items since the collections were modified.
+                CurrentMaterialCollection = newCurrentMaterial;
+                CurrentMaterial = newCurrentMaterial.Materials[currentMaterialIndex];
+            }
 
             OnRenderFrameNeeded();
         }

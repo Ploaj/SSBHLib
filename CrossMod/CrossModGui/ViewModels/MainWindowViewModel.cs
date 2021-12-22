@@ -126,7 +126,7 @@ namespace CrossModGui.ViewModels
             {
                 // TODO: Rework this to take a directory instead.
                 // We're just searching the directory to collect model related files.
-                var (rModel, rSkeleton) = numdlb.GetModelAndSkeleton();
+                var (rModel, rSkeleton, textureByName) = numdlb.GetModelSkeletonTextures();
 
                 // The parent will be a folder and should have a more descriptive name.
                 // Use model.numdlb as a fallback if there is no parent.
@@ -146,6 +146,13 @@ namespace CrossModGui.ViewModels
                         Renderer.Camera.FrameBoundingSphere(collection.BoundingSphere);
 
                         onLoadModel();
+                    }
+
+                    // Add the textures from this folder.
+                    // TODO: Should we add special handling for duplicate texture names in separate folders.
+                    foreach (var pair in textureByName)
+                    {
+                        collection.TextureByName[pair.Key] = pair.Value;
                     }
 
                     collection.ModelNames.Add(parentText);

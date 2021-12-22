@@ -98,7 +98,7 @@ namespace CrossMod.Tools
                 if (node is NumdlbNode renderable)
                 {
                     // TODO: This will need to be updated and can hopefully share code with MainWindowViewModel.
-                    var (rModel, rSkeleton) = renderable.GetModelAndSkeleton();
+                    var (rModel, rSkeleton, textureByName) = renderable.GetModelSkeletonTextures();
                     if (rModel != null)
                     {
                         rModel?.HideExpressionMeshes();
