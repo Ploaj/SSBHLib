@@ -1,19 +1,7 @@
 # SSBHLib
-SSBHLib is a library for reading and writing the SSBH format for Smash Ultimate. If you discover a bug in any of these projects, report it in
-[issues](https://github.com/Ploaj/CrossMod/issues).
+If you discover a bug in any of these projects, report it in [issues](https://github.com/Ploaj/CrossMod/issues).
 
-## Project Structure 
-- SSBHLib - SSBH format definitions, parsing, exporting, and decoding/encoding of animation and mesh data
-- CrossMod - projects related to CrossModGUI
-    - CrossMod - rendering and file parsing functionality for CrossModGui
-    - CrossMod.MaterialValidation - queries an SQLite database of in game shaders for validating materials
-    - CrossModGUI - a desktop model viewer and material editor for Windows using WPF + OpenTK
-- MatLab - a command line tool for editing MATL files (`.numatb`) by converting to and from XML
-- Tools - a collection of command line tools for exporting SSBH files to more common formats for reverse engineering
-    - BatchExportNumatbToXml - uses MatLab to convert `.numatb` files to `.xml`
-    - BatchExportShaderBinaries - dumps the compiled shader data from `.nushdb` files
-    - NuanmbToJson - converts `.nuanmb` files to JSON but does not support editing
-    - SSBHBatchProcess - tests reading/writing various SSBH formats for a specified directory
+**SSBHLib and its related libraries are no longer being maintained and have been replaced by [ssbh_lib](https://github.com/ultimate-research/ssbh_lib). Cross Mod will still continue to receive new releases.**
 
 ## Cross Mod Gui
 <img src="https://github.com/Ploaj/SSBHLib/blob/master/CrossModApp.jpg" align="top" height="auto" width="auto"><br>
@@ -29,5 +17,4 @@ A simple program for converting .numatb files to .xml and .xml files to .numatb.
 `MatLab.exe <input> [output]`  
 
 # Building
-Compile in Visual Studio 2019 or later. Requires .NET Core 3.1. Cross Mod GUI and Cross Mod require Windows specific components.
-SSBHLib itself and the other command line programs will work on any platform supporting .Net Core. 
+Compile in Visual Studio 2019 or later. Requires .NET Core 3.1. Cross Mod GUI and Cross Mod require Windows specific components. SSBHLib itself and the other command line programs will work on any platform supporting .NET Core. 
