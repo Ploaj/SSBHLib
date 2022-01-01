@@ -1,4 +1,9 @@
 # Cross Mod
+**v0.20**
+* Added the ability to reload the current workspace with File > Reload Workspace or using Ctrl + R.
+* Fixed a potential crash when starting Cross Mod while not connected to the internet.
+* Improved accuracy of scale rendering for skeletal animations.
+
 **v0.19**
 * Fixed texture swizzling for 2D textures.
 * Added support for rendering R8Unorm textures, which is used for the spycloak texture.
