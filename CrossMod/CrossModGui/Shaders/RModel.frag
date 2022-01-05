@@ -93,6 +93,7 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
+    int isDiscard;
 };
 
 uniform int hasRequiredAttributes;
@@ -469,9 +470,10 @@ void main()
         prmColor = CustomVector[47];
 
     fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector[0].x);
-    // Alpha testing.
-    // TODO: Not all shaders have this.
-    if (fragColor0.a < 0.5 && hasCustomFloat19 != 1)
+    // Alpha testing is only enabled for certain shaders.
+    // This currently employs a heuristic that may not always work.
+    // All shaders with alpha testing have "discard;", but the converse isn't necessarily true in theory.
+    if (isDiscard == 1 && fragColor0.a < 0.5 && hasCustomFloat19 != 1)
         discard;
 
     float roughness = prmColor.g;

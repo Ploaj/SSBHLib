@@ -77,6 +77,7 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
+    int isDiscard;
 };
 
 uniform int hasRequiredAttributes;

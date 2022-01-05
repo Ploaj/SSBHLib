@@ -244,6 +244,34 @@ namespace CrossMod.MaterialValidation
             return actualAttributes.All(a => expectedAttributes.Contains(a));
         }
 
+        /// <summary>
+        /// Checks if <paramref name="shaderLabel"/> contains "discard" in its decompiled pixel shader.
+        /// </summary>
+        /// <param name="shaderLabel">The name of the shader, including the render pass tag</param>
+        /// <returns><c>true</c> if "discard" is present in <paramref name="shaderLabel"/></returns>
+        public static bool IsDiscardShader(string shaderLabel)
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            // The current database only contains correlations 
+            // between shaders and mesh attributes based on material assignments.
+            // TODO: Use a dump of decompiled shaders to find the actual attributes?
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                    SELECT *
+                    FROM ProgramDiscard
+                    WHERE 
+                        Name = $shaderLabel
+                ";
+            command.Parameters.AddWithValue("$shaderLabel", GetShader(shaderLabel));
+
+            // Read() returns true if there are any results.
+            using var reader = command.ExecuteReader();
+            return reader.Read();
+        }
+
         private static string GetShader(string shaderLabel)
         {
             // Assume all the shaders can use any of the render passes (opaque, near, far, sort).
