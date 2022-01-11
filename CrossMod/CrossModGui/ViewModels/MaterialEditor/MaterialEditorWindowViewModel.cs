@@ -141,7 +141,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
 
             foreach (var model in models)
             {
-                var collection = CreateMaterialCollection(model.Item1, materialByName, model.Item2);
+                var collection = CreateMaterialCollection(model.Item1, materialByName, model.Item2, model.Item4, model.Item3);
                 MaterialCollections.Add(collection);
             }
         }
@@ -296,7 +296,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
             OnRenderFrameNeeded();
         }
 
-        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName, Matl matl)
+        private MaterialCollection CreateMaterialCollection(string name, Dictionary<string, RMaterial> materialByName,
+            Matl matl, Modl? modl = null, Mesh? mesh = null)
         {
             var collection = new MaterialCollection(name);
             for (int i = 0; i < matl.Entries.Length; i++)
@@ -304,27 +305,14 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 // Pass a reference to the render material to enable real time updates.
                 materialByName.TryGetValue(matl.Entries[i].MaterialLabel, out RMaterial? rMaterial);
 
-                var material = CreateMaterial(matl.Entries[i], i, rMaterial);
+                var material = CreateMaterial(matl.Entries[i], i, rMaterial, modl, mesh);
                 collection.Materials.Add(material);
             }
 
             return collection;
         }
 
-        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial)
-        {
-            var material = CreateMaterial(entry, index);
-
-            // Enable real time viewport updates.
-            if (rMaterial != null)
-            {
-                material.SyncToRMaterial(rMaterial, OnRenderFrameNeeded);
-            }
-
-            return material;
-        }
-
-        private static Material CreateMaterial(MatlEntry entry, int index, Modl? modl = null, Mesh? mesh = null)
+        private Material CreateMaterial(MatlEntry entry, int index, RMaterial? rMaterial, Modl? modl = null, Mesh? mesh = null)
         {
             var idColor = UniqueColors.IndexToColor(index);
 
@@ -341,6 +329,13 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 IsNotValidShaderLabel = !ShaderValidation.IsValidShaderLabel(entry.ShaderLabel)
             };
             AddAttributesToMaterial(entry, material);
+
+            // Enable real time viewport updates.
+            if (rMaterial != null)
+            {
+                material.SyncToRMaterial(rMaterial, OnRenderFrameNeeded);
+            }
+
             return material;
         }
 
@@ -362,7 +357,7 @@ namespace CrossModGui.ViewModels.MaterialEditor
                 if (modlEntry.MaterialLabel != materialLabel)
                     continue;
 
-                var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text);
+                var current = meshObject.Attributes.Select(a => a.AttributeStrings[0].Text).ToList();
                 var missingAttributes = string.Join(", ", required.Except(current).ToList());
                 if (string.IsNullOrEmpty(missingAttributes))
                     continue;
