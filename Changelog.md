@@ -1,8 +1,14 @@
 # Cross Mod
+**v0.21**
+* Fixed an issue where mesh object names failed to display in the material editor for missing attributes.
+* Improved rendering accuracy by toggling alpha testing based on the current shader label. This uses a heuristic based on decompiled shader code and may not always be accurate.
+* Added a readonly checkbox for whether a material might use alpha testing to the material editor.
+
 **v0.20**
 * Added the ability to reload the current workspace with File > Reload Workspace or using Ctrl + R.
 * Fixed a potential crash when starting Cross Mod while not connected to the internet.
 * Improved accuracy of scale rendering for skeletal animations.
+* Fixed an issue where some models weren't framed properly in the viewport after opening.
 
 **v0.19**
 * Fixed texture swizzling for 2D textures.
