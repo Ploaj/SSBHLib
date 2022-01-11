@@ -48,6 +48,8 @@ namespace CrossModGui.ViewModels.MaterialEditor
         // This will need to be updated if the shader label changes.
         public bool IsNotValidShaderLabel { get; set; }
 
+        public bool HasAlphaTesting { get; set; }
+
         public SolidColorBrush? MaterialIdColor { get; set; }
 
         public RasterizerStateParam? RasterizerState0 { get; set; }

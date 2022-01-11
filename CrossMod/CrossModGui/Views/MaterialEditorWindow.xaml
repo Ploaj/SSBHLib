@@ -88,6 +88,8 @@
                         <ComboBox Grid.Row="1" Grid.Column="1" Margin="5,2" ItemsSource="{Binding CurrentMaterial.RenderPasses}" SelectedItem="{Binding CurrentMaterial.SelectedRenderPass}"></ComboBox>
                         <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Vertex Attributes</TextBlock>
                         <TextBlock Grid.Row="2" Grid.Column="1" Margin="5,2" Text="{Binding CurrentMaterial.ShaderAttributeNames}" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2">Alpha Testing</TextBlock>
+                        <CheckBox Grid.Row="3" Grid.Column="1" Margin="5,2" IsChecked="{Binding CurrentMaterial.HasAlphaTesting}" IsHitTestVisible="False"></CheckBox>
                     </Grid>
                     <Label Visibility="Visible">Material Errors</Label>
                     <Expander Name="invalidShaderExpander" Visibility="{Binding CurrentMaterial.IsNotValidShaderLabel, Converter={StaticResource booleanVisibilityConverter}}" IsExpanded="True">
