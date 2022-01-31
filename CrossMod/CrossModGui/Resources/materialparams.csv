@@ -1,9 +1,13 @@
 ParamName,Label1,Min1,Max1,Label2,Min2,Max2,Label3,Min3,Max3,Label4,Min4,Max4
+CustomVector1,Min Tex Alpha,0,1,,,,,,,,,
 CustomVector3,Red,0,5,Green,0,5,Blue,0,5,,,
+CustomVector6,Scale U,0,1,Scale V,0,1,Translate U,-1,1,Translate V,-1,1
 CustomVector8,Red,0,1,Green,0,1,Blue,0,1,,,
 CustomVector11,Red,0,1,Green,0,1,Blue,0,1,,,
 CustomVector13,Red,0,1,Green,0,1,Blue,0,1,,,
 CustomVector14,Red,0,1,Green,0,1,Blue,0,1,Blend Factor,0,1
 CustomVector18,Column Count,0,1,Row Count,0,1,Frames per Sprite,0,1,Sprite Count,0,1
 CustomVector30,Blend Factor,0,1,Smooth Factor,0,50,,,,,,
+CustomVector31,Scale U,0,1,Scale V,0,1,Translate U,-1,1,Translate V,-1,1
+CustomVector32,Scale U,0,1,Scale V,0,1,Translate U,-1,1,Translate V,-1,1
 CustomVector47,Metalness,0,1,Roughness,0,1,Ambient Occlusion,0,1,Specular,0,1
