@@ -71,7 +71,6 @@ namespace CrossMod.Nodes
                 ".nuanmb" => new NuanmbNode(filePath),
                 ".xmb" => new XmbNode(filePath),
                 ".prc" => new ParamNode(filePath),
-                ".nuhlp" => new NuhlpbNode(filePath),
                 _ => null
             };
         }

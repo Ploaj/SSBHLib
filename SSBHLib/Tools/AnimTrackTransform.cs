@@ -18,9 +18,8 @@
         public float Sy;
         public float Sz;
 
-        public float CompensateScale;
         public ushort ScaleType;
-        public int Unk1;
+        public int CompensateScale;
 
         public override string ToString()
         {

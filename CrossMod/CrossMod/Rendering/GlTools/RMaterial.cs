@@ -32,6 +32,7 @@ namespace CrossMod.Rendering.GlTools
         public bool HasColorSet7 { get; }
 
         public bool IsValidShaderLabel { get; }
+        public bool IsDiscard { get; }
 
         public Vector3 MaterialIdColorRgb255 => UniqueColors.IndexToColor(Index);
 
@@ -91,6 +92,7 @@ namespace CrossMod.Rendering.GlTools
             ShaderLabel = shaderLabel;
             Index = index;
             IsValidShaderLabel = ShaderValidation.IsValidShaderLabel(ShaderLabel);
+            IsDiscard = ShaderValidation.IsDiscardShader(ShaderLabel);
 
             // This is faster than accessing the database multiple times.
             var attributes = ShaderValidation.GetAttributes(ShaderLabel);
@@ -260,6 +262,7 @@ namespace CrossMod.Rendering.GlTools
 
             // Validate shaders, materials, and attributes.
             uniformBlock.SetValue("isValidShaderLabel", IsValidShaderLabel);
+            uniformBlock.SetValue("isDiscard", IsDiscard);
             uniformBlock.SetValue("hasColorSet1", HasColorSet1);
             uniformBlock.SetValue("hasColorSet2", HasColorSet2);
             uniformBlock.SetValue("hasColorSet3", HasColorSet3);
@@ -277,6 +280,7 @@ namespace CrossMod.Rendering.GlTools
         private void SetVectors(UniformBlock uniformBlock)
         {
             // Use a 16 byte type to avoid alignment issues.
+            // TODO: Cache this?
             var requiredParameters = ShaderValidation.GetParameters(ShaderLabel);
 
             // Custom vectors default to (0.0, 0.0, 0.0, 0.0).
@@ -380,35 +384,6 @@ namespace CrossMod.Rendering.GlTools
         {
             genericMaterial.AddTexture("diffusePbrCube", DefaultTextures.Instance.Value.DiffusePbr);
             genericMaterial.AddTexture("specularPbrCube", TextureAssignment.GetTexture(this, MatlEnums.ParamId.Texture7));
-        }
-
-        private void SetParamAsVec4Debug(UniformBlock uniformBlock, MatlEnums.ParamId paramId)
-        {
-            // Convert parameters into colors for easier visualization.
-            var name = "vec4Param";
-
-            if (vec4ByParamId.ContainsKey(paramId))
-            {
-                var value = vec4ByParamId[paramId];
-                uniformBlock.SetValue(name, value);
-            }
-            else if (boolByParamId.ContainsKey(paramId))
-            {
-                var value = boolByParamId[paramId];
-                if (value)
-                    uniformBlock.SetValue(name, new Vector4(1, 0, 1, 0));
-                else
-                    uniformBlock.SetValue(name, new Vector4(0, 0, 1, 0));
-            }
-            else if (floatByParamId.ContainsKey(paramId))
-            {
-                var value = floatByParamId[paramId];
-                uniformBlock.SetValue(name, new Vector4(value, value, value, 0));
-            }
-            else
-            {
-                uniformBlock.SetValue(name, Vector4.Zero);
-            }
         }
     }
 }

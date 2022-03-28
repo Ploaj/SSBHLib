@@ -29,22 +29,18 @@ namespace CrossMod.Nodes
         public int Height { get; set; }
         public int Depth { get; set; }
 
+        // TODO: Rework this to be based off of the nutexb format.
         public TextureTarget TextureTarget { get; set; }
         public PixelFormat PixelFormat { get; set; }
         public PixelType PixelType { get; set; }
         public InternalFormat InternalFormat { get; set; }
+        public NUTEX_FORMAT NutexFormat { get; set; }
 
         public int ArrayCount { get; set; } = 1;
 
         public bool IsCubeMap { get { return Arrays.Count == 6; } }
 
-        public bool IsSRGB
-        {
-            get
-            {
-                return (InternalFormat.ToString().ToLower().Contains("srgb"));
-            }
-        }
+        public bool IsSRGB => InternalFormat.ToString().ToLower().Contains("srgb");
 
         private Texture renderTexture = null;
 
@@ -78,11 +74,9 @@ namespace CrossMod.Nodes
                 surface.Height = reader.ReadInt32();
                 surface.Depth = reader.ReadInt32();
 
-                var Format = (NUTEX_FORMAT)reader.ReadByte();
+                var format = (NUTEX_FORMAT)reader.ReadUInt16();
+                reader.ReadUInt16();
 
-                reader.ReadByte();
-
-                ushort Padding = reader.ReadUInt16();
                 reader.ReadUInt32();
 
                 int MipCount = reader.ReadInt32();
@@ -93,19 +87,17 @@ namespace CrossMod.Nodes
                 int MajorVersion = reader.ReadInt16();
                 int MinorVersion = reader.ReadInt16();
 
-                if (pixelFormatByNuTexFormat.ContainsKey(Format))
-                    surface.PixelFormat = pixelFormatByNuTexFormat[Format];
-
-                if (internalFormatByNuTexFormat.ContainsKey(Format))
-                    surface.InternalFormat = internalFormatByNuTexFormat[Format];
-
-                surface.PixelType = GetPixelType(Format);
+                surface.NutexFormat = format;
+                surface.PixelFormat = pixelFormatByNuTexFormat[format];
+                surface.InternalFormat = internalFormatByNuTexFormat[format];
+                surface.PixelType = GetPixelType(format);
 
                 reader.BaseStream.Position = 0;
                 byte[] ImageData = reader.ReadBytes(ImageSize);
 
                 try
                 {
+                    System.Diagnostics.Debug.WriteLine(FilePath);
                     surface.Arrays = SwitchSwizzler.GetImageData(surface, ImageData, MipCount);
                 }
                 catch (System.Exception)
@@ -136,6 +128,7 @@ namespace CrossMod.Nodes
             surface.InternalFormat = InternalFormat.Rgba;
             surface.PixelFormat = PixelFormat.Bgra;
             surface.PixelType = PixelType.UnsignedByte;
+            surface.NutexFormat = NUTEX_FORMAT.R8G8B8A8_UNORM;
 
             var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var length = bitmapData.Stride * bitmapData.Height;
@@ -235,6 +228,7 @@ namespace CrossMod.Nodes
 
         private static readonly Dictionary<NUTEX_FORMAT, InternalFormat> internalFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, InternalFormat>()
         {
+            { NUTEX_FORMAT.R8_UNORM, InternalFormat.R8 },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, InternalFormat.Srgb8Alpha8 },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, InternalFormat.Rgba8 },
             { NUTEX_FORMAT.R32G32B32A32_FLOAT, InternalFormat.Rgba32f },
@@ -246,10 +240,10 @@ namespace CrossMod.Nodes
             { NUTEX_FORMAT.BC2_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt3Ext },
             { NUTEX_FORMAT.BC3_UNORM, InternalFormat.CompressedRgbaS3tcDxt5Ext },
             { NUTEX_FORMAT.BC3_SRGB, InternalFormat.CompressedSrgbAlphaS3tcDxt5Ext },
-            { NUTEX_FORMAT.BC4_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.BC4_SNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.BC5_UNORM, InternalFormat.Rgba },
-            { NUTEX_FORMAT.BC5_SNORM, InternalFormat.Rgba },
+            { NUTEX_FORMAT.BC4_UNORM, InternalFormat.CompressedRedRgtc1 },
+            { NUTEX_FORMAT.BC4_SNORM, InternalFormat.CompressedSignedRedRgtc1 },
+            { NUTEX_FORMAT.BC5_UNORM, InternalFormat.CompressedRgRgtc2 },
+            { NUTEX_FORMAT.BC5_SNORM, InternalFormat.CompressedSignedRgRgtc2 },
             { NUTEX_FORMAT.BC6_UFLOAT, InternalFormat.CompressedRgbBptcUnsignedFloat },
             { NUTEX_FORMAT.BC7_UNORM, InternalFormat.CompressedRgbaBptcUnorm },
             { NUTEX_FORMAT.BC7_SRGB, InternalFormat.CompressedSrgbAlphaBptcUnorm }
@@ -269,33 +263,49 @@ namespace CrossMod.Nodes
         /// </summary>
         private static readonly Dictionary<NUTEX_FORMAT, PixelFormat> pixelFormatByNuTexFormat = new Dictionary<NUTEX_FORMAT, PixelFormat>()
         {
-            { NUTEX_FORMAT.R32G32B32A32_FLOAT, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R8_UNORM, PixelFormat.Red },
             { NUTEX_FORMAT.R8G8B8A8_SRGB, PixelFormat.Rgba },
             { NUTEX_FORMAT.R8G8B8A8_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.R32G32B32A32_FLOAT, PixelFormat.Rgba },
             { NUTEX_FORMAT.B8G8R8A8_UNORM, PixelFormat.Bgra },
             { NUTEX_FORMAT.B8G8R8A8_SRGB, PixelFormat.Bgra },
+            { NUTEX_FORMAT.BC1_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC1_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC2_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC2_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC3_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC3_SRGB, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC4_UNORM, PixelFormat.Red },
+            { NUTEX_FORMAT.BC4_SNORM, PixelFormat.Red },
+            { NUTEX_FORMAT.BC5_UNORM, PixelFormat.Rg },
+            { NUTEX_FORMAT.BC5_SNORM, PixelFormat.Rg },
+            { NUTEX_FORMAT.BC6_UFLOAT, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC7_UNORM, PixelFormat.Rgba },
+            { NUTEX_FORMAT.BC7_SRGB, PixelFormat.Rgba }
         };
     }
 
     public enum NUTEX_FORMAT
     {
-        R8G8B8A8_UNORM = 0,
-        R8G8B8A8_SRGB = 0x05,
-        R32G32B32A32_FLOAT = 0x34,
-        B8G8R8A8_UNORM = 0x50,
-        B8G8R8A8_SRGB = 0x55,
-        BC1_UNORM = 0x80,
-        BC1_SRGB = 0x85,
-        BC2_UNORM = 0x90,
-        BC2_SRGB = 0x95,
-        BC3_UNORM = 0xa0,
-        BC3_SRGB = 0xa5,
-        BC4_UNORM = 0xb0,
-        BC4_SNORM = 0xb5,
-        BC5_UNORM = 0xc0,
-        BC5_SNORM = 0xc5,
-        BC6_UFLOAT = 0xd7,
-        BC7_UNORM = 0xe0,
-        BC7_SRGB = 0xe5
+        R8_UNORM = 0x0100,
+        R8G8B8A8_UNORM = 0x0400,
+        R8G8B8A8_SRGB = 0x0405,
+        R32G32B32A32_FLOAT = 0x0434,
+        B8G8R8A8_UNORM = 0x0450,
+        B8G8R8A8_SRGB = 0x0455,
+        BC1_UNORM = 0x0480,
+        BC1_SRGB = 0x0485,
+        BC2_UNORM = 0x0490,
+        BC2_SRGB = 0x0495,
+        BC3_UNORM = 0x04a0,
+        BC3_SRGB = 0x04a5,
+        BC4_UNORM = 0x0180,
+        BC4_SNORM = 0x0185,
+        BC5_UNORM = 0x0280,
+        BC5_SNORM = 0x0285,
+        BC6_UFLOAT = 0x04d7,
+        BC6_SFLOAT = 0x04d8,
+        BC7_UNORM = 0x04e0,
+        BC7_SRGB = 0x04e5,
     }
 }

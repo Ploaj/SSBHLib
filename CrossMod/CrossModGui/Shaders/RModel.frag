@@ -12,6 +12,7 @@ in vec4 colorSet2;
 in vec4 colorSet3;
 in vec4 colorSet5;
 in vec2 bake1;
+in vec3 shColor;
 
 noperspective in vec3 edgeDistance;
 
@@ -92,6 +93,7 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
+    int isDiscard;
 };
 
 uniform int hasRequiredAttributes;
@@ -468,9 +470,10 @@ void main()
         prmColor = CustomVector[47];
 
     fragColor0.a = max(albedoColor.a * emissionColor.a, CustomVector[0].x);
-    // Alpha testing.
-    // TODO: Not all shaders have this.
-    if (fragColor0.a < 0.5 && hasCustomFloat19 != 1)
+    // Alpha testing is only enabled for certain shaders.
+    // This currently employs a heuristic that may not always work.
+    // All shaders with alpha testing have "discard;", but the converse isn't necessarily true in theory.
+    if (isDiscard == 1 && fragColor0.a < 0.5 && hasCustomFloat19 != 1)
         discard;
 
     float roughness = prmColor.g;
@@ -507,20 +510,11 @@ void main()
     // TODO: This should be an irradiance map and may override the vertex attribute.
     vec3 diffuseIbl = textureLod(diffusePbrCube, fragmentNormal, 0).rgb * iblIntensity * 0.8; 
 
-    // TODO: This should be done in the vertex shader.
-    // TODO: Spherical harmonics from shpcanim files?
-    // TODO: Where do the cbuf11[19], cbuf11[20], and cbuf11[21] vectors come from?
-    // TODO: Matrix multiplication?
-    float ambientR = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14186, 0.04903, -0.082, 1.11054));
-    float ambientG = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.14717, 0.03699, -0.08283, 1.11036));
-    float ambientB = dot(vec4(normalize(vertexNormal), 1.0), vec4(0.1419, 0.04334, -0.08283, 1.11018));
-    vec3 vertexAmbient = vec3(ambientR, ambientG, ambientB);
-
     // Render passes.
     float sssBlend = prmColor.r * CustomVector[30].x;
     vec3 albedoColorFinal = GetAlbedoColorFinal(albedoColor);
 
-    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, vertexAmbient, ambientOcclusion, sssBlend);
+    vec3 diffusePass = DiffuseTerm(albedoColorFinal.rgb, nDotL, shColor, ambientOcclusion, sssBlend);
 
     vec3 specularPass = SpecularTerm(nDotH, max(nDotL, 0.0), nDotV, halfAngle, fragmentNormal, roughness, specularIbl, metalness, prmColor.a);
 
@@ -542,7 +536,7 @@ void main()
         fragColor0.rgb += EmissionTerm(emissionColor) * 0.5;
 
     if (renderRimLighting == 1)
-        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, max(nDotL, 0.0), norColor.a * prmColor.b * lightLeakFix, vertexAmbient);
+        fragColor0.rgb = GetRimBlend(fragColor0.rgb, albedoColorFinal, nDotV, max(nDotL, 0.0), norColor.a * prmColor.b * lightLeakFix, shColor);
     
     // Final color multiplier.
     fragColor0.rgb *= CustomVector[8].rgb;

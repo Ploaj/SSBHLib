@@ -79,10 +79,11 @@ namespace CrossMod.Tools
             if (nodes.Count == 0)
                 return;
 
-            var rnumdl = nodes[0] as RNumdl;
-            if (rnumdl?.RenderModel != null)
-                renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
+            //var rnumdl = nodes[0] as RNumdl;
+            //if (rnumdl?.RenderModel != null)
+            //    renderer.Camera.FrameBoundingSphere(rnumdl.RenderModel.BoundingSphere);
 
+            // TODO: Fix this?
             renderer.ItemToRender = nodes[0].Renderable.Value;
             renderer.RenderNodes();
             renderer.SwapBuffers();
@@ -97,11 +98,12 @@ namespace CrossMod.Tools
             {
                 if (node is NumdlbNode renderable)
                 {
-                    var model = renderable.GetRenderableNode();
-                    if (model != null)
+                    // TODO: This will need to be updated and can hopefully share code with MainWindowViewModel.
+                    var (rModel, rSkeleton, textureByName) = renderable.GetModelSkeletonTextures();
+                    if (rModel != null)
                     {
-                        model.RenderModel?.HideExpressionMeshes();
-                        return new List<IRenderableNode>() { renderable };
+                        rModel?.HideExpressionMeshes();
+                        //return new List<IRenderableNode>() { rModel };
                     }
 
                 }

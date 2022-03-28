@@ -80,12 +80,16 @@ namespace CrossMod.Rendering
             }
         }
 
-        public void SetFrameCamera(Camera camera, float frame)
+        public void SetCameraTransforms(float frame, ref Matrix4 modelView, ref Matrix4 projection, float aspectRatio)
         {
+            float fovRadians = MathHelper.DegreesToRadians(90);
             foreach (var a in CameraNodes)
             {
                 var key = a.FieldOfView.GetKey(frame);
-                camera.FovRadians = key.Value;
+                fovRadians = key.Value;
+
+                // TODO: Multiple nodes?
+                break;
             }
 
             foreach (var a in TransformNodes)
@@ -94,12 +98,20 @@ namespace CrossMod.Rendering
                 if (a.Name.ToLower().Contains("gya_camera"))
                 {
                     var key = a.Transform.GetKey(frame);
-                    // TODO: Store the translation, rotation, etc instead of decomposing the matrix again?
-                    // Another option is to allow overriding the MVP matrix.
-                    //camera.TranslationZ = key.Value.ExtractTranslation().Z;
+
+                    // A positive XYZ translation moves the camera right, up, and out of the screen.
+                    // This requires negating the translation vector.
+                    // The quaternion angle stored in the W component also needs to be negated.
+                    var rotation = Matrix4.CreateFromQuaternion(new Quaternion(key.Value.Rx, key.Value.Ry, key.Value.Rz, -key.Value.Rw));
+                    var translation = Matrix4.CreateTranslation(-key.Value.X, -key.Value.Y, -key.Value.Z);
+                    // The matrix order from beginning to end is translation, rotation, and then perspective.
+                    modelView = translation * rotation;
+                    projection = Matrix4.CreatePerspectiveFieldOfView(fovRadians, aspectRatio, 0.1f, 100000f);
+
+                    // TODO: Multiple nodes?
+                    break;
                 }
             }
-
         }
     }
 
@@ -156,7 +168,5 @@ namespace CrossMod.Rendering
     {
         public float Frame;
         public T Value;
-        public float CompensateScale; // workaround for strange scaling type
-        public bool HasCompensateScale;
     }
 }

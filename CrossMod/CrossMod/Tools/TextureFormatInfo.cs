@@ -1,25 +1,24 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using CrossMod.Nodes;
+using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 
-// Classes ported from StudioSB
-// https://github.com/Ploaj/StudioSB/blob/master/LICENSE
 namespace CrossMod.Tools
 {
     public class TextureFormatInfo
     {
-        public static uint GetBPP(InternalFormat format)
+        public static uint GetBPP(NUTEX_FORMAT format)
         {
             return FormatTable[format].BytesPerPixel;
         }
-        public static uint GetBlockWidth(InternalFormat format)
+        public static uint GetBlockWidth(NUTEX_FORMAT format)
         {
             return FormatTable[format].BlockWidth;
         }
-        public static uint GetBlockHeight(InternalFormat format)
+        public static uint GetBlockHeight(NUTEX_FORMAT format)
         {
             return FormatTable[format].BlockHeight;
         }
-        public static uint GetBlockDepth(InternalFormat format)
+        public static uint GetBlockDepth(NUTEX_FORMAT format)
         {
             return FormatTable[format].BlockDepth;
         }
@@ -40,35 +39,29 @@ namespace CrossMod.Tools
             }
         }
 
-        private static readonly Dictionary<InternalFormat, FormatInfo> FormatTable =
-                            new Dictionary<InternalFormat, FormatInfo>()
-           {
-            { InternalFormat.Rgba32f,                        new FormatInfo(16, 1, 1, 1) },
-            { InternalFormat.Rgba32i,                        new FormatInfo(16, 1, 1, 1) },
-            { InternalFormat.Rgba32ui,                       new FormatInfo(16, 1, 1, 1) },
-            { InternalFormat.Rgba16f,                        new FormatInfo(8,  1, 1, 1) },
-            { InternalFormat.Rgba16i,                        new FormatInfo(8,  1, 1, 1) },
-            { InternalFormat.Rgba16ui,                       new FormatInfo(8,  1, 1, 1) }, 
-            { InternalFormat.Rg32f,                          new FormatInfo(8,  1, 1, 1) },
-            { InternalFormat.Rg32i,                          new FormatInfo(8,  1, 1, 1) },
-            { InternalFormat.Rg32ui,                         new FormatInfo(8,  1, 1, 1) },
-            { InternalFormat.Rgba8i,                         new FormatInfo(4,  1, 1, 1) },
-            { InternalFormat.Srgb8Alpha8,                    new FormatInfo(4,  1, 1, 1) },
-            { InternalFormat.Rgba8Snorm,                     new FormatInfo(4,  1, 1, 1) },
-            { InternalFormat.Rgba8ui,                        new FormatInfo(4,  1, 1, 1) },
-            { InternalFormat.Rgba8,                          new FormatInfo(4,  1, 1, 1) }, 
-            { InternalFormat.SrgbAlpha,                      new FormatInfo(4,  1, 1, 1) }, 
-            { InternalFormat.R32f,                           new FormatInfo(4,  1, 1, 1) }, 
-            { InternalFormat.Rgb5A1,                         new FormatInfo(2,  1, 1, 1) }, 
-            { InternalFormat.CompressedRgbaS3tcDxt1Ext,      new FormatInfo(8,  4, 4, 1) }, 
-            { InternalFormat.CompressedSrgbAlphaS3tcDxt1Ext, new FormatInfo(8,  4, 4, 1) }, 
-            { InternalFormat.CompressedRgbaS3tcDxt3Ext,      new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedSrgbAlphaS3tcDxt3Ext, new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedRgbaS3tcDxt5Ext,      new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedSrgbAlphaS3tcDxt5Ext, new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedRgbBptcUnsignedFloat, new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedRgbaBptcUnorm,        new FormatInfo(16, 4, 4, 1) },
-            { InternalFormat.CompressedSrgbAlphaBptcUnorm,   new FormatInfo(16, 4, 4, 1) },
+        private static readonly Dictionary<NUTEX_FORMAT, FormatInfo> FormatTable =
+                            new Dictionary<NUTEX_FORMAT, FormatInfo>()
+        {
+            { NUTEX_FORMAT.R8_UNORM, new FormatInfo(1, 1, 1, 1) },
+            { NUTEX_FORMAT.R8G8B8A8_UNORM, new FormatInfo(4, 1, 1, 1) },
+            { NUTEX_FORMAT.R8G8B8A8_SRGB, new FormatInfo(4, 1, 1, 1) },
+            { NUTEX_FORMAT.R32G32B32A32_FLOAT, new FormatInfo(16, 1, 1, 1) },
+            { NUTEX_FORMAT.B8G8R8A8_UNORM, new FormatInfo(4, 1, 1, 1) },
+            { NUTEX_FORMAT.B8G8R8A8_SRGB, new FormatInfo(4, 1, 1, 1) },
+            { NUTEX_FORMAT.BC1_UNORM, new FormatInfo(8, 4, 4, 1) },
+            { NUTEX_FORMAT.BC1_SRGB, new FormatInfo(8, 4, 4, 1) },
+            { NUTEX_FORMAT.BC2_UNORM, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC2_SRGB, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC3_UNORM, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC3_SRGB, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC4_UNORM, new FormatInfo(8, 4, 4, 1) },
+            { NUTEX_FORMAT.BC4_SNORM, new FormatInfo(8, 4, 4, 1) },
+            { NUTEX_FORMAT.BC5_UNORM, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC5_SNORM, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC6_UFLOAT, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC6_SFLOAT, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC7_UNORM, new FormatInfo(16, 4, 4, 1) },
+            { NUTEX_FORMAT.BC7_SRGB, new FormatInfo(16, 4, 4, 1) },
         };
     }
 }

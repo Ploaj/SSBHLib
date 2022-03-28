@@ -247,7 +247,7 @@ namespace SSBHLib.Tools
             float xpos = parser.ReadSingle();
             float ypos = parser.ReadSingle();
             float zpos = parser.ReadSingle();
-            float csca = parser.ReadSingle();
+            int csca = parser.ReadInt32();
 
             parser.Seek(dataOffset + header.CompressedDataOffset);
             for (int frame = 0; frame < header.FrameCount; frame++)
@@ -264,9 +264,9 @@ namespace SSBHLib.Tools
                     Sx = xsca,
                     Sy = ysca,
                     Sz = zsca,
-                    CompensateScale = csca,
-                    Unk1 = 0 // TODO: What should the default be?
+                    CompensateScale = csca // TODO: What should the default be?
                 };
+                // TODO: "itemIndex" is a really hacky way of handling this.
                 for (int itemIndex = 0; itemIndex < items.Length; itemIndex++)
                 {
                     // First check if this track should be parsed
@@ -300,15 +300,29 @@ namespace SSBHLib.Tools
                     transform.ScaleType = (ushort)(header.Flags & 0x3);
                     if ((header.Flags & 0x3) == 0x3)
                     {
-                        //Scale Compensate
+                        // Uniform scale.
                         if (itemIndex == 0)
                         {
-                            transform.CompensateScale = frameValue;
+                            transform.Sx = frameValue;
+                            transform.Sy = frameValue;
+                            transform.Sz = frameValue;
                         }
                     }
                     else if ((header.Flags & 0x3) == 0x2)
                     {
                         // Unk2 scaling.
+                        switch (itemIndex)
+                        {
+                            case 0:
+                                transform.Sx = frameValue;
+                                break;
+                            case 1:
+                                transform.Sy = frameValue;
+                                break;
+                            case 2:
+                                transform.Sz = frameValue;
+                                break;
+                        }
                     }
                     else if ((header.Flags & 0x3) == 0x1)
                     {
@@ -390,8 +404,7 @@ namespace SSBHLib.Tools
                     X = reader.ReadSingle(),
                     Y = reader.ReadSingle(),
                     Z = reader.ReadSingle(),
-                    CompensateScale = 0.0f,
-                    Unk1 = reader.ReadInt32()
+                    CompensateScale = reader.ReadInt32()
                 };
 
                 return transform;

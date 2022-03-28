@@ -33,6 +33,7 @@ out vec4 geomColorSet6;
 out vec4 geomColorSet7;
 out vec2 geomBake1;
 out vec3 geomPosition;
+out vec3 geomShColor;
 
 uniform mat4 mvp;
 uniform mat4 modelView;
@@ -76,6 +77,7 @@ uniform MaterialParams
     int hasColorSet7;
 
     int isValidShaderLabel;
+    int isDiscard;
 };
 
 uniform int hasRequiredAttributes;
@@ -130,5 +132,12 @@ void main()
 
     // The w component flips mirrored tangents.
     geomTangent = vec4(transformedTangent.xyz, Tangent0.w);
+
+    // TODO: Spherical harmonics from shpcanim files?
+    float shAmbientR = dot(vec4(normalize(geomVertexNormal), 1.0), vec4(0.14186, 0.04903, -0.082, 1.11054));
+    float shAmbientG = dot(vec4(normalize(geomVertexNormal), 1.0), vec4(0.14717, 0.03699, -0.08283, 1.11036));
+    float shAmbientB = dot(vec4(normalize(geomVertexNormal), 1.0), vec4(0.1419, 0.04334, -0.08283, 1.11018));
+    geomShColor = vec3(shAmbientR, shAmbientG, shAmbientB);
+
     gl_Position = mvp * vec4(position.xyz, 1.0);
 }

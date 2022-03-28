@@ -52,7 +52,7 @@ namespace CrossMod.Rendering.Models
             }
         }
 
-        public void Render(Camera camera, RSkeleton? skeleton = null)
+        public void Render(Matrix4 modelView, Matrix4 projection, RSkeleton? skeleton = null)
         {
             Shader shader = ShaderContainer.GetCurrentRModelShader();
             if (!shader.LinkStatusIsOk)
@@ -61,7 +61,7 @@ namespace CrossMod.Rendering.Models
             shader.UseProgram();
 
             SetRenderSettingsUniforms(shader);
-            SetCameraUniforms(camera, shader);
+            SetCameraUniforms(modelView, projection, shader);
 
             // Bones
             if (boneUniformBuffer != null)
@@ -74,16 +74,14 @@ namespace CrossMod.Rendering.Models
                 boneUniformBuffer.SetValues("transforms", boneBinds);
             }
 
-            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer);
+            DrawMeshes(SubMeshes.Select(m => new Tuple<RMesh, RSkeleton?>(m, skeleton)), shader, boneUniformBuffer, modelView, projection);
         }
 
-        public static void SetCameraUniforms(Camera camera, Shader currentShader)
+        public static void SetCameraUniforms(Matrix4 modelView, Matrix4 projection, Shader currentShader)
         {
-            Matrix4 mvp = camera.MvpMatrix;
-            currentShader.SetMatrix4x4("mvp", ref mvp);
-
-            currentShader.SetMatrix4x4("modelView", camera.ModelViewMatrix);
-            currentShader.SetVector3("cameraPos", camera.PositionWorldSpace);
+            currentShader.SetMatrix4x4("mvp", modelView * projection);
+            currentShader.SetMatrix4x4("modelView", modelView);
+            currentShader.SetVector3("cameraPos", modelView.Inverted().ExtractTranslation());
         }
 
         public static void SetRenderSettingsUniforms(Shader currentShader)
@@ -140,7 +138,8 @@ namespace CrossMod.Rendering.Models
                 return 0;
         }
 
-        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer)
+        public static void DrawMeshes(IEnumerable<Tuple<RMesh, RSkeleton?>> subMeshes, Shader currentShader, UniformBlock? boneUniformBuffer,
+            Matrix4 modelView, Matrix4 projection)
         {
             // Meshes often share a material, so skip redundant and costly state changes.
             RMaterial? previousMaterial = null;
@@ -152,10 +151,14 @@ namespace CrossMod.Rendering.Models
                 DrawMesh(m.Item1, m.Item2, currentShader, previousMaterial, boneUniformBuffer, previousSkeleton);
                 previousMaterial = m.Item1.Material;
                 previousSkeleton = m.Item2;
+
+                // Render skeleton on top.
+                if (RenderSettings.Instance.RenderBones)
+                    m.Item2?.Render(modelView, projection);
             }
         }
 
-        public static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
+        private static void DrawMesh(RMesh m, RSkeleton? skeleton, Shader currentShader, RMaterial? previousMaterial, UniformBlock? boneUniformBuffer, RSkeleton? previousSkeleton)
         {
             // TODO: This optimization is buggy.
             // Check if the uniform values have already been set for this shader.

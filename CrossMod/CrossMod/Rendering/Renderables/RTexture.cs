@@ -30,7 +30,7 @@ namespace CrossMod.Rendering
             IsSrgb = isSrgb;
         }
 
-        public void Render(Camera camera)
+        public void Render(Matrix4 modelView, Matrix4 projection)
         {
             if (Texture == null)
                 return;
@@ -39,7 +39,7 @@ namespace CrossMod.Rendering
             if (Texture is Texture2D)
                 DrawTexture2d();
             else if (Texture is TextureCubeMap)
-                DrawTextureCube(camera);
+                DrawTextureCube(modelView, projection);
         }
 
         private void DrawTexture2d()
@@ -52,7 +52,7 @@ namespace CrossMod.Rendering
 
             // Use nearest neighbor to preserve pixel boundaries.
             if (sampler == null)
-                sampler = new SamplerObject { MagFilter = TextureMagFilter.Nearest, MinFilter = TextureMinFilter.Nearest };
+                sampler = new SamplerObject { MagFilter = TextureMagFilter.Nearest, MinFilter = TextureMinFilter.NearestMipmapNearest };
 
             // Texture unit 0 should be reserved for image preview.
             sampler.Bind(0);
@@ -64,7 +64,7 @@ namespace CrossMod.Rendering
             triangle.Draw(shader);
         }
 
-        private void DrawTextureCube(Camera camera)
+        private void DrawTextureCube(Matrix4 modelView, Matrix4 projection)
         {
             var shader = ShaderContainer.GetShader("RTextureCube");
             shader.UseProgram();
@@ -84,7 +84,9 @@ namespace CrossMod.Rendering
             shader.SetTexture("image", Texture, 0);
 
             // Use the existing rotation matrix to support changing the view.
-            shader.SetMatrix4x4("mvpMatrix", camera.RotationMatrix * Matrix4.CreatePerspectiveFieldOfView(1.5708f, camera.RenderWidth / (float)camera.RenderHeight, 0.01f, 10.0f));
+            //shader.SetMatrix4x4("mvpMatrix", camera.RotationMatrix * Matrix4.CreatePerspectiveFieldOfView(1.5708f, camera.RenderWidth / (float)camera.RenderHeight, 0.01f, 10.0f));
+            // TODO: Cube maps require a special camera setup.
+            shader.SetMatrix4x4("mvpMatrix", modelView * projection);
 
             // The colors need to be converted back to sRGB gamma.
             shader.SetBoolToInt("isSrgb", IsSrgb);

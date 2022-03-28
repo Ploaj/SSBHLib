@@ -35,8 +35,9 @@ namespace CrossMod.Rendering
             Matrix4[] transforms = new Matrix4[Bones.Count];
             for (int i = 0; i < Bones.Count; i++)
             {
-                transforms[i] = Bones[i].InvWorldTransform * GetAnimationTransform(Bones[i]);
-                //System.Diagnostics.Debug.WriteLine($"{Bones[i].Name} {transforms[i]}");
+                // Undo the skeleton transformation and then apply the animation transform instead.
+                // TODO: Would it be clearer to just return Matrix4.Identity when not animating?
+                transforms[i] = Bones[i].InvWorldTransform * GetAnimatedWorldTransform(Bones[i]);
             }
 
             return transforms;
@@ -45,7 +46,7 @@ namespace CrossMod.Rendering
         public Matrix4 GetAnimationSingleBindsTransform(int index)
         {
             if (index != -1 && Bones.Count > 0)
-                return GetAnimationTransform(Bones[index]);
+                return GetAnimatedWorldTransform(Bones[index]);
 
             return Matrix4.Identity;
         }
@@ -60,7 +61,7 @@ namespace CrossMod.Rendering
             return -1;
         }
 
-        public void Render(Camera camera)
+        public void Render(Matrix4 modelView, Matrix4 projection)
         {
             // Render skeleton on top.
             GL.Disable(EnableCap.DepthTest);
@@ -78,18 +79,18 @@ namespace CrossMod.Rendering
 
             boneShader.SetVector4("boneColor", RenderSettings.Instance.BoneColor);
 
-            Matrix4 mvp = camera.MvpMatrix;
+            Matrix4 mvp = modelView * projection;
             boneShader.SetMatrix4x4("mvp", ref mvp);
             boneShader.SetMatrix4x4("rotation", ref prismRotation);
 
             foreach (RBone b in Bones)
             {
-                Matrix4 transform = GetAnimationTransform(b);
+                Matrix4 transform = GetAnimatedWorldTransform(b);
                 boneShader.SetMatrix4x4("bone", ref transform);
                 boneShader.SetInt("hasParent", b.ParentId != -1 ? 1 : 0);
                 if (b.ParentId != -1)
                 {
-                    Matrix4 parentTransform = GetAnimationTransform(Bones[b.ParentId]);
+                    Matrix4 parentTransform = GetAnimatedWorldTransform(Bones[b.ParentId]);
                     boneShader.SetMatrix4x4("parent", ref parentTransform);
                 }
                 bonePrism.Draw(boneShader);
@@ -100,54 +101,40 @@ namespace CrossMod.Rendering
             }
         }
 
-        private Matrix4 GetAnimationTransform(RBone b)
+        private Matrix4 GetAnimatedWorldTransform(RBone b)
         {
-            // TODO: How do the scaling types work?
-            if (b.AnimationTrackTransform is AnimTrackTransform transform)
-            {
-                // TODO: Always include the current bones scale?
-                var currentTransform = GetMatrix(transform, true);
-
-                if (b.ParentId == -1)
-                {
-                    return currentTransform;
-                }
-
-                var inheritScale = ShouldInheritScale(transform);
-                return currentTransform * AccumulateTransforms(Bones[b.ParentId], inheritScale);
-            }
-            else
-            {
-                return AccumulateTransforms(b, true);
-            }
+            return AccumulateTransforms(b, true);
         }
 
         private static bool ShouldInheritScale(AnimTrackTransform transform)
         {
+            // TODO: This should return true for uncompressed transforms.
             return transform.ScaleType != 1;
         }
 
         private Matrix4 AccumulateTransforms(RBone b, bool includeScale)
         {
+            // Recursively accumulate the parent transform.
             if (b.AnimationTrackTransform is AnimTrackTransform transform)
             {
-                // Recursively accumulate the parent transform.
-
-                // TODO: Don't use scale from Unk1 == 1?
-                // TODO: Is this scale compensation like in Maya?
-                // TODO: This isn't completely accurate?
-                var currentTransform = GetMatrix(transform, includeScale && transform.Unk1 == 0);
+                var currentTransform = GetMatrix(transform, includeScale);
 
                 if (b.ParentId == -1)
                 {
                     return currentTransform;
                 }
 
-                // If any bone in the chain doesn't inherit scale,
-                // the scale of all all the subsequent ancestors should be ignored.
+                // Disabling scale inheritance propogates up the parent chain.
                 var inheritScale = ShouldInheritScale(transform);
                 var parentTransform = AccumulateTransforms(Bones[b.ParentId], includeScale && inheritScale);
 
+                // Compensate scale reverts the immediate parent's scale.
+                if (Bones[b.ParentId].AnimationTrackTransform is AnimTrackTransform parentTrackTransform && transform.CompensateScale == 1 && inheritScale)
+                {
+                    // The order of operations is important here to reduce scaling artifacts like shearing.
+                    var scaleCompensation = Matrix4.CreateScale(1f / parentTrackTransform.Sx, 1f / parentTrackTransform.Sy, 1f / parentTrackTransform.Sz);
+                    currentTransform = scaleCompensation * currentTransform;
+                }
                 return currentTransform * parentTransform;
             }
             else
@@ -160,7 +147,7 @@ namespace CrossMod.Rendering
                 }
                 else
                 {
-                    return b.Transform * GetAnimationTransform(Bones[b.ParentId]);
+                    return b.Transform * GetAnimatedWorldTransform(Bones[b.ParentId]);
                 }
             }
         }
@@ -171,15 +158,11 @@ namespace CrossMod.Rendering
                     Matrix4.CreateTranslation(transform.X, transform.Y, transform.Z);
 
             var scale = new Vector3(transform.Sx, transform.Sy, transform.Sz);
-            if (transform.ScaleType == 3)
-                scale = new Vector3(transform.CompensateScale);
 
             if (includeScale)
                 return Matrix4.CreateScale(scale) * matrix;
 
-
             return matrix;
-
         }
     }
 

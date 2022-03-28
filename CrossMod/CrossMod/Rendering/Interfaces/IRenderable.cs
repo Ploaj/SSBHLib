@@ -4,6 +4,6 @@ namespace CrossMod.Rendering
 {
     public interface IRenderable
     {
-        void Render(Camera camera);
+        void Render(OpenTK.Matrix4 modelView, OpenTK.Matrix4 projection);
     }
 }

@@ -12,7 +12,8 @@ namespace CrossMod.Nodes
             {
                 // TODO: This lacks necessary error checking.
                 Param = new ParamFile(AbsolutePath);
-                ParamNodeContainer.AddFile(this);
+                // TODO: Does this do anything currently?
+                //ParamNodeContainer.AddFile(this);
             }
             catch (System.Exception)
             {
