@@ -18,13 +18,21 @@ namespace CrossMod.Rendering.Resources
         public Texture2D DefaultWhite { get; } = new Texture2D();
         public Texture2D DefaultNormal { get; } = new Texture2D();
         public Texture2D DefaultBlack { get; } = new Texture2D();
+        public Texture2D DefaultDiffuse2 { get; } = new Texture2D();
+        public Texture2D DefaultGray { get; } = new Texture2D();
+        public Texture2D DefaultMetallicBG { get; } = new Texture2D();
+        public Texture2D DefaultSpecular { get; } = new Texture2D();
         public Texture3D ColorGradingLut { get; } = new Texture3D();
 
 
         /// <summary>
-        /// /common/shader/sfxpbs/fighter/default_params or 
+        /// /common/shader/sfxpbs/fighter/default_params or
         /// </summary>
         public Texture2D DefaultParamsFighter { get; } = new Texture2D();
+        public Texture2D DefaultParams2 { get; } = new Texture2D();
+        public Texture2D DefaultParams3 { get; } = new Texture2D();
+        public Texture2D DefaultParamsR000G025B100 { get; } = new Texture2D();
+        public Texture2D DefaultParamsR100G025B100 { get; } = new Texture2D();
 
         /// <summary>
         /// Similar to <see cref="DefaultParamsFighter"/> but specular is black.
@@ -53,7 +61,7 @@ namespace CrossMod.Rendering.Resources
             LoadBitmap(UvPattern, "DefaultTextures/UVPattern.png");
 
             LoadBitmap(DefaultWhite, "DefaultTextures/default_white.png");
-            LoadBitmap(DefaultParamsFighter, "DefaultTextures/default_Params.tif");
+            LoadBitmap(DefaultParamsFighter, "DefaultTextures/default_params.tif");
             LoadBitmap(DefaultPrm, "DefaultTextures/default_prm.tif");
             LoadBitmap(DefaultNormal, "DefaultTextures/default_normal.tif");
             LoadBitmap(DefaultBlack, "DefaultTextures/default_black.png");
