@@ -39,7 +39,6 @@ namespace CrossMod.Rendering
             { "/common/shader/sfxpbs/default_black", DefaultTextures.Instance.Value.DefaultBlack },
             { "/common/shader/sfxpbs/default_white", DefaultTextures.Instance.Value.DefaultWhite },
             { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.Value.DefaultWhite },
-            { "/common/shader/sfxpbs/default_color", DefaultTextures.Instance.Value.DefaultWhite },
             { "/common/shader/sfxpbs/default_color2", DefaultTextures.Instance.Value.DefaultWhite },
             { "/common/shader/sfxpbs/default_color3", DefaultTextures.Instance.Value.DefaultWhite },
             { "/common/shader/sfxpbs/default_color4", DefaultTextures.Instance.Value.DefaultWhite },
