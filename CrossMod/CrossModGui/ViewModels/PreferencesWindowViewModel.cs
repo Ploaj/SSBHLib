@@ -22,7 +22,7 @@ namespace CrossModGui.ViewModels
         }
         private bool enableDarkTheme = true;
 
-        public string ReleaseTag { get; set; } = "v0.21";
+        public string ReleaseTag { get; set; } = "v0.22";
 
         public DateTime LastUpdateCheckTime = DateTime.UnixEpoch;
 

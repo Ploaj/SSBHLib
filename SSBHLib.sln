@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod", "CrossMod\CrossMod\CrossMod.csproj", "{F9AA9734-A74E-4E28-BA16-6E97A063DD20}"
 EndProject
@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsbhLib.Test", "SsbhLib.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatLab", "MatLab\MatLab.csproj", "{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuanmbToJson", "Tools\NuanmbToJson\NuanmbToJson.csproj", "{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod.Test", "CrossMod\CrossMod.Test\CrossMod.Test.csproj", "{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BatchExportNumatbToXml", "Tools\BatchExportNumatbToXml\BatchExportNumatbToXml.csproj", "{B6A9E036-1A83-48D4-9335-289D465E3731}"
@@ -27,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod.MaterialValidation
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossMod.MaterialValidation.Test", "CrossMod\CrossMod.MaterialValidation.Test\CrossMod.MaterialValidation.Test.csproj", "{7C7AD75D-94DF-4E41-AFD0-192AEDA24595}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchExportShaderBinaries", "Tools\BatchExportShaderBinaries\BatchExportShaderBinaries.csproj", "{BEEBA7EC-33E0-40C5-A14D-0E7F1E0F317F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BatchExportShaderBinaries", "Tools\BatchExportShaderBinaries\BatchExportShaderBinaries.csproj", "{BEEBA7EC-33E0-40C5-A14D-0E7F1E0F317F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +61,6 @@ Global
 		{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8515C96F-1F36-4B6F-ABDF-EE2DDEA02D2A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64642703-51D4-4DF6-8BFB-7D351E2B4BA2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE3E010-F939-4ECA-BA40-50C6B4528F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
