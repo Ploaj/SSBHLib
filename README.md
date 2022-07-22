@@ -1,8 +1,8 @@
 # SSBHLib
 If you discover a bug in any of these projects, report it in [issues](https://github.com/Ploaj/CrossMod/issues).
 
-**SSBHLib and its related libraries are no longer being maintained and have been replaced by [ssbh_lib](https://github.com/ultimate-research/ssbh_lib).  
-Cross Mod Gui has been replaced by [ssbh_editor](https://github.com/ScanMountGoat/ssbh_editor).**
+**Cross Mod Gui has been replaced by [ssbh_editor](https://github.com/ScanMountGoat/ssbh_editor).**  
+**SSBHLib and its related libraries are no longer being maintained and have been replaced by [ssbh_lib](https://github.com/ultimate-research/ssbh_lib).**  
 
 ## Cross Mod Gui
 <img src="https://github.com/Ploaj/SSBHLib/blob/master/CrossModApp.jpg" align="top" height="auto" width="auto"><br>
