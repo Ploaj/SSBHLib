@@ -1,7 +1,7 @@
 # Cross Mod
 **v0.22**
-This is the final release. Cross Mod is no longer maintained and has been replaced by SSBH Editor.
-SSBH Editor can be downloaded from https://github.com/ScanMountGoat/ssbh_editor/releases.
+* This is the final release. Cross Mod is no longer maintained and has been replaced by SSBH Editor.
+* SSBH Editor can be downloaded from https://github.com/ScanMountGoat/ssbh_editor/releases.
 * Added additional material parameter descriptions.
 * Added rendering support for additional default textures.
 
